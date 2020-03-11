@@ -1,0 +1,427 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Faculty Dashboard</title>
+    <!-- Meta -->
+    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
+    <!-- Favicon icon -->
+    <link rel="icon" href="{% static 'assests/images/favicon.ico' %}" type="image/x-icon">
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
+    <!-- feather Awesome -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+    <!-- Style.css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
+</head>
+
+<body>
+    <!-- Pre-loader start -->
+    <div class="theme-loader">
+        <div class="ball-scale">
+            <div class='contain'>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pre-loader end -->
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-container navbar-wrapper">
+
+            <nav class="navbar header-navbar pcoded-header">
+                <div class="navbar-wrapper">
+                    <div class="navbar-logo">
+                    <a class="mobile-menu" id="mobile-collapse" href="#!">
+                        <i class="feather icon-menu"></i>
+                    </a>
+                    <a href="index-1.htm">
+                        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Theme-Logo">
+                    </a>
+                    <a class="mobile-options">
+                        <i class="feather icon-more-horizontal"></i>
+                    </a>
+                </div>
+                    <div class="navbar-container container-fluid">
+
+                    <ul class="nav-right">
+
+                        <li class="user-profile header-notification">
+                            <div class="dropdown-primary dropdown">
+                                <div class="dropdown-toggle" data-toggle="dropdown">
+                                    <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">
+                                    <span>Jasmin Makwana</span>
+                                    <i class="feather icon-chevron-down"></i>
+                                </div>
+                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                    <li>
+                                        <a href="user-profile.htm">
+                                            <i class="feather icon-user"></i> Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="auth-normal-sign-in.htm">
+                                            <i class="feather icon-log-out"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+            </nav>
+            <div class="pcoded-main-container">
+                <div class="pcoded-wrapper">
+                     <nav class="pcoded-navbar">
+                         <div class="pcoded-inner-navbar main-menu">
+                            <div class="pcoded-navigatio-lavel">Quick Links</div>
+                            <ul class="pcoded-item pcoded-left-item">
+                                <li class="">
+                                    <a href="#">
+                                        <span class="pcoded-micon"><i class="feather icon-home"></i></span>
+                                        <span class="pcoded-mtext">My Profile</span>
+                                    </a>
+                                </li>
+
+                                <ul class="pcoded-item pcoded-left-item">
+                                    <li class="pcoded-hasmenu">
+                                        <a href="javascript:void(0)">
+                                            <span class="pcoded-micon"><i class="feather icon-clipboard"></i></span>
+                                            <span class="pcoded-mtext">View Detaied Feedback</span>
+                                        </a>
+                                        <ul class="pcoded-submenu">
+                                            <li class=" ">
+                                                <a href="form-elements-component.htm">
+                                                    <span class="pcoded-mtext">Mid Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="form-elements-add-on.htm">
+                                                    <span class="pcoded-mtext">End Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="form-elements-advance.htm">
+                                                    <span class="pcoded-mtext">Course Exit Survey</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <ul class="pcoded-item pcoded-left-item">
+                                    <li class="pcoded-hasmenu">
+                                        <a href="javascript:void(0)">
+                                            <span class="pcoded-micon"><i class="feather icon-clipboard"></i></span>
+                                            <span class="pcoded-mtext">View Average Feedback</span>
+                                        </a>
+                                        <ul class="pcoded-submenu">
+                                            <li class=" ">
+                                                <a href="form-elements-component.htm">
+                                                    <span class="pcoded-mtext">Mid Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="form-elements-add-on.htm">
+                                                    <span class="pcoded-mtext">End Semester</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <li class="">
+                                    <a href="#">
+                                        <span class="pcoded-micon"><i class="feather icon-home"></i></span>
+                                        <span class="pcoded-mtext">Publish News</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="#">
+                                        <span class="pcoded-micon"><i class="feather icon-home"></i></span>
+                                        <span class="pcoded-mtext">Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <div class="pcoded-content">
+                        <div class="pcoded-inner-content">
+                            <div class="main-body">
+                                <div class="page-wrapper">
+                                     <div class="page-header">
+                                        <div class="row align-items-end">
+                                            <div class="col-lg-8">
+                                                <div class="page-header-title">
+                                                    <div class="d-inline">
+                                                        <h4>Committees</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="page-body">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-md-6">
+                                                <div class="card social-card bg-simple-c-blue">
+                                                    <div class="card-block">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-auto">
+                                                                <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
+                                                            </div>
+                                                            <div class="col">
+                                                                <h4>Anti Ragging</h4>
+                                                                <p>ABC</p>
+                                                                <p>Total Members : 120</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-md-6">
+                                                <div class="card social-card bg-simple-c-yellow">
+                                                    <div class="card-block">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-auto">
+                                                                <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
+                                                            </div>
+                                                            <div class="col">
+                                                                <h4>Women Cell</h4>
+                                                                <p>ABC</p>
+                                                                <p>Total Members : 120</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-xl-4 col-md-6">
+                                                <div class="card social-card bg-simple-c-green">
+                                                    <div class="card-block">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-auto">
+                                                                <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
+                                                            </div>
+                                                            <div class="col">
+                                                                <h4>Grievance</h4>
+                                                                <p>ABC</p>
+                                                                <p>Total Members : 120</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="page-header">
+                                                    <div class="row align-items-end">
+                                                        <div class="col-lg-8">
+                                                            <div class="page-header-title">
+                                                                <div class="d-inline">
+                                                                    <h4>Recent News</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                 </div>
+                                            <!-- List view card start -->
+                                                <div class="card">
+                                                <div class="row card-block">
+                                                    <div class="col-md-12">
+                                                        <ul class="list-view">
+                                                            <li>
+                                                                <div class="card list-view-media">
+                                                                    <div class="card-block">
+                                                                        <div class="media">
+                                                                            <a class="media-left" href="#">
+                                                                                <img class="media-object card-list-img" src="{% static 'assets/images/avatar-1.jpg' %}" alt="Generic placeholder image"/>
+                                                                            </a>
+                                                                            <div class="media-body">
+                                                                                <div class="col-xs-12">
+                                                                                    <h6 class="d-inline-block">
+                                                                                        Heading</h6>
+                                                                                    <label class="label label-info">Agent</label>
+                                                                                </div>
+                                                                                <div class="f-13 text-muted m-b-15">
+                                                                                    Software Engineer
+                                                                                </div>
+                                                                                <p>Hi, This is my short intro text.
+                                                                                    Lorem ipsum is a dummy content sit
+                                                                                    dollar. You can copy and paste this
+                                                                                    dummy content from anywhere and to
+                                                                                    anywhere. Its all free and must be a
+                                                                                    good to folllow in prectice</p>
+                                                                                <div class="m-t-15">
+                                                                                    <button type="button" data-toggle="tooltip" title="Facebook" class="btn btn-facebook btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-social-facebook"></span>
+                                                                                    </button>
+                                                                                    <button type="button" data-toggle="tooltip" title="Twitter" class="btn btn-twitter btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-social-twitter"></span>
+                                                                                    </button>
+                                                                                    <button type="button" data-toggle="tooltip" title="Linkedin" class="btn btn-linkedin btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-brand-linkedin"></span>
+                                                                                    </button>
+                                                                                    <button type="button" data-toggle="tooltip" title="Drible" class="btn btn-dribbble btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-social-dribble"></span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li class="">
+                                                                <div class="card list-view-media">
+                                                                    <div class="card-block">
+                                                                        <div class="media">
+                                                                            <a class="media-left" href="#">
+                                                                                <img class="media-object card-list-img" src="{% static 'assets/images/avatar-2.jpg' %}" alt="Generic placeholder image"/>
+                                                                            </a>
+                                                                            <div class="media-body">
+                                                                                <div>
+                                                                                    <h6 class="d-inline-block">
+                                                                                        Heading</h6>
+                                                                                    <label class="label  label-info">Accountant</label>
+                                                                                </div>
+                                                                                <div class="f-13 text-muted m-b-15">
+                                                                                    Softwear Engineer
+                                                                                </div>
+                                                                                <p>Hi, This is my short intro text.
+                                                                                    Lorem ipsum is a dummy content sit
+                                                                                    dollar. You can copy and paste this
+                                                                                    dummy content from anywhere and to
+                                                                                    anywhere. Its all free and must be a
+                                                                                    good to folllow in prectice</p>
+                                                                                <div class="m-t-15">
+                                                                                    <button type="button" data-toggle="tooltip" title="Facebook" class="btn btn-facebook btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-social-facebook"></span>
+                                                                                    </button>
+                                                                                    <button type="button" data-toggle="tooltip" title="Twitter" class="btn btn-twitter btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-social-twitter"></span>
+                                                                                    </button>
+                                                                                    <button type="button" data-toggle="tooltip" title="Linkedin" class="btn btn-linkedin btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-brand-linkedin"></span>
+                                                                                    </button>
+                                                                                    <button type="button" data-toggle="tooltip" title="Drible" class="btn btn-dribbble btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-social-dribble"></span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            <li class="">
+                                                                <div class="card list-view-media">
+                                                                    <div class="card-block">
+                                                                        <div class="media">
+                                                                            <a class="media-left" href="#">
+                                                                                <img class="media-object card-list-img" src="{% static 'assets/images/avatar-3.jpg' %}" alt="Generic placeholder image"/>
+                                                                            </a>
+                                                                            <div class="media-body">
+                                                                                <div>
+                                                                                    <h6 class="d-inline-block">
+                                                                                        Heading</h6>
+                                                                                    <label class="label  label-info">Accountant</label>
+                                                                                </div>
+                                                                                <div class="f-13 text-muted m-b-15">
+                                                                                    Softwear Engineer
+                                                                                </div>
+                                                                                <p>Hi, This is my short intro text.
+                                                                                    Lorem ipsum is a dummy content sit
+                                                                                    dollar. You can copy and paste this
+                                                                                    dummy content from anywhere and to
+                                                                                    anywhere. Its all free and must be a
+                                                                                    good to folllow in prectice</p>
+                                                                                <div class="m-t-15">
+                                                                                    <button type="button" data-toggle="tooltip" title="Facebook" class="btn btn-facebook btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-social-facebook"></span>
+                                                                                    </button>
+                                                                                    <button type="button" data-toggle="tooltip" title="Twitter" class="btn btn-twitter btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-social-twitter"></span>
+                                                                                    </button>
+                                                                                    <button type="button" data-toggle="tooltip" title="Linkedin" class="btn btn-linkedin btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-brand-linkedin"></span>
+                                                                                    </button>
+                                                                                    <button type="button" data-toggle="tooltip" title="Drible" class="btn btn-dribbble btn-mini waves-effect waves-light">
+                                                                                        <span class="icofont icofont-social-dribble"></span>
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <!-- List view card end -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Required Jquery -->
+    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
+    <!-- jquery slimscroll js -->
+    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
+    <!-- modernizr js -->
+    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+    <!-- Chart js -->
+    <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>
+    <!-- amchart js -->
+    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>
+    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>
+    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
+    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
+    <!-- custom js -->
+    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+
+</body>
+
+</html>
