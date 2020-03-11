@@ -51,6 +51,10 @@ def FacultyDashboard(request):
     return render(request, 'dashboard_faculty.html', context={})
 
 
+def CommitteeDashboard(request):
+    return render(request, 'committee_dashboard.html', context={})
+
+
 def RegisterView(request):
     context = {}
     if request.method == "POST":
