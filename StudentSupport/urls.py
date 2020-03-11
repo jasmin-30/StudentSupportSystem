@@ -6,4 +6,5 @@ urlpatterns = [
     path('register/', views.RegisterView, name='register'),
     path('student/dashboard/', views.StudentDashboard, name='student_dashbaord'),
     path('faculty/dashboard/', views.FacultyDashboard, name='faculty_dashboard'),
+    path('committee/dashboard/', views.CommitteeDashboard, name='committee_dashboard'),
 ]
