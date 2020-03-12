@@ -59,6 +59,9 @@ def ViewDetailedFeedback(request):
     return render(request, 'view_detailed_feedback.html', context={})
 
 
+def ViewAverageFeedback(request):
+    return render(request, 'view_average_feedback.html', context={})
+
 def RegisterView(request):
     context = {}
     if request.method == "POST":
