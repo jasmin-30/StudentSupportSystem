@@ -12,4 +12,6 @@ urlpatterns = [
     path('hod/dashboard/', views.HodDashboard, name='hod_dashboard'),
     path('hod/viewdetailedfeedback/', views.HodViewDetailedFeedback, name='hod_view_detailed_feedback'),
     path('hod/viewaveragefeedback/', views.HodViewAverageFeedback, name='hod_view_average_feedback'),
+    path('principal/dashboard/', views.PrincipalDashboard, name='principal_dashboard'),
+    path('principal/department/', views.Department, name='department'),
 ]
