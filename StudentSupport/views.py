@@ -55,12 +55,13 @@ def CommitteeDashboard(request):
     return render(request, 'committee_dashboard.html', context={})
 
 
-def ViewDetailedFeedback(request):
+def FacultyViewDetailedFeedback(request):
     return render(request, 'view_detailed_feedback.html', context={})
 
 
-def ViewAverageFeedback(request):
+def FacultyViewAverageFeedback(request):
     return render(request, 'view_average_feedback.html', context={})
+
 
 def RegisterView(request):
     context = {}
