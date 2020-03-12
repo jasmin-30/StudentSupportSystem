@@ -63,6 +63,18 @@ def FacultyViewAverageFeedback(request):
     return render(request, 'view_average_feedback.html', context={})
 
 
+def HodDashboard(request):
+    return render(request, 'hod_dashboard.html', context={})
+
+
+def HodViewDetailedFeedback(request):
+    return render(request, 'hod_view_detailed_feedback.html', context={})
+
+
+def HodViewAverageFeedback(request):
+    return render(request, 'hod_view_average_feedback.html', context={})
+
+
 def RegisterView(request):
     context = {}
     if request.method == "POST":
