@@ -7,4 +7,5 @@ urlpatterns = [
     path('student/dashboard/', views.StudentDashboard, name='student_dashbaord'),
     path('faculty/dashboard/', views.FacultyDashboard, name='faculty_dashboard'),
     path('committee/dashboard/', views.CommitteeDashboard, name='committee_dashboard'),
+    path('viewdetailedfeedback/', views.ViewDetailedFeedback, name='view_detailed_feedback'),
 ]
