@@ -83,6 +83,10 @@ def Department(request):
     return render(request, 'department.html', context={})
 
 
+def StudentProfile(request):
+    return render(request, 'student_profile_page.html', context={})
+
+
 def RegisterView(request):
     context = {}
     if request.method == "POST":
