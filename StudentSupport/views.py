@@ -116,6 +116,30 @@ def FacultyDashboard(request):
     return render(request, 'dashboard_faculty.html', context={})
 
 
+def CommitteeDashboard(request):
+    return render(request, 'committee_dashboard.html', context={})
+
+
+def FacultyViewDetailedFeedback(request):
+    return render(request, 'view_detailed_feedback.html', context={})
+
+
+def FacultyViewAverageFeedback(request):
+    return render(request, 'view_average_feedback.html', context={})
+
+
+def HodDashboard(request):
+    return render(request, 'hod_dashboard.html', context={})
+
+
+def HodViewDetailedFeedback(request):
+    return render(request, 'hod_view_detailed_feedback.html', context={})
+
+
+def HodViewAverageFeedback(request):
+    return render(request, 'hod_view_average_feedback.html', context={})
+
+
 def PrincipalDashboard(request):
     return render(request, 'principal_dashboard.html', context={})
 
@@ -134,6 +158,18 @@ def ConfirmAccountView(request):
             context["msg"] = "Your Account has been Successfully activated. You can now access your profile."
             return render(request, "index.html", context)
     return HttpResponseRedirect("/")
+
+
+def Department(request):
+    return render(request, 'department.html', context={})
+
+
+def StudentProfile(request):
+    return render(request, 'student_profile_page.html', context={})
+
+
+def FacultyProfile(request):
+    return render(request, 'faculty_profile_page.html', context={})
 
 
 def RegisterView(request):
@@ -226,7 +262,8 @@ def ChangePasswordView(request):
                 return render(request, "index.html", context)
 
             except Exception as e:
-                context["error"] = "Error in changing password. Try again later or if problem persists contact developer team."
+                context[
+                    "error"] = "Error in changing password. Try again later or if problem persists contact developer team."
                 return render(request, "index.html", context)
 
             context["success"] = "Password Changed Successfully."
