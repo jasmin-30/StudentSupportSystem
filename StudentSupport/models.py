@@ -9,7 +9,7 @@ from django.conf import settings
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, is_staff=False, is_active=True, is_admin=False):
+    def create_user(self, email, password=None, is_staff=False, is_active=False, is_admin=False):
         if not email:
             raise ValueError("User must have an email address")
 
@@ -32,7 +32,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None):
-        user = self.create_user(email, password=password, is_staff=True, is_admin=True)
+        user = self.create_user(email, password=password, is_staff=True, is_admin=True, is_active=True)
         user.is_superuser = True
         user.save(using=self._db)
         # user.is_superuser = True
@@ -52,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     confirm = models.BooleanField(default=False)
     # confirmed_date = models.DateTimeField(default=datetime.datetime.now())
     password = models.CharField(max_length=255)
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=False)
     staff = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
 

@@ -1,22 +1,31 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <title>Student Dashboard</title>
+    <title>Head Of Department Dashboard</title>
     <!-- Meta -->
     <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
     <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'assests/images/favicon.ico' %}" type="image/x-icon">
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
+    <!-- themify-icons line icon -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
+    <!-- ico font -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
+    <!-- Switch component css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
+    <!-- Tags css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
 </head>
 
 <body>
@@ -58,52 +67,158 @@
         </div>
     </div>
     <!-- Pre-loader end -->
-       <div id="pcoded" class="pcoded">
+    <div class="modal fade" id="large-Modal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Publish News</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+               <div class="modal-body">
+                    <form>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">News Title</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">News Description</label>
+                            <div class="col-sm-10">
+                                <textarea rows="5" cols="5" class="form-control" placeholder="Default textarea"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label">Target Audience</label>
+                            <div class="col-sm-10">
+                                <div class="checkbox-fade fade-in-primary">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr">
+                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
+                                        </span>
+                                        <span>All</span>
+                                    </label>
+                                </div>
+                                <br>
+                                <div class="checkbox-fade fade-in-primary">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr">
+                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
+                                        </span>
+                                        <span>Computer Engineering</span>
+                                    </label>
+                                </div>
+                                <br>
+                                <div class="checkbox-fade fade-in-primary">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr">
+                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
+                                        </span>
+                                        <span>Information & Technology</span>
+                                    </label>
+                                </div>
+                                <br>
+                                <div class="checkbox-fade fade-in-primary">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr">
+                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
+                                        </span>
+                                        <span>Production Engineering</span>
+                                    </label>
+                                </div>
+                                <br>
+                                <div class="checkbox-fade fade-in-primary">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr">
+                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
+                                        </span>
+                                        <span>Civil Engineering</span>
+                                    </label>
+                                </div>
+                                <br>
+                                <div class="checkbox-fade fade-in-primary">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr">
+                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
+                                        </span>
+                                        <span>Electronic & Communication</span>
+                                    </label>
+                                </div>
+                                <br>
+                                <div class="checkbox-fade fade-in-primary">
+                                    <label>
+                                        <input type="checkbox" value="">
+                                        <span class="cr">
+                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
+                                        </span>
+                                        <span>Mechanical Engineering</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn btn-large btn-primary" style="float:right;">Publish</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="pcoded" class="pcoded">
         <div class="pcoded-overlay-box"></div>
         <div class="pcoded-container navbar-wrapper">
-
             <nav class="navbar header-navbar pcoded-header">
                 <div class="navbar-wrapper">
-
                     <div class="navbar-logo">
-                        <a href="{% url 'student_dashbaord' %}">
-                            <img class="img-fluid" src="{% static 'assets/images/logo_sss.png' %}" alt="Theme-Logo">
-                        </a>
-                    </div>
-
+                    <a class="mobile-menu" id="mobile-collapse" href="#!">
+                        <i class="feather icon-menu"></i>
+                    </a>
+                    <a href="index-1.htm">
+                        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Theme-Logo">
+                    </a>
+                    <a class="mobile-options">
+                        <i class="feather icon-more-horizontal"></i>
+                    </a>
+                </div>
                     <div class="navbar-container container-fluid">
 
-                        <ul class="nav-right">
-                            <li class="user-profile header-notification">
-                                <div class="dropdown-primary dropdown">
-                                    <div class="dropdown-toggle" data-toggle="dropdown">
-{#                                        <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">#}
-                                        <span>Jasmin Makwana</span>
-                                        <i class="feather icon-chevron-down"></i>
-                                    </div>
-                                    <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                        <li>
-                                            <a href="#!">
-                                                <i class="feather icon-settings"></i> My Profile
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="{% url 'logout' %}">
-                                                <i class="feather icon-log-out"></i> Logout
-                                            </a>
-                                        </li>
-                                    </ul>
+                    <ul class="nav-right">
+
+                        <li class="user-profile header-notification">
+                            <div class="dropdown-primary dropdown">
+                                <div class="dropdown-toggle" data-toggle="dropdown">
+                                    <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">
+                                    <span>Jasmin Makwana</span>
+                                    <i class="feather icon-chevron-down"></i>
                                 </div>
-                            </li>
-                        </ul>
-                    </div>
+                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                    <li>
+                                        <a href="user-profile.htm">
+                                            <i class="feather icon-user"></i> Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="change_password.html">
+                                            <i class="feather icon-log-out"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
                 </div>
             </nav>
-
             <div class="pcoded-main-container">
                 <div class="pcoded-wrapper">
                     <nav class="pcoded-navbar">
-                        <div class="pcoded-inner-navbar main-menu">
+                         <div class="pcoded-inner-navbar main-menu">
                             <div class="pcoded-navigatio-lavel">Quick Links</div>
                             <ul class="pcoded-item pcoded-left-item">
                                 <li class="">
@@ -114,30 +229,64 @@
                                 </li>
                                 <li class="">
                                     <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-server"></i></span>
-                                        <span class="pcoded-mtext">Complaints Section</span>
+                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
+                                        <span class="pcoded-mtext">Manage Department</span>
                                     </a>
                                 </li>
-                                <li class="pcoded-hasmenu">
+                                <ul class="pcoded-item pcoded-left-item">
+                                    <li class="pcoded-hasmenu">
+                                        <a href="javascript:void(0)">
+                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
+                                            <span class="pcoded-mtext">View Detaied Feedback</span>
+                                        </a>
+                                        <ul class="pcoded-submenu">
+                                            <li class=" ">
+                                                <a href="{% url 'hod_view_detailed_feedback' %}">
+                                                    <span class="pcoded-mtext">Mid Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="form-elements-add-on.htm">
+                                                    <span class="pcoded-mtext">End Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="form-elements-advance.htm">
+                                                    <span class="pcoded-mtext">Course Exit Survey</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <ul class="pcoded-item pcoded-left-item">
+                                    <li class="pcoded-hasmenu">
+                                        <a href="javascript:void(0)">
+                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
+                                            <span class="pcoded-mtext">View Average Feedback</span>
+                                        </a>
+                                        <ul class="pcoded-submenu">
+                                            <li class=" ">
+                                                <a href="{% url 'hod_view_average_feedback' %}">
+                                                    <span class="pcoded-mtext">Mid Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="form-elements-add-on.htm">
+                                                    <span class="pcoded-mtext">End Semester</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <li class="">
                                     <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                        <span class="pcoded-mtext">Feedback Section</span>
+                                        <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
+                                        <span class="pcoded-mtext" data-toggle="modal" data-target="#large-Modal">Publish News
+                                        </span>
                                     </a>
-                                    <ul class="pcoded-submenu">
-                                        <li class="">
-                                            <a href="#">
-                                                <span class="pcoded-mtext">Mid Semester Feedback</span>
-                                            </a>
-                                        </li>
-                                        <li class="">
-                                            <a href="#">
-                                                <span class="pcoded-mtext">End Semester Feedback</span>
-                                            </a>
-                                        </li>
-                                    </ul>
                                 </li>
                                 <li class="">
-                                    <a href="{% url 'logout' %}">
+                                    <a href="#">
                                         <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
                                         <span class="pcoded-mtext">Logout</span>
                                     </a>
@@ -149,10 +298,75 @@
                         <div class="pcoded-inner-content">
                             <div class="main-body">
                                 <div class="page-wrapper">
+                                     <div class="page-header">
+                                        <div class="row align-items-end">
+                                            <div class="col-lg-8">
+                                                <div class="page-header-title">
+                                                    <div class="d-inline">
+                                                        <h4>Committees</h4>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     <div class="page-body">
-                                         <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="page-header">
+                                        <div class="row">
+                                            <div class="col-xl-4 col-md-6">
+                                                <a href="{% url 'committee_dashboard' %}">
+                                                    <div class="card social-card bg-simple-c-blue">
+                                                        <div class="card-block">
+                                                            <div class="row align-items-center">
+                                                                <div class="col-auto">
+                                                                    <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <h4>Anti Ragging</h4>
+                                                                    <p>ABC</p>
+                                                                    <p>Total Members : 120</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-xl-4 col-md-6">
+                                                <a href="#">
+                                                    <div class="card social-card bg-simple-c-yellow">
+                                                        <div class="card-block">
+                                                            <div class="row align-items-center">
+                                                                <div class="col-auto">
+                                                                    <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <h4>Women Cell</h4>
+                                                                    <p>ABC</p>
+                                                                    <p>Total Members : 120</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-xl-4 col-md-6">
+                                                <a href="#">
+                                                    <div class="card social-card bg-simple-c-green">
+                                                        <div class="card-block">
+                                                            <div class="row align-items-center">
+                                                                <div class="col-auto">
+                                                                    <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
+                                                                </div>
+                                                                <div class="col">
+                                                                    <h4>Grievance</h4>
+                                                                    <p>ABC</p>
+                                                                    <p>Total Members : 120</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="page-header">
                                                     <div class="row align-items-end">
                                                         <div class="col-lg-8">
                                                             <div class="page-header-title">
@@ -164,7 +378,7 @@
                                                     </div>
                                                  </div>
                                             <!-- List view card start -->
-                                            <div class="card">
+                                                <div class="card">
                                                 <div class="row card-block">
                                                     <div class="col-md-12">
                                                         <ul class="list-view">
@@ -296,8 +510,8 @@
                                                 </div>
                                             </div>
                                             <!-- List view card end -->
+                                            </div>
                                         </div>
-                                    </div>
                                     </div>
                                 </div>
                             </div>
@@ -307,7 +521,6 @@
             </div>
         </div>
     </div>
-
     <!-- Required Jquery -->
     <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>

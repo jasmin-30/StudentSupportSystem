@@ -15,7 +15,7 @@
     <script src="{% static 'assets/js/material-components-web.min.js' %}"></script>
 <!--    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">-->
     <!-- Favicon icon -->
-{#    <link rel="icon" href="{% static 'assests/images/favicon.ico' %}" type="image/x-icon">#}
+{#    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">#}
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
 
@@ -31,13 +31,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/swiper/css/swiper.min.css' %}">
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
-    <!-- notify js Fremwork -->
-    <!-- <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.brighttheme.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.buttons.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.history.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.mobile.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/pnotify/notify.css' %}"> -->
     <!-- Notification.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/notification/notification.css' %}">
     <!-- animation nifty modal window effects css -->
@@ -46,7 +39,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <!-- Animate.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/animate.css/css/animate.css' %}">
-<!--    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">-->
 </head>
 
 <body>
@@ -88,6 +80,57 @@
         </div>
     </div>
     <!-- Pre-loader end -->
+    <!-- Forgot Password Modal -->
+    <div id="forgot-password" class="modal fade" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="login-card card-block login-card-modal">
+                <form class="md-float-material" method="post" action="#">
+                    {% csrf_token %}
+                    <div class="text-center">
+                        <img src="{% static 'assets/images/logo_sss.png' %}" alt="logo.png" width="60%">
+                    </div>
+                    <div class="card m-t-15">
+                        <div class="auth-box card-block">
+                        <div class="row m-b-0">
+                            <div class="col-md-12">
+                                <h3 class="text-left">Recover your Password</h3>
+                            </div>
+                        </div>
+                        <p class="text-inverse b-b-default text-right">
+                            <a href="#" data-toggle="modal" data-target="#sign-in-modal" data-dismiss="modal">
+                                <i class="feather icon-arrow-left"></i>
+                                Back to Login
+                            </a>
+                        </p>
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Your Email Address" name="email_forgot" id="email_forgot" required>
+                            <span class="md-line"></span>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <button type="submit" class="btn btn-primary btn-md btn-block waves-effect text-center">Reset Password</button>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-10">
+                                <p class="text-inverse text-left">
+                                    <b>Student Support System</b>
+                                    <br />
+                                    Government Engineering College, Bhavnagar
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </form>
+                <!-- end of form -->
+            </div>
+        </div>
+    </div>
+    <!-- Forgot Password Modal end -->
+
+    <!-- Sign in Modal -->
     <div class="modal fade" id="sign-in-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -112,25 +155,37 @@
                                 <input type="password" class="form-control" name="pwd" id="pwd" required>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row" id="role-div">
                             <label class="col-sm-4 col-form-label" for="role">Role : </label>
                             <div class="col-sm-8">
-                                <select name="role" id="role" class="form-control" required>
-                                    <option value="opt1" disabled>Select Role</option>
+                                <select onblur="validate_role()" name="role" id="role" class="form-control" required>
+                                    <option value="-1" disabled>Select Role</option>
                                     <option value="Student">Student</option>
                                     <option value="Faculty">Faculty</option>
                                     <option value="Principal">Principal</option>
                                 </select>
+                                <div id="Error_role" style="display: none; color: red;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-8">
+                                <a href="#" data-toggle="modal" data-target="#sign-up-modal" data-dismiss="modal">Not Registered as Student? Click here to register</a>
+                            </div>
+                            <div class="col-sm-4">
+                                <a href="#" data-toggle="modal" data-target="#forgot-password" data-dismiss="modal">Forgot Password?</a>
                             </div>
                         </div>
                         <div class="form-group row f-right" style="padding-right: 15px;">
-                            <button type="submit" class="btn btn-primary waves-effect waves-light">Sign In</button>
+                            <button type="submit" class="btn btn-disabled" id="button-sign-in" name="button-sign-in" onfocus="validate_signin()" onmouseover="validate_signin()" disabled>Sign In</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Sign in Modal End -->
+
+    <!-- Sign up Modal -->
     <div class="modal fade" id="sign-up-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -143,40 +198,45 @@
                 <div class="modal-body">
                     <form method="post" action="{% url 'register' %}">
                         {% csrf_token %}
-                        <div class="form-group row">
+                        <div class="form-group row" id="fname-div">
                             <label class="col-sm-4 col-form-label" for="fname">First Name : </label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" name="fname" id="fname" required>
+                                <input type="text" class="form-control" onblur="validate_fname()" name="fname" id="fname" required>
+                                <div id="Error_fname" style="display: none; color: red;"></div>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row" id="lname-div">
                             <label class="col-sm-4 col-form-label" for="lname">Last Name : </label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" name="lname" id="lname" required>
+                                <input type="text" class="form-control" onblur="validate_lname()" name="lname" id="lname" required>
+                                <div id="Error_lname" style="display: none; color: red;"></div>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row" id="emailid-div">
                             <label class="col-sm-4 col-form-label" for="emailid">Email ID : </label>
                             <div class="col-sm-8">
-                                <input type="email" class="form-control" name="emailid" id="emailid" required>
+                                <input type="email" class="form-control" onblur="validate_email()" name="emailid" id="emailid" required>
+                                <div id="Error_emailid" style="display: none; color: red;"></div>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row" id="password-div">
                             <label class="col-sm-4 col-form-label" for="password">Password : </label>
                             <div class="col-sm-8">
-                                <input type="password" class="form-control" name="password" id="password" required>
+                                <input type="password" class="form-control" onblur="validate_password()" name="password" id="password" required>
+                                <div id="Error_Pwd" style="display: none; color: red;"></div>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row" id="enrollment-div">
                             <label class="col-sm-4 col-form-label" for="enrollment">Enrollment No : </label>
                             <div class="col-sm-8">
-                                <input type="text" class="form-control" name="enrollment" id="enrollment" maxlength="12" required>
+                                <input type="text" class="form-control" onblur="validate_enrollment()" name="enrollment" id="enrollment" maxlength="12" required>
+                                <div id="Error_enrl" style="display: none; color: red;"></div>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row" id="dept-div">
                             <label class="col-sm-4 col-form-label" for="dept">Department : </label>
                             <div class="col-sm-8">
-                                <select name="dept" id="dept" class="form-control" required>
+                                <select onblur="validate_dept()" name="dept" id="dept" class="form-control" required>
                                     <option value="-1" disabled selected>Select Department</option>
                                     {% for i in dept %}
                                         {% if i.accronym == "AM" or i.accronym == "GNRL" %}
@@ -185,12 +245,13 @@
                                         {% endif %}
                                     {% endfor %}
                                 </select>
+                                <div id="Error_dept" style="display: none; color: red;"></div>
                             </div>
                         </div>
-                        <div class="form-group row">
+                        <div class="form-group row" id="sem-div">
                             <label class="col-sm-4 col-form-label" for="sem">Semester : </label>
                             <div class="col-sm-8">
-                                <select name="sem" id="sem" class="form-control" required>
+                                <select onblur="validate_sem()" name="sem" id="sem" class="form-control" required>
                                     <option value="-1" disabled selected>Select Semester</option>
                                     <option value="1">Sem 1</option>
                                     <option value="2">Sem 2</option>
@@ -201,16 +262,28 @@
                                     <option value="7">Sem 7</option>
                                     <option value="8">Sem 8</option>
                                 </select>
+                                <div id="Error_sem" style="display: none; color: red;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-8">
+                                <a href="#" data-toggle="modal" data-target="#sign-in-modal" data-dismiss="modal">
+                                    <i class="feather icon-arrow-left"></i>
+                                    Already Registered? Login
+                                </a>
                             </div>
                         </div>
                         <div class="form-group row f-right" style="padding-right: 15px;">
-                            <button type="submit" class="btn btn-primary waves-effect waves-light">Register</button>
+                            <button type="submit" id="button-register" class="btn btn-disabled" onfocus="validate_form()" onmouseover="validate_form()" disabled>Register</button>
                         </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Sign Up Modal End -->
+
+    <!-- Main Content -->
     <div id="pcoded" class="pcoded">
         <div class="pcoded-overlay-box"></div>
         <div class="pcoded-container navbar-wrapper">
@@ -411,7 +484,7 @@
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
 {#    <script type="text/javascript" src="{% static 'assets/js/modal.js' %}"></script>#}
-    <!-- sweet alert modal.js intialize js -->
+    <!-- sweet alert modal.js initialize js -->
     <!-- modalEffects js nifty modal window effects -->
     <script type="text/javascript" src="{% static 'assets/js/modalEffects.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/classie.js' %}"></script>
@@ -421,16 +494,6 @@
     <!-- swiper js -->
     <script type="text/javascript" src="{% static 'bower_components/swiper/js/swiper.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/swiper-custom.js' %}"></script>
-    <!-- pnotify js -->
-    <!-- <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.desktop.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.buttons.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.confirm.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.callbacks.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.animate.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.history.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.mobile.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.nonblock.js' %}"></script> -->
     <!-- notification js -->
     <script type="text/javascript" src="{% static 'assets/js/bootstrap-growl.min.js' %}"></script>
 {#    <script type="text/javascript" src="{% static 'assets/pages/notification/notification.js' %}"></script>#}
@@ -442,21 +505,212 @@
 <!--    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>-->
      <!-- Custom js -->
     <script type="text/javascript" src="{% static 'assets/js/script.js' %}"></script>
+    <!-- Validation Javascripts -->
+    <script type="text/javascript">
+        function validate_role() {
+            var role = document.getElementById('role').value;
+            var tag = document.getElementById('Error_role');
+            if(role == -1){
+                tag.innerHTML = "Select Valid Role";
+                tag.style.display = 'block';
+                document.getElementById("role").classList.add("form-control-danger");
+                document.getElementById("role-div").classList.add("has-danger");
+                return false;
+            }
+            else {
+                tag.style.display = 'none';
+                document.getElementById("role").classList.remove("form-control-danger");
+                document.getElementById("role-div").classList.remove("has-danger");
+                return true;
+            }
+        }
+
+        function validate_signin() {
+            var email = document.getElementById('email').value;
+            var pwd = document.getElementById('pwd').value;
+            var btn = document.getElementById('button-sign-in');
+            if(email != "" && pwd != "" && validate_role()){
+                btn.classList.remove('btn-disabled');
+                btn.classList.add('btn-primary');
+                btn.disabled = false;
+            }
+            else {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-disabled');
+                btn.disabled = true;
+            }
+        }
+
+        function validate_fname() {
+            var fname = document.getElementById('fname').value;
+            var tag = document.getElementById('Error_fname');
+            if(fname.length === 0){
+                tag.innerHTML = "Enter Valid First Name";
+                tag.style.display = 'block';
+                document.getElementById("fname").classList.add("form-control-danger");
+                document.getElementById("fname-div").classList.add("has-danger");
+                return false;
+            }
+            else {
+                tag.style.display = 'none';
+                document.getElementById("fname").classList.remove("form-control-danger");
+                document.getElementById("fname-div").classList.remove("has-danger");
+                return true;
+            }
+        }
+        
+        function validate_lname() {
+            var lname = document.getElementById('lname').value;
+            var tag = document.getElementById('Error_lname');
+            if(lname.length === 0){
+                tag.innerHTML = "Enter Valid Last Name";
+                tag.style.display = 'block';
+                document.getElementById("lname").classList.add("form-control-danger");
+                document.getElementById("lname-div").classList.add("has-danger");
+                return false;
+            }
+            else {
+                tag.style.display = 'none';
+                document.getElementById("lname").classList.remove("form-control-danger");
+                document.getElementById("lname-div").classList.remove("has-danger");
+                return true;
+            }
+        }
+        
+        function validate_email() {
+            var email = document.getElementById('emailid').value;
+            var tag = document.getElementById('Error_emailid');
+            var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+            if(re.test(email.toLowerCase())){
+                tag.style.display = 'none';
+                document.getElementById("emailid").classList.remove("form-control-danger");
+                document.getElementById("emailid-div").classList.remove("has-danger");
+                return true;
+            }
+            else {
+                tag.innerHTML = "Enter Valid Email Address";
+                tag.style.display = 'block';
+                document.getElementById("emailid").classList.add("form-control-danger");
+                document.getElementById("emailid-div").classList.add("has-danger");
+                return false;
+            }
+
+        }
+        
+        function validate_password() {
+            var regularExpression = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[a-zA-Z!@#$%&? "])[a-zA-Z0-9!@#$%&?]{6,16}$/;
+            var pwd = document.getElementById("password").value;
+            var tag = document.getElementById("Error_Pwd");
+            if(regularExpression.test(pwd)){
+                tag.style.display = 'none';
+                document.getElementById("password").classList.remove("form-control-danger");
+                document.getElementById("password-div").classList.remove("has-danger");
+                document.getElementById("password").classList.add("form-control-success");
+                return true;
+            }
+            else {
+                tag.innerHTML = "Password must have at least one uppercase, one lowercase, one digit and one special character. Length of password is 6 to 16.";
+                tag.style.display = 'block';
+                document.getElementById("password").classList.add("form-control-danger");
+                document.getElementById("password-div").classList.add("has-danger");
+                return false;
+            }
+        }
+
+        function validate_enrollment() {
+            var enrl = document.getElementById("enrollment").value;
+            var tag = document.getElementById("Error_enrl");
+            if(enrl.length === 12){
+                tag.style.display = 'none';
+                document.getElementById("enrollment").classList.remove("form-control-danger");
+                document.getElementById("enrollment-div").classList.remove("has-danger");
+                //document.getElementById("enrollment").classList.add("form-control-success");
+                //document.getElementById("enrollment-div").classList.add("has-success");
+                return true;
+            }
+            else {
+                tag.innerHTML = "Length of enrollment number must be 12";
+                tag.style.display = 'block';
+                document.getElementById("enrollment").classList.add("form-control-danger");
+                document.getElementById("enrollment-div").classList.add("has-danger");
+                return false;
+            }
+        }
+
+        function validate_dept() {
+            var branch = document.getElementById('dept').value;
+            var tag = document.getElementById('Error_dept');
+            if(branch == -1) {
+                tag.innerHTML = "Select Valid Department.";
+                tag.style.display = 'block';
+                document.getElementById("dept").classList.add("form-control-danger");
+                document.getElementById("dept-div").classList.add("has-danger");
+                return false;
+            }
+            else {
+                tag.style.display = 'none';
+                document.getElementById("dept").classList.remove("form-control-danger");
+                document.getElementById("dept-div").classList.remove("has-danger");
+                return true;
+            }
+        }
+
+        function validate_sem() {
+            var sem = document.getElementById('sem').value;
+            var tag = document.getElementById('Error_sem');
+            if(sem == -1) {
+                tag.innerHTML = "Select Valid Semester.";
+                tag.style.display = 'block';
+                document.getElementById("sem").classList.add("form-control-danger");
+                document.getElementById("sem-div").classList.add("has-danger");
+                return false;
+            }
+            else {
+                tag.style.display = 'none';
+                document.getElementById("sem").classList.remove("form-control-danger");
+                document.getElementById("sem-div").classList.remove("has-danger");
+                return true;
+            }
+        }
+
+        function validate_form() {
+            var btn = document.getElementById('button-register');
+            if(validate_fname() && validate_lname() && validate_email() && validate_password() && validate_enrollment() && validate_dept() && validate_sem()){
+                btn.classList.remove('btn-disabled');
+                btn.classList.add('btn-primary');
+                btn.disabled = false;
+            }
+            else {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-disabled');
+                btn.disabled = true;
+            }
+        }
+    </script>
+    <!-- Validation Javascripts Section Ends Here -->
     <script type="text/javascript">
         {% if success %}
-            swal("{{ success }}", "{{ msg }}", "success");
+            setTimeout(function () {
+                swal({
+                    title: "{{ success }}",
+                    text: "{{ msg }}",
+                    type: "success",
+            }, function () {
+                    window.location = "{{ base_url }}";
+                });
+            }, 10);
         {% endif %}
         {% if error %}
-            function notify(from, align, icon, type, animIn, animOut){
+            /*function notify(from, align, icon, type, animIn, animOut, msg){
                 $.growl({
                     icon: icon,
-                    title: ' Error ',
-                    message: '{{ error }}',
+                    title: '',
+                    message: msg,
                     url: ''
                 },{
                     element: 'body',
                     type: type,
-                    allow_dismiss: true,
+                    allow_dismiss: false,
                     placement: {
                         from: from,
                         align: align
@@ -468,7 +722,7 @@
                     spacing: 10,
                     z_index: 999999,
                     delay: 2500,
-                    timer: 1000,
+                    timer: 3000,
                     url_target: '_blank',
                     mouse_over: false,
                     animate: {
@@ -488,14 +742,20 @@
                     '</div>'
                 });
             }
-            notify('top', 'center', 'fa fa-comments', 'danger', 'animated bounceInDown', 'animated bounceOutUp');
-            //alert("{{ error }}");
-            //new PNotify({
-              //  title: 'Error',
-                //text: '{{ error }}',
-               // icon: 'icofont icofont-info-circle',
-               // type: 'error'
-            //});
+            notify('top', 'center', 'fa fa-comments', 'danger', 'animated bounceInDown', 'animated bounceOutUp', '{{ error }}');
+            setTimeout(function () {
+                window.location = "{{ base_url }}";
+            }, 3500);*/
+            setTimeout(function () {
+                swal({
+                    title: "Error",
+                    text: "{{ error }}",
+                    dangerMode: true,
+                    type: "error",
+            }, function () {
+                    window.location = "{{ base_url }}";
+                });
+            }, 10);
         {% endif %}
     </script>
 </body>
