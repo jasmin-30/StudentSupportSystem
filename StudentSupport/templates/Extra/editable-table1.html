@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+        <title>Editable Table</title>
+        <script type="text/javascript">
+            var ajax_data = [];
+            {% for i in fac %}
+                var tmp = {
+                    "enrollment" : '{{ i.enrollment_no }}',
+                    "fname" : '{{ i.first_name }}',
+                    "lname" : '{{ i.last_name }}',
+                    "email" : '{{ i.auth_id.email }}',
+                    "dept" : '{{ i.dept_id.dept_name }}',
+                    "sem" : '{{ i.semester }}'
+                };
+                ajax_data.push(tmp);
+            {% endfor %}
+            var tbl = '';
+            tbl += '<table class="table table-hover">';
+            tbl += '<thead>';
+                tbl += '<tr>';
+                tbl += '<th scope="col">Enrollment No</th>';
+                tbl += '<th scope="col">First Name</th>';
+                tbl += '<th scope="col">Last Name</th>';
+                tbl += '<th scope="col">Email Address</th>';
+                tbl += '<th scope="col">Department</th>';
+                tbl += '<th scope="col">Semester</th>';
+            tbl += '</thead>';
+
+            tbl += '<tbody>';
+
+                $.each(ajax_data, function (index, val) {
+
+                    tbl += '<tr row_id="' + val['enrollment'] +'">';
+
+                        tbl += '<td><div class="row_data" edit_type="click" col_name="enrollment">'+val['enrollment']+'</div></td>';
+                        tbl += '<td><div class="row_data" edit_type="click" col_name="fname">'+val['fname']+'</div></td>';
+                        tbl += '<td><div class="row_data" edit_type="click" col_name="lname">'+val['lname']+'</div></td>';
+                        tbl += '<td><div class="row_data" edit_type="click" col_name="email">'+val['email']+'</div></td>';
+                        tbl += '<td><div class="row_data" edit_type="click" col_name="dept">'+val['dept']+'</div></td>';
+                        tbl += '<td><div class="row_data" edit_type="click" col_name="sem">'+val['sem']+'</div></td>';
+
+                        tbl += '<td>';
+                            tbl += '<span class="btn_edit"><a href="#" class="btn btn-link" row_id="'+val['enrollment']+'">Edit</a></span>';
+
+                            tbl += '<span class="btn_save"><a href="#" class="btn btn-link" row_id="'+val['enrollment']+'">Save</a> | </span>';
+                            tbl += '<span class="btn_cancel"><a href="#" class="btn btn-link" row_id="'+val['enrollment']+'">Cancel</a> | </span>';
+                        tbl += '</td>';
+
+                    tbl += '</tr>';
+
+                });
+
+            tbl += '</tbody>';
+
+            tbl += '</table>';
+
+            $(document).find('.table-responsive').html(tbl);
+
+            $(document).find('.btn_save').hide();
+            $(document).find('.btn_cancel').hide();
+
+            // making div editable starts here.
+            $(document).on('click', '.row_data', function (event) {
+                event.preventDefault();
+
+                if($(this).attr('edit_type') === 'button') {
+                    return false;
+                }
+
+                $(this).closest('div').attr('contenteditable', 'true');
+
+                $(this).addClass('bg-warning').css('padding', '5px');
+
+                $(this).focus();
+
+            });
+
+
+
+        </script>
+    </head>
+    <body>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="table-responsive">
+{#                    <table class="table table-hover">#}
+{#                        <thead>#}
+{#                            <tr>#}
+{#                                <th scope="col">Enrollment No</th>#}
+{#                                <th scope="col">First Name</th>#}
+{#                                <th scope="col">Last Name</th>#}
+{#                                <th scope="col">Email Address</th>#}
+{#                                <th scope="col">Department</th>#}
+{#                                <th scope="col">Semester</th>#}
+{#                                <th>Buttons</th>#}
+{#                            </tr>#}
+{#                        </thead>#}
+{#                        <tbody>#}
+{#                            {% for i in fac %}#}
+{#                                <tr>#}
+{#                                    <th scope="row">{{ i.enrollment_no }}</th>#}
+{#                                    <td class="editable" data-id="{{ i.enrollment_no }}" data-type="fname">{{ i.first_name }}</td>#}
+{#                                    <td class="editable" data-id="{{ i.enrollment_no }}" data-type="lname">{{ i.last_name }}</td>#}
+{#                                    <td class="editable" data-id="{{ i.enrollment_no }}" data-type="email">{{ i.auth_id.email }}</td>#}
+{#                                    <td class="editable" data-id="{{ i.enrollment_no }}" data-type="dept">{{ i.dept_id.dept_name }}</td>#}
+{#                                    <td class="editable" data-id="{{ i.enrollment_no }}" data-type="sem">{{ i.semester }}</td>#}
+{#                                    <td>#}
+{#                                        <span>#}
+{#                                            <button type="button" class="btn btn-link">Edit</button>#}
+{#                                            <button type="button" class="btn btn-link">Delete</button>#}
+{#                                        </span>#}
+{#                                    </td>#}
+{#                                </tr>#}
+{#                            {% endfor %}#}
+{#                        </tbody>#}
+{#                    </table>#}
+                    </div>
+                </div>
+            </div>
+        </div>
+{#        <script type="text/javascript">#}
+{#            $(document).ready(function () {#}
+{#                $(document).on("click", ".editable", function () {#}
+{#                    var value = $(this).text();#}
+{#                    var input = "<input type='text' class='input-data' value='"+value+"' class='form-control'>";#}
+{#                    $(this).html(input);#}
+{#                })#}
+{#            });#}
+{#        </script>#}
+{#        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>#}
+{#        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>#}
+{#        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>#}
+    </body>
+</html>

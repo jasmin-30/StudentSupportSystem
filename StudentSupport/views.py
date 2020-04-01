@@ -1,4 +1,6 @@
+import json
 from base64 import b64encode, b64decode
+from io import BytesIO
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -7,10 +9,20 @@ from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings as st
 from django.db import *
+
 from StudentSupport.models import *
 
 
 # Create your views here.
+def EditableTableView(request):
+    fac_qs = Students.objects.all()
+    dept_qs = Departments.objects.all()
+    context = {
+        "fac": fac_qs,
+        "dept": dept_qs
+    }
+    return render(request, "Extra/editable-table.html", context)
+
 
 def HomePageView(request):
     dept_qs = Departments.objects.all()
@@ -74,11 +86,6 @@ def HomePageView(request):
                     if user.role == role:
                         # print(user)
                         login(request, user)  # Redirect to dashboard after login
-                        # return HttpResponseRedirect("/logout/")
-                        # html = """
-                        #     <a href="/logout/">Logout</a>
-                        # """
-                        # return HttpResponse(html)
                         request.session["User"] = str(user.id)
                         return HttpResponseRedirect("/" + role.lower() + "/dashboard/")
                     else:
@@ -109,7 +116,28 @@ def LogoutView(request):
 
 
 def StudentDashboard(request):
-    return render(request, 'dashboard_student.html', context={})
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        user_obj = User.objects.get(id=request.session["User"])
+        print(user_obj)
+        std_obj = Students.objects.get(auth_id=user_obj)
+        print(std_obj)
+        try:
+            news_qs = News.objects.order_by('-timestamp')[10]
+        except IndexError as e:
+            print(e)
+            news_qs = News.objects.order_by('-timestamp')
+            print(news_qs)
+
+        print(news_qs)
+        context["news"] = news_qs
+        context["name"] = str(std_obj.first_name) + " " + str(std_obj.last_name)
+        return render(request, 'dashboard_student.html', context)
+    else:
+        context["error"] = "Login First."
+        return render(request, "index.html", context)
 
 
 def FacultyDashboard(request):
@@ -141,11 +169,108 @@ def HodViewAverageFeedback(request):
 
 
 def PrincipalDashboard(request):
-    return render(request, 'principal_dashboard.html', context={})
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        user_obj = User.objects.get(id=request.session["User"])
+        principal_obj = Principal.objects.get(auth_id=user_obj)
+        context["name"] = principal_obj.name
+        return render(request, 'principal/principal_dashboard.html', context)
+    else:
+        return render(request, 'principal/principal_dashboard.html', context)
+
+
+def ManageCommitteesView(request):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        user_obj = User.objects.get(id=request.session["User"])
+        principal_obj = Principal.objects.get(auth_id=user_obj)
+        context["name"] = principal_obj.name
+        committee_qs = Committee_Details.objects.all()
+        context["committees"] = committee_qs
+        faculty_qs = Faculty.objects.all()
+        context["faculties"] = faculty_qs
+
+        if request.method == "POST":
+            if request.POST.get('name') is not None:
+                name = request.POST.get('name')
+                details = request.POST.get('details')
+                chairperson = request.POST.get('chairperson')
+                try:
+                    obj = Committee_Details.objects.create(
+                        committee_name=name,
+                        committee_details=details,
+                        chairperson=Faculty.objects.get(id=chairperson)
+                    )
+                    obj.save()
+                    #Send Email to Chiarperson regarding committee details and motive
+                    context["success"] = "Committee Created Successfully."
+                    return render(request, "principal/manage_committees.html", context)
+
+                except Faculty.DoesNotExist:
+                    context["error"] = "Select Valid Chair person."
+                    return render(request, "principal/manage_committees.html", context)
+
+                except Exception as e:
+                    print(e)
+                    context["error"] = "Error in creating committee. Please Contact Developers."
+                    return render(request, "principal/manage_committees.html", context)
+
+        return render(request, 'principal/manage_committees.html', context)
+    else:
+        return render(request, 'index.html', context)
+
+
+def EditCommittees(request):
+    if request.user.is_authenticated:
+        if request.user.role == "Principal":
+            if request.method == "GET":
+                if request.GET.get('info') is not None:
+                    info = request.GET.get('info')
+                    data = eval(info)
+                    print(data)
+                    if data['action'] == 'update':
+                        try:
+                            committee_obj = Committee_Details.objects.get(id=data['row_id'])
+                            print(committee_obj)
+                            committee_obj.committee_name = data['name']
+                            committee_obj.committee_details = data['details']
+                            committee_obj.chairperson = Faculty.objects.get(id=data['fac_id'])
+                            committee_obj.save()
+                            return HttpResponse("Data Updated Successfully.")
+
+                        except Exception as e:
+                            print(e)
+                            return HttpResponse(e)
+
+                    if data['action'] == 'delete':
+                        try:
+                            committee_obj = Committee_Details.objects.get(id=data['row_id']).delete()
+                            return HttpResponse("Data Deleted Successfully.")
+
+                        except Exception as e:
+                            print(e)
+                            return HttpResponse(e)
+                else:
+                    return HttpResponse("Error in parsing json data.")
+
+        else:
+            return HttpResponse("You are not authorized to perform this action.")
+    else:
+        return HttpResponse("Login First")
+
+
+def StudentMidSemFeedbackView(request):
+    return render(request, "student_mid_sem_feedback.html", context={})
 
 
 def ConfirmAccountView(request):
-    context = {}
+    context = {
+        "base_url": st.BASE_URL,
+    }
     if request.method == "GET":
         if request.GET.get('email') is not None:
             raw_email = str(request.GET.get('email'))
@@ -160,8 +285,23 @@ def ConfirmAccountView(request):
     return HttpResponseRedirect("/")
 
 
-def Department(request):
-    return render(request, 'department.html', context={})
+def ManageDepartmentView(request):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        dept_qs = Departments.objects.all()
+        fac_qs = Faculty.objects.all()
+        dept = []
+        for i in dept_qs:
+            tmp = {}
+            tmp["id"] = i.id
+            tmp["dept_name"] = i.dept_name
+            tmp["hod"] = fac_qs.filter(dept_id=i.id)
+            dept.append(tmp)
+        context["dept"] = dept
+        context["faculties"] = fac_qs
+        return render(request, 'principal/manage_departments.html', context)
 
 
 def StudentProfile(request):
@@ -173,7 +313,9 @@ def FacultyProfile(request):
 
 
 def RegisterView(request):
-    context = {}
+    context = {
+        "base_url": st.BASE_URL,
+    }
     if request.method == "POST":
         fname = request.POST.get('fname')
         lname = request.POST.get('lname')
@@ -240,7 +382,9 @@ def RegisterView(request):
 
 
 def ChangePasswordView(request):
-    context = {}
+    context = {
+        "base_url": st.BASE_URL,
+    }
     if request.method == "GET":
         if request.GET.get('email') is not None:
             raw_email = str(request.GET.get('email'))
@@ -262,6 +406,7 @@ def ChangePasswordView(request):
                 return render(request, "index.html", context)
 
             except Exception as e:
+                print(e)
                 context[
                     "error"] = "Error in changing password. Try again later or if problem persists contact developer team."
                 return render(request, "index.html", context)

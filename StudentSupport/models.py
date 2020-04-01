@@ -9,7 +9,7 @@ from django.conf import settings
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, is_staff=False, is_active=False, is_admin=False):
+    def create_user(self, email, password=None, is_staff=False, is_active=False, is_admin=False, role="Student"):
         if not email:
             raise ValueError("User must have an email address")
 
@@ -22,6 +22,7 @@ class UserManager(BaseUserManager):
         user.set_password(password)
         user.staff = is_staff
         user.admin = is_admin
+        user.role = role
         # user.is_superuser = is_superuser
         user.active = is_active
         user.save(using=self._db)
@@ -49,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     role = models.CharField(choices=ROLE, default="Student", max_length=20, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    confirm = models.BooleanField(default=False)
+    # confirm = models.BooleanField(default=False)
     # confirmed_date = models.DateTimeField(default=datetime.datetime.now())
     password = models.CharField(max_length=255)
     active = models.BooleanField(default=False)
@@ -79,9 +80,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.email
 
-    def is_confirmed(self):
-        return self.confirm
-
     @property
     def is_staff(self):
         return self.staff
@@ -93,6 +91,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     @property
     def is_admin(self):
         return self.admin
+
 
 #
 # # Create your models here.
@@ -166,14 +165,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 #
 #
 # Models to store information about all the departments.
-class Departments(models.Model):
-    dept_name = models.CharField(max_length=100)
-    accronym = models.CharField(max_length=5, default=None)
-
-    def __str__(self):
-        return self.dept_name
-
-
 class Principal(models.Model):
     name = models.CharField(max_length=255)
     auth_id = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='id', on_delete=models.CASCADE, default=None)
@@ -182,11 +173,24 @@ class Principal(models.Model):
         return str(self.auth_id)
 
 
+class Departments(models.Model):
+    dept_name = models.CharField(max_length=100)
+    accronym = models.CharField(max_length=5, default=None)
+
+    def __str__(self):
+        return self.dept_name
+
+
 class Faculty(models.Model):
     name = models.CharField(max_length=255)
     auth_id = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='id', on_delete=models.CASCADE, default=None)
-    dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.SET_NULL, null=True)
+    dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE    , null=True)
+    hod = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def is_hod(self):
+        return self.hod
 
     def __str__(self):
         return str(self.auth_id)
@@ -433,7 +437,7 @@ class Program_Exit_Survey_Answers(models.Model):
 class Committee_Details(models.Model):
     committee_name = models.CharField(max_length=100)
     committee_details = models.TextField()
-    chairperson = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='id', on_delete=models.CASCADE)
+    chairperson = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -499,11 +503,12 @@ class News(models.Model):
         (8, 8),
         (9, 9)  # 9 means all departments
     )
+    news_subject = models.TextField()
     news_details = models.TextField()
     issuing_faculty = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
-    target_audience = models.CharField(max_length=2, choices=SEMESTER, default=9)
-    start_date = models.DateField(auto_now_add=True)
-    expiry_date = models.DateField(auto_now_add=True)
+    target_audience = models.IntegerField(choices=SEMESTER, default=9)
+    # start_date = models.DateField(auto_now_add=True)
+    # expiry_date = models.DateField(auto_now_add=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

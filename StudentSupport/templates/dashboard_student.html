@@ -66,7 +66,7 @@
                 <div class="navbar-wrapper">
 
                     <div class="navbar-logo">
-                        <a href="{% url 'student_dashbaord' %}">
+                        <a href="{% url 'student_dashboard' %}">
                             <img class="img-fluid" src="{% static 'assets/images/logo_sss.png' %}" alt="Theme-Logo">
                         </a>
                     </div>
@@ -78,12 +78,12 @@
                                 <div class="dropdown-primary dropdown">
                                     <div class="dropdown-toggle" data-toggle="dropdown">
 {#                                        <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">#}
-                                        <span>Jasmin Makwana</span>
+                                        <span>{{ name }}</span>
                                         <i class="feather icon-chevron-down"></i>
                                     </div>
                                     <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
                                         <li>
-                                            <a href="#!">
+                                            <a href="{% url 'student_dashboard' %}">
                                                 <i class="feather icon-settings"></i> My Profile
                                             </a>
                                         </li>
@@ -104,10 +104,12 @@
                 <div class="pcoded-wrapper">
                     <nav class="pcoded-navbar">
                         <div class="pcoded-inner-navbar main-menu">
-                            <div class="pcoded-navigatio-lavel">Quick Links</div>
+                            <div class="pcoded-navigatio-lavel" menu-title-theme="theme5">
+                                Quick Links
+                            </div>
                             <ul class="pcoded-item pcoded-left-item">
                                 <li class="">
-                                    <a href="#">
+                                    <a href="{% url 'student_dashboard' %}">
                                         <span class="pcoded-micon"><i class="feather icon-user"></i></span>
                                         <span class="pcoded-mtext">My Profile</span>
                                     </a>
@@ -168,129 +170,30 @@
                                                 <div class="row card-block">
                                                     <div class="col-md-12">
                                                         <ul class="list-view">
-                                                            <li>
-                                                                <div class="card list-view-media">
-                                                                    <div class="card-block">
-                                                                        <div class="media">
-                                                                            <a class="media-left" href="#">
-                                                                                <img class="media-object card-list-img" src="{% static 'assets/images/avatar-1.jpg' %}" alt="Generic placeholder image"/>
-                                                                            </a>
-                                                                            <div class="media-body">
-                                                                                <div class="col-xs-12">
-                                                                                    <h6 class="d-inline-block">
-                                                                                        Heading</h6>
-                                                                                    <label class="label label-info">Agent</label>
-                                                                                </div>
-                                                                                <div class="f-13 text-muted m-b-15">
-                                                                                    Software Engineer
-                                                                                </div>
-                                                                                <p>Hi, This is my short intro text.
-                                                                                    Lorem ipsum is a dummy content sit
-                                                                                    dollar. You can copy and paste this
-                                                                                    dummy content from anywhere and to
-                                                                                    anywhere. Its all free and must be a
-                                                                                    good to folllow in prectice</p>
-                                                                                <div class="m-t-15">
-                                                                                    <button type="button" data-toggle="tooltip" title="Facebook" class="btn btn-facebook btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-social-facebook"></span>
-                                                                                    </button>
-                                                                                    <button type="button" data-toggle="tooltip" title="Twitter" class="btn btn-twitter btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-social-twitter"></span>
-                                                                                    </button>
-                                                                                    <button type="button" data-toggle="tooltip" title="Linkedin" class="btn btn-linkedin btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-brand-linkedin"></span>
-                                                                                    </button>
-                                                                                    <button type="button" data-toggle="tooltip" title="Drible" class="btn btn-dribbble btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-social-dribble"></span>
-                                                                                    </button>
-                                                                                </div>
-                                                                            </div>
+                                                            {% if news %}
+                                                                <!-- Repeat from here -->
+                                                                {% for n in news %}
+                                                                    <li class="m-b-20" style="border-bottom: solid #353c4e; border-bottom-width: thin;">
+                                                                        <div class="col-xs-12">
+                                                                            <h5 class="d-inline-block m-b-10">
+                                                                                <b><u>{{ n.news_subject }}</u></b>
+                                                                            </h5>
                                                                         </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                            <li class="">
-                                                                <div class="card list-view-media">
-                                                                    <div class="card-block">
-                                                                        <div class="media">
-                                                                            <a class="media-left" href="#">
-                                                                                <img class="media-object card-list-img" src="{% static 'assets/images/avatar-2.jpg' %}" alt="Generic placeholder image"/>
-                                                                            </a>
-                                                                            <div class="media-body">
-                                                                                <div>
-                                                                                    <h6 class="d-inline-block">
-                                                                                        Heading</h6>
-                                                                                    <label class="label  label-info">Accountant</label>
-                                                                                </div>
-                                                                                <div class="f-13 text-muted m-b-15">
-                                                                                    Softwear Engineer
-                                                                                </div>
-                                                                                <p>Hi, This is my short intro text.
-                                                                                    Lorem ipsum is a dummy content sit
-                                                                                    dollar. You can copy and paste this
-                                                                                    dummy content from anywhere and to
-                                                                                    anywhere. Its all free and must be a
-                                                                                    good to folllow in prectice</p>
-                                                                                <div class="m-t-15">
-                                                                                    <button type="button" data-toggle="tooltip" title="Facebook" class="btn btn-facebook btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-social-facebook"></span>
-                                                                                    </button>
-                                                                                    <button type="button" data-toggle="tooltip" title="Twitter" class="btn btn-twitter btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-social-twitter"></span>
-                                                                                    </button>
-                                                                                    <button type="button" data-toggle="tooltip" title="Linkedin" class="btn btn-linkedin btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-brand-linkedin"></span>
-                                                                                    </button>
-                                                                                    <button type="button" data-toggle="tooltip" title="Drible" class="btn btn-dribbble btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-social-dribble"></span>
-                                                                                    </button>
-                                                                                </div>
-                                                                            </div>
+                                                                        <p class="m-b-0">
+                                                                            {{ n.news_details }}
+                                                                        </p>
+                                                                        <div class="f-13 text-muted">
+                                                                            {{ n.timestamp }}
+                                                                            <br />
+                                                                            By, {{ n.issuing_faculty.name }}
                                                                         </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
-                                                            <li class="">
-                                                                <div class="card list-view-media">
-                                                                    <div class="card-block">
-                                                                        <div class="media">
-                                                                            <a class="media-left" href="#">
-                                                                                <img class="media-object card-list-img" src="{% static 'assets/images/avatar-3.jpg' %}" alt="Generic placeholder image"/>
-                                                                            </a>
-                                                                            <div class="media-body">
-                                                                                <div>
-                                                                                    <h6 class="d-inline-block">
-                                                                                        Heading</h6>
-                                                                                    <label class="label  label-info">Accountant</label>
-                                                                                </div>
-                                                                                <div class="f-13 text-muted m-b-15">
-                                                                                    Softwear Engineer
-                                                                                </div>
-                                                                                <p>Hi, This is my short intro text.
-                                                                                    Lorem ipsum is a dummy content sit
-                                                                                    dollar. You can copy and paste this
-                                                                                    dummy content from anywhere and to
-                                                                                    anywhere. Its all free and must be a
-                                                                                    good to folllow in prectice</p>
-                                                                                <div class="m-t-15">
-                                                                                    <button type="button" data-toggle="tooltip" title="Facebook" class="btn btn-facebook btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-social-facebook"></span>
-                                                                                    </button>
-                                                                                    <button type="button" data-toggle="tooltip" title="Twitter" class="btn btn-twitter btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-social-twitter"></span>
-                                                                                    </button>
-                                                                                    <button type="button" data-toggle="tooltip" title="Linkedin" class="btn btn-linkedin btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-brand-linkedin"></span>
-                                                                                    </button>
-                                                                                    <button type="button" data-toggle="tooltip" title="Drible" class="btn btn-dribbble btn-mini waves-effect waves-light">
-                                                                                        <span class="icofont icofont-social-dribble"></span>
-                                                                                    </button>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </li>
+                                                                    </li>
+                                                                {% endfor %}
+                                                                <!-- Repeat News Section ends here -->
+                                                            {% else %}
+                                                                News Published by professors will be displayed here.<br />
+                                                                No News Published yet.
+                                                            {% endif %}
                                                         </ul>
                                                     </div>
                                                 </div>

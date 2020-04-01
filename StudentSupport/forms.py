@@ -10,12 +10,19 @@ class UserAdminCreationForm(forms.ModelForm):
     A form for creating new users. Includes all the required
     fields, plus a repeated password.
     """
+    ROLE = (
+        ("Student", "Student"),
+        ("Faculty", "Faculty"),
+        ("Principal", "Principal")
+    )
+
     password1 = forms.CharField(label='Password', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Password confirmation', widget=forms.PasswordInput)
+    password2 = forms.CharField(label='Confirm Password', widget=forms.PasswordInput)
+    role = forms.CharField(label='Role', widget=forms.Select(choices=ROLE))
 
     class Meta:
         model = User
-        fields = ('email',)
+        fields = ('email', 'role')
 
     def clean_password2(self):
         # Check that the two password entries match
@@ -29,6 +36,7 @@ class UserAdminCreationForm(forms.ModelForm):
         # Save the provided password in hashed format
         user = super(UserAdminCreationForm, self).save(commit=False)
         user.set_password(self.cleaned_data["password1"])
+        user.role = self.cleaned_data["role"]
         if commit:
             user.save()
         return user

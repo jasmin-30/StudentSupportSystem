@@ -159,7 +159,7 @@
                             <label class="col-sm-4 col-form-label" for="role">Role : </label>
                             <div class="col-sm-8">
                                 <select onblur="validate_role()" name="role" id="role" class="form-control" required>
-                                    <option value="-1" disabled>Select Role</option>
+                                    <option value="-1" selected disabled>Select Role</option>
                                     <option value="Student">Student</option>
                                     <option value="Faculty">Faculty</option>
                                     <option value="Principal">Principal</option>
@@ -176,7 +176,7 @@
                             </div>
                         </div>
                         <div class="form-group row f-right" style="padding-right: 15px;">
-                            <button type="submit" class="btn btn-disabled" id="button-sign-in" name="button-sign-in" onfocus="validate_signin()" onmouseover="validate_signin()" disabled>Sign In</button>
+                            <button type="submit" class="btn btn-disabled" id="button-sign-in" name="button-sign-in" onfocus="validate_signin()" onclick="validate_signin()" onmouseover="validate_signin()" onmouseenter="validate_signin()" disabled>Sign In</button>
                         </div>
                     </form>
                 </div>
@@ -185,102 +185,276 @@
     </div>
     <!-- Sign in Modal End -->
 
-    <!-- Sign up Modal -->
-    <div class="modal fade" id="sign-up-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
+    <!-- Tabs modal > Start-->
+    <div class="modal fade modal-flex" id="sign-up-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Student Sign Up</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
                 <div class="modal-body">
-                    <form method="post" action="{% url 'register' %}">
-                        {% csrf_token %}
-                        <div class="form-group row" id="fname-div">
-                            <label class="col-sm-4 col-form-label" for="fname">First Name : </label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" onblur="validate_fname()" name="fname" id="fname" required>
-                                <div id="Error_fname" style="display: none; color: red;"></div>
-                            </div>
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="tab" href="#tab-student" role="tab" aria-expanded="true">
+                                <h6>
+                                    Student Registration
+                                </h6>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="tab" href="#tab-faculty" role="tab" aria-expanded="false">
+                                <h6>
+                                    Faculty Registration
+                                </h6>
+                            </a>
+                        </li>
+                    </ul>
+                    <div class="tab-content modal-body">
+                        <div class="tab-pane active" id="tab-student" role="tabpanel" aria-expanded="true">
+                            <h4 class="m-b-20">Student Registration</h4>
+                            <form method="post" action="{% url 'register' %}">
+                                {% csrf_token %}
+                                <div class="form-group row" id="fname-div">
+                                    <label class="col-sm-4 col-form-label" for="fname">First Name : </label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" onblur="validate_fname()" name="fname" id="fname" required>
+                                        <div id="Error_fname" style="display: none; color: red;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="lname-div">
+                                    <label class="col-sm-4 col-form-label" for="lname">Last Name : </label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" onblur="validate_lname()" name="lname" id="lname" required>
+                                        <div id="Error_lname" style="display: none; color: red;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="emailid-div">
+                                    <label class="col-sm-4 col-form-label" for="emailid">Email ID : </label>
+                                    <div class="col-sm-8">
+                                        <input type="email" class="form-control" onblur="validate_email()" name="emailid" id="emailid" required>
+                                        <div id="Error_emailid" style="display: none; color: red;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="password-div">
+                                    <label class="col-sm-4 col-form-label" for="password">Password : </label>
+                                    <div class="col-sm-8">
+                                        <input type="password" class="form-control" onblur="validate_password()" name="password" id="password" required>
+                                        <div id="Error_Pwd" style="display: none; color: red;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="enrollment-div">
+                                    <label class="col-sm-4 col-form-label" for="enrollment">Enrollment No : </label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" onblur="validate_enrollment()" name="enrollment" id="enrollment" maxlength="12" required>
+                                        <div id="Error_enrl" style="display: none; color: red;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="dept-div">
+                                    <label class="col-sm-4 col-form-label" for="dept">Department : </label>
+                                    <div class="col-sm-8">
+                                        <select onblur="validate_dept()" name="dept" id="dept" class="form-control" required>
+                                            <option value="-1" disabled selected>Select Department</option>
+                                            {% for i in dept %}
+                                                {% if i.accronym == "AM" or i.accronym == "GNRL" or i.accronym == "MECH1" or i.accronym == "MECH2" %}
+                                                {% else %}
+                                                    <option value="{{ i.id }}">{{ i.dept_name }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                        <div id="Error_dept" style="display: none; color: red;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="sem-div">
+                                    <label class="col-sm-4 col-form-label" for="sem">Semester : </label>
+                                    <div class="col-sm-8">
+                                        <select onblur="validate_sem()" name="sem" id="sem" class="form-control" required>
+                                            <option value="-1" disabled selected>Select Semester</option>
+                                            <option value="1">Sem 1</option>
+                                            <option value="2">Sem 2</option>
+                                            <option value="3">Sem 3</option>
+                                            <option value="4">Sem 4</option>
+                                            <option value="5">Sem 5</option>
+                                            <option value="6">Sem 6</option>
+                                            <option value="7">Sem 7</option>
+                                            <option value="8">Sem 8</option>
+                                        </select>
+                                        <div id="Error_sem" style="display: none; color: red;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-8">
+                                        <a href="#" data-toggle="modal" data-target="#sign-in-modal" data-dismiss="modal">
+                                            <i class="feather icon-arrow-left"></i>
+                                            Already Registered? Login
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="form-group row f-right" style="padding-right: 15px;">
+                                    <button type="submit" id="button-register" class="btn btn-disabled" onfocus="validate_form()" onclick="validate_form()" onmouseover="validate_form()" onmouseenter="validate_form()" disabled>Register</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group row" id="lname-div">
-                            <label class="col-sm-4 col-form-label" for="lname">Last Name : </label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" onblur="validate_lname()" name="lname" id="lname" required>
-                                <div id="Error_lname" style="display: none; color: red;"></div>
-                            </div>
+                        <div class="tab-pane" id="tab-faculty" role="tabpanel" aria-expanded="false">
+                            <h4 class="m-b-20">Faculty Registration</h4>
+                            <form action="{% url 'register' %}" method="post">
+                                {% csrf_token %}
+                                <div class="form-group row" id="faculty-name-div">
+                                    <label class="col-sm-4 col-form-label" for="faculty-name"> Name : </label>
+                                    <div class="col-sm-8">
+                                        <input type="text" data-toggle="tooltip" title="It should contain First name, Initial of middle name and lastname such as 'Barry H. Allen'." onblur="validate_faculty_name()" class="form-control" name="faculty-name" id="faculty-name" required>
+                                        <div id="Error_faculty-name" style="display: none; color: red;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="faculty-emailid-div">
+                                    <label class="col-sm-4 col-form-label" for="faculty-emailid">Email ID : </label>
+                                    <div class="col-sm-8">
+                                        <input type="email" onblur="validate_faculty_email()" class="form-control" name="faculty-emailid" id="faculty-emailid" required>
+                                        <div id="Error_faculty-emailid" style="display: none; color: red;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="faculty-password-div">
+                                    <label class="col-sm-4 col-form-label" for="faculty-password">Password : </label>
+                                    <div class="col-sm-8">
+                                        <input type="password" onblur="validate_faculty_password()" class="form-control" name="faculty-password" id="faculty-password" required>
+                                        <div id="Error_faculty-password" style="display: none; color: red;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group row" id="faculty-dept-div">
+                                    <label class="col-sm-4 col-form-label" for="faculty-dept">Department : </label>
+                                    <div class="col-sm-8">
+                                        <select onblur="validate_faculty_dept()" name="faculty-dept" id="faculty-dept" class="form-control" required>
+                                            <option value="-1" disabled selected>Select Department</option>
+                                            {% for i in dept %}
+                                                {% if i.accronym == "AM" or i.accronym == "GNRL" or i.accronym == "MECH1" or i.accronym == "MECH2" %}
+                                                {% else %}
+                                                    <option value="{{ i.id }}">{{ i.dept_name }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                        <div id="Error_faculty-dept" style="display: none; color: red;"></div>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-sm-8">
+                                        <a href="#" data-toggle="modal" data-target="#sign-in-modal" data-dismiss="modal">
+                                            <i class="feather icon-arrow-left"></i>
+                                            Already Registered? Login
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="form-group row f-right" style="padding-right: 15px;">
+                                    <button type="submit" id="button-faculty-register" class="btn btn-disabled" onfocus="validate_faculty_form()" onclick="validate_faculty_form()" onmouseover="validate_faculty_form()" onmouseenter="validate_faculty_form()" disabled>Register</button>
+                                </div>
+                            </form>
                         </div>
-                        <div class="form-group row" id="emailid-div">
-                            <label class="col-sm-4 col-form-label" for="emailid">Email ID : </label>
-                            <div class="col-sm-8">
-                                <input type="email" class="form-control" onblur="validate_email()" name="emailid" id="emailid" required>
-                                <div id="Error_emailid" style="display: none; color: red;"></div>
-                            </div>
-                        </div>
-                        <div class="form-group row" id="password-div">
-                            <label class="col-sm-4 col-form-label" for="password">Password : </label>
-                            <div class="col-sm-8">
-                                <input type="password" class="form-control" onblur="validate_password()" name="password" id="password" required>
-                                <div id="Error_Pwd" style="display: none; color: red;"></div>
-                            </div>
-                        </div>
-                        <div class="form-group row" id="enrollment-div">
-                            <label class="col-sm-4 col-form-label" for="enrollment">Enrollment No : </label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" onblur="validate_enrollment()" name="enrollment" id="enrollment" maxlength="12" required>
-                                <div id="Error_enrl" style="display: none; color: red;"></div>
-                            </div>
-                        </div>
-                        <div class="form-group row" id="dept-div">
-                            <label class="col-sm-4 col-form-label" for="dept">Department : </label>
-                            <div class="col-sm-8">
-                                <select onblur="validate_dept()" name="dept" id="dept" class="form-control" required>
-                                    <option value="-1" disabled selected>Select Department</option>
-                                    {% for i in dept %}
-                                        {% if i.accronym == "AM" or i.accronym == "GNRL" %}
-                                        {% else %}
-                                            <option value="{{ i.id }}">{{ i.dept_name }}</option>
-                                        {% endif %}
-                                    {% endfor %}
-                                </select>
-                                <div id="Error_dept" style="display: none; color: red;"></div>
-                            </div>
-                        </div>
-                        <div class="form-group row" id="sem-div">
-                            <label class="col-sm-4 col-form-label" for="sem">Semester : </label>
-                            <div class="col-sm-8">
-                                <select onblur="validate_sem()" name="sem" id="sem" class="form-control" required>
-                                    <option value="-1" disabled selected>Select Semester</option>
-                                    <option value="1">Sem 1</option>
-                                    <option value="2">Sem 2</option>
-                                    <option value="3">Sem 3</option>
-                                    <option value="4">Sem 4</option>
-                                    <option value="5">Sem 5</option>
-                                    <option value="6">Sem 6</option>
-                                    <option value="7">Sem 7</option>
-                                    <option value="8">Sem 8</option>
-                                </select>
-                                <div id="Error_sem" style="display: none; color: red;"></div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-sm-8">
-                                <a href="#" data-toggle="modal" data-target="#sign-in-modal" data-dismiss="modal">
-                                    <i class="feather icon-arrow-left"></i>
-                                    Already Registered? Login
-                                </a>
-                            </div>
-                        </div>
-                        <div class="form-group row f-right" style="padding-right: 15px;">
-                            <button type="submit" id="button-register" class="btn btn-disabled" onfocus="validate_form()" onmouseover="validate_form()" disabled>Register</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- Tabs modal > End-->
+
+    <!-- Sign up Modal -->
+{#    <div class="modal fade" id="sign-up2-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">#}
+{#        <div class="modal-dialog" role="document">#}
+{#            <div class="modal-content">#}
+{#                <div class="modal-header">#}
+{#                    <h4 class="modal-title">Student Sign Up</h4>#}
+{#                    <ul class="nav nav-tabs" role="tablist">#}
+{#                        <li class="nav-item">#}
+{#                            <a class="nav-link active" data-toggle="tab" href="#tab-student" role="tab">Student</a>#}
+{#                        </li>#}
+{#                        <li class="nav-item">#}
+{#                            <a class="nav-link" data-toggle="tab" href="#tab-faculty" role="tab">Faculty</a>#}
+{#                        </li>#}
+{#                    </ul>#}
+{#                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">#}
+{#                        <span aria-hidden="true">×</span>#}
+{#                    </button>#}
+{#                </div>#}
+{#                <div class="modal-body">#}
+{#                    <form method="post" action="{% url 'register' %}">#}
+{#                        {% csrf_token %}#}
+{#                        <div class="form-group row" id="fname-div">#}
+{#                            <label class="col-sm-4 col-form-label" for="fname">First Name : </label>#}
+{#                            <div class="col-sm-8">#}
+{#                                <input type="text" class="form-control" onblur="validate_fname()" name="fname" id="fname" required>#}
+{#                                <div id="Error_fname" style="display: none; color: red;"></div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group row" id="lname-div">#}
+{#                            <label class="col-sm-4 col-form-label" for="lname">Last Name : </label>#}
+{#                            <div class="col-sm-8">#}
+{#                                <input type="text" class="form-control" onblur="validate_lname()" name="lname" id="lname" required>#}
+{#                                <div id="Error_lname" style="display: none; color: red;"></div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group row" id="emailid-div">#}
+{#                            <label class="col-sm-4 col-form-label" for="emailid">Email ID : </label>#}
+{#                            <div class="col-sm-8">#}
+{#                                <input type="email" class="form-control" onblur="validate_email()" name="emailid" id="emailid" required>#}
+{#                                <div id="Error_emailid" style="display: none; color: red;"></div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group row" id="password-div">#}
+{#                            <label class="col-sm-4 col-form-label" for="password">Password : </label>#}
+{#                            <div class="col-sm-8">#}
+{#                                <input type="password" class="form-control" onblur="validate_password()" name="password" id="password" required>#}
+{#                                <div id="Error_Pwd" style="display: none; color: red;"></div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group row" id="enrollment-div">#}
+{#                            <label class="col-sm-4 col-form-label" for="enrollment">Enrollment No : </label>#}
+{#                            <div class="col-sm-8">#}
+{#                                <input type="text" class="form-control" onblur="validate_enrollment()" name="enrollment" id="enrollment" maxlength="12" required>#}
+{#                                <div id="Error_enrl" style="display: none; color: red;"></div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group row" id="dept-div">#}
+{#                            <label class="col-sm-4 col-form-label" for="dept">Department : </label>#}
+{#                            <div class="col-sm-8">#}
+{#                                <select onblur="validate_dept()" name="dept" id="dept" class="form-control" required>#}
+{#                                    <option value="-1" disabled selected>Select Department</option>#}
+{#                                    {% for i in dept %}#}
+{#                                        {% if i.accronym == "AM" or i.accronym == "GNRL" %}#}
+{#                                        {% else %}#}
+{#                                            <option value="{{ i.id }}">{{ i.dept_name }}</option>#}
+{#                                        {% endif %}#}
+{#                                    {% endfor %}#}
+{#                                </select>#}
+{#                                <div id="Error_dept" style="display: none; color: red;"></div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group row" id="sem-div">#}
+{#                            <label class="col-sm-4 col-form-label" for="sem">Semester : </label>#}
+{#                            <div class="col-sm-8">#}
+{#                                <select onblur="validate_sem()" name="sem" id="sem" class="form-control" required>#}
+{#                                    <option value="-1" disabled selected>Select Semester</option>#}
+{#                                    <option value="1">Sem 1</option>#}
+{#                                    <option value="2">Sem 2</option>#}
+{#                                    <option value="3">Sem 3</option>#}
+{#                                    <option value="4">Sem 4</option>#}
+{#                                    <option value="5">Sem 5</option>#}
+{#                                    <option value="6">Sem 6</option>#}
+{#                                    <option value="7">Sem 7</option>#}
+{#                                    <option value="8">Sem 8</option>#}
+{#                                </select>#}
+{#                                <div id="Error_sem" style="display: none; color: red;"></div>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group row">#}
+{#                            <div class="col-sm-8">#}
+{#                                <a href="#" data-toggle="modal" data-target="#sign-in-modal" data-dismiss="modal">#}
+{#                                    <i class="feather icon-arrow-left"></i>#}
+{#                                    Already Registered? Login#}
+{#                                </a>#}
+{#                            </div>#}
+{#                        </div>#}
+{#                        <div class="form-group row f-right" style="padding-right: 15px;">#}
+{#                            <button type="submit" id="button-register" class="btn btn-disabled" onfocus="validate_form()" onmouseover="validate_form()" disabled>Register</button>#}
+{#                        </div>#}
+{#                    </form>#}
+{#                </div>#}
+{#            </div>#}
+{#        </div>#}
+{#    </div>#}
     <!-- Sign Up Modal End -->
 
     <!-- Main Content -->
@@ -494,18 +668,15 @@
     <!-- swiper js -->
     <script type="text/javascript" src="{% static 'bower_components/swiper/js/swiper.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/swiper-custom.js' %}"></script>
-    <!-- notification js -->
-    <script type="text/javascript" src="{% static 'assets/js/bootstrap-growl.min.js' %}"></script>
-{#    <script type="text/javascript" src="{% static 'assets/pages/notification/notification.js' %}"></script>#}
 
     <script type="text/javascript" src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <!-- custom js -->
-<!--    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>-->
      <!-- Custom js -->
     <script type="text/javascript" src="{% static 'assets/js/script.js' %}"></script>
-    <!-- Validation Javascripts -->
+
+    <!-- Sign in Validation Javascripts > Start -->
     <script type="text/javascript">
         function validate_role() {
             var role = document.getElementById('role').value;
@@ -540,7 +711,11 @@
                 btn.disabled = true;
             }
         }
+    </script>
+    <!-- Sign in Validation Javascripts > End -->
 
+    <!-- Student Signup Validation Javascripts > Start -->
+    <script type="text/javascript">
         function validate_fname() {
             var fname = document.getElementById('fname').value;
             var tag = document.getElementById('Error_fname');
@@ -558,7 +733,7 @@
                 return true;
             }
         }
-        
+
         function validate_lname() {
             var lname = document.getElementById('lname').value;
             var tag = document.getElementById('Error_lname');
@@ -576,7 +751,7 @@
                 return true;
             }
         }
-        
+
         function validate_email() {
             var email = document.getElementById('emailid').value;
             var tag = document.getElementById('Error_emailid');
@@ -596,7 +771,7 @@
             }
 
         }
-        
+
         function validate_password() {
             var regularExpression = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[a-zA-Z!@#$%&? "])[a-zA-Z0-9!@#$%&?]{6,16}$/;
             var pwd = document.getElementById("password").value;
@@ -687,8 +862,108 @@
             }
         }
     </script>
-    <!-- Validation Javascripts Section Ends Here -->
+    <!-- Student Signup Validation Javascripts > End -->
+
+    <!-- Faculty Signup Validation Javascripts > Start -->
     <script type="text/javascript">
+        function validate_faculty_name() {
+            var name = document.getElementById('faculty-name').value.toString();
+            var tag = document.getElementById('Error_faculty-name');
+            if(name.length === 0){
+                tag.innerHTML = "Enter Valid Name. It should contain First name, Initial of middle name and lastname such as 'Barry H. Allen' ";
+                tag.style.display = 'block';
+                document.getElementById("faculty-name").classList.add("form-control-danger");
+                document.getElementById("faculty-name-div").classList.add("has-danger");
+                return false;
+            }
+            else {
+                tag.style.display = 'none';
+                document.getElementById("faculty-name").classList.remove("form-control-danger");
+                document.getElementById("faculty-name-div").classList.remove("has-danger");
+                return true;
+            }
+        }
+
+        function validate_faculty_email() {
+            var email = document.getElementById('faculty-emailid').value;
+            var tag = document.getElementById('Error_faculty-emailid');
+            var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+            if(re.test(email.toLowerCase())){
+                tag.style.display = 'none';
+                document.getElementById("faculty-emailid").classList.remove("form-control-danger");
+                document.getElementById("faculty-emailid-div").classList.remove("has-danger");
+                return true;
+            }
+            else {
+                tag.innerHTML = "Enter Valid Email Address";
+                tag.style.display = 'block';
+                document.getElementById("faculty-emailid").classList.add("form-control-danger");
+                document.getElementById("faculty-emailid-div").classList.add("has-danger");
+                return false;
+            }
+
+        }
+
+        function validate_faculty_password() {
+            var regularExpression = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[a-zA-Z!@#$%&? "])[a-zA-Z0-9!@#$%&?]{6,16}$/;
+            var pwd = document.getElementById("faculty-password").value;
+            var tag = document.getElementById("Error_faculty-password");
+            if(regularExpression.test(pwd)){
+                tag.style.display = 'none';
+                document.getElementById("faculty-password").classList.remove("form-control-danger");
+                document.getElementById("faculty-password-div").classList.remove("has-danger");
+                document.getElementById("faculty-password").classList.add("form-control-success");
+                return true;
+            }
+            else {
+                tag.innerHTML = "Password must have at least one uppercase, one lowercase, one digit and one special character. Length of password is 6 to 16.";
+                tag.style.display = 'block';
+                document.getElementById("faculty-password").classList.add("form-control-danger");
+                document.getElementById("faculty-password-div").classList.add("has-danger");
+                return false;
+            }
+        }
+
+        function validate_faculty_dept() {
+            var branch = document.getElementById('faculty-dept').value;
+            var tag = document.getElementById('Error_faculty-dept');
+            if(branch == -1) {
+                tag.innerHTML = "Select Valid Department.";
+                tag.style.display = 'block';
+                document.getElementById("faculty-dept").classList.add("form-control-danger");
+                document.getElementById("faculty-dept-div").classList.add("has-danger");
+                return false;
+            }
+            else {
+                tag.style.display = 'none';
+                document.getElementById("faculty-dept").classList.remove("form-control-danger");
+                document.getElementById("faculty-dept-div").classList.remove("has-danger");
+                return true;
+            }
+        }
+
+        function validate_faculty_form() {
+            var btn = document.getElementById('button-faculty-register');
+            if(validate_faculty_name() && validate_faculty_email() && validate_faculty_password() && validate_faculty_dept()){
+                btn.classList.remove('btn-disabled');
+                btn.classList.add('btn-primary');
+                btn.disabled = false;
+            }
+            else {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-disabled');
+                btn.disabled = true;
+            }
+        }
+
+    </script>
+    <!-- Faculty Signup Validation Javascripts > End -->
+
+    <!-- Messages Javascripts > Start -->
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
         {% if success %}
             setTimeout(function () {
                 swal({
@@ -758,6 +1033,7 @@
             }, 10);
         {% endif %}
     </script>
+    <!-- Messages Javascripts > Start -->
 </body>
 
 </html>

@@ -195,7 +195,7 @@
                         <li class="user-profile header-notification">
                             <div class="dropdown-primary dropdown">
                                 <div class="dropdown-toggle" data-toggle="dropdown">
-                                    <span>Jasmin Makwana</span>
+                                    <span>{{ name }}</span>
                                     <i class="feather icon-chevron-down"></i>
                                 </div>
                                 <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
@@ -229,13 +229,13 @@
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="#">
+                                    <a href="{% url 'manage_committees' %}">
                                         <span class="pcoded-micon"><i class="feather icon-user"></i></span>
                                         <span class="pcoded-mtext">Manage Committees</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="#">
+                                    <a href="{% url 'manage_department' %}">
                                         <span class="pcoded-micon"><i class="feather icon-user"></i></span>
                                         <span class="pcoded-mtext">Manage Departments</span>
                                     </a>
@@ -335,7 +335,7 @@
                                                  <div class="row">
                                                     <div class="col-md-6 col-lg-3">
                                                         <div class="card">
-                                                            <a href="{% url 'department' %}">
+                                                            <a href="{% url 'manage_department' %}">
                                                             <div class="card-block user-radial-card">
                                                                 <div data-label="50%">
                                                                     <img src="{% static 'assets/images/ce.png' %}" alt="User-Image">
