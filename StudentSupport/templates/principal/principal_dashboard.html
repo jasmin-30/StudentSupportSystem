@@ -7,7 +7,7 @@
     <!-- Meta -->
     <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
     <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assests/images/favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
@@ -181,7 +181,7 @@
                     <a class="mobile-menu" id="mobile-collapse" href="#!">
                         <i class="feather icon-menu"></i>
                     </a>
-                    <a href="index-1.htm">
+                    <a href="{% url 'principal_dashboard' %}">
                         <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Theme-Logo">
                     </a>
                     <a class="mobile-options">
@@ -195,18 +195,17 @@
                         <li class="user-profile header-notification">
                             <div class="dropdown-primary dropdown">
                                 <div class="dropdown-toggle" data-toggle="dropdown">
-                                    <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">
                                     <span>Jasmin Makwana</span>
                                     <i class="feather icon-chevron-down"></i>
                                 </div>
                                 <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
                                     <li>
-                                        <a href="user-profile.htm">
+                                        <a href="#">
                                             <i class="feather icon-user"></i> Profile
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="change_password.html">
+                                        <a href="{% url 'logout' %}">
                                             <i class="feather icon-log-out"></i> Logout
                                         </a>
                                     </li>
@@ -231,6 +230,18 @@
                                 </li>
                                 <li class="">
                                     <a href="#">
+                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
+                                        <span class="pcoded-mtext">Manage Committees</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="#">
+                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
+                                        <span class="pcoded-mtext">Manage Departments</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="{% url 'logout' %}">
                                         <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
                                         <span class="pcoded-mtext">Logout</span>
                                     </a>
