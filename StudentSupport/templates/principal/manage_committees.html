@@ -150,6 +150,11 @@
                 .attr('edit_type', 'click')
                 .css('padding', '');
 
+            var tag = tbl_row.find('#chairperson');
+            var value = tag.attr('fac_id');
+            tag.find('[id=faculty_select]').val(value);
+            {#alert(tag.attr('fac_id'));#}
+
             //--->add the original entry > start
             tbl_row.find('.row_data').each(function(index, val)
             {
@@ -325,6 +330,26 @@
                 url:"{{ base_url }}"+"edit-delete-committees/",
                 data: {
                     info: JSON.stringify(arr, null, 2),
+                },
+                statusCode: {
+                    400: function (msg) {
+                        $('#response')
+                            .css('display', 'block')
+                            .removeClass('alert-success')
+                            .removeClass('background-success')
+                            .addClass('alert-danger')
+                            .addClass('background-danger')
+                            .html(msg.responseText);
+                    },
+                    401: function (msg) {
+                        $('#response')
+                            .css('display', 'block')
+                            .removeClass('alert-success')
+                            .removeClass('background-success')
+                            .addClass('alert-danger')
+                            .addClass('background-danger')
+                            .html(msg.responseText);
+                    }
                 },
                 success: function (msg) {
                     $('#response')
@@ -593,7 +618,6 @@
     <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
 
     <script type="text/javascript">

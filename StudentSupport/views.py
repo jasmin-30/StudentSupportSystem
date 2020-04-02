@@ -1,14 +1,17 @@
 import json
 from base64 import b64encode, b64decode
+from email.utils import decode_params
 from io import BytesIO
 from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseRedirect
+from django.db.models import Q
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.conf import settings as st
 from django.db import *
+from rest_framework import status
 
 from StudentSupport.models import *
 
@@ -186,8 +189,7 @@ def ManageCommitteesView(request):
         "base_url": st.BASE_URL,
     }
     if request.user.is_authenticated:
-        user_obj = User.objects.get(id=request.session["User"])
-        principal_obj = Principal.objects.get(auth_id=user_obj)
+        principal_obj = Principal.objects.get(auth_id=request.session["User"])
         context["name"] = principal_obj.name
         committee_qs = Committee_Details.objects.all()
         context["committees"] = committee_qs
@@ -206,7 +208,7 @@ def ManageCommitteesView(request):
                         chairperson=Faculty.objects.get(id=chairperson)
                     )
                     obj.save()
-                    #Send Email to Chiarperson regarding committee details and motive
+                    # Send Email to Chiarperson regarding committee details and motive
                     context["success"] = "Committee Created Successfully."
                     return render(request, "principal/manage_committees.html", context)
 
@@ -240,27 +242,27 @@ def EditCommittees(request):
                             committee_obj.committee_details = data['details']
                             committee_obj.chairperson = Faculty.objects.get(id=data['fac_id'])
                             committee_obj.save()
-                            return HttpResponse("Data Updated Successfully.")
+                            return HttpResponse("Data Updated Successfully.", status=status.HTTP_200_OK)
 
                         except Exception as e:
                             print(e)
-                            return HttpResponse(e)
+                            return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
 
                     if data['action'] == 'delete':
                         try:
                             committee_obj = Committee_Details.objects.get(id=data['row_id']).delete()
-                            return HttpResponse("Data Deleted Successfully.")
+                            return HttpResponse("Data Deleted Successfully.", status=status.HTTP_200_OK)
 
                         except Exception as e:
                             print(e)
-                            return HttpResponse(e)
+                            return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
                 else:
-                    return HttpResponse("Error in parsing json data.")
+                    return HttpResponse("Error in parsing json data.", status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            return HttpResponse("You are not authorized to perform this action.")
+            return HttpResponse("You are not authorized to perform this action.", status=status.HTTP_401_UNAUTHORIZED)
     else:
-        return HttpResponse("Login First")
+        return HttpResponse("Login First", status=status.HTTP_400_BAD_REQUEST)
 
 
 def StudentMidSemFeedbackView(request):
@@ -290,6 +292,8 @@ def ManageDepartmentView(request):
         "base_url": st.BASE_URL,
     }
     if request.user.is_authenticated:
+        principal_obj = Principal.objects.get(auth_id=request.session["User"])
+        context["name"] = principal_obj.name
         dept_qs = Departments.objects.all()
         fac_qs = Faculty.objects.all()
         dept = []
@@ -297,11 +301,85 @@ def ManageDepartmentView(request):
             tmp = {}
             tmp["id"] = i.id
             tmp["dept_name"] = i.dept_name
-            tmp["hod"] = fac_qs.filter(dept_id=i.id)
+            try:
+                tmp["hod"] = fac_qs.filter(dept_id=i.id, hod=True).values()[0]
+            except:
+                tmp["hod"] = fac_qs.filter(dept_id=i.id, hod=True)
             dept.append(tmp)
         context["dept"] = dept
         context["faculties"] = fac_qs
         return render(request, 'principal/manage_departments.html', context)
+
+
+def FetchFaculties(request):
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            if request.GET.get('info') is not None:
+                data = request.GET.get('info')
+                data = eval(data)
+                print(data)
+                try:
+                    fac_qs = Faculty.objects.filter(dept_id=int(data["department_id"]))
+                    if fac_qs.count() == 0:
+                        return HttpResponse("Error in loading Faculty List please try again later.",
+                                            status=status.HTTP_400_BAD_REQUEST)
+                    data = {}
+                    faculties = []
+                    for i in fac_qs:
+                        tmp = {}
+                        tmp["id"] = i.id
+                        tmp["name"] = i.name
+                        tmp["dept_id"] = i.dept_id.id
+                        tmp["auth_id"] = i.auth_id.id
+                        faculties.append(tmp)
+
+                    data["Faculties"] = faculties
+                    return HttpResponse(json.dumps(faculties), content_type='application/json',
+                                        status=status.HTTP_200_OK)
+                except:
+                    return HttpResponse("Error in loading Faculty List please try again later.",
+                                        status=status.HTTP_400_BAD_REQUEST)
+
+    return HttpResponse("Error in loading Faculty List please try again later.", status=status.HTTP_400_BAD_REQUEST)
+
+
+def EditHOD(request):
+    if request.user.is_authenticated:
+        if request.user.role == "Principal":
+            if request.method == "GET":
+                if request.GET.get('info') is not None:
+                    data = request.GET.get('info')
+                    data = eval(data)
+                    print(data)
+                    try:
+                        if(data["old_hod"] != '-1'):
+                            old_hod = Faculty.objects.get(id=int(data["old_hod"]))
+                            old_hod.hod = False
+                            old_hod.save()
+                            print("Old HOD: ", old_hod)
+                            new_hod = Faculty.objects.get(id=int(data["fac_id"]))
+                            print("New HOD: ", new_hod)
+                            new_hod.hod = True
+                            new_hod.save()
+                            return HttpResponse(
+                                "Head Of Department changed for " + str(new_hod.dept_id.dept_name) + " Department.",
+                                status=status.HTTP_200_OK)
+                        else:
+                            new_hod = Faculty.objects.get(id=int(data["fac_id"]))
+                            print("New HOD: ", new_hod)
+                            new_hod.hod = True
+                            new_hod.save()
+                            return HttpResponse(
+                                "Head Of Department Assigned for " + str(new_hod.dept_id.dept_name) + " Department.",
+                                status=status.HTTP_200_OK)
+                    except:
+                        return HttpResponse("Error in changing Head ot the department. Please try again later.",
+                                            status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return HttpResponse("You are not authorized to change Head of the department.",
+                                status=status.HTTP_401_UNAUTHORIZED)
+    else:
+        return HttpResponse("Login First", status=status.HTTP_400_BAD_REQUEST)
 
 
 def StudentProfile(request):

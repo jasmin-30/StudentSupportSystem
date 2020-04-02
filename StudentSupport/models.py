@@ -184,7 +184,7 @@ class Departments(models.Model):
 class Faculty(models.Model):
     name = models.CharField(max_length=255)
     auth_id = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='id', on_delete=models.CASCADE, default=None)
-    dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE    , null=True)
+    dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE, null=True)
     hod = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 

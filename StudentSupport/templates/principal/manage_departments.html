@@ -43,16 +43,6 @@
             });
         {% endfor %}
 
-        var faculty_select = '';
-        faculty_select += '<span class="faculty">';
-            faculty_select += '<select class="form-control" id="faculty_select" name="faculty_select">';
-            {% for i in faculties %}
-                faculty_select += '<option value="'+'{{ i.id }}'+'">'+'{{ i.name }}'+'</option>';
-            {% endfor %}
-            faculty_select += '</select>';
-        faculty_select += '</span>';
-
-
         //--->create data table > start
         var tbl = '';
         tbl +='<table class="table table-hover">';
@@ -81,16 +71,18 @@
                     //loop through ajax row data
                     tbl +='<tr row_id="'+row_id+'">';
                         tbl +='<th ><div scope="row" col_name="id">'+ count.toString() +'</div></th>';count+=1;
-                        tbl +='<td ><div class="row_data" edit_type="click" col_name="name">'+val['name']+'</div></td>';
-                        tbl +='<td ><div class="row_data" edit_type="click" col_name="details">'+val['details']+'</div></td>';
-                        tbl +='<td ><div class="row_data" edit_type="click" fac_id="'+val["fac_id"]+'" original_entry="'+val['chairperson']+'" id="chairperson" col_name="chairperson">'+val['chairperson']+'</div></td>';
+                        tbl +='<td ><div col_name="name">'+val['name']+'</div></td>';
+                        if(val['hod']) {
+                            tbl +='<td ><div class="row_data" edit_type="click" id="hod" col_name="hod" fac_id="'+val["fac_id"]+'" original_entry="'+val['hod']+'">'+val['hod']+'</div></td>';
+                        }
+                        else {
+                            tbl +='<td ><div class="row_data" edit_type="click" id="hod" col_name="hod" original_entry="Not Assigned"><span style="color: red">Not Assigned</span></div></td>';
+                        }
 
                         //--->edit options > start
                         tbl +='<td>';
 
-                            tbl +='<span class="btn_edit" > <a href="#" class="btn btn-link " row_id="'+row_id+'" > Edit</a> | </span>';
-                            tbl +='<span class="btn_delete" > <a href="#" class="btn btn-link " row_id="'+row_id+'" > Delete</a></span>';
-                            tbl +='<span class="btn_confirm" > <a href="#" class="btn btn-link " row_id="'+row_id+'" > Confirm</a> | </span>';
+                            tbl +='<span class="btn_edit" > <a href="#" class="btn btn-link " row_id="'+row_id+'" > Edit</a></span>';
 
                             //only show this button if edit button is clicked
                             tbl +='<span class="btn_save"> <a href="#" class="btn btn-link"  row_id="'+row_id+'"> Save</a> | </span>';
@@ -113,7 +105,6 @@
         //out put table data
         $(document).find('.tbl_data').html(tbl);
 
-        $(document).find('.btn_confirm').hide();
         $(document).find('.btn_save').hide();
         $(document).find('.btn_cancel').hide();
 
@@ -126,112 +117,59 @@
 
             var row_id = tbl_row.attr('row_id');
 
-            tbl_row.find('.btn_save').show();
-            tbl_row.find('.btn_cancel').show();
-
-            //hide edit button
-            tbl_row.find('.btn_edit').hide();
-            tbl_row.find('.btn_delete').hide();
-            tbl_row.find('.btn_confirm').hide();
-
-            //make the whole row editable
-            tbl_row.find('.row_data')
-                .attr('contenteditable', 'true')
-                .attr('edit_type', 'button')
-                .css('background-color', 'white')
-                .css('padding','.5rem .75rem')
-                .css('border', 'solid 1px');
-
-
-            tbl_row.find('#chairperson').html(faculty_select)
-                .attr('contenteditable', 'false')
-                .attr('edit_type', 'click')
-                .css('padding', '');
-
-            //--->add the original entry > start
-            tbl_row.find('.row_data').each(function(index, val)
-            {
-                //this will help in case user decided to click on cancel button
-                if( $(this).attr('col_name') === 'chairperson') {
-                }
-                else {
-                    $(this).attr('original_entry', $(this).html());
-                }
-            });
-            //--->add the original entry > end
-
-        });
-        //--->button > edit > end
-
-        //--->button > delete > start
-        $(document).on('click', '.btn_delete', function(event)
-        {
-            event.preventDefault();
-            var tbl_row = $(this).closest('tr');
-
-            var row_id = tbl_row.attr('row_id');
-
-            tbl_row.find('.btn_confirm').show();
-            tbl_row.find('.btn_cancel').show();
-
-            //hide edit button
-            tbl_row.find('.btn_save').hide();
-            tbl_row.find('.btn_edit').hide();
-            tbl_row.find('.btn_delete').hide();
-
-        });
-        //--->button > delete > end
-
-
-        //--->button > confirm > start
-        $(document).on('click', '.btn_confirm', function(event)
-        {
-            event.preventDefault();
-            var tbl_row = $(this).closest('tr');
-
-            var row_id = tbl_row.attr('row_id');
-
-            tbl_row.find('.btn_edit').show();
-            tbl_row.find('.btn_delete').show();
-
-            //hide edit button
-            tbl_row.find('.btn_confirm').hide();
-            tbl_row.find('.btn_save').hide();
-            tbl_row.find('.btn_cancel').hide();
-            tbl_row.remove();
-
             var arr = {
-                action: 'delete',
-                row_id: row_id,
+                department_id:row_id,
             };
 
             $.ajax({
                 type:"GET",
-                url:"{{ base_url }}"+"edit-delete-committees/",
+                url:"{{ base_url }}"+"fetch-faculties/",
                 data: {
                     info: JSON.stringify(arr, null, 2),
                 },
+                statusCode:{
+                    400: function (msg) {
+                        alert(msg.responseText);
+                    },
+                    401: function (msg) {
+                        alert(msg);
+                    }
+                },
                 success: function (msg) {
-                    $('#response')
-                        .css('display', 'block')
-                        .removeClass('alert-danger')
-                        .removeClass('background-danger')
-                        .addClass('alert-success')
-                        .addClass('background-success')
-                        .html(msg);
+                    //console.log(msg);
+                    var faculty_select = '';
+                    faculty_select += '<span class="faculty">';
+                        faculty_select += '<select class="form-control" id="faculty_select" name="faculty_select">';
+                        $.each(msg, function( index, val ) {
+                            var tag = tbl_row.find('#hod');
+                            var fac_id = tag.attr('fac_id');
+                            if(val['id'] == fac_id) {
+                                faculty_select += '<option value="'+val['id']+'" selected>'+val['name']+'</option>';
+                            }
+                            else {
+                                faculty_select += '<option value="'+val['id']+'">'+val['name']+'</option>';
+                            }
+                        });
+                        faculty_select += '</select>';
+                    faculty_select += '</span>';
+                    tbl_row.find('#hod').html(faculty_select)
+                        .attr('contenteditable', 'false')
+                        .attr('edit_type', 'click')
+                        .css('padding', '');
+
+                    tbl_row.find('.btn_save').show();
+                    tbl_row.find('.btn_cancel').show();
+
+                    //hide edit button
+                    tbl_row.find('.btn_edit').hide();
                 },
                 failure: function (msg) {
-                    $('#response')
-                        .css('display', 'block')
-                        .removeClass('alert-success')
-                        .removeClass('background-success')
-                        .addClass('alert-danger')
-                        .addClass('background-danger')
-                        .html(msg);
+                    alert(msg);
                 },
             });
+
         });
-        //--->button > confirm > end
+        //--->button > edit > end
 
         //--->button > cancel > start
         $(document).on('click', '.btn_cancel', function(event)
@@ -245,17 +183,9 @@
             //hide save and cacel buttons
             tbl_row.find('.btn_save').hide();
             tbl_row.find('.btn_cancel').hide();
-            tbl_row.find('.btn_confirm').hide();
 
             //show edit button
             tbl_row.find('.btn_edit').show();
-            tbl_row.find('.btn_delete').show();
-
-            //make the whole row editable
-            tbl_row.find('.row_data')
-                .attr('contenteditable', 'false')
-                .attr('edit_type', 'click')
-                .removeAttr('style');
 
             tbl_row.find('.row_data').each(function(index, val)
             {
@@ -280,14 +210,7 @@
 
             //show edit button
             tbl_row.find('.btn_edit').show();
-            tbl_row.find('.btn_delete').show();
 
-
-            //make the whole row editable
-            tbl_row.find('.row_data')
-                .attr('contenteditable', 'false')
-                .attr('edit_type', 'click')
-                .removeAttr('style');
 
             //--->get row data > start
             var arr = {};
@@ -295,32 +218,33 @@
             {
                 var col_val;
                 var col_name = $(this).attr('col_name');
-                if(col_name == 'chairperson'){
+                if(col_name == 'hod'){
                     col_val = $(this).find('#faculty_select option:selected').val();
                     arr['fac_id'] = col_val;
                     var fac_name = $(this).find('#faculty_select option:selected').text();
                     arr[col_name] = fac_name;
+                    var old_hod = $(this).attr('fac_id');
+                    if(old_hod) {
+                        arr['old_hod'] = old_hod
+                    }
+                    else {
+                        arr['old_hod'] = '-1'
+                    }
                     $(this).attr('fac_id', col_val);
                     $(this).attr('original_entry', fac_name);
                     $(this).html(fac_name);
 
-                    //arr[col_name] = $(this).find('#dept_select').$("[value="+col_val+"]").html();
-                }
-                else {
-                    col_val  =  $(this).html();
-                    arr[col_name] = col_val;
                 }
             });
             //--->get row data > end
 
             //use the "arr"	object for your ajax call
-            $.extend(arr, {row_id:row_id});
-            $.extend(arr, {action:"update"});
+            $.extend(arr, {department_id:row_id});
 
             //--->Making Ajax request > Start
             $.ajax({
                 type:"GET",
-                url:"{{ base_url }}"+"edit-delete-committees/",
+                url:"{{ base_url }}"+"change-hod/",
                 data: {
                     info: JSON.stringify(arr, null, 2),
                 },
@@ -344,9 +268,6 @@
                 },
             });
             //--->Making Ajax request > End
-
-            //out put to show
-            //$('.post_msg').html( '<pre class="bg-success">'+JSON.stringify(arr, null, 2) +'</pre>')
 
 
         });
@@ -396,54 +317,6 @@
         </div>
     </div>
     <!-- Pre-loader end -->
-    <!-- Sign in Modal -->
-    <div class="modal fade" id="add-committee" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Add Committee</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">×</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <form method="post" action="{% url 'manage_committees' %}">
-                        {% csrf_token %}
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label" for="name">Committee Name : </label>
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" name="name" id="name" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label" for="details">Committee Details: </label>
-                            <div class="col-sm-8">
-                                <textarea class="form-control" name="details" id="details" required></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label" for="chairperson">Chair Person : </label>
-                            <div class="col-sm-8">
-                                <select name="chairperson" id="chairperson" class="form-control" required>
-                                    <option value="-1" selected disabled>Select Chairperson</option>
-                                    {% for i in faculties %}
-                                        <option value="{{ i.id }}">{{ i.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row f-right" style="padding-right: 15px;">
-                            <button type="submit" class="btn btn-success btn-outline-success">
-                                <i class="icofont icofont-check-circled"></i>
-                                Confirm
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Sign in Modal End -->
     <div id="pcoded" class="pcoded">
         <div class="pcoded-overlay-box"></div>
         <div class="pcoded-container navbar-wrapper">
@@ -530,7 +403,7 @@
                                             <div class="col-lg-8">
                                                 <div class="page-header-title">
                                                     <div class="d-inline">
-                                                        <h4>Manage Committees</h4>
+                                                        <h4>Manage Departments</h4>
                                                     </div>
                                                 </div>
                                             </div>
@@ -542,8 +415,8 @@
                                                 <div class="card">
                                                     <div class="card-header">
                                                         <p>
-                                                            Add, Modify and Delete Committees from here.
-                                                            <button type="button" class="btn btn-primary f-right" data-toggle="modal" data-target="#add-committee">Add Committee</button>
+                                                            Assign or change head of the department from here.
+{#                                                            <button type="button" class="btn btn-primary f-right" data-toggle="modal" data-target="#add-committee">Add Committee</button>#}
                                                         </p>
                                                     </div>
                                                     <div class="card-block">
@@ -591,7 +464,6 @@
     <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
 
     <script type="text/javascript">
