@@ -423,7 +423,7 @@
         </div>
     </div>
     <!-- Pre-loader end -->
-    <!-- Sign in Modal -->
+    <!-- Add Committee Modal -->
     <div class="modal fade" id="add-committee" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -470,7 +470,7 @@
             </div>
         </div>
     </div>
-    <!-- Sign in Modal End -->
+    <!-- Add Committee Modal End -->
     <div id="pcoded" class="pcoded">
         <div class="pcoded-overlay-box"></div>
         <div class="pcoded-container navbar-wrapper">
@@ -499,7 +499,7 @@
                                 </div>
                                 <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
                                     <li>
-                                        <a href="#">
+                                        <a href="{% url 'principal_profile' %}">
                                             <i class="feather icon-user"></i> Profile
                                         </a>
                                     </li>
@@ -522,7 +522,7 @@
                             <div class="pcoded-navigatio-lavel">Quick Links</div>
                             <ul class="pcoded-item pcoded-left-item">
                                 <li class="">
-                                    <a href="#">
+                                    <a href="{% url 'principal_profile' %}">
                                         <span class="pcoded-micon"><i class="feather icon-user"></i></span>
                                         <span class="pcoded-mtext">My Profile</span>
                                     </a>

@@ -10,6 +10,7 @@ urlpatterns = [
     path('faculty/dashboard/', views.FacultyDashboard, name='faculty_dashboard'),
     path('principal/dashboard/', views.PrincipalDashboard, name='principal_dashboard'),
     path('principal/manage-committees/', views.ManageCommitteesView, name='manage_committees'),
+    path('principal/profile/', views.PrincipalProfile, name='principal_profile'),
     path('edit-delete-committees/', views.EditCommittees, name="edit_committees"),
     path('principal/manage-department/', views.ManageDepartmentView, name='manage_department'),
     path('fetch-faculties/', views.FetchFaculties, name='fetch_faculties'),

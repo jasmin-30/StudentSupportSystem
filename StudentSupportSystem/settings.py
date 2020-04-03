@@ -127,6 +127,6 @@ EMAIL_USE_SSL = False
 EMAIL_PORT = 587
 
 EMAIL_HOST_USER = 'sf.gecbhav@gmail.com'
-EMAIL_HOST_PASSWORD = 'SF@gecbhav2019'
+EMAIL_HOST_PASSWORD = 'SF#gecbhav2019'
 
 BASE_URL = 'http://127.0.0.1:8000/'

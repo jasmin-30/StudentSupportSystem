@@ -85,6 +85,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.staff
 
     @property
+    def getRole(self):
+        return self.role
+
+    @property
     def is_active(self):
         return self.active
 
@@ -193,7 +197,7 @@ class Faculty(models.Model):
         return self.hod
 
     def __str__(self):
-        return str(self.auth_id)
+        return str(self.name) + " : " + str(self.auth_id)
 
 
 class Students(models.Model):
