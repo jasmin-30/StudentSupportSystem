@@ -208,7 +208,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="change_password.html">
+                                        <a href="../home_auth/change_password.html">
                                             <i class="feather icon-log-out"></i> Logout
                                         </a>
                                     </li>
@@ -231,7 +231,12 @@
                                         <span class="pcoded-mtext">My Profile</span>
                                     </a>
                                 </li>
-
+                                <li class="">
+                                    <a href="#">
+                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
+                                        <span class="pcoded-mtext">Manage Department</span>
+                                    </a>
+                                </li>
                                 <ul class="pcoded-item pcoded-left-item">
                                     <li class="pcoded-hasmenu">
                                         <a href="javascript:void(0)">
@@ -240,7 +245,7 @@
                                         </a>
                                         <ul class="pcoded-submenu">
                                             <li class=" ">
-                                                <a href="{% url 'view_detailed_feedback' %}">
+                                                <a href="{% url 'hod_view_detailed_feedback' %}">
                                                     <span class="pcoded-mtext">Mid Semester</span>
                                                 </a>
                                             </li>
@@ -265,7 +270,7 @@
                                         </a>
                                         <ul class="pcoded-submenu">
                                             <li class=" ">
-                                                <a href="form-elements-component.htm">
+                                                <a href="{% url 'hod_view_average_feedback' %}">
                                                     <span class="pcoded-mtext">Mid Semester</span>
                                                 </a>
                                             </li>
@@ -315,6 +320,19 @@
                                                 <div class="card">
                                                     <div class="card-block">
                                                         <form>
+                                                            <div class="form-group row">
+                                                            <label class="col-sm-4 col-form-label">Select Faculty To View Feedback</label>
+                                                            <div class="col-sm-8">
+                                                                <select name="select" class="form-control">
+                                                                    <option value="opt1">Select Faculty</option>
+                                                                    <option value="opt2">Prof. Karshan Kandoriya</option>
+                                                                    <option value="opt3">Prof. Ashish Nimavat</option>
+                                                                    <option value="opt4">Prof. Bhavna Bhattu</option>
+                                                                    <option value="opt5">Prof. Hetal Mawani</option>
+                                                                    <option value="opt6">Prof. Nishant Makwana</option>
+                                                                </select>
+                                                            </div>
+                                                            </div>
                                                             <div class="form-group row">
                                                             <label class="col-sm-4 col-form-label">Select Subject To View Feedback</label>
                                                             <div class="col-sm-8">

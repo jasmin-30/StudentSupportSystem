@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Principal Dashboard</title>
+    <title>Department</title>
     <!-- Meta -->
     <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
     <!-- Favicon icon -->
@@ -155,7 +155,7 @@
                                             <div class="col-lg-8">
                                                 <div class="page-header-title">
                                                     <div class="d-inline">
-                                                        <h4>Committees</h4>
+                                                        <h4>{{ dept_name }}</h4>
                                                     </div>
                                                 </div>
                                             </div>
@@ -163,124 +163,94 @@
                                     </div>
                                     <div class="page-body">
                                         <div class="row">
-                                            {% for i in committees %}
-                                                <div class="col-xl-4 col-md-6">
-                                                    <a href="{% url 'committee_dashboard' committee=i.committee_name %}">
-                                                        <div class="card social-card bg-simple-c-blue">
-                                                            <div class="card-block">
-                                                                <div class="row align-items-center">
-                                                                    <div class="col-auto">
-                                                                        <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
-                                                                    </div>
-                                                                    <div class="col">
-                                                                        <h4>{{ i.committee_name }}</h4>
-                                                                        <p>{{ i.chairperson.name }}</p>
-                                                                        <p>Total Members : 120</p>
-                                                                    </div>
-                                                                </div>
+                                            <div class="col-4 ol-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <form method="post" action="#">
+                                                            {% csrf_token %}
+                                                            <div class="form-group">
+                                                                <label class="form-control-label" for="type">Feedback Type : </label>
+                                                                <select class="form-control" id="type" name="type">
+                                                                    <option value="-1" selected disabled>Select Type of Feedback</option>
+                                                                    <option value="mid">Mid Semester Feedback</option>
+                                                                    <option value="end">End Semester Feedback</option>
+                                                                </select>
                                                             </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            {% endfor %}
-                                                <div class="col-sm-12">
-                                                    <div class="page-header">
-                                                        <div class="row align-items-end">
-                                                            <div class="col-lg-8">
-                                                                <div class="page-header-title">
-                                                                    <div class="d-inline">
-                                                                        <h4>Departments</h4>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="row">
-                                                        {% for i in departments %}
-                                                            <div class="col-md-6 col-lg-3">
-                                                                <div class="card">
-                                                                    <a href="{% url 'departments' dept=i.accronym %}">
-                                                                    <div class="card-block user-radial-card">
-{#                                                                        <div data-label="50%">#}
-{#                                                                            <img src="{% static 'assets/images/ce.png' %}" alt="User-Image">#}
-{#                                                                        </div>#}
-{#                                                                        <br>#}
-                                                                        <h6>{{ i.dept_name }}</h6>
-                                                                    </div>
-                                                                    </a>
-                                                                </div>
-                                                            </div>
-                                                        {% endfor %}
-{#                                                        <div class="col-md-6 col-lg-3">#}
-{#                                                            <div class="card">#}
-{#                                                                <a href="{% url 'departments' %}">#}
-{#                                                                <div class="card-block user-radial-card">#}
-{#                                                                    <div data-label="50%">#}
-{#                                                                        <img src="{% static 'assets/images/ce.png' %}" alt="User-Image">#}
-{#                                                                    </div>#}
-{#                                                                    <br>#}
-{#                                                                    <h6>Computer Engineering</h6>#}
-{#                                                                </div>#}
-{#                                                                </a>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                        <div class="col-md-6 col-lg-3">#}
-{#                                                            <div class="card">#}
-{#                                                                <div class="card-block user-radial-card">#}
-{#                                                                    <div data-label="50%">#}
-{#                                                                        <img src="{% static 'assets/images/it.png' %}" alt="User-Image">#}
-{#                                                                    </div>#}
-{#                                                                    <br>#}
-{#                                                                    <h6>Information & Technology</h6>#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                        <div class="col-md-6 col-lg-3">#}
-{#                                                            <div class="card">#}
-{#                                                                <div class="card-block user-radial-card">#}
-{#                                                                    <div data-label="50%">#}
-{#                                                                        <img src="{% static 'assets/images/civil.png' %}" alt="User-Image">#}
-{#                                                                    </div>#}
-{#                                                                    <br>#}
-{#                                                                    <h6>Civil Engineering</h6>#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                        <div class="col-md-6 col-lg-3">#}
-{#                                                            <div class="card">#}
-{#                                                                <div class="card-block user-radial-card">#}
-{#                                                                    <div data-label="50%">#}
-{#                                                                        <img src="{% static 'assets/images/mech.png' %}" alt="User-Image">#}
-{#                                                                    </div>#}
-{#                                                                    <br>#}
-{#                                                                    <h6>Mechanical Engineering</h6>#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                        <div class="col-md-6 col-lg-3">#}
-{#                                                            <div class="card">#}
-{#                                                                <div class="card-block user-radial-card">#}
-{#                                                                    <div data-label="50%">#}
-{#                                                                        <img src="{% static 'assets/images/prod.png' %}" alt="User-Image">#}
-{#                                                                    </div>#}
-{#                                                                    <br>#}
-{#                                                                    <h6>Production Engineering</h6>#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                        <div class="col-md-6 col-lg-3">#}
-{#                                                            <div class="card">#}
-{#                                                                <div class="card-block user-radial-card">#}
-{#                                                                    <div data-label="50%">#}
-{#                                                                        <img src="{% static 'assets/images/ec.png' %}" alt="User-Image">#}
-{#                                                                    </div>#}
-{#                                                                    <br>#}
-{#                                                                    <h6>Electronic & Communication</h6>#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
+                                                        </form>
                                                     </div>
                                                 </div>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                                <div class="card">
+                                                    <div class="card-header">
+                                                        You are viewing <b>Mid Semester Feedback</b>. Select Faculty below to view feedback.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                                                 <div class="row">
+                                                     {% for i in faculties %}
+                                                         <div class="col-4 col-sm-4 col-md-3 col-lg-3 col-xl-3">
+                                                            <div class="card" style="border-radius: 50px;">
+                                                                <a href="#">
+                                                                <div id="{{ i.id }}" class="card-block user-radial-card" onclick="Load(document.getElementById('{{ i.id }}'))" style="border-radius: 50px;">
+                                                                    <h6>Prof. {{ i.name }}</h6>
+                                                                </div>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                     {% endfor %}
+{#                                                    <div class="col-md-6 col-lg-3">#}
+{#                                                        <div class="card">#}
+{#                                                            <a href="#">#}
+{#                                                            <div class="card-block user-radial-card">#}
+{#                                                                <h6>Prof. Karshan Kandoriya</h6>#}
+{#                                                            </div>#}
+{#                                                            </a>#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                    <div class="col-md-6 col-lg-3">#}
+{#                                                        <div class="card">#}
+{#                                                            <div class="card-block user-radial-card">#}
+{#                                                                <div data-label="50%" class="radial-bar radial-bar-lg">#}
+{#                                                                    <img src="{% static 'assets/images/avatar-2.jpg' %}" alt="User-Image">#}
+{#                                                                </div>#}
+{#                                                                <br>#}
+{#                                                                <h6>Prof. Ashish Nimavat</h6>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                    <div class="col-md-6 col-lg-3">#}
+{#                                                        <div class="card">#}
+{#                                                            <div class="card-block user-radial-card">#}
+{#                                                                <div data-label="50%" class="radial-bar radial-bar-lg">#}
+{#                                                                    <img src="{% static 'assets/images/avatar-3.jpg' %}" alt="User-Image">#}
+{#                                                                </div>#}
+{#                                                                <br>#}
+{#                                                                <h6>Prof. Bhavna Bhattu</h6>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                    <div class="col-md-6 col-lg-3">#}
+{#                                                        <div class="card">#}
+{#                                                            <div class="card-block user-radial-card">#}
+{#                                                                <div data-label="50%" class="radial-bar radial-bar-lg">#}
+{#                                                                    <img src="{% static 'assets/images/avatar-4.jpg' %}" alt="User-Image">#}
+{#                                                                </div>#}
+{#                                                                <br>#}
+{#                                                                <h6>Prof. Hetal Mavani</h6>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="card">
+                                                <div class="card-body">
+                                                    <canvas id="myChart"></canvas>
+                                                </div>
+                                            </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -300,15 +270,81 @@
     <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
     <!-- modernizr js -->
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+    <!-- Chart js -->
+    <script type="text/javascript" src="{% static 'assets/extra-js/Chart/Chart.js_2.9.3.js' %}"></script>
 
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <!-- custom js -->
-    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+    <script type="text/javascript">
+        window.chartColors = {
+            red: 'rgb(255, 99, 132)',
+            orange: 'rgb(255, 159, 64)',
+            yellow: 'rgb(255, 205, 86)',
+            green: 'rgb(75, 192, 192)',
+            blue: 'rgb(54, 162, 235)',
+            purple: 'rgb(153, 102, 255)',
+            grey: 'rgb(201, 203, 207)'
+        };
+        var color = Chart.helpers.color;
+		var barChartData = {
+			labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+			datasets: [{
+				label: 'Dataset 1',
+				backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.red,
+				borderWidth: 1,
+				data: [50, 75, 25, 90, 52, 20, 10]
+			}, {
+				label: 'Dataset 2',
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.blue,
+				borderWidth: 1,
+				data: [10, 15, 20, 25, 35, 45, 50]
+			}]
 
+		};
+        window.onload = function() {
+			var ctx = document.getElementById('myChart').getContext('2d');
+			window.myBar = new Chart(ctx, {
+				type: 'bar',
+				data: barChartData,
+				options: {
+				    scales: {
+				        yAxes: [{
+				            ticks: {
+				                beginAtZero: true,
+                                max: 100
+                            }
+                        }]
+                    },
+					responsive: true,
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Chart.js Bar Chart'
+					}
+				}
+			});
+
+		};
+        function LoadGraph(fac_id) {
+
+        }
+        function Load(btn) {
+            $('.bg-success').each(function () {
+                $(this).removeClass('bg-success');
+            });
+            $(btn).addClass('bg-success');
+            LoadGraph(btn.id);
+        }
+    </script>
 </body>
 
 </html>

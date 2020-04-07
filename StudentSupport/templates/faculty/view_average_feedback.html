@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Department</title>
+    <title>View Average Feedback</title>
     <!-- Meta -->
     <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
     <!-- Favicon icon -->
@@ -22,8 +22,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
-    <!-- Radial.css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/chart/radial/css/radial.css' %}">
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
@@ -178,43 +176,43 @@
             <nav class="navbar header-navbar pcoded-header">
                 <div class="navbar-wrapper">
                     <div class="navbar-logo">
-                    <a class="mobile-menu" id="mobile-collapse" href="#!">
-                        <i class="feather icon-menu"></i>
-                    </a>
-                    <a href="/">
-                        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Theme-Logo">
-                    </a>
-                    <a class="mobile-options">
-                        <i class="feather icon-more-horizontal"></i>
-                    </a>
-                </div>
+                        <a class="mobile-menu" id="mobile-collapse" href="javascript:void(0)">
+                            <i class="feather icon-menu"></i>
+                        </a>
+                        <a href="{% url 'faculty_dashboard' %}">
+                            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Theme-Logo">
+                        </a>
+                        <a class="mobile-options">
+                            <i class="feather icon-more-horizontal"></i>
+                        </a>
+                    </div>
+
                     <div class="navbar-container container-fluid">
 
-                    <ul class="nav-right">
+                        <ul class="nav-right">
+                            <li class="user-profile header-notification">
+                                <div class="dropdown-primary dropdown">
+                                    <div class="dropdown-toggle" data-toggle="dropdown">
+                                        <span>{{ name }}</span>
+                                        <i class="feather icon-chevron-down"></i>
+                                    </div>
+                                    <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                        <li>
+                                            <a href="{% url 'faculty_profile' %}">
+                                                <i class="feather icon-settings"></i> My Profile
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{% url 'logout' %}">
+                                                <i class="feather icon-log-out"></i> Logout
+                                            </a>
+                                        </li>
+                                    </ul>
 
-                        <li class="user-profile header-notification">
-                            <div class="dropdown-primary dropdown">
-                                <div class="dropdown-toggle" data-toggle="dropdown">
-                                    <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">
-                                    <span>Jasmin Makwana</span>
-                                    <i class="feather icon-chevron-down"></i>
                                 </div>
-                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                    <li>
-                                        <a href="user-profile.htm">
-                                            <i class="feather icon-user"></i> Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="change_password.html">
-                                            <i class="feather icon-log-out"></i> Logout
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </nav>
             <div class="pcoded-main-container">
@@ -224,13 +222,63 @@
                             <div class="pcoded-navigatio-lavel">Quick Links</div>
                             <ul class="pcoded-item pcoded-left-item">
                                 <li class="">
-                                    <a href="#">
+                                    <a href="{% url 'faculty_profile' %}">
                                         <span class="pcoded-micon"><i class="feather icon-user"></i></span>
                                         <span class="pcoded-mtext">My Profile</span>
                                     </a>
                                 </li>
+                                    <li class="pcoded-hasmenu">
+                                        <a href="javascript:void(0)">
+                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
+                                            <span class="pcoded-mtext">View Detailed Feedback</span>
+                                        </a>
+                                        <ul class="pcoded-submenu">
+                                            <li class=" ">
+                                                <a href="{% url 'view_detailed_feedback' type='mid-sem' %}">
+                                                    <span class="pcoded-mtext">Mid Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="{% url 'view_detailed_feedback' type='end-sem' %}">
+                                                    <span class="pcoded-mtext">End Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="#">
+                                                    <span class="pcoded-mtext">Program Exit Survey</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+
+
+                                    <li class="pcoded-hasmenu">
+                                        <a href="javascript:void(0)">
+                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
+                                            <span class="pcoded-mtext">View Average Feedback</span>
+                                        </a>
+                                        <ul class="pcoded-submenu">
+                                            <li class=" ">
+                                                <a href="{% url 'view_average_feedback' type='mid-sem' %}">
+                                                    <span class="pcoded-mtext">Mid Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="{% url 'view_average_feedback' type='end-sem' %}">
+                                                    <span class="pcoded-mtext">End Semester</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
                                 <li class="">
-                                    <a href="#">
+                                    <a href="javascript:void(0)">
+                                        <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
+                                        <span class="pcoded-mtext" data-toggle="modal" data-target="#large-Modal">Publish News
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="{% url 'logout' %}">
                                         <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
                                         <span class="pcoded-mtext">Logout</span>
                                     </a>
@@ -247,70 +295,61 @@
                                             <div class="col-lg-8">
                                                 <div class="page-header-title">
                                                     <div class="d-inline">
-                                                        <h4>Computer Department</h4>
+                                                        <h4>{{ type }} Average Feedback</h4>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="page-body">
-                                        <div class="row">
-                                             <div class="col-sm-12">
-                                                 <div class="row">
-                                                    <div class="col-md-6 col-lg-3">
-                                                        <div class="card">
-                                                            <a href="{% url 'department' %}">
-                                                            <div class="card-block user-radial-card">
-                                                                <div data-label="50%" class="radial-bar radial-bar-lg">
-                                                                    <img src="{% static 'assets/images/avatar-1.jpg' %}" alt="User-Image">
-                                                                </div>
-                                                                <br>
-                                                                <h6>Prof. Karshan Kandoriya</h6>
-                                                            </div>
-                                                            </a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6 col-lg-3">
+                                       <div class="row">
+                                           <div class="col-sm-12">
+                                               <div class="card">
+                                                   <div class="card-header">
+                                                       <h5>Select Subject to download report.</h5>
+                                                   </div>
+                                                   <div class="card-body">
+                                                       <form action="#" method="post">
+                                                           {% csrf_token %}
+                                                           <div class="form-group row">
+                                                               <label class="col-sm-2 col-form-label p-l-25" for="subject">Select Subject : </label>
+                                                               <div class="col-sm-6">
+                                                                   <select class="form-control" id="subject" name="subject">
+                                                                       <option value="-1" selected disabled>Select Subject</option>
+                                                                       <option value="opt2">Computer Network</option>
+                                                                       <option value="opt3">Compiler Design</option>
+                                                                       <option value="opt4">Theory Of Computation</option>
+                                                                       <option value="opt5">Cyber Security</option>
+                                                                       <option value="opt6">Mathematics 1</option>
+                                                                       <option value="opt7">Mathematics 2</option>
+                                                                       <option value="opt8">Mathematics 3</option>
+                                                                   </select>
+                                                               </div>
+                                                               <div class="col-sm-4">
+                                                                   <button class="btn btn-primary" type="submit">Download</button>
+                                                               </div>
+                                                           </div>
+                                                       </form>
+                                                   </div>
+                                               </div>
+                                           </div>
+                                            <div class="col-sm-12">
+                                                <!-- Basic Form Inputs card start -->
                                                 <div class="card">
-                                                    <div class="card-block user-radial-card">
-                                                        <div data-label="50%" class="radial-bar radial-bar-lg">
-                                                            <img src="{% static 'assets/images/avatar-2.jpg' %}" alt="User-Image">
-                                                        </div>
-                                                        <br>
-                                                        <h6>Prof. Ashish Nimavat</h6>
+                                                    <!-- Zero config.table start -->
+                                                    <div class="card-block">
+                                                        <canvas id="barChart"></canvas>
                                                     </div>
                                                 </div>
-                                            </div>
-                                                    <div class="col-md-6 col-lg-3">
-                                                <div class="card">
-                                                    <div class="card-block user-radial-card">
-                                                        <div data-label="50%" class="radial-bar radial-bar-lg">
-                                                            <img src="{% static 'assets/images/avatar-3.jpg' %}" alt="User-Image">
-                                                        </div>
-                                                        <br>
-                                                        <h6>Prof. Bhavna Bhattu</h6>
-                                                    </div>
+                                                    <!-- Zero config.table end -->
                                                 </div>
+                                                <!-- Basic Form Inputs card end -->
                                             </div>
-                                                    <div class="col-md-6 col-lg-3">
-                                                <div class="card">
-                                                    <div class="card-block user-radial-card">
-                                                        <div data-label="50%" class="radial-bar radial-bar-lg">
-                                                            <img src="{% static 'assets/images/avatar-4.jpg' %}" alt="User-Image">
-                                                        </div>
-                                                        <br>
-                                                        <h6>Prof. Hetal Mavani</h6>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                       </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -324,20 +363,71 @@
     <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
     <!-- modernizr js -->
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
-    <!-- Chart js -->
-    <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>
-    <!-- amchart js -->
-    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
-    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
-    <!-- custom js -->
-    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/css-scrollbars.js' %}"></script>
 
+    <!-- Chart js -->
+    <script type="text/javascript" src="{% static 'assets/extra-js/Chart/Chart.js_2.9.3.js' %}"></script>
+
+    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/script.js' %}"></script>
+    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+    <script type="text/javascript">
+        window.chartColors = {
+            red: 'rgb(255, 99, 132)',
+            orange: 'rgb(255, 159, 64)',
+            yellow: 'rgb(255, 205, 86)',
+            green: 'rgb(75, 192, 192)',
+            blue: 'rgb(54, 162, 235)',
+            purple: 'rgb(153, 102, 255)',
+            grey: 'rgb(201, 203, 207)'
+        };
+        var color = Chart.helpers.color;
+		var barChartData = {
+			labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+			datasets: [{
+				label: 'Dataset 1',
+				backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.red,
+				borderWidth: 1,
+				data: [50, 75, 25, 90, 52, 20, 10]
+			}, {
+				label: 'Dataset 2',
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.blue,
+				borderWidth: 1,
+				data: [10, 15, 20, 25, 35, 45, 50]
+			}]
+
+		};
+        window.onload = function() {
+			var ctx = document.getElementById('barChart').getContext('2d');
+			window.myBar = new Chart(ctx, {
+				type: 'bar',
+				data: barChartData,
+				options: {
+				    scales: {
+				        yAxes: [{
+				            ticks: {
+				                beginAtZero: true,
+                                max: 100
+                            }
+                        }]
+                    },
+					responsive: true,
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Chart.js Bar Chart'
+					}
+				}
+			});
+
+		};
+    </script>
 </body>
 
 </html>

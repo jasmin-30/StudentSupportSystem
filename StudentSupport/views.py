@@ -29,6 +29,7 @@ def EditableTableView(request):
     return render(request, "Extra/editable-table.html", context)
 
 
+# Authentication and Home Page Views > Start
 def HomePageView(request):
     dept_qs = Departments.objects.all()
     # print(dept_qs)
@@ -46,7 +47,7 @@ def HomePageView(request):
             except Exception as e:
                 print(e)
                 context["error"] = "You are not a registered User."
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
 
             email_to = email_forgot
             email_from = st.EMAIL_HOST_USER
@@ -54,7 +55,7 @@ def HomePageView(request):
             url = st.BASE_URL + "changePassword/?email=" + email_encrypted.decode('utf-8')
             # print(email_to, email_from)
             subject = "Recover Your Password."
-            html_message = render_to_string('recover_password_template.html',
+            html_message = render_to_string('email_templates/recover_password_template.html',
                                             {'first_name': student_obj.first_name, 'url': url})
             plain_message = strip_tags(html_message)
             recipient_list = [str(email_to)]
@@ -71,10 +72,10 @@ def HomePageView(request):
             if status == 1:
                 context["success"] = "Email Sent Successfully"
                 context["msg"] = "Check your inbox for further instructions to change your password."
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
             else:
                 context["error"] = "Error in sending email. Check whether computer is connected to internet."
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
         # Forgot Password > End
 
         # Login > Start
@@ -86,7 +87,7 @@ def HomePageView(request):
                 user_obj = User.objects.get(email=email)
             except User.DoesNotExist:
                 context["error"] = "Email ID does not exist. Register first if you are student."
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
 
             if user_obj.is_active:
                 user = authenticate(request, username=email, password=pwd)
@@ -100,17 +101,19 @@ def HomePageView(request):
                         # return HttpResponse("You are  not registered as" + role)
                         context["error"] = "You are  not registered as " + role
                         # print(context)
-                        return render(request, 'index.html', context)
+                        return render(request, 'home_auth/index.html', context)
                 else:
                     # return HttpResponse("There was a problem logging in. Check your email or password again.")
                     context["error"] = "There was a problem logging in. Check your email or password again."
                     # print(context)
-                    return render(request, 'index.html', context)
+                    return render(request, 'home_auth/index.html', context)
             else:
                 context["error"] = "Please Activate your account. Check your inbox for Confirmation Email."
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
 
-    return render(request, 'index.html', context)
+    logout(request)
+    request.session.clear()
+    return render(request, 'home_auth/index.html', context)
 
 
 def LogoutView(request):
@@ -145,7 +148,7 @@ def RegisterView(request):
             except IntegrityError as e:
                 print(e)
                 context["error"] = "Email ID is already Registered. Log in with valid credentials."
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
 
             email_to = str(email)
             email_from = str(st.EMAIL_HOST_USER)
@@ -154,7 +157,8 @@ def RegisterView(request):
             print(url)
             # print(email_to, email_from)
             subject = "Confirm Your Account - Student Support System - GEC, Bhavnagar"
-            html_message = render_to_string('confirm_email_template.html', {'first_name': fname, 'url': url})
+            html_message = render_to_string('email_templates/confirm_email_template.html',
+                                            {'first_name': fname, 'url': url})
             plain_message = strip_tags(html_message)
             recipient_list = [str(email_to)]
             # print(plain_message)
@@ -180,17 +184,17 @@ def RegisterView(request):
                 except IntegrityError as e:
                     print(e)
                     context["error"] = "Enrollment Number Already Exists..."
-                    return render(request, "index.html", context)
+                    return render(request, "home_auth/index.html", context)
 
                 context["success"] = "Registered Successfully"
                 context["msg"] = "Please check your inbox for a confirmation email. Click the link in the email to " \
                                  "confirm your email address. "
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
             else:
                 user.delete()
                 context[
                     "error"] = "Error in sending email please try again later. Check whether computer is connected to internet or not."
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
         # Student Registration > End
 
         # Faculty Registration > Start
@@ -209,7 +213,7 @@ def RegisterView(request):
             except IntegrityError as e:
                 print(e)
                 context["error"] = "Email ID is already Registered. Log in with valid credentials."
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
 
             email_to = faculty_email
             email_from = str(st.EMAIL_HOST_USER)
@@ -218,7 +222,8 @@ def RegisterView(request):
             print(url)
             # print(email_to, email_from)
             subject = "Confirm Your Account - Student Support System - GEC, Bhavnagar"
-            html_message = render_to_string('confirm_email_template.html', {'first_name': faculty_name, 'url': url})
+            html_message = render_to_string('email_templates/confirm_email_template.html',
+                                            {'first_name': faculty_name, 'url': url})
             plain_message = strip_tags(html_message)
             recipient_list = [str(email_to)]
             # print(plain_message)
@@ -242,21 +247,39 @@ def RegisterView(request):
                 except Exception as e:
                     print(e)
                     context["error"] = "Error Occured Please Try again later."
-                    return render(request, "index.html", context)
+                    return render(request, "home_auth/index.html", context)
 
                 context["success"] = "Registered Successfully"
                 context["msg"] = "Please check your inbox for a confirmation email. Click the link in the email to " \
                                  "confirm your email address. "
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
             else:
                 faculty_user.delete()
                 context[
                     "error"] = "Error in sending email please try again later. Check whether computer is connected to internet or not."
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
 
 
     else:
-        return render(request, "index.html", context)
+        return render(request, "home_auth/index.html", context)
+
+
+def ConfirmAccountView(request):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.method == "GET":
+        if request.GET.get('email') is not None:
+            raw_email = str(request.GET.get('email'))
+            email = b64decode(raw_email.encode()).decode('utf-8')
+            user_obj = User.objects.get(email=email)
+            print(user_obj)
+            user_obj.active = True
+            user_obj.save()
+            context["success"] = "Account Activated Successfully."
+            context["msg"] = "Your Account has been Successfully activated. You can now access your profile."
+            return render(request, "home_auth/index.html", context)
+    return HttpResponseRedirect("/")
 
 
 def ChangePasswordView(request):
@@ -268,7 +291,7 @@ def ChangePasswordView(request):
             raw_email = str(request.GET.get('email'))
             email = b64decode(raw_email.encode()).decode('utf-8')
             request.session["email"] = email
-            return render(request, "change_password.html", {})
+            return render(request, "home_auth/change_password.html", {})
 
     if request.method == "POST":
         if "email" in request.session and request.POST.get('password') is not None:
@@ -281,28 +304,32 @@ def ChangePasswordView(request):
             except User.DoesNotExist:
                 context["error"] = "Email Address Does not exist."
                 request.session.delete("email")
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
 
             except Exception as e:
                 print(e)
                 context[
                     "error"] = "Error in changing password. Try again later or if problem persists contact developer team."
-                return render(request, "index.html", context)
+                return render(request, "home_auth/index.html", context)
 
             context["success"] = "Password Changed Successfully."
             context["msg"] = "You can now login with new password."
             request.session.delete("email")
-            return render(request, "index.html", context)
+            return render(request, "home_auth/index.html", context)
 
     return HttpResponseRedirect("/")
 
 
+# Authentication and Home Page Views > End
+
+
+# Student Related Views > Start
 def StudentDashboard(request):
     context = {
         "base_url": st.BASE_URL,
     }
     if request.user.is_authenticated:
-        user_obj = User.objects.get(id=request.session["User"])
+        user_obj = User.objects.get(id=request.user)
         print(user_obj)
         std_obj = Students.objects.get(auth_id=user_obj)
         print(std_obj)
@@ -316,51 +343,166 @@ def StudentDashboard(request):
         print(news_qs)
         context["news"] = news_qs
         context["name"] = str(std_obj.first_name) + " " + str(std_obj.last_name)
-        return render(request, 'dashboard_student.html', context)
+        return render(request, 'students/dashboard_student.html', context)
     else:
         context["error"] = "Login First."
-        return render(request, "index.html", context)
+        return render(request, "home_auth/index.html", context)
 
 
+def StudentMidSemFeedbackView(request):
+    return render(request, "students/student_mid_sem_feedback.html", context={})
+
+
+def StudentProfile(request):
+    return render(request, 'students/student_profile_page.html', context={})
+
+
+# Student Related Views > End
+
+
+# Faculty Related Views > Start
 def FacultyDashboard(request):
-    return render(request, 'dashboard_faculty.html', context={})
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        fac_obj = Faculty.objects.get(auth_id=request.user)
+        context["name"] = fac_obj.name
+        try:
+            news_qs = News.objects.order_by('-timestamp')[10]
+        except IndexError as e:
+            print(e)
+            news_qs = News.objects.order_by('-timestamp')
+            print(news_qs)
+
+        print(news_qs)
+        context["news"] = news_qs
+        return render(request, 'faculty/dashboard_faculty.html', context)
+    else:
+        context["error"] = "Login to access dashboard."
+        return render(request, 'faculty/dashboard_faculty.html', context)
 
 
-def CommitteeDashboard(request):
-    return render(request, 'committee_dashboard.html', context={})
+def FacultyViewDetailedFeedback(request, type):
+    print(type)
+    return render(request, 'faculty/view_detailed_feedback.html', context={})
 
 
-def FacultyViewDetailedFeedback(request):
-    return render(request, 'view_detailed_feedback.html', context={})
+def FacultyViewAverageFeedback(request, type):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        fac_obj = Faculty.objects.get(auth_id=request.user)
+        context["name"] = fac_obj.name
+        if type == "mid-sem":
+            context["type"] = "Mid Semester"
+            return render(request, 'faculty/view_average_feedback.html', context)
+        elif type == "end-sem":
+            context["type"] = "End Semester"
+            return render(request, 'faculty/view_average_feedback.html', context)
+
+    else:
+        context["error"] = "Login to access dashboard."
+        return render(request, 'faculty/view_average_feedback.html', context)
 
 
-def FacultyViewAverageFeedback(request):
-    return render(request, 'view_average_feedback.html', context={})
+
+def FacultyProfile(request):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated and request.user.getRole == "Faculty":
+        fac_obj = Faculty.objects.get(auth_id=request.user)
+        context["name"] = fac_obj.name
+        context["email"] = request.user.email
+        context["dept"] = fac_obj.dept_id.dept_name
+        dept_qs = Departments.objects.all()
+        context["departments"] = dept_qs
+        if request.method == "POST":
+            if request.POST.get('name') is not None:
+                name = request.POST.get('name')
+                email = request.POST.get('email')
+                dept = request.POST.get('dept')
+                if name != fac_obj.name or email != request.user.email or dept != fac_obj.dept_id.id:
+                    fac_obj.name = name
+                    fac_obj.dept_id = Departments.objects.get(id=int(dept))
+                    fac_obj.save()
+                    user_obj = User.objects.get(id=request.user.id)
+                    user_obj.email = email
+                    user_obj.save()
+                    request.user = user_obj
+                    context["success"] = "Profile Updated Successfully"
+                    context["name"] = fac_obj.name
+                    context["email"] = request.user.email
+                    context["dept"] = fac_obj.dept_id.dept_name
+                    return render(request, 'faculty/faculty_profile_page.html', context)
+
+                else:
+                    return render(request, 'faculty/faculty_profile_page.html', context)
+
+            elif request.POST.get('newpwd') is not None:
+                oldpwd = request.POST.get('oldpwd')
+                newpwd = request.POST.get('newpwd')
+                pwd = request.user.password
+                print(pwd)
+                if check_password(oldpwd, pwd):
+                    try:
+                        user_obj = User.objects.get(id=request.user.id)
+                        user_obj.set_password(str(newpwd))
+                        user_obj.save()
+                        update_session_auth_hash(request, user_obj)
+                        context["success"] = "Password Changed Successfully."
+                        return render(request, 'faculty/faculty_profile_page.html', context)
+                    except Exception as e:
+                        print(e)
+                        context["error"] = "Error in changing password. please try again later."
+                        return render(request, 'faculty/faculty_profile_page.html', context)
+                else:
+                    context[
+                        "error"] = "Old Password does not match with the one you entered. Please enter correct password."
+                    return render(request, 'faculty/faculty_profile_page.html', context)
+        else:
+            return render(request, 'faculty/faculty_profile_page.html', context)
+    else:
+        context["error"] = "Login first."
+        return render(request, 'home_auth/index.html', context)
 
 
+# Faculty Related Views > End
+
+# HOD Related Views > Start
 def HodDashboard(request):
-    return render(request, 'hod_dashboard.html', context={})
+    return render(request, 'hod/hod_dashboard.html', context={})
 
 
 def HodViewDetailedFeedback(request):
-    return render(request, 'hod_view_detailed_feedback.html', context={})
+    return render(request, 'hod/hod_view_detailed_feedback.html', context={})
 
 
 def HodViewAverageFeedback(request):
-    return render(request, 'hod_view_average_feedback.html', context={})
+    return render(request, 'hod/hod_view_average_feedback.html', context={})
 
 
+# HOD Related Views > End
+
+# Principal Related Views > Start
 def PrincipalDashboard(request):
     context = {
         "base_url": st.BASE_URL,
     }
     if request.user.is_authenticated:
+        committee_qs = Committee_Details.objects.all()
         user_obj = User.objects.get(id=request.session["User"])
         principal_obj = Principal.objects.get(auth_id=user_obj)
+        dept_qs = Departments.objects.all()
+        context["departments"] = dept_qs
         context["name"] = principal_obj.name
+        context["committees"] = committee_qs
         return render(request, 'principal/principal_dashboard.html', context)
     else:
-        return render(request, 'principal/principal_dashboard.html', context)
+        context["error"] = "Login to access dashboard."
+        return render(request, 'home_auth/index.html', context)
 
 
 def ManageCommitteesView(request):
@@ -402,7 +544,8 @@ def ManageCommitteesView(request):
 
         return render(request, 'principal/manage_committees.html', context)
     else:
-        return render(request, 'index.html', context)
+        context["error"] = "Login first to access dashboard."
+        return render(request, 'home_auth/index.html', context)
 
 
 def EditCommittees(request):
@@ -443,6 +586,7 @@ def EditCommittees(request):
     else:
         return HttpResponse("Login First", status=status.HTTP_400_BAD_REQUEST)
 
+
 def ManageDepartmentView(request):
     context = {
         "base_url": st.BASE_URL,
@@ -465,6 +609,9 @@ def ManageDepartmentView(request):
         context["dept"] = dept
         context["faculties"] = fac_qs
         return render(request, 'principal/manage_departments.html', context)
+    else:
+        context["error"] = "You are not authorized to view this page."
+        return render(request, 'home_auth/index.html', context)
 
 
 def FetchFaculties(request):
@@ -590,33 +737,30 @@ def PrincipalProfile(request):
 
     else:
         context["error"] = "Login to access dashboard."
-        return render(request, 'index.html', context)
-
-def StudentMidSemFeedbackView(request):
-    return render(request, "student_mid_sem_feedback.html", context={})
+        return render(request, 'home_auth/index.html', context)
 
 
-def ConfirmAccountView(request):
+# Principal Related Views > End
+
+def DepartmentsView(request, dept):
     context = {
         "base_url": st.BASE_URL,
     }
-    if request.method == "GET":
-        if request.GET.get('email') is not None:
-            raw_email = str(request.GET.get('email'))
-            email = b64decode(raw_email.encode()).decode('utf-8')
-            user_obj = User.objects.get(email=email)
-            print(user_obj)
-            user_obj.active = True
-            user_obj.save()
-            context["success"] = "Account Activated Successfully."
-            context["msg"] = "Your Account has been Successfully activated. You can now access your profile."
-            return render(request, "index.html", context)
-    return HttpResponseRedirect("/")
+    if request.user.is_authenticated and request.user.getRole == "Principal":
+        principal_obj = Principal.objects.get(auth_id=request.user)
+        context["name"] = principal_obj.name
+        fac_qs = Faculty.objects.filter(dept_id__accronym__exact=dept)
+        dept_name = Departments.objects.get(accronym__exact=dept).dept_name
+        context["faculties"] = fac_qs
+        context["dept_name"] = dept_name
+        return render(request, 'principal/department.html', context)
+    else:
+        context["error"] = "You are not authorized to view this page."
 
 
-def StudentProfile(request):
-    return render(request, 'student_profile_page.html', context={})
+# Committee Related Views > Start
+def CommitteeDashboard(request, committee):
+    print(committee)
+    return render(request, 'committees/committee_dashboard.html', context={})
 
-
-def FacultyProfile(request):
-    return render(request, 'faculty_profile_page.html', context={})
+# Committee Related Views > End

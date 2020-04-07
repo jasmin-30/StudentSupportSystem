@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>View Average Feedback</title>
+    <title>View Detailed Feedback</title>
     <!-- Meta -->
     <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
     <!-- Favicon icon -->
@@ -22,14 +22,14 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
-    <!-- Chartlist chart css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/chartist/css/chartist.css' %}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.css">
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
+    <!-- Data Table Css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/data-table/css/buttons.dataTables.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css' %}">
 </head>
 
 <body>
@@ -208,7 +208,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="change_password.html">
+                                        <a href="../home_auth/change_password.html">
                                             <i class="feather icon-log-out"></i> Logout
                                         </a>
                                     </li>
@@ -307,7 +307,7 @@
                                             <div class="col-lg-8">
                                                 <div class="page-header-title">
                                                     <div class="d-inline">
-                                                        <h4>Mid Semester Average Feedback</h4>
+                                                        <h4>Mid Semester Detailed Feedback</h4>
                                                     </div>
                                                 </div>
                                             </div>
@@ -332,7 +332,7 @@
                                                                     <option value="opt6">Prof. Nishant Makwana</option>
                                                                 </select>
                                                             </div>
-                                                            </div>
+                                                        </div>
                                                             <div class="form-group row">
                                                             <label class="col-sm-4 col-form-label">Select Subject To View Feedback</label>
                                                             <div class="col-sm-8">
@@ -351,16 +351,101 @@
                                                         </form>
                                                     </div>
                                                     <!-- Zero config.table start -->
-                                                    <div class="card-block">
-                                                        <canvas id="barChart" width="100" height="100"></canvas>
-                                                    </div>
+                                                        <div class="card-block">
+                                                            <div class="dt-responsive table-responsive">
+                                                                <table id="simpletable" class="table table-striped table-bordered nowrap">
+                                                                    <thead>
+                                                                    <tr>
+                                                                        <th>Sr. No.</th>
+                                                                        <th>Questions</th>
+                                                                        <th>Answers</th>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                        <tr>
+                                                                            <td>1</td>
+                                                                            <td>System Architect</td>
+                                                                            <td>Edinburgh</td>
 
-                                                    <div class="card-block">
-                                                        <form>
-                                                            <input type="button" class="btn btn-primary" style="float:right;" value="Download">
-                                                        </form>
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>2</td>
+                                                                            <td>Accountant</td>
+                                                                            <td>Tokyo</td>
+
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>3</td>
+                                                                            <td>Junior Technical Author</td>
+                                                                            <td>San Francisco</td>
+
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>4</td>
+                                                                            <td>Senior Javascript Developer</td>
+                                                                            <td>Edinburgh</td>
+
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>5</td>
+                                                                            <td>System Architect</td>
+                                                                            <td>Edinburgh</td>
+
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>6</td>
+                                                                            <td>Accountant</td>
+                                                                            <td>Tokyo</td>
+
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>7</td>
+                                                                            <td>Junior Technical Author</td>
+                                                                            <td>San Francisco</td>
+
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>8</td>
+                                                                            <td>Senior Javascript Developer</td>
+                                                                            <td>Edinburgh</td>
+
+                                                                        </tr>
+                                                                         <tr>
+                                                                            <td>9</td>
+                                                                            <td>System Architect</td>
+                                                                            <td>Edinburgh</td>
+
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>10</td>
+                                                                            <td>Accountant</td>
+                                                                            <td>Tokyo</td>
+
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>11</td>
+                                                                            <td>Junior Technical Author</td>
+                                                                            <td>San Francisco</td>
+
+                                                                        </tr>
+                                                                        <tr>
+                                                                            <td>12</td>
+                                                                            <td>Senior Javascript Developer</td>
+                                                                            <td>Edinburgh</td>
+
+                                                                        </tr>
+                                                                    </tbody>
+                                                                    <tfoot>
+                                                                    <tr>
+                                                                        <th>Sr. No.</th>
+                                                                        <th>Questions</th>
+                                                                        <th>Answers</th>
+                                                                    </tr>
+                                                                    </tfoot>
+                                                                </table>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                     <!-- Zero config.table end -->
                                                 </div>
                                                 <!-- Basic Form Inputs card end -->
@@ -383,17 +468,29 @@
     <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
     <!-- modernizr js -->
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/css-scrollbars.js' %}"></script>
-    <!-- Chart js -->
-<!--    <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>-->
-   <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
-    <!-- custom js -->
-    <script type="text/javascript" src="{% static 'assets/pages/chart/chartjs/chartjs-custom.js' %}"></script>
-    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/script.js' %}"></script>
-    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
+    <!-- amchart js -->
+    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>
+    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>
+    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
+    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
+    <!-- custom js -->
+    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+    <script src="{% static 'assets/pages/data-table/js/data-table-custom.js' %}"></script>
+    <!-- data-table js -->
+    <script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'assets/pages/data-table/js/jszip.min.js' %}"></script>
+    <script src="{% static 'assets/pages/data-table/js/pdfmake.min.js' %}"></script>
+    <script src="{% static 'assets/pages/data-table/js/vfs_fonts.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-buttons/js/buttons.print.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-buttons/js/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
     <!-- i18next.min.js -->
     <script type="text/javascript" src="{% static 'bower_components/i18next/js/i18next.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/i18next-xhr-backend/js/i18nextXHRBackend.min.js' %}"></script>
@@ -401,29 +498,6 @@
     <script type="text/javascript" src="{% static 'bower_components/jquery-i18next/js/jquery-i18next.min.js' %}"></script>
     <!-- Global site tag (gtag.js) - Google Analytics -->
     <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
-    <script>
-        var ctx = document.getElementById('barChart').getContext('2d');
-        var chart = new Chart(ctx, {
-            // The type of chart we want to create
-            type: 'bar',
-
-            // The data for our dataset
-            data: {
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                datasets: [{
-                    label: 'My First dataset',
-                    backgroundColor: 'rgb(0,255,255)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    data: [0, 10, 5, 2, 20, 30, 45]
-                }]
-            },
-
-            // Configuration options go here
-            options: {
-
-            }
-        });
-    </script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
