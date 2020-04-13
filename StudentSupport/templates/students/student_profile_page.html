@@ -14,11 +14,15 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
     <!-- Material Icon -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/material-design/css/material-design-iconic-font.min.css' %}">
+
+
 </head>
 
 <body>
@@ -59,7 +63,8 @@
             </div>
         </div>
     </div>
-     <div class="modal fade" id="large-Modal" tabindex="-1" role="dialog">
+
+    <div class="modal fade" id="large-Modal" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -69,32 +74,33 @@
                     </button>
                 </div>
                <div class="modal-body">
-                    <form>
+                    <form method="post" action="{% url 'student_profile' %}">
+                        {% csrf_token %}
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">First Name</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" id="fname" name="fname" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Last Name</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" id="lname" name="lname" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Email Id</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" id="email" name="email" required>
                             </div>
                         </div>
-                        <button class="btn btn-large btn-primary f-right">Save changes</button>
+                        <button type="submit" class="btn btn-large btn-primary f-right">Save changes</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
-     <div class="modal fade" id="large-Modal1" tabindex="-1" role="dialog">
+    <div class="modal fade" id="large-Modal1" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -104,44 +110,25 @@
                     </button>
                 </div>
                <div class="modal-body">
-                    <form>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Enrollment Number</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Department</label>
-                            <div class="col-sm-10">
-                                   <select name="select" class="form-control">
-                                       <option value="opt1">Select Department</option>
-                                       <option value="opt2">Computer Engineering</option>
-                                       <option value="opt3">Information & Technology</option>
-                                       <option value="opt4">Civil Engineering</option>
-                                       <option value="opt5">Electronics & Communications</option>
-                                       <option value="opt6">Production Engineering</option>
-                                       <option value="opt7">Mechanical Engineering</option>
-                                   </select>
-                               </div>
-                        </div>
+                    <form method="post" action="{% url 'student_profile' %}">
+                        {% csrf_token %}
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">Semester</label>
                             <div class="col-sm-10">
-                                   <select name="select" class="form-control">
-                                       <option value="opt1">Select Semester</option>
-                                       <option value="opt2">1</option>
-                                       <option value="opt3">2</option>
-                                       <option value="opt4">3</option>
-                                       <option value="opt5">4</option>
-                                       <option value="opt6">5</option>
-                                       <option value="opt7">6</option>
-                                       <option value="opt7">7</option>
-                                       <option value="opt7">8</option>
+                                   <select name="sem" class="form-control" id="sem" required>
+                                       <option value="-1" disabled selected>Select Semester</option>
+                                       <option value="1">Sem 1</option>
+                                       <option value="2">Sem 2</option>
+                                       <option value="3">Sem 3</option>
+                                       <option value="4">Sem 4</option>
+                                       <option value="5">Sem 5</option>
+                                       <option value="6">Sem 6</option>
+                                       <option value="7">Sem 7</option>
+                                       <option value="8">Sem 8</option>
                                    </select>
                                </div>
                         </div>
-                        <button class="btn btn-large btn-primary f-right">Save changes</button>
+                        <button type="submit" class="btn btn-large btn-primary f-right">Save changes</button>
                     </form>
                 </div>
             </div>
@@ -154,12 +141,10 @@
 
             <nav class="navbar header-navbar pcoded-header">
                 <div class="navbar-wrapper">
+
                     <div class="navbar-logo">
-                        <a href="index-1.htm">
-                            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Theme-Logo">
-                        </a>
-                        <a class="mobile-options">
-                            <i class="feather icon-more-horizontal"></i>
+                        <a href="{% url 'student_dashboard' %}">
+                            <img class="img-fluid" src="{% static 'assets/images/logo_sss.png' %}" alt="Theme-Logo">
                         </a>
                     </div>
 
@@ -169,18 +154,18 @@
                             <li class="user-profile header-notification">
                                 <div class="dropdown-primary dropdown">
                                     <div class="dropdown-toggle" data-toggle="dropdown">
-                                        <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">
-                                        <span>Jasmin Makwana</span>
+{#                                        <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">#}
+                                        <span>{{ name }}</span>
                                         <i class="feather icon-chevron-down"></i>
                                     </div>
                                     <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
                                         <li>
-                                            <a href="#!">
+                                            <a href="{% url 'student_profile' %}">
                                                 <i class="feather icon-settings"></i> My Profile
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="auth-normal-sign-in.htm">
+                                            <a href="{% url 'logout' %}">
                                                 <i class="feather icon-log-out"></i> Logout
                                             </a>
                                         </li>
@@ -197,28 +182,42 @@
                 <div class="pcoded-wrapper">
                     <nav class="pcoded-navbar">
                         <div class="pcoded-inner-navbar main-menu">
-                            <div class="pcoded-navigatio-lavel">Quick Links</div>
+                            <div class="pcoded-navigatio-lavel" menu-title-theme="theme5">
+                                Quick Links
+                            </div>
                             <ul class="pcoded-item pcoded-left-item">
                                 <li class="">
-                                    <a href="#">
+                                    <a href="{% url 'student_profile' %}">
                                         <span class="pcoded-micon"><i class="feather icon-user"></i></span>
                                         <span class="pcoded-mtext">My Profile</span>
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="#">
+                                    <a href="{% url 'student_complaint_section'  %}">
                                         <span class="pcoded-micon"><i class="feather icon-server"></i></span>
-                                        <span class="pcoded-mtext">View Complaints</span>
+                                        <span class="pcoded-mtext">Complaints Section</span>
                                     </a>
                                 </li>
-                                <li class="">
+                                <li class="pcoded-hasmenu">
                                     <a href="#">
                                         <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                        <span class="pcoded-mtext">View Feedback</span>
+                                        <span class="pcoded-mtext">Feedback Section</span>
                                     </a>
+                                    <ul class="pcoded-submenu">
+                                        <li class="">
+                                            <a href="{% url 'student_mid_sem_feedback'  %}">
+                                                <span class="pcoded-mtext">Mid Semester Feedback</span>
+                                            </a>
+                                        </li>
+                                        <li class="">
+                                            <a href="{% url 'student_end_sem_feedback'  %}">
+                                                <span class="pcoded-mtext">End Semester Feedback</span>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
                                 <li class="">
-                                    <a href="#">
+                                    <a href="{% url 'logout' %}">
                                         <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
                                         <span class="pcoded-mtext">Logout</span>
                                     </a>
@@ -226,6 +225,8 @@
                             </ul>
                         </div>
                     </nav>
+
+
                     <div class="pcoded-content">
                         <div class="pcoded-inner-content">
                             <div class="main-body">
@@ -252,12 +253,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                            <!-- List view card start -->
+                                    <!-- List view card start -->
                                     <div class="card">
                                         <div class="card-block">
                                             <div class="row">
                                                 <div class="col-lg-12 col-xl-12">
-                                                    <div class="sub-title">Jasmin Makwana</div>
+                                                    <div class="sub-title">{{ name }}</div>
                                                     <!-- Nav tabs -->
                                                     <ul class="nav nav-tabs md-tabs tabs-left b-none" role="tablist">
                                                         <li class="nav-item">
@@ -274,75 +275,71 @@
                                                         </li>
                                                     </ul>
                                                     <!-- Tab panes -->
-                                                    <div class="col-sm-4 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
+                                                    <div class="col-sm-10 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
                                                         <div class="tab-pane active" id="personaldetail" role="tabpanel">
-                                                            <form action="#" method="post">
-                                                            {% csrf_token %}
+                                                            <form>
                                                                 <div class="form-group row">
-                                                                    <label class="col-sm-2 col-form-label" style="padding: 6px 15px; font-weight:900;">First Name :</label>
-                                                                    <label class="col-sm-6 col-form-label">Jasmin</label>
+                                                                    <label class="col-sm-6 col-form-label" style="padding: 6px 15px; font-weight:900;">First Name :</label>
+                                                                    <label class="col-sm-6 col-form-label">{{ std_obj.first_name }}</label>
                                                                 </div>
                                                                 <div class="form-group row">
-                                                                    <label class="col-sm-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Last Name :</label>
-                                                                    <label class="col-sm-6 col-form-label">Makwana</label>
+                                                                    <label class="col-sm-6 col-form-label" style="padding: 6px 15px; font-weight:900;">Last Name :</label>
+                                                                    <label class="col-sm-6 col-form-label">{{ std_obj.last_name }}</label>
                                                                 </div>
                                                                 <div class="form-group row">
-                                                                    <label class="col-sm-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Email ID :</label>
-                                                                    <label class="col-sm-6 col-form-label">Jasmin123@gmail.com</label>
+                                                                    <label class="col-sm-6 col-form-label" style="padding: 6px 15px; font-weight:900;">Email ID :</label>
+                                                                    <label class="col-sm-6 col-form-label">{{ email }}</label>
                                                                 </div>
                                                            </form>
                                                             <div class="form-group row">
-                                                                <label class="col-sm-2 col-form-label" style="padding: 6px 15px; font-weight:900;"></label>
-                                                                <button class="btn btn-primary pcoded-mtext" data-toggle="modal" data-target="#large-Modal">Edit Profile</button>
+                                                                <button class="btn btn-primary pcoded-mtext" data-toggle="modal" data-target="#large-Modal" style="margin-left: 1.5%;">Edit Profile</button>
                                                             </div>
                                                         </div>
                                                         <div class="tab-pane" id="academicdetail" role="tabpanel">
-                                                            <form action="#" method="post">
-                                                            {% csrf_token %}
+                                                            <form>
                                                                 <div class="form-group row">
-                                                                    <label class="col-sm-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Enrollment Number :</label>
-                                                                    <label class="col-sm-6 col-form-label">160210107033</label>
+                                                                    <label class="col-sm-6 col-form-label" style="padding: 6px 15px; font-weight:900;">Enrollment Number :</label>
+                                                                    <label class="col-sm-6 col-form-label">{{ std_obj.enrollment_no }}</label>
                                                                 </div>
                                                                 <div class="form-group row">
-                                                                    <label class="col-sm-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Department :</label>
-                                                                    <label class="col-sm-6 col-form-label">Computer Engineering</label>
+                                                                    <label class="col-sm-6 col-form-label" style="padding: 6px 15px; font-weight:900;">Department :</label>
+                                                                    <label class="col-sm-6 col-form-label">{{ department }}</label>
                                                                 </div>
                                                                 <div class="form-group row">
-                                                                    <label class="col-sm-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Semester :</label>
-                                                                    <label class="col-sm-6 col-form-label">8th</label>
+                                                                    <label class="col-sm-6 col-form-label" style="padding: 6px 15px; font-weight:900;">Semester :</label>
+                                                                    <label class="col-sm-6 col-form-label">{{ std_obj.semester }}</label>
                                                                 </div>
                                                            </form>
                                                             <div class="form-group row">
-                                                                <label class="col-sm-2 col-form-label" style="padding: 6px 15px; font-weight:900;"></label>
-                                                                <button class="btn btn-primary pcoded-mtext" data-toggle="modal" data-target="#large-Modal1">Edit Academic</button>
+                                                                <button class="btn btn-primary pcoded-mtext bts" data-toggle="modal" data-target="#large-Modal1" style="margin-left: 1.5%;">Edit Academic</button>
                                                             </div>
                                                         </div>
                                                         <div class="tab-pane" id="changepassword" role="tabpanel">
-                                                            <form action="#" method="post">
+                                                            <form method="post" action="{% url 'student_profile' %}">
                                                                 {% csrf_token %}
                                                                 <div class="form-group row">
-                                                                    <label class="col-sm-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="oldpwd">Old Password :</label>
-                                                                    <div class="col-sm-6">
+                                                                    <label class="col-sm-6 col-form-label" style="padding: 6px 20px; font-weight:900;" for="oldpwd">Old Password :</label>
+                                                                    <div class="col-md-6">
                                                                         <input type="password" class="form-control" id="oldpwd" name="oldpwd" required/>
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row">
-                                                                    <label class="col-sm-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="newpwd">New Password :</label>
-                                                                    <div class="col-sm-6">
+                                                                    <label class="col-sm-6 col-form-label" style="padding: 6px 20px; font-weight:900;" for="newpwd">New Password :</label>
+                                                                    <div class="col-md-6">
                                                                         <input type="password" class="form-control" id="newpwd" name="newpwd" required/>
+                                                                        <div id="Error_newpwd" style="display: none; color: red;"></div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row">
-                                                                    <label class="col-sm-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="cnfrmpwd">Confirm Password :</label>
-                                                                    <div class="col-sm-6">
+                                                                    <label class="col-sm-6 col-form-label" style="padding: 6px 20px; font-weight:900;" for="cnfrmpwd">Confirm Password :</label>
+                                                                    <div class="col-sm-6" id="cnfrmpwd-div">
                                                                         <input type="password" class="form-control" id="cnfrmpwd" name="cnfrmpwd" onchange="verify_pwd()" onkeyup="verify_pwd()" onclick="verify_pwd()" required/>
-                                                                        <span id="errormsg" style="color: red"></span>
+                                                                        <div id="Error_cnfrmpwd" style="display: none; color: red;"></div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group row">
-                                                                    <label class="col-sm-3 col-form-label" style="padding: 6px 20px;"></label>
                                                                     <div class="col-sm-6">
-                                                                        <button type="submit" class="btn btn-primary m-b-0">Update</button>
+                                                                        <button type="submit" id="button-update" name="button-update" class="btn btn-primary m-b-0" style="margin-left: 1%;">Update</button>
                                                                     </div>
                                                                 </div>
                                                             </form>
@@ -353,7 +350,7 @@
                                             </div>
 
                                     </div>
-                                            <!-- List view card end -->
+                                    <!-- List view card end -->
                                             </div>
                                     </div>
                                     </div>
@@ -375,6 +372,8 @@
     <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
     <!-- modernizr js -->
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+    <!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
     <!-- Chart js -->
     <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>
     <!-- amchart js -->
@@ -388,6 +387,74 @@
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+
+    <script type="text/javascript">
+        {% if success %}
+            swal({
+                title: "{{ success }}",
+                type: "success"
+            });
+        {% endif %}
+
+        {% if error %}
+            swal({
+                title: "Error",
+                text: "{{ error }}",
+                dangerMode: true,
+                type: "error"
+            });
+        {% endif %}
+    </script>
+
+    <!-- Validation js > Start -->
+    <script type="text/javascript">
+        function validate_password() {
+            var regularExpression = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[a-zA-Z!@#$%&? "])[a-zA-Z0-9!@#$%&?]{6,16}$/;
+            var pwd = document.getElementById('newpwd').value;
+            var tag = document.getElementById('Error_newpwd');
+            if(regularExpression.test(pwd)){
+                tag.style.display = 'none';
+                document.getElementById("newpwd").classList.remove("form-control-danger");
+                document.getElementById("newpwd-div").classList.remove("has-danger");
+                document.getElementById("newpwd").classList.add("form-control-success");
+                return true;
+            }
+            else {
+                tag.innerHTML = "Password must have at least one uppercase, one lowercase, one digit and one special character. Length of password is 6 to 16.";
+                tag.style.display = 'block';
+                document.getElementById("newpwd").classList.add("form-control-danger");
+                document.getElementById("newpwd-div").classList.add("has-danger");
+                return false;
+            }
+        }
+
+        function verify_pwd() {
+            var pwd = document.getElementById('newpwd').value;
+            var pwd1 = document.getElementById('cnfrmpwd').value;
+            var tag = document.getElementById('Error_cnfrmpwd');
+            var div = document.getElementById('cnfrmpwd-div');
+            var btn = document.getElementById('button-update');
+            if(pwd !== pwd1) {
+                tag.style.display = 'block';
+                tag.innerHTML = "Password does not match";
+                document.getElementById('cnfrmpwd').classList.add('form-control-danger');
+                div.classList.add("has-danger");
+                btn.classList.remove('btn-primary');
+            }
+            else {
+                tag.style.display = 'none';
+                document.getElementById('cnfrmpwd').classList.remove('form-control-danger');
+                div.classList.remove("has-danger");
+                if(validate_password()) {
+                    btn.classList.add('btn-primary');
+                }
+                else {
+                    btn.classList.remove('btn-primary');
+                }
+            }
+        }
+    </script>
+    <!-- Validation js > End -->
 </body>
 
 </html>

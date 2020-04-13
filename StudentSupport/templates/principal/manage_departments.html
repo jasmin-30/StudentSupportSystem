@@ -12,7 +12,7 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
 {#    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">#}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="{% static 'assets/extra-js/jquery_2.1.4.js' %}"></script>
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
     <!-- themify-icons line icon -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
@@ -30,6 +30,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
     <script type="text/javascript">
+    // TODO : Bring this table into table tag and add sweet alert also.
     $(document).ready(function($)
     {
         //ajax row data
@@ -327,7 +328,7 @@
                         <i class="feather icon-menu"></i>
                     </a>
                     <a href="{% url 'principal_dashboard' %}">
-                        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Theme-Logo">
+                        <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Theme-Logo" style="max-width:85%;">
                     </a>
                     <a class="mobile-options">
                         <i class="feather icon-more-horizontal"></i>

@@ -22,6 +22,13 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+    <!-- notify js Fremwork -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.brighttheme.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.buttons.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.history.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.mobile.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/pnotify/notify.css' %}">
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
@@ -424,20 +431,34 @@
     <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
     <!-- modernizr js -->
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
-    <!-- Chart js -->
-    <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>
-    <!-- amchart js -->
-    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>
+    <!-- pnotify js -->
+    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.desktop.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.buttons.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.confirm.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.callbacks.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.animate.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.history.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.mobile.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.nonblock.js' %}"></script>
+
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <!-- custom js -->
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
-
+    <script type="text/javascript">
+        {% ifnotequal pnotify None %}
+            $(document).ready(function () {
+                new PNotify({
+                    title: 'Notice',
+                    text: '{{ pnotify }}',
+                    type: 'info'
+                });
+            });
+        {% endifnotequal %}
+    </script>
 </body>
 
 </html>

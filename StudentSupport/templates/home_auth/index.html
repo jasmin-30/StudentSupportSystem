@@ -146,19 +146,19 @@
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label" for="email">Email ID : </label>
                             <div class="col-sm-8">
-                                <input type="email" class="form-control" name="email" id="email" required>
+                                <input type="email" class="form-control" tabindex="1" name="email" id="email" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label" for="pwd">Password : </label>
                             <div class="col-sm-8">
-                                <input type="password" class="form-control" name="pwd" id="pwd" required>
+                                <input type="password" class="form-control" tabindex="2" name="pwd" id="pwd" required>
                             </div>
                         </div>
                         <div class="form-group row" id="role-div">
                             <label class="col-sm-4 col-form-label" for="role">Role : </label>
                             <div class="col-sm-8">
-                                <select onblur="validate_role()" name="role" id="role" class="form-control" required>
+                                <select onblur="validate_role()" name="role" id="role" tabindex="3" class="form-control" required>
                                     <option value="-1" selected disabled>Select Role</option>
                                     <option value="Student">Student</option>
                                     <option value="Faculty">Faculty</option>
@@ -169,14 +169,14 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-8">
-                                <a href="#" data-toggle="modal" data-target="#sign-up-modal" data-dismiss="modal">Not Registered as Student? Click here to register</a>
+                                <a href="#" data-toggle="modal" tabindex="4" data-target="#sign-up-modal" data-dismiss="modal">Not Registered as Student? Click here to register</a>
                             </div>
                             <div class="col-sm-4">
-                                <a href="#" data-toggle="modal" data-target="#forgot-password" data-dismiss="modal">Forgot Password?</a>
+                                <a href="#" data-toggle="modal" tabindex="5" data-target="#forgot-password" data-dismiss="modal">Forgot Password?</a>
                             </div>
                         </div>
                         <div class="form-group row f-right" style="padding-right: 15px;">
-                            <button type="submit" class="btn btn-disabled" id="button-sign-in" name="button-sign-in" onfocus="validate_signin()" onclick="validate_signin()" onmouseover="validate_signin()" onmouseenter="validate_signin()" disabled>Sign In</button>
+                            <button type="submit" class="btn btn-disabled" tabindex="6" id="button-sign-in" name="button-sign-in" onfocus="validate_signin()" onclick="validate_signin()" onmouseover="validate_signin()" onmouseenter="validate_signin()" disabled>Sign In</button>
                         </div>
                     </form>
                 </div>
@@ -465,21 +465,14 @@
             <nav class="navbar header-navbar pcoded-header">
                 <div class="navbar-wrapper">
 
-                    <div class="navbar-logo" style="background-color: white;">
+                    <div class="navbar-logo">
                         <a href="{% url 'home' %}">
-                            <img src="{% static 'assets/images/logo_sss.png' %}" alt="Logo" width="220" height="36"/>
+                            <img src="{% static 'assets/images/logo_sss3.png' %}" alt="Logo" width="220" height="36"/>
                         </a>
-<!--                        <a href="{% url 'home' %}">-->
-<!--                            <span style="font-size: 12pt;">-->
-<!--                                Student Support System-->
-<!--                            </span>-->
-<!--                        </a>-->
                     </div>
                     <div class="navbar-container">
                         <ul class="nav-right">
                             <li class="nav-item">
-<!--                                <button type="button" class="btn btn-sm btn-primary btn-outline-primary" data-toggle="modal" data-target="#default-Modal">Sign In</button>-->
-<!--                                <button type="button" class="btn btn-sm btn-primary btn-outline-primary" data-toggle="modal" data-target="#default-Modal1">Sign Up</button>-->
                                 <button class="mdc-button" data-toggle="modal" data-target="#sign-in-modal" style="color: #404E67;">
                                     <span class="mdc-button__ripple"></span>
                                     Sign In

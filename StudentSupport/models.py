@@ -1,5 +1,7 @@
-import datetime
-
+# TODO : News model need to be changed. News should be department specific.
+# TODO : Remove Course Exit Survey Tables.
+# TODO : optimize all models.
+# TODO : Take care of models.CASCADE field in every foriegn keys.
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -190,6 +192,7 @@ class Faculty(models.Model):
     auth_id = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='id', on_delete=models.CASCADE, default=None)
     dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE, null=True)
     hod = models.BooleanField(default=False)
+    active = models.BooleanField(default=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     @property
@@ -235,7 +238,7 @@ class Subjects(models.Model):
         (8, 8)
     )
     subject_name = models.CharField(max_length=100)
-    subject_code = models.CharField(max_length=10, unique=True)
+    subject_code = models.CharField(max_length=10)
     dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE)
     semester = models.IntegerField(choices=SEMESTER, default=1)
     is_active = models.BooleanField(default=True)
@@ -467,9 +470,10 @@ class Complaints_of_Students(models.Model):
     committee_id = models.ForeignKey(Committee_Details, to_field='id', on_delete=models.CASCADE)
     complaint_details = models.TextField()
     status = models.CharField(max_length=30, choices=STATUS, default=1)
-    reacting_faculty = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='id', on_delete=models.CASCADE)
-    action_taken = models.TextField()
-    report = models.TextField()
+    reacting_faculty = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='id', on_delete=models.CASCADE, null=True,
+                                         blank=True)
+    action_taken = models.TextField(null=True, blank=True)
+    report = models.TextField(null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -517,3 +521,11 @@ class News(models.Model):
 
     def __str__(self):
         return self.news_details
+
+
+class Student_Feedback_Status(models.Model):
+    student_id = models.ForeignKey(Students, to_field='enrollment_no', on_delete=models.CASCADE)
+    subject_id = models.ForeignKey(Subjects, to_field='id', on_delete=models.CASCADE)
+    is_given = models.BooleanField(default=False)
+    end_sem_is_given = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)

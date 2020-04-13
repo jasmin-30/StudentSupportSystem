@@ -19,10 +19,12 @@
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
-    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
-    <script type="text/javascript">
 
+    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
+
+    <script type="text/javascript">
         function GetFacultyName(id) {
+
             $.ajax({
                 type: "GET",
                 url: "http://127.0.0.1:8000/getFacultyName/",
@@ -36,7 +38,7 @@
                     document.getElementById('faculty_id').value = json["id"];
                 },
                 error: function () {
-                    alert('error in getting faculty');
+                    alert('error');
                 }
             });
         }
@@ -63,7 +65,7 @@
             $.ajax({
                 type: "GET",
                 async: false,
-                url: "http://127.0.0.1:8000/checkStatus/",
+                url: "http://127.0.0.1:8000/checkStatusforEndSem/",
                 data : {"sub_id": id},
 
                 success: function (result) {
@@ -82,7 +84,7 @@
             $.ajax({
                 type: "GET",
                 async: false,
-                url: "http://127.0.0.1:8000/getFeedback/",
+                url: "http://127.0.0.1:8000/getFeedbackforEndSem/",
                 data : {"subject_id": id},
 
                 success: function (result) {
@@ -213,7 +215,7 @@
                      <h5 class="modal-title" id="exampleModalLabel"></h5> <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
                  </div>
                  <div class="modal-body">
-                    <form id="regForm" method="post" action="{% url 'student_mid_sem_feedback' %}">
+                    <form id="regForm" method="post" action="{% url 'student_end_sem_feedback' %}">
                         {% csrf_token %}
                         <!-- One "tab" for each step in the form: -->
                         {% for i in questions %}
@@ -242,7 +244,7 @@
                         <div class="tab" style="margin-top: -15%; margin-bottom: 15%;">
                           <div class="col-md-12"><p style="font-size: 20px;">Remarks: </p></div>
                           <div class="col-md-12">
-                            <textarea id="remarks" name="remarks" placeholder="Enter" required></textarea>
+                            <textarea id="remarks" name="remarks" placeholder="Enter"></textarea>
                           </div>
                         </div>
 
@@ -273,7 +275,6 @@
              </div>
          </div>
      </div>
-
 
     <!-- View Feedback Modal -->
     <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModal2Label" aria-hidden="true">
@@ -313,6 +314,7 @@
              </div>
          </div>
     </div>
+
 
     <div id="pcoded" class="pcoded">
     <div class="pcoded-overlay-box"></div>
@@ -413,7 +415,7 @@
                                                     <div class="col-lg-8">
                                                         <div class="page-header-title">
                                                             <div class="d-inline">
-                                                                <h4>Student Mid Semester Feedback</h4>
+                                                                <h4>Student End Semester Feedback</h4>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -447,7 +449,7 @@
                                                                                     document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }});">Give Feedback</button></td>');
                                                                                 }
                                                                             </script>
-{#                                                                          <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }})">Give Feedback</button></td>#}
+{#                                                                            <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }})">Give Feedback</button></td>#}
                                                                         </tr>
                                                                     {% endfor %}
                                                             </tbody>
@@ -473,6 +475,7 @@
                                                                         <th scope="row">{{ forloop.counter }}</th>
                                                                         <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
                                                                         <script type="text/javascript">
+
                                                                             var k = check_status({{ i.id }});
 
                                                                             if (k == '1') {
@@ -509,6 +512,7 @@
                                                                         <th scope="row">{{ forloop.counter }}</th>
                                                                         <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
                                                                         <script type="text/javascript">
+
                                                                             var k = check_status({{ i.id }});
 
                                                                             if (k == '1') {
@@ -583,6 +587,7 @@
                                                                             <th scope="row">{{ forloop.counter }}</th>
                                                                             <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
                                                                             <script type="text/javascript">
+
                                                                                 var k = check_status({{ i.id }});
 
                                                                                 if (k == '1') {
@@ -620,6 +625,7 @@
                                                                         <th scope="row">{{ forloop.counter }}</th>
                                                                         <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
                                                                         <script type="text/javascript">
+
                                                                             var k = check_status({{ i.id }});
 
                                                                             if (k == '1') {
@@ -657,6 +663,7 @@
                                                                         <th scope="row">{{ forloop.counter }}</th>
                                                                         <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
                                                                         <script type="text/javascript">
+
                                                                             var k = check_status({{ i.id }});
 
                                                                             if (k == '1') {
@@ -694,6 +701,7 @@
                                                                             <th scope="row">{{ forloop.counter }}</th>
                                                                             <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
                                                                             <script type="text/javascript">
+
                                                                                 var k = check_status({{ i.id }});
 
                                                                                 if (k == '1') {
@@ -736,17 +744,17 @@
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
     <!-- Chart js -->
-{#    <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>#}
-{#    <!-- amchart js -->#}
-{#    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>#}
-{#    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>#}
-{#    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>#}
+    <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>
+    <!-- amchart js -->
+    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>
+    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>
+    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <!-- custom js -->
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-{#    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>#}
+    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
 
     <script type="text/javascript">

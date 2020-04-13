@@ -1,4 +1,4 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,6 +14,8 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
@@ -115,7 +117,8 @@
                                     </a>
                                 </li>
                                 <li class="">
-                                    <a href="{% url 'student_complaint_section'  %}">
+                                  <!-- Add Complaint -->
+                                    <a href="{% url 'student_complaint_section' %}">
                                         <span class="pcoded-micon"><i class="feather icon-server"></i></span>
                                         <span class="pcoded-mtext">Complaints Section</span>
                                     </a>
@@ -147,59 +150,103 @@
                             </ul>
                         </div>
                     </nav>
-
                     <div class="pcoded-content">
                         <div class="pcoded-inner-content">
                             <div class="main-body">
                                 <div class="page-wrapper">
                                     <div class="page-body">
-                                         <div class="row">
+                                        <div class="row">
                                         <div class="col-sm-12">
                                             <div class="page-header">
-                                                    <div class="row align-items-end">
-                                                        <div class="col-lg-8">
-                                                            <div class="page-header-title">
-                                                                <div class="d-inline">
-                                                                    <h4>Recent News</h4>
-                                                                </div>
+                                                <div class="row align-items-end">
+                                                    <div class="col-lg-8">
+                                                        <div class="page-header-title">
+                                                            <div class="d-inline">
+                                                                <h4>Complaint Section</h4>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                 </div>
-                                            <!-- List view card start -->
-                                            <div class="card">
-                                                <div class="row card-block">
-                                                    <div class="col-md-12">
-                                                        <ul class="list-view">
-                                                            {% if news %}
-                                                                <!-- Repeat from here -->
-                                                                {% for n in news %}
-                                                                    <li class="m-b-20" style="border-bottom: solid #353c4e; border-bottom-width: thin;">
-                                                                        <div class="col-xs-12">
-                                                                            <h5 class="d-inline-block m-b-10">
-                                                                                <b><u>{{ n.news_subject }}</u></b>
-                                                                            </h5>
-                                                                        </div>
-                                                                        <p class="m-b-0">
-                                                                            {{ n.news_details }}
-                                                                        </p>
-                                                                        <div class="f-13 text-muted">
-                                                                            {{ n.timestamp }}
-                                                                            <br />
-                                                                            By, {{ n.issuing_faculty.name }}
-                                                                        </div>
-                                                                    </li>
-                                                                {% endfor %}
-                                                                <!-- Repeat News Section ends here -->
-                                                            {% else %}
-                                                                News Published by professors will be displayed here.<br />
-                                                                No News Published yet.
-                                                            {% endif %}
-                                                        </ul>
-                                                    </div>
                                                 </div>
                                             </div>
-                                            <!-- List view card end -->
+                                            <div class="col-md-12">
+                                                <ul class="list-view">
+                                                  <!-- Model -->
+                                                  <div class="modal fade modal-flex" id="studentcomplainmodal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
+                                                      <div class="modal-dialog" role="document">
+                                                          <div class="modal-content" style="width: 181%; margin-left: -14%;">
+                                                              <div class="modal-body">
+                                                                <form method="post" action="{% url 'student_complaint_section' %}">
+                                                                    {% csrf_token %}
+                                                                    <div class="form-group row">
+                                                                        <label class="col-sm-3 col-form-label" for="complaint">Complaint Description : </label>
+                                                                        <div class="col-sm-8">
+                                                                          <textarea name="complaint" id="complaint" rows="8" cols="70" required></textarea>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <div class="form-group row" id="role-div">
+                                                                        <label class="col-sm-3 col-form-label" for="role">Committee : </label>
+                                                                        <div class="col-sm-8">
+                                                                            <select onblur="validate_role()" name="committee" id="committee" class="form-control" style = "width: 107%;" required>
+                                                                                <option value="-1" selected disabled>Select Committee</option>
+                                                                                {% for i in committees %}
+                                                                                    <option value="{{ i.id }}">{{ i.committee_name }}</option>
+                                                                                {% endfor %}
+                                                                            </select>
+                                                                            <div id="Error_role" style="display: none; color: red;"></div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="form-group row f-right" style="padding-right: 15px;">
+                                                                        <button type="submit" class="btn btn-primary">Submit</button>
+                                                                    </div>
+                                                                </form>
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+
+                                                  <button class="mdc-button btn btn-primary" data-toggle="modal" data-target="#studentcomplainmodal" style="color: #404E67;">
+                                                      <span class="mdc-button__ripple"></span>
+                                                      Add Complaint
+                                                  </button>
+                                                </ul>
+                                            </div>
+                                            <div class="col-md-12" style="margin-top: 2%;">
+                                                <table class="table table-hover">
+                                                  <thead>
+                                                    <tr>
+                                                      <th scope="col">#</th>
+                                                      <th scope="col">Complain Details</th>
+                                                      <th scope="col">Status</th>
+                                                      <th scope="col">Action Taken</th>
+                                                      <th scope="col">Report</th>
+                                                      <th scope="col">Committee</th>
+                                                      <th scope="col">Reacting Faculty</th>
+                                                      <th scope="col">Enrollment Number</th>
+                                                    </tr>
+                                                  </thead>
+                                                  <tbody>
+                                                    {% for i in complaints_of_students %}
+                                                        <tr>
+                                                          <th scope="row">{{ forloop.counter }}</th>
+                                                          <td>{{ i.complaint_details }}</td>
+                                                          {% if i.status == '0' %}
+                                                              <td>Closed</td>
+                                                          {% elif i.status == '1' %}
+                                                              <td>Active/Pending</td>
+                                                          {% elif i.status == '2' %}
+                                                              <td>Re-Opened</td>
+                                                          {% endif %}
+                                                          <td>{{ i.action_taken }}</td>
+                                                          <td>{{ i.report }}</td>
+                                                          <td>{{ i.committee_id.committee_name }}</td>
+                                                          <td>{{ i.reacting_faculty }}</td>
+                                                          <td>{{ i.student_id.enrollment_no }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                  </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </div>
                                     </div>
@@ -207,6 +254,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
@@ -221,6 +269,8 @@
     <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
     <!-- modernizr js -->
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+    <!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
     <!-- Chart js -->
     <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>
     <!-- amchart js -->
@@ -234,6 +284,24 @@
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+
+    <script type="text/javascript">
+        {% if success %}
+            swal({
+                title: "{{ success }}",
+                type: "success"
+            });
+        {% endif %}
+
+        {% if error %}
+            swal({
+                title: "Error",
+                text: "{{ error }}",
+                dangerMode: true,
+                type: "error"
+            });
+        {% endif %}
+    </script>
 
 </body>
 

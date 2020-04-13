@@ -1,0 +1,1154 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Manage Department - HOD</title>
+    <!-- Meta -->
+    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
+    <!-- Favicon icon -->
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
+    <!-- themify-icons line icon -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
+    <!-- ico font -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
+    <!-- Switch component css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
+    <!-- Tags css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
+    <!-- feather Awesome -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+
+    <!-- Style.css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/custom_style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
+</head>
+
+<body>
+    <!-- Pre-loader start -->
+    <div class="theme-loader">
+        <div class="ball-scale">
+            <div class='contain'>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pre-loader end -->
+    <!-- Change Faculty for Subject > Start -->
+    <div class="modal fade" id="change-faculty-modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Change Faculty for Subject : <span id="change_subject">Data Structure</span></h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                            <button type="button" class="btn btn-primary f-right" id="btn_add_new_teaching_faculty">
+                                <i class="feather icon-plus-circle"></i>
+                                Add More Faculty
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive m-t-10">
+                        <table class="table table-hover" id="teaching_faculty_table">
+                            <thead>
+                                <th>#</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Action</th>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="add_new_teaching_faculty-div" style="display: none;">
+                        <div class="form-group row">
+                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" for="faculty_select">Add Teaching Faculty : </label>
+                            <div id="faculty_select-div" class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                <select class="form-control" name="faculty_select" id="faculty_select" onblur="verify_select()" onchange="verify_select()">
+                                </select>
+                                <div id="Error_faculty_select" style="color: red; display: none;"></div>
+                            </div>
+                            <div class="col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                                <button type="button" class="btn btn-disabled" id="btn_add_new_faculty" onmouseover="activate_btn()" disabled>Add</button>
+                            </div>
+                            <div class="col-sm-1 col-md-1 col-lg-1 col-xl-1">
+                                <a href="#" class="btn btn-link" id="btn_icon_cancel">
+                                    <i class="feather icon-x-circle"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn_close" class="btn btn-default waves-effect " data-dismiss="modal">Close</button>
+                    <button type="button" id="btn_save_changes" class="btn btn-primary waves-effect waves-light">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Change Faculty for Subject > End -->
+
+    <!-- Add Subject modal > Start -->
+    <div class="modal fade" id="add-subject-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Subject</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="#">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="add_Subject_Name">Subject Name : </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="add_Subject_Name" id="add_Subject_Name" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="add_Subject_Code">Subject Code : </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="add_Subject_Code" id="add_Subject_Code" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="add_subject_semester">Semester : </label>
+                            <div class="col-sm-8">
+                                <select name="add_subject_semester" id="add_subject_semester" class="form-control" onchange="load_faculty()" required>
+                                    <option value="-1" disabled selected>Select Semester</option>
+                                    <option value="1">Sem 1</option>
+                                    <option value="2">Sem 2</option>
+                                    <option value="3">Sem 3</option>
+                                    <option value="4">Sem 4</option>
+                                    <option value="5">Sem 5</option>
+                                    <option value="6">Sem 6</option>
+                                    <option value="7">Sem 7</option>
+                                    <option value="8">Sem 8</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="add_teaching_faculty">Semester : </label>
+                            <div class="col-sm-8">
+                                <div id="add_teaching_faculty-div">
+                                    <select name="add_teaching_faculty" id="add_teaching_faculty" class="form-control" onblur="build_form()" required>
+
+                                    </select>
+                                </div>
+                                <a href="#" class="btn btn-link p-l-0" id="add_new_select_faculty">Add More Teaching Faculty</a>
+                            </div>
+                        </div>
+                        <div class="form-group row f-right" style="padding-right: 15px;">
+                            <button type="button" class="btn btn-disabled" id="btn-confirm" disabled>
+                                <i class="feather icon-plus"></i>  Add Subject
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Add Subject modal > End -->
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-container navbar-wrapper">
+            <nav class="navbar header-navbar pcoded-header">
+                <div class="navbar-wrapper">
+                    <div class="navbar-logo">
+                    <a class="mobile-menu" id="mobile-collapse" href="javascript:void(0)">
+                        <i class="feather icon-menu"></i>
+                    </a>
+                    <a href="{% url 'hod_dashboard' %}">
+                        <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Theme-Logo" style="max-width:85%;">
+                    </a>
+                </div>
+                    <div class="navbar-container container-fluid">
+                        <form action="#" class="m-t-0" method="post">
+                            {% csrf_token %}
+                        <ul class="nav-left">
+                                <li class="user-profile header-notification">
+                                    <div class="form-group">
+                                        <select name="select" class="form-control" style="border-radius:10px;">
+                                            <option>Semester</option>
+                                            <option value="odd">Odd</option>
+                                            <option value="even">Even</option>
+                                        </select>
+                                    </div>
+                                </li>
+                                <li class="header-search">
+                                    <div class="form-group">
+                                        <select name="select" class="form-control" onchange="this.form.submit()" style="border-radius:10px;">
+                                            <option>Year</option>
+                                            <option value="2020">2020</option>
+                                            <option value="2021">2021</option>
+                                        </select>
+                                    </div>
+                                </li>
+                    </ul>
+                            </form>
+                        <ul class="nav-right">
+                        <li class="user-profile header-notification">
+                            <div class="dropdown-primary dropdown">
+                                <div class="dropdown-toggle" data-toggle="dropdown">
+                                    <span>{{ faculty.name }}</span>
+                                    <i class="feather icon-chevron-down"></i>
+                                </div>
+                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                    <li>
+                                        <a href="#">
+                                            <i class="feather icon-user"></i> Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'logout' %}">
+                                            <i class="feather icon-log-out"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    </div>
+                </div>
+            </nav>
+            <div class="pcoded-main-container">
+                <div class="pcoded-wrapper">
+                    <nav class="pcoded-navbar">
+                         <div class="pcoded-inner-navbar main-menu">
+                            <div class="pcoded-navigatio-lavel">Quick Links</div>
+                            <ul class="pcoded-item pcoded-left-item">
+                                <li class="">
+                                    <a href="#">
+                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
+                                        <span class="pcoded-mtext">My Profile</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="#">
+                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
+                                        <span class="pcoded-mtext">Manage Department</span>
+                                    </a>
+                                </li>
+                                <ul class="pcoded-item pcoded-left-item">
+                                    <li class="pcoded-hasmenu">
+                                        <a href="javascript:void(0)">
+                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
+                                            <span class="pcoded-mtext">View Detaied Feedback</span>
+                                        </a>
+                                        <ul class="pcoded-submenu">
+                                            <li class=" ">
+                                                <a href="{% url 'hod_view_detailed_feedback' %}">
+                                                    <span class="pcoded-mtext">Mid Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="#">
+                                                    <span class="pcoded-mtext">End Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="#">
+                                                    <span class="pcoded-mtext">Program Exit Survey</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <ul class="pcoded-item pcoded-left-item">
+                                    <li class="pcoded-hasmenu">
+                                        <a href="javascript:void(0)">
+                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
+                                            <span class="pcoded-mtext">View Average Feedback</span>
+                                        </a>
+                                        <ul class="pcoded-submenu">
+                                            <li class=" ">
+                                                <a href="{% url 'hod_view_average_feedback' %}">
+                                                    <span class="pcoded-mtext">Mid Semester</span>
+                                                </a>
+                                            </li>
+                                            <li class=" ">
+                                                <a href="#">
+                                                    <span class="pcoded-mtext">End Semester</span>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                                <li class="">
+                                    <a href="#">
+                                        <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
+                                        <span class="pcoded-mtext" data-toggle="modal" data-target="#large-Modal">Publish News
+                                        </span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="{% url 'logout' %}">
+                                        <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
+                                        <span class="pcoded-mtext">Logout</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </nav>
+                    <div class="pcoded-content">
+                        <div class="pcoded-inner-content">
+                            <div class="main-body">
+                                <div class="page-wrapper">
+                                    <div class="page-body">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="page-header">
+                                                    <div class="row align-items-end">
+                                                        <div class="col-lg-8">
+                                                            <div class="page-header-title">
+                                                                <div class="d-inline">
+                                                                    <h4>Manage Department</h4>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-4">
+                                                            <span class="f-right">
+                                                                <a href="{% url 'hod_dashboard' %}">
+                                                                    <i class="feather icon-arrow-left"></i>
+                                                                    Back to Dashboard
+                                                                </a>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            <!-- List view card start -->
+                                    <div class="card">
+                                        <div class="card-block">
+                                            <div class="row">
+                                                <div class="col-lg-12 col-xl-12">
+                                                    <!-- Nav tabs -->
+                                                    <ul class="nav nav-tabs md-tabs tabs-left b-none" role="tablist">
+                                                        <li class="nav-item">
+                                                            <a class="nav-link active" data-toggle="tab" href="#faculties" role="tab" style="font-size: 12pt; width: 180px;">Faculties</a>
+                                                            <div class="slide"></div>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" data-toggle="tab" href="#subjects" role="tab" style="font-size: 12pt; width: 180px;">Subjects</a>
+                                                            <div class="slide"></div>
+                                                        </li>
+                                                    </ul>
+                                                    <!-- Tab panes -->
+                                                    <div class="col-sm-10 col-md-10 col-lg-10 col-xl-10 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
+                                                        <div class="tab-pane active" id="faculties" role="tabpanel">
+                                                            <div class="row">
+                                                                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                                                    <h5>List of all faculties registered in your Department</h5>
+                                                                </div>
+                                                            </div>
+                                                            <div class="table-responsive p-t-20">
+                                                                <table class="table table-hover">
+                                                                    <thead>
+                                                                        <th>#</th>
+                                                                        <th>Name</th>
+                                                                        <th>Email ID</th>
+                                                                        <th>Action</th>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    {% for f in faculties %}
+                                                                        {% ifnotequal f.auth_id request.user %}
+                                                                            <tr row_id="{{ f.id }}">
+                                                                                <th scope="row">
+                                                                                    <div col_name="id">
+                                                                                        {{ forloop.counter }}
+                                                                                    </div>
+                                                                                </th>
+                                                                                <td>
+                                                                                    <div col_name="name" id="name">
+                                                                                        {{ f.name }}
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div col_name="email" id="email">
+                                                                                        {{ f.auth_id.email }}
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <span class="btn_remove">
+                                                                                        <a href="#" class="btn btn-link p-t-0 p-b-0">
+                                                                                            Remove
+                                                                                        </a>
+                                                                                    </span>
+                                                                                </td>
+                                                                            </tr>
+                                                                        {% else %}
+                                                                            <tr row_id="{{ f.id }}">
+                                                                                <th scope="row">
+                                                                                    <div col_name="id">
+                                                                                        {{ forloop.counter }}
+                                                                                    </div>
+                                                                                </th>
+                                                                                <td>
+                                                                                    <div col_name="name" id="name">
+                                                                                        {{ f.name }}
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div col_name="email" id="email">
+                                                                                        {{ f.auth_id.email }}
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <a href="javascript:void(0)" class="btn btn-link p-t-0 p-b-0">
+                                                                                        HOD
+                                                                                    </a>
+                                                                                </td>
+                                                                            </tr>
+                                                                        {% endifnotequal %}
+                                                                    {% endfor %}
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                        <div class="tab-pane" id="subjects" role="tabpanel">
+                                                            <div class="loader-block" style="display: none">
+                                                                <svg id="loader2" viewBox="0 0 100 100">
+                                                                    <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
+                                                                </svg>
+                                                            </div>
+                                                            <div class="subject-data" style="display: block">
+                                                                <div class="row">
+                                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                                                        <h5>List of Subjects of Department</h5>
+                                                                    </div>
+                                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                                                        <button type="button" class="btn btn-primary f-right" data-toggle="modal" data-target="#add-subject-modal">
+                                                                            Add Subjects
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 table-responsive p-t-20">
+                                                                        <table class="table table-hover">
+                                                                            <thead>
+                                                                                <th>#</th>
+                                                                                <th>Subject Name</th>
+                                                                                <th>Subject Code</th>
+                                                                                <th>Semester</th>
+                                                                                <th>Teaching Faculty</th>
+                                                                                <th>Action</th>
+                                                                            </thead>
+                                                                            <tbody>
+                                                                            {% for s in subjects %}
+                                                                                <tr row_id="{{ s.id }}">
+                                                                                    <th scope="row">
+                                                                                        <div col_name="subject_id" id="subject_id">
+                                                                                            {{ forloop.counter }}
+                                                                                        </div>
+                                                                                    </th>
+                                                                                    <td>
+                                                                                        <div class="subject_data" col_name="subject_name" id="subject_name">
+                                                                                            {{ s.name }}
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div class="subject_data" col_name="subject_code" id="subject_code">
+                                                                                            {{ s.code }}
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div class="subject_data" col_name="subject_sem" id="subject_sem">
+                                                                                            {{ s.sem }}
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <div class="subject_data" col_name="teaching_faculties" id="teaching_faculties" is_edited="0">
+                                                                                            {% for i in s.teaching_faculty %}
+                                                                                                <span class="faculty" fac_id="{{ i.faculty_id.id }}" fac_email="{{ i.faculty_id.auth_id.email }}">
+                                                                                                    {{ i.faculty_id.name }}
+                                                                                                </span>
+                                                                                                <br/>
+                                                                                            {% endfor %}
+                                                                                        </div>
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <span class="btn_subject_edit">
+                                                                                            <a href="#" class="btn btn-link p-0">Edit</a> |
+                                                                                        </span>
+                                                                                        <span class="btn_subject_remove">
+                                                                                            <a href="#" class="btn btn-link p-0">Remove</a>
+                                                                                        </span>
+                                                                                        <span class="btn_subject_save">
+                                                                                            <a href="#" class="btn btn-link p-0">Save</a> |
+                                                                                        </span>
+                                                                                        <span class="btn_subject_cancel">
+                                                                                            <a href="#" class="btn btn-link p-0">Cancel</a>
+                                                                                        </span>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            {% endfor %}
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            </div>
+
+                                    </div>
+                                            <!-- List view card end -->
+                                            </div>
+                                    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Required Jquery -->
+    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
+    <!-- jquery slimscroll js -->
+    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
+    <!-- modernizr js -->
+    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+
+
+    <!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+
+    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
+    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
+    <!-- custom js -->
+{#    <script src="{% static 'assets/extra-js/jquery_2.1.4.js' %}"></script>#}
+    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+
+    <!-- Javascript for add subject modal > start -->
+    <script type="text/javascript">
+        var faculty_id = {};
+        var div_content = '';
+        var all_faculty = '<option value="-1" selected disabled>Select Faculty</option>';
+        {% for f in all_faculty %}
+            all_faculty += '<option value="{{ f.id }}">{{ f.name }} ({{ f.dept_id.dept_name }})</option>'
+        {% endfor %}
+
+        var dept_faculty = '<option value="-1" selected disabled>Select Faculty</option>';
+        {% for f in faculties %}
+            dept_faculty += '<option value="{{ f.id }}">{{ f.name }} ({{ f.dept_id.dept_name }})</option>'
+        {% endfor %}
+
+
+        function load_faculty() {
+            var sem_value = $(document).find('#add_subject_semester option:selected').val();
+            var faculty_select_tag = $(document).find('#add_teaching_faculty');
+            if(sem_value < 5) {
+                faculty_select_tag.html(all_faculty);
+            }
+            else {
+                faculty_select_tag.html(dept_faculty);
+            }
+        }
+
+        function build_form() {
+            var div_tag = $(document).find('#add_teaching_faculty-div');
+            var faculty_select_tag = $(document).find('#add_teaching_faculty option:selected');
+            if (typeof faculty_select_tag.val() != 'undefined') {
+                var faculty_value = faculty_select_tag.val();
+                if(faculty_value == "-1") {
+                    if(Object.keys(faculty_id).length == 0) {
+                        alert("Select valid faculty");
+                    }
+                }
+                else {
+                    faculty_id[faculty_value] = faculty_select_tag.text();
+                    console.log(faculty_id);
+                    div_content += '<div class="added_faculty" fac_id="'+faculty_value+'">' + faculty_select_tag.text() + '<a id="delete_added" href="javascript:void(0)" class="btn btn-link p-0 m-l-5"><i class="feather icon-x-circle"></i></a></div>';
+                    div_tag.html(div_content + '<br />');
+                    var btn = $(document).find('#btn-confirm');
+                    btn.removeAttr('disabled');
+                    btn.removeClass('btn-disabled');
+                    btn.addClass('btn-outline-primary');
+                }
+            }
+        }
+
+        $(document).on('click', '#delete_added', function (event) {
+            event.preventDefault();
+            var div = $(this).closest('div');
+            var id_tobe_removed = div.attr('fac_id');
+            delete faculty_id[id_tobe_removed];
+            console.log(faculty_id);
+            div_content = '';
+            if(Object.keys(faculty_id).length > 0) {
+                $.each(faculty_id, function (index, value) {
+                    div_content += '<div class="added_faculty" fac_id="'+index+'">' + value + '<a id="delete_added" href="javascript:void(0)" class="btn btn-link p-0 m-l-5"><i class="feather icon-x-circle"></i></a></div>';
+                });
+            }
+            else {
+                var faculty_select_template = '<select name="add_teaching_faculty" id="add_teaching_faculty" class="form-control" onblur="build_form()" required>';
+                var sem_value = $(document).find('#add_subject_semester option:selected').val();
+                if(sem_value < 5) {
+                    faculty_select_template += all_faculty;
+                }
+                else {
+                    faculty_select_template += dept_faculty;
+                }
+                faculty_select_template += '</select>';
+                var div_tag = $(document).find('#add_teaching_faculty-div');
+                div_tag.html(faculty_select_template);
+                var btn = $(document).find('#btn-confirm');
+                btn.attr('disabled', 'true');
+                btn.addClass('btn-disabled');
+                btn.removeClass('btn-outline-primary');
+            }
+            div.remove();
+        });
+
+
+        $(document).on('click', '#add_new_select_faculty', function (event) {
+            event.preventDefault();
+            var faculty_select_template = '<select name="add_teaching_faculty" id="add_teaching_faculty" class="form-control" onblur="build_form()" required>';
+            var div_tag = $(document).find('#add_teaching_faculty-div');
+            var faculty_select_tag = $(document).find('#add_teaching_faculty option:selected');
+            if (typeof faculty_select_tag.val() == 'undefined') {
+                var sem_value = $(document).find('#add_subject_semester option:selected').val();
+                if(sem_value < 5) {
+                    faculty_select_template += all_faculty;
+                }
+                else {
+                    faculty_select_template += dept_faculty;
+                }
+                faculty_select_template += '</select>';
+                div_tag.html(div_content + '<br />' + faculty_select_template);
+            }
+            else {
+                var faculty_value = faculty_select_tag.val();
+                if(faculty_value == "-1") {
+                    alert("Select valid Faculty");
+                }
+                else{
+                    faculty_id[faculty_value] = faculty_select_tag.text();
+                    console.log(faculty_id);
+                    div_content += '<div class="added_faculty" fac_id="'+faculty_value+'">' + faculty_select_tag.text() + '<a id="delete_added" href="javascript:void(0)" class="btn btn-link p-0 m-l-5"><i class="feather icon-x-circle"></i></a></div>';
+                    var sem_value = $(document).find('#add_subject_semester option:selected').val();
+                    if(sem_value < 5) {
+                        faculty_select_template += all_faculty;
+                    }
+                    else {
+                        faculty_select_template += dept_faculty;
+                    }
+                    faculty_select_template += '</select>';
+                    div_tag.html(div_content + '<br />' + faculty_select_template);
+                    var btn = $(document).find('#btn-confirm');
+                    btn.removeAttr('disabled');
+                    btn.removeClass('btn-disabled');
+                    btn.addClass('btn-outline-primary');
+                }
+            }
+        });
+
+        // click event for add subject button with ajax.
+        $(document).on('click', '#btn-confirm', function (event) {
+            event.preventDefault();
+            var data = {
+                type: 'add',
+                subject_name: $(document).find('#add_Subject_Name').val(),
+                subject_code: $(document).find('#add_Subject_Code').val(),
+                subject_semester: $(document).find('#add_subject_semester option:selected').val(),
+                teaching_faculty: faculty_id
+            };
+            console.log("Adding Subject");
+            console.log(data);
+            $.ajax({
+                type:"GET",
+                url:"{{ base_url }}" + "modify-subjects/",
+                data: {
+                    info: JSON.stringify(data, null, 2),
+                },
+
+                success: function (msg) {
+                    console.log(msg);
+                    var response = JSON.parse(msg);
+                    swal({
+                        title: "Subject Added successfully!",
+                        text: response['subject'] + " has been added successfully.",
+                        type: "success",
+                    });
+                },
+                error: function (msg) {
+                    console.log(msg);
+                    var response = JSON.parse(msg.responseText);
+                    swal({
+                        title: "Error!",
+                        text: response['error'],
+                        type: "error",
+                    });
+                },
+            });
+        });
+    </script>
+    <!-- Javascript for add subject modal > End -->
+
+    <script type="text/javascript">
+        var btn_add = document.getElementById('btn_add_new_faculty');
+        function verify_select() {
+            var selected_value = document.getElementById('faculty_select').value.toString();
+            var tag = document.getElementById('Error_faculty_select');
+            var div_tag = document.getElementById('faculty_select-div');
+            if(selected_value === '-1') {
+                tag.innerHTML = "Select Valid Faculty."
+                tag.style.display = "block";
+                div_tag.classList.add("has-danger");
+                document.getElementById('faculty_select').classList.add('form-control-danger');
+                return false;
+            }
+            else {
+                tag.style.display = "none";
+                div_tag.classList.remove("has-danger");
+                document.getElementById('faculty_select').classList.remove('form-control-danger');
+                btn_add.classList.remove('btn-disabled');
+                btn_add.classList.add('btn-outline-primary');
+                btn_add.disabled = false;
+                return true;
+            }
+        }
+
+        function activate_btn() {
+            if(!verify_select()) {
+                btn_add.classList.add('btn-disabled');
+                btn_add.classList.remove('btn-outline-primary');
+                btn_add.disabled = true;
+            }
+        }
+    </script>
+
+    <script type="text/javascript">
+        {% if success %}
+            swal({
+                title: "{{ success }}",
+                type: "success",
+            });
+        {% endif %}
+
+        {% if error %}
+            swal({
+                title: "Error",
+                text: "{{ error }}",
+                dangerMode: true,
+                type: "error",
+            });
+        {% endif %}
+    </script>
+
+    <!-- Javascripts for Subjects > Start -->
+    <script type="text/javascript">
+        $(document).find('.btn_subject_save').hide();
+        $(document).find('.btn_subject_cancel').hide();
+
+        // Click event for edit button.
+        $(document).on('click', '.btn_subject_edit', function (event) {
+            event.preventDefault();
+            var tbl_row = $(this).closest('tr');
+            tbl_row.find('.btn_subject_edit').hide();
+            tbl_row.find('.btn_subject_remove').hide();
+            tbl_row.find('.btn_subject_save').show();
+            tbl_row.find('.btn_subject_cancel').show();
+            var row_id = tbl_row.attr('row_id');
+            tbl_row.find('.subject_data').each(function (index, val) {
+                $(this).attr('original_entry', $(this).html().toString().trim());
+            });
+            tbl_row.find('.subject_data').each(function (index, val) {
+                if($(this).attr('col_name') == "subject_name") {
+                    var value = $(this).html().toString().trim();
+                    var name_input = '<input class="form-control" id="subject_name" name="subject_name" value="'+value+'"></input>'
+                    $(this).html(name_input);
+                }
+                else if($(this).attr('col_name') == "subject_code") {
+                    var value = $(this).html().toString().trim();
+                    var code_input = '<input class="form-control" id="subject_code" name="subject_code" value="'+value+'"></input>'
+                    $(this).html(code_input);
+                }
+                else if($(this).attr('col_name') == "subject_sem") {
+                    var value = $(this).html().toString().trim();
+                    var sem_select = '<select class="form-control" name="sem" id="sem">';
+                    var i;
+                    for(i=1;i<9;++i){
+                        if(i == value){
+                            sem_select += '<option value="'+i.toString()+'" selected>Sem '+i.toString()+'</option>';
+                        }
+                        else {
+                            sem_select += '<option value="'+i.toString()+'">Sem '+i.toString()+'</option>';
+                        }
+                    }
+                    sem_select += '</select>';
+                    $(this).html(sem_select);
+                }
+                else if($(this).attr('col_name') == "teaching_faculties") {
+                    var spans = $(this).find('.faculty');
+                    var faculty_id = {};
+
+                    // creating object for displaying in modal
+                    spans.each(function (ind, val) {
+                        faculty_id[$(this).attr('fac_id')] = {
+                            id:$(this).attr('fac_id'),
+                            name:$(this).html().toString().trim(),
+                            email:$(this).attr('fac_email')
+                        };
+                    });
+
+                    // taking subject data from table to display into modal
+                    var sub_sem = tbl_row.find('#subject_sem').attr('original_entry');
+                    var sub_name = tbl_row.find('#subject_name').attr('original_entry');
+                    var sub_code = tbl_row.find('#subject_code').attr('original_entry');
+
+                    $(this).html('<button class="btn btn-link p-0" data-toggle="modal" data-target="#change-faculty-modal">Change Faculties</button>')
+
+                    // creating instance of table body of modal.
+                    var table_body = $('#teaching_faculty_table tbody');
+
+                    // Creating select tag for adding new teaching faculty according to subject semester.
+                    // if subject is taken in first 4 semester than all the faculty will be displayed.
+                    // if subject is being taken after 4th semester than only department faculties will be displayed.
+                    table_body.html('');
+                    $(document).find('#change_subject').html(sub_name);
+                    var faculty_select_options = '<option value="-1" selected disabled>Select Teaching Faculty</option>';
+                    if(parseInt(sub_sem) < 5) {
+                        {% for f in all_faculty %}
+                            var tmp_id = '{{ f.id }}' || '-1';
+                            if(parseInt(tmp_id) in faculty_id){ }
+                            else {
+                                faculty_select_options += '<option value="{{ f.id }}" fac_name="{{ f.name }}" fac_email="{{ f.auth_id.email }}">{{ f.name }} ({{ f.dept_id.dept_name }})</option>';
+                            }
+                        {% endfor %}
+                    }
+                    else {
+                        {% for f in faculties %}
+                            var tmp_id = '{{ f.id }}' || '-1';
+                            if(parseInt(tmp_id) in faculty_id){ }
+                            else {
+                                faculty_select_options += '<option value="{{ f.id }}" fac_name="{{ f.name }}" fac_email="{{ f.auth_id.email }}">{{ f.name }} ({{ f.dept_id.dept_name }})</option>';
+                            }
+                        {% endfor %}
+                    }
+                    $(document).find('#faculty_select').html(faculty_select_options);
+
+                    // Forming Table data.
+                    var tr_data = '';
+                    var count = 1;
+                    $.each(faculty_id, function (index, value) {
+                        tr_data += '<tr teaching_faculty_id='+value['id']+'>';
+                        tr_data += '<td><div scope="row" col_name="id">'+ count++ +'</div></td>';
+                        tr_data += '<td><div class="faculty_data" col_name="teaching_faculty_name">'+value['name']+'</div></td>';
+                        tr_data += '<td><div class="faculty_data" col_name="teaching_faculty_email">'+value['email']+'</div></td>';
+                        tr_data += '<td><span class="btn_remove_teaching_faculty"><a href="#" class="btn btn-link p-t-0 p-b-0"><i class="feather icon-trash-2"></i></a></span></td>';
+                        tr_data += '</tr>';
+                    });
+                    table_body.append(tr_data);
+
+                    // Click event of add more faculty button
+                    $(document).on('click', '#btn_add_new_teaching_faculty', function (event) {
+                        event.preventDefault();
+                        var div_tag = $(document).find('#add_new_teaching_faculty-div');
+                        div_tag.css('display', 'block');
+                    });
+
+                    //click event of that delete icon in table.
+                    $(document).on('click', '.btn_remove_teaching_faculty', function (event) {
+                        event.preventDefault();
+                        var modal_tbl_row = $(this).closest('tr');
+                        var row_faculty_id = modal_tbl_row.attr('teaching_faculty_id');
+                        delete faculty_id[row_faculty_id];
+                        //faculty_id = faculty_id.filter(item => item !== row_faculty_id);
+                        console.log(faculty_id);
+                        modal_tbl_row.remove();
+                    });
+
+                    // click of add button after selecting faculty.
+                    $(document).on('click', '#btn_add_new_faculty', function (event) {
+                        event.preventDefault();
+                        var select_tag = $(document).find('#faculty_select-div option:selected');
+                        faculty_id[select_tag.val()] = {
+                            id:select_tag.val(),
+                            name:select_tag.attr('fac_name'),
+                            email:select_tag.attr('fac_email')
+                        };
+                        tr_data = '';
+                        tr_data += '<tr teaching_faculty_id='+select_tag.val()+'>';
+                        tr_data += '<td><div scope="row" col_name="id">'+ count++ +'</div></td>';
+                        tr_data += '<td><div class="faculty_data" col_name="teaching_faculty_name">'+select_tag.attr('fac_name')+'</div></td>';
+                        tr_data += '<td><div class="faculty_data" col_name="teaching_faculty_email">'+select_tag.attr('fac_email')+'</div></td>';
+                        tr_data += '<td><span class="btn_remove_teaching_faculty"><a href="#" class="btn btn-link p-t-0 p-b-0"><i class="feather icon-trash-2"></i></a></span></td>';
+                        tr_data += '</tr>';
+                        table_body.append(tr_data);
+                        var div_tag = $(document).find('#add_new_teaching_faculty-div');
+                        div_tag.css('display', 'none');
+                    });
+
+                    // click event of cancel icon
+                    $(document).on('click', '#btn_icon_cancel', function (event) {
+                        event.preventDefault();
+                        $(document).find('#add_new_teaching_faculty-div').css('display', 'none');
+                    });
+
+                    // click event of save changes button
+                    $(document).on('click', '#btn_save_changes', function (event) {
+                        event.preventDefault();
+                        var div_tag = tbl_row.find('#teaching_faculties');
+                        div_tag.attr('is_edited', '1');
+                        var span_html = '';
+                        $.each(faculty_id, function (id, obj) {
+                            span_html += '<span class="faculty" fac_id="'+obj['id']+'" fac_email="'+obj['email']+'">'+obj['name']+'</span><br/>';
+                        });
+                        div_tag.html(span_html);
+                        $("#change-faculty-modal").modal("hide");
+                    });
+
+                    // click event for close button
+                    $(document).on('click', '#btn_close', function (event) {
+                        event.preventDefault();
+                        var div_tag = tbl_row.find('#teaching_faculties');
+                        div_tag.html(div_tag.attr('original_entry'));
+                        div_tag.attr('is_edited', '1');
+                        $("#change-faculty-modal").modal("hide");
+                    });
+                }
+
+            });
+        });
+
+        //click event for cancel button.
+        $(document).on('click', '.btn_subject_cancel', function (event) {
+            event.preventDefault();
+            var tbl_row = $(this).closest('tr');
+            tbl_row.find('.btn_subject_edit').show();
+            tbl_row.find('.btn_subject_remove').show();
+            tbl_row.find('.btn_subject_save').hide();
+            tbl_row.find('.btn_subject_cancel').hide();
+            var row_id = tbl_row.attr('row_id');
+            tbl_row.find('.subject_data').each(function (index, val) {
+                $(this).html($(this).attr('original_entry'));
+            });
+        });
+
+        // click event for save button
+        $(document).on('click', '.btn_subject_save', function (event) {
+            event.preventDefault();
+            var tbl_row = $(this).closest('tr');
+            tbl_row.find('.btn_subject_edit').show();
+            tbl_row.find('.btn_subject_remove').show();
+            tbl_row.find('.btn_subject_save').hide();
+            tbl_row.find('.btn_subject_cancel').hide();
+            var row_id = tbl_row.attr('row_id');
+
+            //checking whether teaching faculties has been changed or not
+            var teaching_faculties_div = tbl_row.find('[id=teaching_faculties]');
+            if(teaching_faculties_div.attr('is_edited') == "0") {
+                teaching_faculties_div.html(teaching_faculties_div.attr('original_entry'));
+            }
+            var data = {};
+            data['subject_id'] = row_id;
+            tbl_row.find('.subject_data').each(function (index, value) {
+                if($(this).attr('col_name') == 'subject_name') {
+                    data['subject_name'] = $(this).find('[name=subject_name]').val();
+                    $(this).html(data['subject_name']);
+                }
+                else if($(this).attr('col_name') == 'subject_code') {
+                    data['subject_code'] = $(this).find('[name=subject_code]').val();
+                    $(this).html(data['subject_code']);
+                }
+                else if($(this).attr('col_name') == 'subject_sem') {
+                    data['subject_semester'] = $(this).find('[name=sem] option:selected').val();
+                    $(this).html(data['subject_semester']);
+                }
+                else if($(this).attr('col_name') == 'teaching_faculties') {
+                    var spans = $(this).find('.faculty');
+                    var faculty_id = {};
+
+                    // creating object for displaying in modal
+                    spans.each(function (ind, val) {
+                        faculty_id[ind] = {
+                            id:$(this).attr('fac_id'),
+                            name:$(this).html().toString().trim(),
+                            email:$(this).attr('fac_email')
+                        };
+                    });
+                    data['teaching_faculty'] = faculty_id;
+                }
+                data['type'] = 'update';
+            });
+            console.log(data);
+            swal({
+                    title: "Are you sure?",
+                    text: "Changes will be reflected.",
+                    type: "warning",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                }, function () {
+                    $.ajax({
+                        type:"GET",
+                        url:"{{ base_url }}" + "modify-subjects/",
+                        data: {
+                            info: JSON.stringify(data, null, 2),
+                        },
+
+                        success: function (msg) {
+                            var response = JSON.parse(msg);
+                            swal({
+                                title: "Changes saved successfully!",
+                                text: response['subject'] + " has been updated successfully.",
+                                type: "success",
+                            });
+                        },
+                        error: function (msg) {
+                            var response = JSON.parse(msg.responseText);
+                            swal({
+                                title: "Error!",
+                                text: response['error'],
+                                type: "error",
+                            });
+                        },
+                    });
+                });
+        });
+
+        // click event for remove button
+        $(document).on('click', '.btn_subject_remove', function (event) {
+            event.preventDefault();
+            var tbl_row = $(this).closest('tr');
+            var row_id = tbl_row.attr('row_id');
+            var sub_name = tbl_row.find('#subject_name').html().toString().trim();
+            var data = {
+                subject_id: row_id,
+                type: 'delete'
+            }
+            swal({
+                    title: "Are you sure?",
+                    text: sub_name + " Will be deleted.",
+                    type: "warning",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                }, function () {
+                    $.ajax({
+                        type:"GET",
+                        url:"{{ base_url }}" + "modify-subjects/",
+                        data: {
+                            info: JSON.stringify(data, null, 2),
+                        },
+
+                        success: function (msg) {
+                            var response = JSON.parse(msg);
+                            swal({
+                                title: "Subject Deleted!",
+                                text: response['subject'] + " has been removed successfully.",
+                                type: "success",
+                            });
+                            tbl_row.remove();
+                        },
+                        error: function (msg) {
+                            var response = JSON.parse(msg.responseText);
+                            swal({
+                                title: "Error!",
+                                text: response['error'],
+                                type: "error",
+                            });
+                        },
+                    });
+                });
+        });
+    </script>
+    <!-- Javascripts for Subjects > End -->
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(document).on('click', '.btn_remove', function (event) {
+                event.preventDefault();
+                var tbl_row = $(this).closest('tr');
+                var row_id = tbl_row.attr('row_id');
+                swal({
+                    title: "Are you sure?",
+                    text: tbl_row.find('#name').html().trimRight() + " Will be removed from your department.",
+                    type: "warning",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                }, function () {
+                    $.ajax({
+                        type:"GET",
+                        url:"{{ base_url }}"+"remove-faculty/",
+                        data:{
+                            fac_id:row_id,
+                        },
+
+                        success: function (msg) {
+                            var response = JSON.parse(msg);
+                            swal({
+                                title: "Removed successfully!",
+                                text: response['removed_fac_name'] + " has been removed successfully.",
+                                type: "success",
+                            });
+                            tbl_row.remove();
+                        },
+                        error: function (msg) {
+                            var response = JSON.parse(msg.responseText);
+                            swal({
+                                title: "Error!",
+                                text: response['error'],
+                                type: "error",
+                            });
+                        },
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

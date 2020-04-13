@@ -316,13 +316,16 @@
                                                                <div class="col-sm-6">
                                                                    <select class="form-control" id="subject" name="subject">
                                                                        <option value="-1" selected disabled>Select Subject</option>
-                                                                       <option value="opt2">Computer Network</option>
-                                                                       <option value="opt3">Compiler Design</option>
-                                                                       <option value="opt4">Theory Of Computation</option>
-                                                                       <option value="opt5">Cyber Security</option>
-                                                                       <option value="opt6">Mathematics 1</option>
-                                                                       <option value="opt7">Mathematics 2</option>
-                                                                       <option value="opt8">Mathematics 3</option>
+                                                                       {% for s in subjects %}
+                                                                           <option value="{{ s.subject_id.id }}">{{ s.subject_id.subject_name }} ({{ s.subject_id.subject_code }})</option>
+                                                                       {% endfor %}
+{#                                                                       <option value="opt2">Computer Network</option>#}
+{#                                                                       <option value="opt3">Compiler Design</option>#}
+{#                                                                       <option value="opt4">Theory Of Computation</option>#}
+{#                                                                       <option value="opt5">Cyber Security</option>#}
+{#                                                                       <option value="opt6">Mathematics 1</option>#}
+{#                                                                       <option value="opt7">Mathematics 2</option>#}
+{#                                                                       <option value="opt8">Mathematics 3</option>#}
                                                                    </select>
                                                                </div>
                                                                <div class="col-sm-4">
