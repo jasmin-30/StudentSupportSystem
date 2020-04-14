@@ -19,6 +19,7 @@ from StudentSupport.models import *
 
 
 # Create your views here.
+
 def EditableTableView(request):
     fac_qs = Students.objects.all()
     dept_qs = Departments.objects.all()
