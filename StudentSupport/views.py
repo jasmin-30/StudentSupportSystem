@@ -470,9 +470,46 @@ def StudentProfile(request):
 
 # TODO : Optimize it.
 def StudentMidSemFeedbackView(request):
+    context = {
+        "base_url": st.BASE_URL,
+    }
     if request.user.is_authenticated:
         std_obj = Students.objects.get(auth_id=request.session["User"])
         dept_id = std_obj.dept_id
+        context["name"] = str(std_obj.first_name) + " " + str(std_obj.last_name)
+
+        current_sem = std_obj.semester
+        subject = []
+        for i in range(1, current_sem+1):
+            tmp = {}
+            subject_qs = Subjects.objects.filter(dept_id=dept_id, semester=i)
+            if(subject_qs.count() == 0):
+                tmp['status'] = 0
+            else:
+                tmp['status'] = 1
+                for j in subject_qs:
+                    tmp['id'] = j.id
+                    tmp['name'] = j.subject_name
+                    tmp['code'] = j.subject_code
+
+                    teaching_faculty_qs = Subject_to_Faculty_Mapping.objects.filter(subject_id=j)
+                    faculties = []
+                    for k in teaching_faculty_qs:
+                        tmp1 = {}
+                        tmp1['fac_id'] = k.faculty_id.id
+                        tmp1['fac_name'] = k.faculty_id.name
+                        faculties.append(tmp1)
+
+                    tmp['teaching_faculties'] = faculties
+
+                    try:
+                        tmp['mid_sem_obj'] = Student_Feedback_Status.objects.get(student_id=std_obj, subject_id=j)
+                    except:
+                        tmp['mid_sem_obj'] = None
+
+            subject.append(tmp)
+
+
 
         sem1_subqs = Subjects.objects.filter(dept_id=dept_id, semester=1)
         sem2_subqs = Subjects.objects.filter(dept_id=dept_id, semester=2)

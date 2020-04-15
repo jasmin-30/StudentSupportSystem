@@ -526,6 +526,9 @@ class News(models.Model):
 class Student_Feedback_Status(models.Model):
     student_id = models.ForeignKey(Students, to_field='enrollment_no', on_delete=models.CASCADE)
     subject_id = models.ForeignKey(Subjects, to_field='id', on_delete=models.CASCADE)
-    is_given = models.BooleanField(default=False)
-    end_sem_is_given = models.BooleanField(default=False)
+    faculty_id = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
+    # is_given = models.BooleanField(default=False)
+    # end_sem_is_given = models.BooleanField(default=False)
+    mid_sem_feedback = models.ForeignKey(Mid_Sem_Feedback_Answers, to_field='id', on_delete=models.CASCADE, null=True)
+    end_sem_feedback = models.ForeignKey(End_Sem_Feedback_Answers, to_field='id', on_delete=models.CASCADE, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
