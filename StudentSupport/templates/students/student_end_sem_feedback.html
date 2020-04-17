@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Student Dashboard</title>
+    <title>End Semester Feedback Section - Student</title>
     <!-- Meta -->
     <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
     <!-- Favicon icon -->
@@ -14,157 +14,34 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/font-awesome/css/font-awesome.min.css' %}">
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+
+    <!-- Star Ratings -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/star_ratings/stars.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/star_ratings/display_rating.css' %}">
+
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
 
     <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
-
-    <script type="text/javascript">
-        function GetFacultyName(id) {
-
-            $.ajax({
-                type: "GET",
-                url: "http://127.0.0.1:8000/getFacultyName/",
-                data : {"sub_id_gf": id},
-
-                success: function (result) {
-                    var json = JSON.parse(result);
-                    {#alert(json["id"]);#}
-                    document.getElementById('exampleModalLabel').innerHTML = json["name"];
-                    document.getElementById('subject_id').value = id;
-                    document.getElementById('faculty_id').value = json["id"];
-                },
-                error: function () {
-                    alert('error');
-                }
-            });
-        }
-
-        function GetFacultyName2(id) {
-            $.ajax({
-                type: "GET",
-                url: "http://127.0.0.1:8000/getFacultyName/",
-                data : {"sub_id_gf": id},
-
-                success: function (result) {
-                    var json = JSON.parse(result);
-                    {#alert(json["id"]);#}
-                    document.getElementById('exampleModal2Label').innerHTML = json["name"];
-                },
-                error: function () {
-                    alert('error in getting faculty');
-                }
-            });
-        }
-
-        function check_status(id) {
-            var res = "";
-            $.ajax({
-                type: "GET",
-                async: false,
-                url: "http://127.0.0.1:8000/checkStatusforEndSem/",
-                data : {"sub_id": id},
-
-                success: function (result) {
-                    var json = JSON.parse(result);
-                    {#alert(json['v']);#}
-                    res = json['v'];
-                },
-                error: function () {
-                    alert('error');
-                }
-            });
-            return res
-        }
-
-        function GetFeedback(id) {
-            $.ajax({
-                type: "GET",
-                async: false,
-                url: "http://127.0.0.1:8000/getFeedbackforEndSem/",
-                data : {"subject_id": id},
-
-                success: function (result) {
-                    {#alert(result);#}
-                    var json = JSON.parse(result);
-                    document.getElementById("ans_1").innerHTML = json['a1'];
-                    document.getElementById("ans_2").innerHTML = json['a2'];
-                    document.getElementById("ans_3").innerHTML = json['a3'];
-                    document.getElementById("ans_4").innerHTML = json['a4'];
-                    document.getElementById("ans_5").innerHTML = json['a5'];
-                    document.getElementById("ans_6").innerHTML = json['a6'];
-                    document.getElementById("ans_7").innerHTML = json['a7'];
-                    document.getElementById("ans_8").innerHTML = json['a8'];
-                    document.getElementById("ans_9").innerHTML = json['a9'];
-                    document.getElementById("ans_10").innerHTML = json['a10'];
-                    document.getElementById("ans_11").innerHTML = json['remarks'];
-                },
-                error: function () {
-                    alert('error');
-                }
-            });
-        }
-
-    </script>
-
+    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/modal wizard/jquery.modal-wizard.js' %}"></script>
     <style type="text/css">
         #card-rounded {
             border-radius: 25px;
-            margin-bottom: 15px;
-        }
-        /* Style the form */
-        #regForm {
-          background-color: #ffffff;
-          margin: 100px auto;
-          padding: 40px;
-          width: 70%;
-          min-width: 300px;
         }
 
-        /* Style the input fields */
-        input {
-          padding: 10px;
-          width: 100%;
-          font-size: 17px;
-          font-family: Raleway;
-          border: 1px solid #aaaaaa;
+        .expandable {
+            cursor: pointer;
         }
 
-        /* Mark input boxes that gets an error on validation: */
-        input.invalid {
-          background-color: #ffdddd;
-        }
-
-        /* Hide all steps by default: */
-        .tab {
-          display: none;
-        }
-
-        /* Make circles that indicate the steps of the form: */
-        .step {
-          height: 15px;
-          width: 15px;
-          margin: 0 2px;
-          background-color: #bbbbbb;
-          border: none;
-          border-radius: 50%;
-          display: inline-block;
-          opacity: 0.5;
-        }
-
-        /* Mark the active step: */
-        .step.active {
-          opacity: 1;
-        }
-
-        /* Mark the steps that are finished and valid: */
-        .step.finish {
-          background-color: #4CAF50;
-        }
     </style>
+
 </head>
 
 <body>
@@ -207,114 +84,129 @@
     </div>
     <!-- Pre-loader end -->
 
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-             <div class="modal-content" style="width: 122%">
-                 <div class="modal-header">
-                     <h5 class="modal-title" id="exampleModalLabel"></h5> <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-                 </div>
-                 <div class="modal-body">
-                    <form id="regForm" method="post" action="{% url 'student_end_sem_feedback' %}">
+    <!-- Temporary modal -->
+    <div class="modal fade" id="feedback-modal" role="dialog" aria-labelledby="ModalLabel" data-current-step="1" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="ModalLabel">
+                        Feedback Form
+                    </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'student_feedback_section' type='end-sem' %}" method="post">
                         {% csrf_token %}
-                        <!-- One "tab" for each step in the form: -->
-                        {% for i in questions %}
-                            <div class="tab" style="margin-top: -15%; margin-bottom: 15%;">
-                              <div class="col-md-12"><p style="font-size: 20px;">{{ i.question_text }}</p></div>
-                              <div class="col-md-12">
-                                <label class="radio-inline" style="display: inline-flex;font-size: 20px; margin-left:6px; margin-right: 70px;">
-                                  <input type="radio" name = "optradio_{{ forloop.counter }}" style="margin: 3px;" value="1" required>1
-                                </label>
-                                <label class="radio-inline" style="display: inline-flex;font-size: 20px; margin-right: 70px;">
-                                  <input type="radio" name = "optradio_{{ forloop.counter }}" style="margin: 3px;" value="2" required>2
-                                </label>
-                                <label class="radio-inline" style="display: inline-flex;font-size: 20px; margin-right: 70px;">
-                                  <input type="radio" name = "optradio_{{ forloop.counter }}" style="margin: 3px;" value="3" required>3
-                                </label>
-                                <label class="radio-inline" style="display: inline-flex;font-size: 20px; margin-right: 70px;">
-                                  <input type="radio" name = "optradio_{{ forloop.counter }}" style="margin: 3px;" value="4" required>4
-                                </label>
-                                <label class="radio-inline" style="display: inline-flex;font-size: 20px; margin-right: 70px;">
-                                  <input type="radio" name = "optradio_{{ forloop.counter }}" style="margin: 3px;" value="5" required>5
-                                </label>
-                              </div>
-                            </div>
+                        <input type="hidden" name="subject_id" id="subject_id" />
+                        <input type="hidden" name="faculty_id" id="faculty_id" />
+                        {% for q in questions %}
+                            <fieldset data-step="{{ forloop.counter }}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p class="m-b-0" style="font-size: 15px;">Subject Name : <b class="feedback_subject_name"></b></p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <p class="m-b-0" style="font-size: 15px;">Faculty Name : <b class="feedback_faculty_name"></b></p>
+                                    <p class="m-b-0" style="font-size: 15px;">Step {{ forloop.counter }} of {{ remark }}</p>
+                                </div>
+                                <hr>
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <label class="col-form-label">{{ q.question_text }}</label>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="stars">
+                                            <input class="star star-5" id="star-5{{ q.id }}" type="radio" value="5" name="rating_{{ forloop.counter }}" required />
+                                            <label class="star star-5" for="star-5{{ q.id }}"></label>
+                                            <input class="star star-4" id="star-4{{ q.id }}" type="radio" value="4" name="rating_{{ forloop.counter }}" required />
+                                            <label class="star star-4" for="star-4{{ q.id }}"></label>
+                                            <input class="star star-3" id="star-3{{ q.id }}" type="radio" value="3" name="rating_{{ forloop.counter }}" required />
+                                            <label class="star star-3" for="star-3{{ q.id }}"></label>
+                                            <input class="star star-2" id="star-2{{ q.id }}" type="radio" value="2" name="rating_{{ forloop.counter }}" required />
+                                            <label class="star star-2" for="star-2{{ q.id }}"></label>
+                                            <input class="star star-1" id="star-1{{ q.id }}" type="radio" value="1" name="rating_{{ forloop.counter }}" required />
+                                            <label class="star star-1" for="star-1{{ q.id }}"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </fieldset>
                         {% endfor %}
-
-                        <div class="tab" style="margin-top: -15%; margin-bottom: 15%;">
-                          <div class="col-md-12"><p style="font-size: 20px;">Remarks: </p></div>
-                          <div class="col-md-12">
-                            <textarea id="remarks" name="remarks" placeholder="Enter"></textarea>
-                          </div>
-                        </div>
-
-                        <div style="overflow:auto;">
-                          <div style="float:right;">
-                            <button type="button" id="prevBtn" onclick="nextPrev(-1)" class="btn btn-primary">Previous</button>
-                            <button type="button" id="nextBtn" onclick="nextPrev(1)" class="btn btn-primary">Next</button>
-                          </div>
-                        </div>
-
-                        <!-- Circles which indicates the steps of the form: -->
-                        <div style="text-align: center;">
-                            <div style="text-align:center;margin-top:40px; margin-bottom: -50px;display: inline-flex;">
-                              {% for i in questions %}
-                                  <span class="step"></span>
-                              {% endfor %}
+                        <fieldset data-step="{{ remark }}">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="m-b-0" style="font-size: 15px;">Subject Name : <b class="feedback_subject_name"></b></p>
                             </div>
-                            <div style="text-align:center;margin-top:40px; margin-bottom: -50px;display:inline-flex; margin-left: -5px;">
-                                  <span class="step"></span>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <p class="m-b-0" style="font-size: 15px;">Faculty Name : <b class="feedback_faculty_name"></b></p>
+                                <p class="m-b-0" style="font-size: 15px;">Step {{ remark }} of {{ remark }}</p>
                             </div>
-                        </div>
+                            <hr>
+                            <div class="form-group row">
+                                <div class="col-sm-12">
+                                    <label class="col-form-label">Remarks : </label>
+                                </div>
+                                <div class="col-sm-12">
+                                    <textarea class="form-control" id="remark" name="remark" rows="3"></textarea>
+                                </div>
+                            </div>
+                        </fieldset>
 
-                        <input type="hidden" id="subject_id" name="subject_id">
-                        <input type="hidden" id="faculty_id" name="faculty_id">
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-step-to="prev">
+                                Previous
+                            </button>
+                            <button type="button" class="btn btn-success" data-step-to="next">
+                                Next
+                            </button>
+                            <button type="submit" class="btn btn-info">
+                                Submit
+                            </button>
+                        </div>
                     </form>
-
-                 </div>
-             </div>
-         </div>
-     </div>
-
-    <!-- View Feedback Modal -->
-    <div class="modal fade" id="exampleModal2" tabindex="-1" role="dialog" aria-labelledby="exampleModal2Label" aria-hidden="true">
-         <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-             <div class="modal-content" style="width: 122%">
-                 <div class="modal-header">
-                     <h5 class="modal-title" id="exampleModal2Label"></h5> <button type="button" class="close" data-dismiss="modal" aria-label="Close"> <span aria-hidden="true">&times;</span> </button>
-                 </div>
-                 <div class="modal-body" id="viewfeedback_tbl">
-                     <div class="col-md-12" style="margin-top: 2%;">
-                         <table class="table table-hover">
-                          <thead>
-                            <tr>
-                              <th scope="col">#</th>
-                              <th scope="col">Fields</th>
-                              <th scope="col">Feedback Given</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for i in questions %}
-                                <tr>
-                                  <th scope="row">{{ forloop.counter }}</th>
-                                  <td>{{ i.question_text }}</td>
-                                  <td id="ans_{{ forloop.counter }}"></td>
-                                </tr>
-                            {% endfor %}
-                            <tr>
-                              <th scope="row">11</th>
-                              <td>Remarks</td>
-                              <td id="ans_11"></td>
-                            </tr>
-                          </tbody>
-                        </table>
-                     </div>
-
-                 </div>
-             </div>
-         </div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <!-- View Feedback Modal -->
+    <div class="modal fade" id="view-feedback-modal" aria-labelledby="ReviewFeedback" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="ReviewFeedback">Review Your Feedback</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex justify-content-start align-items-center">
+                        <p style="font-size: 15px;">Subject Name : <b class="view_feedback_subject_name"></b></p>
+                        <p class="m-l-20" style="font-size: 15px;">Faculty Name : <b class="view_feedback_faculty_name"></b></p>
+                    </div>
+                    <div class="d-inline">
+                        <p style="font-size: 15px;">Date of Feedback : <b class="view_feedback_date"></b></p>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <tbody>
+                            {% for q in questions %}
+                                <tr>
+                                    <th scope="row">{{ forloop.counter }}</th>
+                                    <td>{{ q.question_text }}</td>
+                                    <td><div class="ans"></div></td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label p-l-50" for="view_feedback_remarks"><b>Remarks : </b></label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" id="view_feedback_remarks" name="view_feedback_remarks" rows="3" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="pcoded" class="pcoded">
     <div class="pcoded-overlay-box"></div>
@@ -360,367 +252,79 @@
 
         <div class="pcoded-main-container">
             <div class="pcoded-wrapper">
-                <nav class="pcoded-navbar">
-                    <div class="pcoded-inner-navbar main-menu">
-                        <div class="pcoded-navigatio-lavel">Quick Links</div>
-                        <ul class="pcoded-item pcoded-left-item">
-                            <li class="">
-                                <a href="{% url 'student_profile' %}">
-                                    <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                    <span class="pcoded-mtext">My Profile</span>
-                                </a>
-                            </li>
-                            <li class="">
-                                <a href="{% url 'student_complaint_section'  %}">
-                                    <span class="pcoded-micon"><i class="feather icon-server"></i></span>
-                                    <span class="pcoded-mtext">Complaints Section</span>
-                                </a>
-                            </li>
-                            <li class="pcoded-hasmenu">
-                                <a href="#">
-                                    <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                    <span class="pcoded-mtext">Feedback Section</span>
-                                </a>
-                                <ul class="pcoded-submenu">
-                                    <li class="">
-                                        <a href="{% url 'student_mid_sem_feedback'  %}">
-                                            <span class="pcoded-mtext">Mid Semester Feedback</span>
-                                        </a>
-                                    </li>
-                                    <li class="">
-                                        <a href="{% url 'student_end_sem_feedback'  %}">
-                                            <span class="pcoded-mtext">End Semester Feedback</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="">
-                                <a href="{% url 'logout' %}">
-                                    <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
-                                    <span class="pcoded-mtext">Logout</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-                <div class="pcoded-content">
-                    <div class="pcoded-inner-content">
-                        <div class="main-body">
-                            <div class="page-wrapper">
-                                <div class="page-body">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="page-header">
-                                                <div class="row align-items-end">
-                                                    <div class="col-lg-8">
-                                                        <div class="page-header-title">
-                                                            <div class="d-inline">
-                                                                <h4>Student End Semester Feedback</h4>
-                                                            </div>
+                <div class="pcoded-inner-content">
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                            <div class="page-body">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="page-header">
+                                            <div class="row align-items-end">
+                                                <div class="col-lg-8">
+                                                    <div class="page-header-title">
+                                                        <div class="d-inline">
+                                                            <h3>End Semester Feedback Section</h3>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="card" id="card-rounded">
-                                                <div class="card-header">
-                                                    <h5>Semester 1</h5>
-                                                    <div class="card-header-right">
-                                                        <ul class="list-unstyled card-option">
-                                                            <li><i class="feather minimize-card icon-plus"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="card-block" style="display: none;">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover">
-                                                            <tbody>
-                                                                    {% for i in sem1_subqs %}
-                                                                        <tr>
-                                                                            <th scope="row">{{ forloop.counter }}</th>
-                                                                            <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
-                                                                            <script type="text/javascript">
-
-                                                                                var k = check_status({{ i.id }});
-
-                                                                                if (k == '1') {
-                                                                                    document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" onclick="GetFacultyName2({{ i.id }});GetFeedback({{ i.id }});">View Feedback</button></td>');
-                                                                                }
-                                                                                else {
-                                                                                    document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }});">Give Feedback</button></td>');
-                                                                                }
-                                                                            </script>
-{#                                                                            <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }})">Give Feedback</button></td>#}
-                                                                        </tr>
-                                                                    {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="card" id="card-rounded">
-                                                <div class="card-header">
-                                                    <h5>Semester 2</h5>
-                                                    <div class="card-header-right">
-                                                        <ul class="list-unstyled card-option">
-                                                            <li><i class="feather minimize-card icon-plus"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="card-block" style="display: none;">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover">
-                                                            <tbody>
-                                                                {% for i in sem2_subqs %}
-                                                                    <tr>
-                                                                        <th scope="row">{{ forloop.counter }}</th>
-                                                                        <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
-                                                                        <script type="text/javascript">
-
-                                                                            var k = check_status({{ i.id }});
-
-                                                                            if (k == '1') {
-                                                                                document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" onclick="GetFacultyName2({{ i.id }});GetFeedback({{ i.id }});">View Feedback</button></td>');
-                                                                            }
-                                                                            else {
-                                                                                document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }});">Give Feedback</button></td>');
-                                                                            }
-                                                                        </script>
-
-{#                                                                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }})">Give Feedback</button></td>#}
-                                                                    </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="card" id="card-rounded">
-                                                <div class="card-header">
-                                                    <h5>Semester 3</h5>
-                                                    <div class="card-header-right">
-                                                        <ul class="list-unstyled card-option">
-                                                            <li><i class="feather minimize-card icon-plus"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="card-block" style="display: none;">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover">
-                                                            <tbody>
-                                                                {% for i in sem3_subqs %}
-                                                                    <tr>
-                                                                        <th scope="row">{{ forloop.counter }}</th>
-                                                                        <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
-                                                                        <script type="text/javascript">
-
-                                                                            var k = check_status({{ i.id }});
-
-                                                                            if (k == '1') {
-                                                                                document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" onclick="GetFacultyName2({{ i.id }});GetFeedback({{ i.id }});">View Feedback</button></td>');
-                                                                            }
-                                                                            else {
-                                                                                document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }});">Give Feedback</button></td>');
-                                                                            }
-                                                                        </script>
-{#                                                                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }})">Give Feedback</button></td>#}
-                                                                    </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="card" id="card-rounded">
-                                                <div class="card-header">
-                                                    <h5>Semester 4</h5>
-                                                    <div class="card-header-right">
-                                                        <ul class="list-unstyled card-option">
-                                                            <li><i class="feather minimize-card icon-plus"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="card-block" style="display: none;">
-                                                    <div class="card-block" style="display: none;">
-                                                        <div class="table-responsive">
-                                                        <table class="table table-hover">
-                                                            <tbody>
-                                                                {% for i in sem4_subqs %}
-                                                                    <tr>
-                                                                        <th scope="row">{{ forloop.counter }}</th>
-                                                                        <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
-                                                                        <script type="text/javascript">
-
-                                                                            var k = check_status({{ i.id }});
-
-                                                                            if (k == '1') {
-                                                                                document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" onclick="GetFacultyName2({{ i.id }});GetFeedback({{ i.id }});">View Feedback</button></td>');
-                                                                            }
-                                                                            else {
-                                                                                document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }});">Give Feedback</button></td>');
-                                                                            }
-                                                                        </script>
-{#                                                                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }})">Give Feedback</button></td>#}
-                                                                    </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="card" id="card-rounded">
-                                                <div class="card-header">
-                                                    <h5>Semester 5</h5>
-                                                    <div class="card-header-right">
-                                                        <ul class="list-unstyled card-option">
-                                                            <li><i class="feather minimize-card icon-plus"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="card-block" style="display: none;">
-                                                    <div class="card-block" style="display: none;">
-                                                        <div class="table-responsive">
-                                                            <table class="table table-hover">
-                                                                <tbody>
-                                                                    {% for i in sem5_subqs %}
-                                                                        <tr>
-                                                                            <th scope="row">{{ forloop.counter }}</th>
-                                                                            <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
-                                                                            <script type="text/javascript">
-
-                                                                                var k = check_status({{ i.id }});
-
-                                                                                if (k == '1') {
-                                                                                    document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" onclick="GetFacultyName2({{ i.id }});GetFeedback({{ i.id }});">View Feedback</button></td>');
-                                                                                }
-                                                                                else {
-                                                                                    document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }});">Give Feedback</button></td>');
-                                                                                }
-                                                                            </script>
-{#                                                                            <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }})">Give Feedback</button></td>#}
-                                                                        </tr>
-                                                                    {% endfor %}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="card" id="card-rounded">
-                                                <div class="card-header">
-                                                    <h5>Semester 6</h5>
-                                                    <div class="card-header-right">
-                                                        <ul class="list-unstyled card-option">
-                                                            <li><i class="feather minimize-card icon-plus"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="card-block" style="display: none;">
-                                                    <div class="card-block" style="display: none;">
-                                                        <div class="table-responsive">
-                                                        <table class="table table-hover">
-                                                            <tbody>
-                                                                {% for i in sem6_subqs %}
-                                                                    <tr>
-                                                                        <th scope="row">{{ forloop.counter }}</th>
-                                                                        <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
-                                                                        <script type="text/javascript">
-
-                                                                            var k = check_status({{ i.id }});
-
-                                                                            if (k == '1') {
-                                                                                document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" onclick="GetFacultyName2({{ i.id }});GetFeedback({{ i.id }});">View Feedback</button></td>');
-                                                                            }
-                                                                            else {
-                                                                                document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }});">Give Feedback</button></td>');
-                                                                            }
-                                                                        </script>
-{#                                                                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }})">Give Feedback</button></td>#}
-                                                                    </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="card" id="card-rounded">
-                                                <div class="card-header">
-                                                    <h5>Semester 7</h5>
-                                                    <div class="card-header-right">
-                                                        <ul class="list-unstyled card-option">
-                                                            <li><i class="feather minimize-card icon-plus"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="card-block" style="display: none;">
-                                                    <div class="card-block" style="display: none;">
-                                                        <div class="table-responsive">
-                                                        <table class="table table-hover">
-                                                            <tbody>
-                                                                {% for i in sem7_subqs %}
-                                                                    <tr>
-                                                                        <th scope="row">{{ forloop.counter }}</th>
-                                                                        <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
-                                                                        <script type="text/javascript">
-
-                                                                            var k = check_status({{ i.id }});
-
-                                                                            if (k == '1') {
-                                                                                document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" onclick="GetFacultyName2({{ i.id }});GetFeedback({{ i.id }});">View Feedback</button></td>');
-                                                                            }
-                                                                            else {
-                                                                                document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }});">Give Feedback</button></td>');
-                                                                            }
-                                                                        </script>
-{#                                                                        <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }})">Give Feedback</button></td>#}
-                                                                    </tr>
-                                                                {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="card" id="card-rounded">
-                                                <div class="card-header">
-                                                    <h5>Semester 8</h5>
-                                                    <div class="card-header-right">
-                                                        <ul class="list-unstyled card-option">
-                                                            <li><i class="feather minimize-card icon-plus"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="card-block" style="display: none;">
-                                                    <div class="card-block" style="display: none;">
-                                                        <div class="table-responsive">
-                                                            <table class="table table-hover">
-                                                                <tbody>
-                                                                    {% for i in sem8_subqs %}
-                                                                        <tr>
-                                                                            <th scope="row">{{ forloop.counter }}</th>
-                                                                            <td>{{ i.subject_name }} ({{ i.subject_code }})</td>
-                                                                            <script type="text/javascript">
-
-                                                                                var k = check_status({{ i.id }});
-
-                                                                                if (k == '1') {
-                                                                                    document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal2" onclick="GetFacultyName2({{ i.id }});GetFeedback({{ i.id }});">View Feedback</button></td>');
-                                                                                }
-                                                                                else {
-                                                                                    document.write('<td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }});">Give Feedback</button></td>');
-                                                                                }
-                                                                            </script>
-{#                                                                            <td><button class="btn btn-primary" data-toggle="modal" data-target="#exampleModal" onclick="GetFacultyName({{ i.id }})">Give Feedback</button></td>#}
-                                                                        </tr>
-                                                                    {% endfor %}
-                                                                </tbody>
-                                                            </table>
-                                                        </div>
-                                                    </div>
+                                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                                    <span class="f-right">
+                                                        <a href="{% url 'student_dashboard' %}" class="btn" style="font-size: 15px">
+                                                            <i class="feather icon-arrow-left"></i>
+                                                            Back to Dashboard
+                                                        </a>
+                                                    </span>
                                                 </div>
                                             </div>
                                         </div>
+                                        {% for i in semesters %}
+                                            <div class="card" id="card-rounded">
+                                                <div class="card-header expandable" style="color: black">
+                                                    <h5 style="font-size: 1.1rem; font-weight: inherit;">Semester {{ forloop.counter }}</h5>
+                                                    <div class="card-header-right">
+                                                        <ul class="list-unstyled card-option">
+                                                            <li><i class="feather icon-plus" style="color: black"></i></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="card-block" style="display: none;">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover">
+                                                            <thead>
+                                                                <th>Subject Name</th>
+                                                                <th>Subject code</th>
+                                                                <th>Faculty</th>
+                                                                <th>Action</th>
+                                                            </thead>
+                                                            <tbody>
+                                                            {% for s in i %}
+                                                                {% ifnotequal s.status 0 %}
+                                                                    <script type="text/javascript">
+                                                                        {% for j in s.teaching_faculties %}
+                                                                            var row = '';
+                                                                            row += '<tr sub_id="{{ s.id }}">';
+                                                                                row += '<td><div class="subject_name">{{ s.name }}</div></td>';
+                                                                                row += '<td><div class="subject_code">{{ s.code }}</div></td>';
+                                                                                row += '<td><div class="teaching_faculty" fac_id="{{ j.fac_id }}">{{ j.fac_name }}</div></td>';
+                                                                                {% ifequal j.end_sem_obj None %}
+                                                                                    row += '<td><span class="btn_give_feedback"><button href="javascript:void(0)" class="btn btn-round btn-outline-primary">Give Feedback</button></span></td>';
+                                                                                {% else %}
+                                                                                    row += '<td><span class="btn_view_feedback" obj_id="{{ j.end_sem_obj }}"><button href="javascript:void(0)" class="btn btn-round btn-outline-primary">View Feedback</button></span></td>';
+                                                                                {% endifequal %}
+                                                                            row += '</tr>';
+                                                                            document.write(row);
+                                                                        {% endfor %}
+                                                                    </script>
+                                                                {% else %}
+                                                                    Contact Head of the department. Ask him/her to add subject of your semester.
+                                                                {% endifnotequal %}
+                                                            {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
                                     </div>
                                 </div>
                             </div>
@@ -736,118 +340,120 @@
 
     <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
     <!-- jquery slimscroll js -->
     <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
     <!-- modernizr js -->
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
-    <!-- Chart js -->
-    <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>
-    <!-- amchart js -->
-    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>
+
+
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <!-- custom js -->
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
-
     <script type="text/javascript">
+        $(".expandable").on('click', function() {
+            var $this = $(this);
+            var port = $($this.parents('.card'));
+            var card = $(port).children('.card-block').slideToggle();
+            $(this).find('i.feather').toggleClass("icon-minus").fadeIn('slow');
+            $(this).find('i.feather').toggleClass("icon-plus").fadeIn('slow');
+        });
+    </script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(document).on('click', '.btn_give_feedback', function (event) {
+                event.preventDefault();
+                var tbl_row = $(this).closest('tr');
+                var sub_id = tbl_row.attr('sub_id');
+                var subject_name = tbl_row.find('.subject_name').html().toString().trim();
+                var fac_data = tbl_row.find('.teaching_faculty');
+                var faculty_name = fac_data.html().toString().trim();
+                var fac_id = fac_data.attr('fac_id');
+                $(document).find('.feedback_subject_name').html(subject_name);
+                $(document).find('.feedback_faculty_name').html(faculty_name);
+                $(document).find('input#subject_id').val(sub_id);
+                $(document).find('input#faculty_id').val(fac_id);
+                $('#feedback-modal').modal('show');
+            });
 
-        var currentTab = 0; // Current tab is set to be the first tab (0)
-        showTab(currentTab); // Display the current tab
+            $(document).on('click', '.btn_view_feedback', function (event) {
+                event.preventDefault();
+                var tbl_row = $(this).closest('tr');
+                var modal = $(document).find('#view-feedback-modal');
+                var fac_data = tbl_row.find('.teaching_faculty');
+                var feedback_obj_id = $(this).attr('obj_id');
+                $.ajax({
+                    type:"GET",
+                    url:"{{ base_url }}" + "get-feedback/",
+                    data: {
+                        type: 'end',
+                        obj_id: feedback_obj_id
+                    },
 
-        function showTab(n) {
-          // This function will display the specified tab of the form ...
-          var x = document.getElementsByClassName("tab");
-          x[n].style.display = "block";
-          // ... and fix the Previous/Next buttons:
-          if (n == 0) {
-            document.getElementById("prevBtn").style.display = "none";
-          } else {
-            document.getElementById("prevBtn").style.display = "inline";
-          }
-          if (n == (x.length - 1)) {
-            document.getElementById("nextBtn").innerHTML = "Submit";
-          } else {
-            document.getElementById("nextBtn").innerHTML = "Next";
-          }
-          // ... and run a function that displays the correct step indicator:
-          fixStepIndicator(n)
-        }
-
-        function nextPrev(n) {
-          // This function will figure out which tab to display
-          var x = document.getElementsByClassName("tab");
-          // Exit the function if any field in the current tab is invalid:
-          if (n == 1 && !validateForm()) return false;
-          // Hide the current tab:
-          x[currentTab].style.display = "none";
-          // Increase or decrease the current tab by 1:
-          currentTab = currentTab + n;
-          // if you have reached the end of the form... :
-          if (currentTab >= x.length) {
-            //...the form gets submitted:
-            document.getElementById("regForm").submit();
-            return false;
-          }
-          // Otherwise, display the correct tab:
-          showTab(currentTab);
-        }
-
-        function validateForm() {
-          // This function deals with validation of the form fields
-          var x, y, i, valid = true;
-          x = document.getElementsByClassName("tab");
-          y = x[currentTab].getElementsByTagName("input");
-          // A loop that checks every input field in the current tab:
-          for (i = 0; i < y.length; i++) {
-            // If a field is empty...
-            if (y[i].value == "") {
-              // add an "invalid" class to the field:
-              y[i].className += " invalid";
-              // and set the current valid status to false:
-              valid = false;
-            }
-          }
-          // If the valid status is true, mark the step as finished and valid:
-          if (valid) {
-            document.getElementsByClassName("step")[currentTab].className += " finish";
-          }
-          return valid; // return the valid status
-        }
-
-        function fixStepIndicator(n) {
-          // This function removes the "active" class of all steps...
-          var i, x = document.getElementsByClassName("step");
-          for (i = 0; i < x.length; i++) {
-            x[i].className = x[i].className.replace(" active", "");
-          }
-          //... and adds the "active" class to the current step:
-          x[n].className += " active";
-        }
+                    success: function (msg) {
+                        response = JSON.parse(msg);
+                        console.log(response);
+                        modal.find('.view_feedback_subject_name').html(response['subject_name']);
+                        modal.find('.view_feedback_faculty_name').html(response['faculty_name']);
+                        modal.find('.view_feedback_date').html(response['date']);
+                        modal.find('#view_feedback_remarks').val(response['remarks']);
+                        modal.find('div.ans').each(function (index, value) {
+                            var ans = response['ans_' + (index+1)];
+                            var content = '<div class="rating-'+ans+'">';
+                            var i;
+                            for(i=1;i<=parseInt(ans);++i) {
+                                content += '<label class="rating"></label>';
+                            }
+                            $(this).html(content);
+                        });
+                        modal.modal('show');
+                    },
+                    error: function (msg) {
+                        response = JSON.parse(msg.responseText);
+                        swal({
+                            title: "Error",
+                            text: response["error"],
+                            dangerMode: true,
+                            type: "error",
+                        });
+                    },
+                });
+            });
+        });
+    </script>
+    <script>
+        // this is for making feedback modal into form wizard.
+        $("#feedback-modal").modalWizard();
     </script>
 
     <script type="text/javascript">
         {% if success %}
-            swal({
-                title: "{{ success }}",
-                type: "success"
-            });
+            setTimeout(function () {
+                swal({
+                    title: "{{ success }}",
+                    text: "{{ msg }}",
+                    type: "success",
+                }, function () {
+                    location.href=location.href;
+                });
+            }, 10);
         {% endif %}
 
         {% if error %}
-            swal({
-                title: "Error",
-                text: "{{ error }}",
-                dangerMode: true,
-                type: "error"
-            });
+            setTimeout(function () {
+                swal({
+                    title: "Error",
+                    text: "{{ error }}",
+                    dangerMode: true,
+                    type: "error",
+            }, function () {
+                    location.href=location.href;
+                });
+            }, 10);
         {% endif %}
     </script>
 

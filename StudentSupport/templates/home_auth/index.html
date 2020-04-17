@@ -122,7 +122,7 @@
                         <div class="form-group row" id="role-div">
                             <label class="col-sm-4 col-form-label" for="role">Role : </label>
                             <div class="col-sm-8">
-                                <select onblur="validate_role()" name="role" id="role" class="form-control" required>
+                                <select onblur="validate_role()" name="role" id="role" class="custom-select" required>
                                     <option value="-1" selected disabled>Select Role</option>
                                     <option value="Student">Student</option>
                                     <option value="Faculty">Faculty</option>
@@ -216,7 +216,7 @@
                                 <div class="form-group row" id="dept-div">
                                     <label class="col-sm-4 col-form-label" for="dept">Department : </label>
                                     <div class="col-sm-8">
-                                        <select onblur="validate_dept()" name="dept" id="dept" class="form-control" required>
+                                        <select onblur="validate_dept()" name="dept" id="dept" class="custom-select" required>
                                             <option value="-1" disabled selected>Select Department</option>
                                             {% for i in dept %}
                                                 {% if i.accronym == "AM" or i.accronym == "GNRL" or i.accronym == "MECH1" or i.accronym == "MECH2" %}
@@ -231,7 +231,7 @@
                                 <div class="form-group row" id="sem-div">
                                     <label class="col-sm-4 col-form-label" for="sem">Semester : </label>
                                     <div class="col-sm-8">
-                                        <select onblur="validate_sem()" name="sem" id="sem" class="form-control" required>
+                                        <select onblur="validate_sem()" name="sem" id="sem" class="custom-select" required>
                                             <option value="-1" disabled selected>Select Semester</option>
                                             <option value="1">Sem 1</option>
                                             <option value="2">Sem 2</option>
@@ -290,7 +290,7 @@
                                 <div class="form-group row" id="faculty-dept-div">
                                     <label class="col-sm-4 col-form-label" for="faculty-dept">Department : </label>
                                     <div class="col-sm-8">
-                                        <select onblur="validate_faculty_dept()" name="faculty-dept" id="faculty-dept" class="form-control" required>
+                                        <select onblur="validate_faculty_dept()" name="faculty-dept" id="faculty-dept" class="custom-select" required>
                                             <option value="-1" disabled selected>Select Department</option>
                                             {% for i in dept %}
                                                 {% if i.accronym == "AM" or i.accronym == "GNRL" or i.accronym == "MECH1" or i.accronym == "MECH2" %}

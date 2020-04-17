@@ -41,14 +41,11 @@ urlpatterns = [
 
     # Student Related urls > Start
     path('student/dashboard/', views.StudentDashboard, name='student_dashboard'),
-    path('student/mid-sem-feedback/', views.StudentMidSemFeedbackView, name='student_mid_sem_feedback'),
-    path('student/end-sem-feedback/', views.StudentEndSemFeedbackView, name='student_end_sem_feedback'),
+    path('student/feedback-section/<str:type>/', views.StudentFeedbackSection, name='student_feedback_section'),
+    # path('student/mid-sem-feedback/', views.StudentFeedbackSection, name='student_mid_sem_feedback'),
+    # path('student/end-sem-feedback/', views.StudentEndSemFeedbackView, name='student_end_sem_feedback'),
     path('student/dashboard/complaint/', views.StudentComplaintSectionView, name='student_complaint_section'),
-    path('getFacultyName/', views.getFacultyName, name='getFacultyName'),
-    path('checkStatus/', views.checkStatus, name='checkStatus'),
-    path('checkStatusforEndSem/', views.checkStatusforEndSem, name='checkStatusforEndSem'),
-    path('getFeedback/', views.GetFeedback, name='GetFeedback'),
-    path('getFeedbackforEndSem/', views.GetFeedbackForEndSem, name='GetFeedbackForEndSem'),
+    path('get-feedback/', views.GetFeedback, name='GetFeedback'),
     path('student/dashboard/student_profile', views.StudentProfile, name='student_profile'),
     # Student Related urls > End
 

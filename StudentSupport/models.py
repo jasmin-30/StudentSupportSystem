@@ -181,7 +181,7 @@ class Principal(models.Model):
 
 class Departments(models.Model):
     dept_name = models.CharField(max_length=100)
-    accronym = models.CharField(max_length=5, default=None)
+    accronym = models.CharField(max_length=10, default=None)
 
     def __str__(self):
         return self.dept_name
@@ -237,7 +237,7 @@ class Subjects(models.Model):
         (7, 7),
         (8, 8)
     )
-    subject_name = models.CharField(max_length=100)
+    subject_name = models.CharField(max_length=255)
     subject_code = models.CharField(max_length=10)
     dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE)
     semester = models.IntegerField(choices=SEMESTER, default=1)
@@ -245,7 +245,7 @@ class Subjects(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.subject_name
+        return str(self.subject_name) + " : " + str(self.dept_id.dept_name) + " : " + str(self.semester)
 
 
 class Subject_to_Faculty_Mapping(models.Model):
@@ -275,6 +275,7 @@ class End_Sem_Feedback_Answers(models.Model):
         (8, 8)
     )
     RATINGS = (
+        (0, 0),
         (1, 1),
         (2, 2),
         (3, 3),
@@ -286,17 +287,17 @@ class End_Sem_Feedback_Answers(models.Model):
     subject_id = models.ForeignKey(Subjects, to_field='id', on_delete=models.CASCADE)
     faculty_id = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
     semester = models.IntegerField(choices=SEMESTER, default=1)
-    Q1 = models.IntegerField(choices=RATINGS, default=1)
-    Q2 = models.IntegerField(choices=RATINGS, default=1)
-    Q3 = models.IntegerField(choices=RATINGS, default=1)
-    Q4 = models.IntegerField(choices=RATINGS, default=1)
-    Q5 = models.IntegerField(choices=RATINGS, default=1)
-    Q6 = models.IntegerField(choices=RATINGS, default=1)
-    Q7 = models.IntegerField(choices=RATINGS, default=1)
-    Q8 = models.IntegerField(choices=RATINGS, default=1)
-    Q9 = models.IntegerField(choices=RATINGS, default=1)
-    Q10 = models.IntegerField(choices=RATINGS, default=1)
-    remarks = models.TextField()
+    Q1 = models.IntegerField(choices=RATINGS, default=0)
+    Q2 = models.IntegerField(choices=RATINGS, default=0)
+    Q3 = models.IntegerField(choices=RATINGS, default=0)
+    Q4 = models.IntegerField(choices=RATINGS, default=0)
+    Q5 = models.IntegerField(choices=RATINGS, default=0)
+    Q6 = models.IntegerField(choices=RATINGS, default=0)
+    Q7 = models.IntegerField(choices=RATINGS, default=0)
+    Q8 = models.IntegerField(choices=RATINGS, default=0)
+    Q9 = models.IntegerField(choices=RATINGS, default=0)
+    Q10 = models.IntegerField(choices=RATINGS, default=0)
+    remarks = models.TextField(null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -322,6 +323,7 @@ class Mid_Sem_Feedback_Answers(models.Model):
         (8, 8)
     )
     RATINGS = (
+        (0, 0),
         (1, 1),
         (2, 2),
         (3, 3),
@@ -333,78 +335,78 @@ class Mid_Sem_Feedback_Answers(models.Model):
     subject_id = models.ForeignKey(Subjects, to_field='id', on_delete=models.CASCADE)
     faculty_id = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
     semester = models.IntegerField(choices=SEMESTER, default=1)
-    Q1 = models.IntegerField(choices=RATINGS, default=1)
-    Q2 = models.IntegerField(choices=RATINGS, default=1)
-    Q3 = models.IntegerField(choices=RATINGS, default=1)
-    Q4 = models.IntegerField(choices=RATINGS, default=1)
-    Q5 = models.IntegerField(choices=RATINGS, default=1)
-    Q6 = models.IntegerField(choices=RATINGS, default=1)
-    Q7 = models.IntegerField(choices=RATINGS, default=1)
-    Q8 = models.IntegerField(choices=RATINGS, default=1)
-    Q9 = models.IntegerField(choices=RATINGS, default=1)
-    Q10 = models.IntegerField(choices=RATINGS, default=1)
-    remarks = models.TextField()
+    Q1 = models.IntegerField(choices=RATINGS, default=0)
+    Q2 = models.IntegerField(choices=RATINGS, default=0)
+    Q3 = models.IntegerField(choices=RATINGS, default=0)
+    Q4 = models.IntegerField(choices=RATINGS, default=0)
+    Q5 = models.IntegerField(choices=RATINGS, default=0)
+    Q6 = models.IntegerField(choices=RATINGS, default=0)
+    Q7 = models.IntegerField(choices=RATINGS, default=0)
+    Q8 = models.IntegerField(choices=RATINGS, default=0)
+    Q9 = models.IntegerField(choices=RATINGS, default=0)
+    Q10 = models.IntegerField(choices=RATINGS, default=0)
+    remarks = models.TextField(null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.student_id)
+        return str(self.student_id) + " : " + str(self.faculty_id.name) + " : " + str(self.subject_id.subject_name)
 
 
-class Course_Exit_Survey_Questions(models.Model):
-    SEMESTER = (
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4),
-        (5, 5),
-        (6, 6),
-        (7, 7),
-        (8, 8)
-    )
-    dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE)
-    subject_id = models.ForeignKey(Subjects, to_field='id', on_delete=models.CASCADE)
-    faculty_id = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
-    question_text = models.TextField()
-    semester = models.IntegerField(choices=SEMESTER, default=1)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return str(self.faculty_id)
-
-
-class Course_Exit_Survey_Answers(models.Model):
-    SEMESTER = (
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4),
-        (5, 5),
-        (6, 6),
-        (7, 7),
-        (8, 8)
-    )
-    RATINGS = (
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4),
-        (5, 5)
-    )
-    student_id = models.ForeignKey(Students, to_field='enrollment_no', on_delete=models.CASCADE)
-    dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE)
-    subject_id = models.ForeignKey(Subjects, to_field='id', on_delete=models.CASCADE)
-    survey_id = models.ForeignKey(Course_Exit_Survey_Questions, to_field='id', on_delete=models.CASCADE)
-    semester = models.IntegerField(choices=SEMESTER, default=1)
-    Q1 = models.IntegerField(choices=RATINGS, default=1)
-    Q2 = models.IntegerField(choices=RATINGS, default=1)
-    Q3 = models.IntegerField(choices=RATINGS, default=1)
-    Q4 = models.IntegerField(choices=RATINGS, default=1)
-    Q5 = models.IntegerField(choices=RATINGS, default=1)
-    remarks = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return str(self.student_id) + str(self.survey_id)
+# class Course_Exit_Survey_Questions(models.Model):
+#     SEMESTER = (
+#         (1, 1),
+#         (2, 2),
+#         (3, 3),
+#         (4, 4),
+#         (5, 5),
+#         (6, 6),
+#         (7, 7),
+#         (8, 8)
+#     )
+#     dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE)
+#     subject_id = models.ForeignKey(Subjects, to_field='id', on_delete=models.CASCADE)
+#     faculty_id = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
+#     question_text = models.TextField()
+#     semester = models.IntegerField(choices=SEMESTER, default=1)
+#     timestamp = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self):
+#         return str(self.faculty_id)
+#
+#
+# class Course_Exit_Survey_Answers(models.Model):
+#     SEMESTER = (
+#         (1, 1),
+#         (2, 2),
+#         (3, 3),
+#         (4, 4),
+#         (5, 5),
+#         (6, 6),
+#         (7, 7),
+#         (8, 8)
+#     )
+#     RATINGS = (
+#         (1, 1),
+#         (2, 2),
+#         (3, 3),
+#         (4, 4),
+#         (5, 5)
+#     )
+#     student_id = models.ForeignKey(Students, to_field='enrollment_no', on_delete=models.CASCADE)
+#     dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE)
+#     subject_id = models.ForeignKey(Subjects, to_field='id', on_delete=models.CASCADE)
+#     survey_id = models.ForeignKey(Course_Exit_Survey_Questions, to_field='id', on_delete=models.CASCADE)
+#     semester = models.IntegerField(choices=SEMESTER, default=1)
+#     Q1 = models.IntegerField(choices=RATINGS, default=1)
+#     Q2 = models.IntegerField(choices=RATINGS, default=1)
+#     Q3 = models.IntegerField(choices=RATINGS, default=1)
+#     Q4 = models.IntegerField(choices=RATINGS, default=1)
+#     Q5 = models.IntegerField(choices=RATINGS, default=1)
+#     remarks = models.TextField()
+#     timestamp = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self):
+#         return str(self.student_id) + str(self.survey_id)
 
 
 class Program_Exit_Survey_Questions(models.Model):
@@ -416,6 +418,7 @@ class Program_Exit_Survey_Questions(models.Model):
 
 class Program_Exit_Survey_Answers(models.Model):
     RATINGS = (
+        (0, 0),
         (1, 1),
         (2, 2),
         (3, 3),
@@ -424,17 +427,17 @@ class Program_Exit_Survey_Answers(models.Model):
     )
     student_id = models.ForeignKey(Students, to_field='enrollment_no', on_delete=models.CASCADE)
     dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE)
-    Q1 = models.IntegerField(choices=RATINGS, default=1)
-    Q2 = models.IntegerField(choices=RATINGS, default=1)
-    Q3 = models.IntegerField(choices=RATINGS, default=1)
-    Q4 = models.IntegerField(choices=RATINGS, default=1)
-    Q5 = models.IntegerField(choices=RATINGS, default=1)
-    Q6 = models.IntegerField(choices=RATINGS, default=1)
-    Q7 = models.IntegerField(choices=RATINGS, default=1)
-    Q8 = models.IntegerField(choices=RATINGS, default=1)
-    Q9 = models.IntegerField(choices=RATINGS, default=1)
-    Q10 = models.IntegerField(choices=RATINGS, default=1)
-    remarks = models.TextField()
+    Q1 = models.IntegerField(choices=RATINGS, default=0)
+    Q2 = models.IntegerField(choices=RATINGS, default=0)
+    Q3 = models.IntegerField(choices=RATINGS, default=0)
+    Q4 = models.IntegerField(choices=RATINGS, default=0)
+    Q5 = models.IntegerField(choices=RATINGS, default=0)
+    Q6 = models.IntegerField(choices=RATINGS, default=0)
+    Q7 = models.IntegerField(choices=RATINGS, default=0)
+    Q8 = models.IntegerField(choices=RATINGS, default=0)
+    Q9 = models.IntegerField(choices=RATINGS, default=0)
+    Q10 = models.IntegerField(choices=RATINGS, default=0)
+    remarks = models.TextField(null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -532,3 +535,6 @@ class Student_Feedback_Status(models.Model):
     mid_sem_feedback = models.ForeignKey(Mid_Sem_Feedback_Answers, to_field='id', on_delete=models.CASCADE, null=True)
     end_sem_feedback = models.ForeignKey(End_Sem_Feedback_Answers, to_field='id', on_delete=models.CASCADE, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.student_id) + " : " + str(self.subject_id.subject_name) + " : " + str(self.faculty_id.name)

@@ -2,6 +2,7 @@ import json
 from base64 import b64encode, b64decode
 from email.utils import decode_params
 from io import BytesIO
+import traceback
 
 from django.contrib.auth.hashers import check_password
 from django.core.mail import send_mail
@@ -352,7 +353,6 @@ def StudentDashboard(request):
 
 
 def StudentProfile(request):
-
     if request.user.is_authenticated:
         student_obj = Students.objects.get(auth_id=request.user)
         departments = Departments.objects.all()
@@ -364,13 +364,13 @@ def StudentProfile(request):
             "name": str(student_obj.first_name) + " " + str(student_obj.last_name),
             "email": request.user.email
         }
-        dept_obj = Departments.objects.get(id = student_obj.dept_id.id)
+        dept_obj = Departments.objects.get(id=student_obj.dept_id.id)
         context["department"] = dept_obj.dept_name
 
         if request.method == "POST":
             if request.POST.get('fname') is not None:
                 student_obj = Students.objects.get(auth_id=request.user)
-                user_obj = User.objects.get(id = request.user.id)
+                user_obj = User.objects.get(id=request.user.id)
                 fname = request.POST.get('fname')
                 lname = request.POST.get('lname')
                 email = request.POST.get('email')
@@ -468,226 +468,297 @@ def StudentProfile(request):
         return render(request, 'home_auth/index.html', context)
 
 
-# TODO : Optimize it.
-def StudentMidSemFeedbackView(request):
+def StudentFeedbackSection(request, type):
     context = {
         "base_url": st.BASE_URL,
     }
     if request.user.is_authenticated:
-        std_obj = Students.objects.get(auth_id=request.session["User"])
+        std_obj = Students.objects.get(auth_id=request.user)
         dept_id = std_obj.dept_id
         context["name"] = str(std_obj.first_name) + " " + str(std_obj.last_name)
+        if type == 'mid-sem':
+            questions = Mid_Sem_Feedback_Questions.objects.all()
+            context["questions"] = questions
+            context["remark"] = (questions.count() + 1)
 
-        current_sem = std_obj.semester
-        subject = []
-        for i in range(1, current_sem+1):
-            tmp = {}
-            subject_qs = Subjects.objects.filter(dept_id=dept_id, semester=i)
-            if(subject_qs.count() == 0):
-                tmp['status'] = 0
-            else:
-                tmp['status'] = 1
-                for j in subject_qs:
-                    tmp['id'] = j.id
-                    tmp['name'] = j.subject_name
-                    tmp['code'] = j.subject_code
+            current_sem = std_obj.semester
+            subject = []
+            for i in range(1, current_sem + 1):
+                tmp_list = []
+                subject_qs = Subjects.objects.filter(dept_id=dept_id, semester=i)
+                if subject_qs.count() == 0:
+                    tmp = {
+                        'status': 0
+                    }
+                    tmp_list.append(tmp)
+                    subject.append(tmp_list)
 
-                    teaching_faculty_qs = Subject_to_Faculty_Mapping.objects.filter(subject_id=j)
-                    faculties = []
-                    for k in teaching_faculty_qs:
-                        tmp1 = {}
-                        tmp1['fac_id'] = k.faculty_id.id
-                        tmp1['fac_name'] = k.faculty_id.name
-                        faculties.append(tmp1)
+                else:
+                    for j in subject_qs:
+                        tmp = {
+                            'id': j.id,
+                            'name': j.subject_name,
+                            'code': j.subject_code
+                        }
 
-                    tmp['teaching_faculties'] = faculties
+                        teaching_faculty_qs = Subject_to_Faculty_Mapping.objects.filter(subject_id=j)
+                        faculties = []
+                        for k in teaching_faculty_qs:
+                            tmp1 = {
+                                'fac_id': k.faculty_id.id,
+                                'fac_name': k.faculty_id.name
+                            }
+                            try:
+                                feedback_status_obj = Student_Feedback_Status.objects.get(student_id=std_obj,
+                                                                                          faculty_id=k.faculty_id,
+                                                                                          subject_id=j)
+                                if feedback_status_obj.mid_sem_feedback is not None:
+                                    tmp1['mid_sem_obj'] = feedback_status_obj.id
 
+                                else:
+                                    tmp1['mid_sem_obj'] = None
+
+                            except Student_Feedback_Status.DoesNotExist:
+                                print("Mid semester object does not exist for:", j, k)
+                                tmp1['mid_sem_obj'] = None
+                            faculties.append(tmp1)
+
+                        tmp['teaching_faculties'] = faculties
+                        tmp['status'] = 1
+                        tmp_list.append(tmp)
+
+                    subject.append(tmp_list)
+
+            context["semesters"] = subject
+
+            if request.method == 'POST':
+                if request.POST.get('subject_id') is not None:
                     try:
-                        tmp['mid_sem_obj'] = Student_Feedback_Status.objects.get(student_id=std_obj, subject_id=j)
-                    except:
-                        tmp['mid_sem_obj'] = None
+                        std_obj = Students.objects.get(auth_id=request.user)
 
-            subject.append(tmp)
+                        dept_obj = Departments.objects.get(id=std_obj.dept_id.id)
 
+                        sub_id = request.POST.get('subject_id')
+                        sub_obj = Subjects.objects.get(id=sub_id)
 
+                        fac_id = request.POST.get('faculty_id')
+                        fac_obj = Faculty.objects.get(id=fac_id)
 
-        sem1_subqs = Subjects.objects.filter(dept_id=dept_id, semester=1)
-        sem2_subqs = Subjects.objects.filter(dept_id=dept_id, semester=2)
-        sem3_subqs = Subjects.objects.filter(dept_id=dept_id, semester=3)
-        sem4_subqs = Subjects.objects.filter(dept_id=dept_id, semester=4)
-        sem5_subqs = Subjects.objects.filter(dept_id=dept_id, semester=5)
-        sem6_subqs = Subjects.objects.filter(dept_id=dept_id, semester=6)
-        sem7_subqs = Subjects.objects.filter(dept_id=dept_id, semester=7)
-        sem8_subqs = Subjects.objects.filter(dept_id=dept_id, semester=8)
-        questions = Mid_Sem_Feedback_Questions.objects.all()
+                        semester = std_obj.semester
 
-        context = {
-            "base_url": st.BASE_URL,
-            "sem1_subqs": sem1_subqs,
-            "sem2_subqs": sem2_subqs,
-            "sem3_subqs": sem3_subqs,
-            "sem4_subqs": sem4_subqs,
-            "sem5_subqs": sem5_subqs,
-            "sem6_subqs": sem6_subqs,
-            "sem7_subqs": sem7_subqs,
-            "sem8_subqs": sem8_subqs,
-            "questions": questions,
-            "name": str(std_obj.first_name) + " " + str(std_obj.last_name)
-        }
+                        ans1 = request.POST.get('rating_1') if request.POST.get('rating_1') else 0
+                        ans2 = request.POST.get('rating_2') if request.POST.get('rating_2') else 0
+                        ans3 = request.POST.get('rating_3') if request.POST.get('rating_3') else 0
+                        ans4 = request.POST.get('rating_4') if request.POST.get('rating_4') else 0
+                        ans5 = request.POST.get('rating_5') if request.POST.get('rating_5') else 0
+                        ans6 = request.POST.get('rating_6') if request.POST.get('rating_6') else 0
+                        ans7 = request.POST.get('rating_7') if request.POST.get('rating_7') else 0
+                        ans8 = request.POST.get('rating_8') if request.POST.get('rating_8') else 0
+                        ans9 = request.POST.get('rating_9') if request.POST.get('rating_9') else 0
+                        ans10 = request.POST.get('rating_10') if request.POST.get('rating_10') else 0
+                        remarks = request.POST.get('remark') if request.POST.get('remark') else None
+                        # print(ans1,ans2, ans3, ans4, ans5, ans6, ans7, ans8, ans9, ans10, remarks)
 
-        if request.method == 'POST':
-            try:
-                std_obj = Students.objects.get(auth_id=request.user)
+                        mid_sem_feedback_ans_obj, is_created = Mid_Sem_Feedback_Answers.objects.get_or_create(
+                            student_id=std_obj,
+                            dept_id=dept_obj,
+                            subject_id=sub_obj,
+                            faculty_id=fac_obj,
+                            semester=semester,
+                            defaults={
+                                'Q1': int(ans1),
+                                'Q2': int(ans2),
+                                'Q3': int(ans3),
+                                'Q4': int(ans4),
+                                'Q5': int(ans5),
+                                'Q6': int(ans6),
+                                'Q7': int(ans7),
+                                'Q8': int(ans8),
+                                'Q9': int(ans9),
+                                'Q10': int(ans10),
+                                'remarks': remarks
+                            }
+                        )
+                        mid_sem_feedback_ans_obj.save()
+                        if is_created:
+                            obj, created_obj = Student_Feedback_Status.objects.get_or_create(
+                                student_id=std_obj,
+                                subject_id=sub_obj,
+                                faculty_id=fac_obj,
+                                defaults={
+                                    'mid_sem_feedback': mid_sem_feedback_ans_obj
+                                }
+                            )
+                            if not created_obj:
+                                obj.mid_sem_feedback = mid_sem_feedback_ans_obj
 
-                dept_obj = Departments.objects.get(id=std_obj.dept_id.id)
+                            obj.save()
 
-                sub_id = request.POST.get('subject_id')
-                sub_obj = Subjects.objects.get(id=sub_id)
+                            context["success"] = "Thank you for giving your feedback."
+                            context["msg"] = "Mid Semester Feedback for " + str(fac_obj.name) + " has been saved successfully."
+                            return render(request, "students/student_mid_sem_feedback.html", context)
 
-                fac_id = request.POST.get('faculty_id')
-                fac_obj = Faculty.objects.get(id=fac_id)
+                        else:
+                            context["error"] = "You have already given feedback for " + str(fac_obj.name)
+                            return render(request, "students/student_mid_sem_feedback.html", context)
 
-                semester = std_obj.semester
+                    except Exception as e:
+                        traceback.print_exc()
+                        print(e)
+                        context["error"] = "Some technical problem occured."
+                        return render(request, "students/student_mid_sem_feedback.html", context)
+                else:
+                    context["error"] = "Some technical problem occured."
+                    return render(request, "students/student_mid_sem_feedback.html", context)
 
-                ans1 = request.POST.get('optradio_1')
-                ans2 = request.POST.get('optradio_2')
-                ans3 = request.POST.get('optradio_3')
-                ans4 = request.POST.get('optradio_4')
-                ans5 = request.POST.get('optradio_5')
-                ans6 = request.POST.get('optradio_6')
-                ans7 = request.POST.get('optradio_7')
-                ans8 = request.POST.get('optradio_8')
-                ans9 = request.POST.get('optradio_9')
-                ans10 = request.POST.get('optradio_10')
-                remarks = request.POST.get('remarks')
-
-                mid_sem_feedback_ans_obj = Mid_Sem_Feedback_Answers.objects.create(
-                    student_id=std_obj,
-                    dept_id=dept_obj,
-                    subject_id=sub_obj,
-                    faculty_id=fac_obj,
-                    semester=semester,
-                    Q1=ans1,
-                    Q2=ans2,
-                    Q3=ans3,
-                    Q4=ans4,
-                    Q5=ans5,
-                    Q6=ans6,
-                    Q7=ans7,
-                    Q8=ans8,
-                    Q9=ans9,
-                    Q10=ans10,
-                    remarks=remarks
-                )
-                mid_sem_feedback_ans_obj.save()
-                student_feedback_status_obj = Student_Feedback_Status.objects.filter(
-                    student_id=std_obj,
-                    subject_id=sub_obj
-                ).update(is_given=True)
-
-                context["success"] = "Thank you for giving your feedback."
-                return render(request, "students/student_mid_sem_feedback.html", context)
-            except:
-                context["error"] = "Some technical problem occured."
+            else:
                 return render(request, "students/student_mid_sem_feedback.html", context)
 
-        else:
-            return render(request, "students/student_mid_sem_feedback.html", context)
-    else:
-        context = {
-            "base_url": st.BASE_URL,
-            "error": "Login to access this page."
-        }
-        return render(request, 'home_auth/index.html', context)
+        elif type == 'end-sem':
+            questions = End_Sem_Feedback_Questions.objects.all()
+            context["questions"] = questions
+            context["remark"] = (questions.count() + 1)
 
+            current_sem = std_obj.semester
+            subject = []
+            for i in range(1, current_sem + 1):
+                tmp_list = []
+                subject_qs = Subjects.objects.filter(dept_id=dept_id, semester=i)
+                if subject_qs.count() == 0:
+                    tmp = {
+                        'status': 0
+                    }
+                    tmp_list.append(tmp)
+                    subject.append(tmp_list)
 
-def StudentEndSemFeedbackView(request):
-    if request.user.is_authenticated:
-        std_obj = Students.objects.get(auth_id = request.session["User"])
-        dept_id = std_obj.dept_id
+                else:
+                    for j in subject_qs:
+                        tmp = {
+                            'id': j.id,
+                            'name': j.subject_name,
+                            'code': j.subject_code
+                        }
 
-        sem1_subqs = Subjects.objects.filter(dept_id = dept_id, semester=1)
-        sem2_subqs = Subjects.objects.filter(dept_id = dept_id, semester=2)
-        sem3_subqs = Subjects.objects.filter(dept_id = dept_id, semester=3)
-        sem4_subqs = Subjects.objects.filter(dept_id = dept_id, semester=4)
-        sem5_subqs = Subjects.objects.filter(dept_id = dept_id, semester=5)
-        sem6_subqs = Subjects.objects.filter(dept_id = dept_id, semester=6)
-        sem7_subqs = Subjects.objects.filter(dept_id = dept_id, semester=7)
-        sem8_subqs = Subjects.objects.filter(dept_id = dept_id, semester=8)
-        questions = End_Sem_Feedback_Questions.objects.all()
-        context = {
-            "base_url": st.BASE_URL,
-            "sem1_subqs": sem1_subqs,
-            "sem2_subqs": sem2_subqs,
-            "sem3_subqs": sem3_subqs,
-            "sem4_subqs": sem4_subqs,
-            "sem5_subqs": sem5_subqs,
-            "sem6_subqs": sem6_subqs,
-            "sem7_subqs": sem7_subqs,
-            "sem8_subqs": sem8_subqs,
-            "questions": questions,
-            "name": str(std_obj.first_name) + " " + str(std_obj.last_name)
-        }
+                        teaching_faculty_qs = Subject_to_Faculty_Mapping.objects.filter(subject_id=j)
+                        faculties = []
+                        for k in teaching_faculty_qs:
+                            tmp1 = {
+                                'fac_id': k.faculty_id.id,
+                                'fac_name': k.faculty_id.name
+                            }
+                            try:
+                                feedback_status_obj = Student_Feedback_Status.objects.get(student_id=std_obj,
+                                                                                          faculty_id=k.faculty_id,
+                                                                                          subject_id=j)
+                                if feedback_status_obj.end_sem_feedback is not None:
+                                    tmp1['end_sem_obj'] = feedback_status_obj.id
 
-        if request.method == 'POST':
-            std_obj = Students.objects.get(auth_id=request.user)
+                                else:
+                                    tmp1['end_sem_obj'] = None
 
-            dept_obj = Departments.objects.get(id=std_obj.dept_id.id)
+                            except Student_Feedback_Status.DoesNotExist:
+                                print("End semester object does not exist for:", j, k)
+                                tmp1['end_sem_obj'] = None
+                            faculties.append(tmp1)
 
-            sub_id = request.POST.get('subject_id')
-            sub_obj = Subjects.objects.get(id=sub_id)
+                        tmp['teaching_faculties'] = faculties
+                        tmp['status'] = 1
+                        tmp_list.append(tmp)
 
-            fac_id = request.POST.get('faculty_id')
-            fac_obj = Faculty.objects.get(id=fac_id)
+                    subject.append(tmp_list)
 
-            semester = std_obj.semester
+            context["semesters"] = subject
 
-            ans1 = request.POST.get('optradio_1')
-            ans2 = request.POST.get('optradio_2')
-            ans3 = request.POST.get('optradio_3')
-            ans4 = request.POST.get('optradio_4')
-            ans5 = request.POST.get('optradio_5')
-            ans6 = request.POST.get('optradio_6')
-            ans7 = request.POST.get('optradio_7')
-            ans8 = request.POST.get('optradio_8')
-            ans9 = request.POST.get('optradio_9')
-            ans10 = request.POST.get('optradio_10')
-            remarks = request.POST.get('remarks')
-            # print(std_id, dept_id, sub_id, fac_id, semester, ans1, ans2, ans3, ans4, ans5, ans6, ans7, ans8, ans9, ans10, remarks)
+            if request.method == 'POST':
+                if request.POST.get('subject_id') is not None:
+                    try:
+                        std_obj = Students.objects.get(auth_id=request.user)
 
-            try:
-                end_sem_feedback_ans_obj = End_Sem_Feedback_Answers.objects.create(
-                    student_id = std_obj,
-                    dept_id = dept_obj,
-                    subject_id = sub_obj,
-                    faculty_id = fac_obj,
-                    semester = semester,
-                    Q1 = ans1,
-                    Q2 = ans2,
-                    Q3 = ans3,
-                    Q4 = ans4,
-                    Q5 = ans5,
-                    Q6 = ans6,
-                    Q7 = ans7,
-                    Q8 = ans8,
-                    Q9 = ans9,
-                    Q10 = ans10,
-                    remarks = remarks
-                )
-                end_sem_feedback_ans_obj.save()
+                        dept_obj = Departments.objects.get(id=std_obj.dept_id.id)
 
-                student_feedback_status_obj = Student_Feedback_Status.objects.filter(
-                    student_id=std_obj,
-                    subject_id=sub_obj
-                ).update(end_sem_is_given=True)
+                        sub_id = request.POST.get('subject_id')
+                        sub_obj = Subjects.objects.get(id=sub_id)
 
-                context["success"] = "Thank you for giving your feedback"
+                        fac_id = request.POST.get('faculty_id')
+                        fac_obj = Faculty.objects.get(id=fac_id)
+
+                        semester = std_obj.semester
+
+                        ans1 = request.POST.get('rating_1') if request.POST.get('rating_1') else 0
+                        ans2 = request.POST.get('rating_2') if request.POST.get('rating_2') else 0
+                        ans3 = request.POST.get('rating_3') if request.POST.get('rating_3') else 0
+                        ans4 = request.POST.get('rating_4') if request.POST.get('rating_4') else 0
+                        ans5 = request.POST.get('rating_5') if request.POST.get('rating_5') else 0
+                        ans6 = request.POST.get('rating_6') if request.POST.get('rating_6') else 0
+                        ans7 = request.POST.get('rating_7') if request.POST.get('rating_7') else 0
+                        ans8 = request.POST.get('rating_8') if request.POST.get('rating_8') else 0
+                        ans9 = request.POST.get('rating_9') if request.POST.get('rating_9') else 0
+                        ans10 = request.POST.get('rating_10') if request.POST.get('rating_10') else 0
+                        remarks = request.POST.get('remark') if request.POST.get('remark') else None
+
+                        end_sem_feedback_ans_obj, is_created = End_Sem_Feedback_Answers.objects.get_or_create(
+                            student_id=std_obj,
+                            dept_id=dept_obj,
+                            subject_id=sub_obj,
+                            faculty_id=fac_obj,
+                            semester=semester,
+                            defaults={
+                                'Q1': int(ans1),
+                                'Q2': int(ans2),
+                                'Q3': int(ans3),
+                                'Q4': int(ans4),
+                                'Q5': int(ans5),
+                                'Q6': int(ans6),
+                                'Q7': int(ans7),
+                                'Q8': int(ans8),
+                                'Q9': int(ans9),
+                                'Q10': int(ans10),
+                                'remarks': remarks
+                            }
+                        )
+                        end_sem_feedback_ans_obj.save()
+                        if is_created:
+                            obj, created_obj = Student_Feedback_Status.objects.get_or_create(
+                                student_id=std_obj,
+                                subject_id=sub_obj,
+                                faculty_id=fac_obj,
+                                defaults={
+                                    'end_sem_feedback': end_sem_feedback_ans_obj
+                                }
+                            )
+                            if not created_obj:
+                                obj.end_sem_feedback = end_sem_feedback_ans_obj
+
+                            obj.save()
+
+                            context["success"] = "Thank you for giving your feedback."
+                            context["msg"] = "End Semester Feedback for " + str(fac_obj.name) + " has been saved successfully."
+                            return render(request, "students/student_end_sem_feedback.html", context)
+
+                        else:
+                            context["error"] = "You have already given feedback for " + str(fac_obj.name)
+                            return render(request, "students/student_end_sem_feedback.html", context)
+
+                    except Exception as e:
+                        traceback.print_exc()
+                        print(e)
+                        context["error"] = "Some technical problem occured."
+                        return render(request, "students/student_end_sem_feedback.html", context)
+
+                else:
+                    context["error"] = "Some technical problem occured."
+                    return render(request, "students/student_end_sem_feedback.html", context)
+
+            else:
                 return render(request, "students/student_end_sem_feedback.html", context)
-            except:
-                context["error"] = "Some technical problem occured."
-                return render(request, "students/student_end_sem_feedback.html", context)
+
         else:
-            return render(request, "students/student_end_sem_feedback.html", context)
+            context = {
+                "base_url": st.BASE_URL,
+                "error": "Page Not Found."
+            }
+            return render(request, 'home_auth/index.html', context)
+
     else:
         context = {
             "base_url": st.BASE_URL,
@@ -714,14 +785,14 @@ def StudentComplaintSectionView(request):
                 std_obj = Students.objects.get(auth_id=request.user)
 
                 com_id = request.POST.get('committee')
-                com_obj = Committee_Details.objects.get(id = com_id)
+                com_obj = Committee_Details.objects.get(id=com_id)
 
                 complaint_details = request.POST.get('complaint')
 
                 complaints_of_student_obj = Complaints_of_Students.objects.create(
-                    student_id = std_obj,
-                    committee_id = com_obj,
-                    complaint_details = complaint_details
+                    student_id=std_obj,
+                    committee_id=com_obj,
+                    complaint_details=complaint_details
                 )
                 complaints_of_student_obj.save()
                 context["success"] = "Complaint registered successfully."
@@ -739,88 +810,87 @@ def StudentComplaintSectionView(request):
         return render(request, 'home_auth/index.html', context)
 
 
-def getFacultyName(request):
-    sub_id = request.GET['sub_id_gf']
-    obj = Subject_to_Faculty_Mapping.objects.get(subject_id=int(sub_id))
-    faculty = Faculty.objects.get(id=obj.faculty_id.id)
-    faculty_id = faculty.id
-    faculty_name = faculty.name
-    result = json.dumps({'name': faculty_name, 'id': faculty_id})
-    return HttpResponse(result)
-
-
-def checkStatus(request):
-    std_obj = Students.objects.get(auth_id=request.user)
-    sub_id = request.GET['sub_id']
-    sub_obj = Subjects.objects.get(id=int(sub_id))
-    # print("Hello")
-    # print(sub_id, sub_obj)
-    feedback_given_obj = Student_Feedback_Status.objects.get(student_id=std_obj, subject_id=sub_obj)
-    print(feedback_given_obj.is_given)
-    if (feedback_given_obj.is_given == True):
-        result = json.dumps({'v': '1'})
-    else:
-        result = json.dumps({'v': '0'})
-    return HttpResponse(result)
-
-
-def checkStatusforEndSem(request):
-    std_obj = Students.objects.get(auth_id=request.user)
-    sub_id = request.GET['sub_id']
-    sub_obj = Subjects.objects.get(id=int(sub_id))
-    # print("Hello")
-    # print(sub_id, sub_obj)
-    feedback_given_obj = Student_Feedback_Status.objects.get(student_id=std_obj, subject_id=sub_obj)
-    print(feedback_given_obj.end_sem_is_given)
-    if (feedback_given_obj.end_sem_is_given == True):
-        result = json.dumps({'v': '1'})
-    else:
-        result = json.dumps({'v': '0'})
-    return HttpResponse(result)
-
-
 def GetFeedback(request):
-    std_obj = Students.objects.get(auth_id=request.user)
-    sub_id = request.GET['subject_id']
-    sub_obj = Subjects.objects.get(id=int(sub_id))
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            if request.GET.get('obj_id') is not None:
+                type = request.GET.get('type')
+                obj_id = request.GET.get('obj_id')
+                if type == "mid":
+                    feedback_obj = Mid_Sem_Feedback_Answers.objects.get(
+                        id=Student_Feedback_Status.objects.get(id=int(obj_id)).mid_sem_feedback.id
+                    )
+                    data = {
+                        'id': feedback_obj.id,
+                        'subject_name': feedback_obj.subject_id.subject_name,
+                        'faculty_name': feedback_obj.faculty_id.name,
+                        'ans_1': feedback_obj.Q1,
+                        'ans_2': feedback_obj.Q2,
+                        'ans_3': feedback_obj.Q3,
+                        'ans_4': feedback_obj.Q4,
+                        'ans_5': feedback_obj.Q5,
+                        'ans_6': feedback_obj.Q6,
+                        'ans_7': feedback_obj.Q7,
+                        'ans_8': feedback_obj.Q8,
+                        'ans_9': feedback_obj.Q9,
+                        'ans_10': feedback_obj.Q10,
+                        'remarks': feedback_obj.remarks,
+                        'date': str(feedback_obj.timestamp.strftime("%d %B, %Y, %H:%M:%S"))
+                    }
+                    res = json.dumps(data)
+                    return HttpResponse(res, status=status.HTTP_200_OK)
 
-    mid_sem_feedback_answer_obj = Mid_Sem_Feedback_Answers.objects.get(student_id=std_obj, subject_id=sub_obj)
+                elif type == "end":
+                    feedback_obj = End_Sem_Feedback_Answers.objects.get(
+                        id=Student_Feedback_Status.objects.get(id=int(obj_id)).end_sem_feedback.id
+                    )
+                    data = {
+                        'id': feedback_obj.id,
+                        'subject_name': feedback_obj.subject_id.subject_name,
+                        'faculty_name': feedback_obj.faculty_id.name,
+                        'ans_1': feedback_obj.Q1,
+                        'ans_2': feedback_obj.Q2,
+                        'ans_3': feedback_obj.Q3,
+                        'ans_4': feedback_obj.Q4,
+                        'ans_5': feedback_obj.Q5,
+                        'ans_6': feedback_obj.Q6,
+                        'ans_7': feedback_obj.Q7,
+                        'ans_8': feedback_obj.Q8,
+                        'ans_9': feedback_obj.Q9,
+                        'ans_10': feedback_obj.Q10,
+                        'remarks': feedback_obj.remarks,
+                        'date': str(feedback_obj.timestamp.strftime("%d %B, %Y, %H:%M:%S"))
+                    }
+                    res = json.dumps(data)
+                    return HttpResponse(res, status=status.HTTP_200_OK)
 
-    result = json.dumps({'a1': mid_sem_feedback_answer_obj.Q1,
-                         'a2': mid_sem_feedback_answer_obj.Q2,
-                         'a3': mid_sem_feedback_answer_obj.Q3,
-                         'a4': mid_sem_feedback_answer_obj.Q4,
-                         'a5': mid_sem_feedback_answer_obj.Q5,
-                         'a6': mid_sem_feedback_answer_obj.Q6,
-                         'a7': mid_sem_feedback_answer_obj.Q7,
-                         'a8': mid_sem_feedback_answer_obj.Q8,
-                         'a9': mid_sem_feedback_answer_obj.Q9,
-                         'a10': mid_sem_feedback_answer_obj.Q10,
-                         'remarks': mid_sem_feedback_answer_obj.remarks
-                         })
-    return HttpResponse(result)
+                else:
+                    data = {
+                        "error": "Can not find what you are looking for."
+                    }
+                    res = json.dumps(data)
+                    return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
 
+            else:
+                data = {
+                    "error": "Feedback Object Not passed"
+                }
+                res = json.dumps(data)
+                return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
 
-def GetFeedbackForEndSem(request):
-    std_obj = Students.objects.get(auth_id=request.user)
-    sub_id = request.GET['subject_id']
-    sub_obj = Subjects.objects.get(id=int(sub_id))
+        else:
+            data = {
+                "error": "Error in parsing data."
+            }
+            res = json.dumps(data)
+            return HttpResponse(res, status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    end_sem_feedback_answer_obj = End_Sem_Feedback_Answers.objects.get(student_id=std_obj, subject_id=sub_obj)
-
-    result = json.dumps({'a1': end_sem_feedback_answer_obj.Q1,
-                         'a2': end_sem_feedback_answer_obj.Q2,
-                         'a3': end_sem_feedback_answer_obj.Q3,
-                         'a4': end_sem_feedback_answer_obj.Q4,
-                         'a5': end_sem_feedback_answer_obj.Q5,
-                         'a6': end_sem_feedback_answer_obj.Q6,
-                         'a7': end_sem_feedback_answer_obj.Q7,
-                         'a8': end_sem_feedback_answer_obj.Q8,
-                         'a9': end_sem_feedback_answer_obj.Q9,
-                         'a10': end_sem_feedback_answer_obj.Q10,
-                         'remarks': end_sem_feedback_answer_obj.remarks
-                         })
-    return HttpResponse(result)
+    else:
+        data = {
+            "error": "Login First"
+        }
+        res = json.dumps(data)
+        return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # Student Related Views > End
@@ -1163,9 +1233,6 @@ def Modify_Subject_AJAX(request):
                 else:
                     context["error"] = "Subject id not passed."
                     res = json.dumps(context)
-                    print(context)
-                    print(res)
-                    print(type(res))
                     return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
             else:
                 context["error"] = "Error in parsing data."

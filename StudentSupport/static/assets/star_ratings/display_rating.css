@@ -1,0 +1,25 @@
+label.rating {
+  padding: 0 5px;
+  font-size: 18px;
+  transition: all .2s;
+}
+
+
+div.rating-1 { color: #fc2912; }
+
+div.rating-2 { color: #ff8c00; }
+
+div.rating-3 { color: #fcaa12; }
+
+div.rating-4 { color: #fcd112; }
+
+div.rating-5 {
+  color: #ffff00;
+  //text-shadow: 0 0 20px #952;
+}
+
+
+label.rating:before {
+  content: '\f005';
+  font-family: FontAwesome;
+}
