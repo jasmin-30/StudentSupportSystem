@@ -1,5 +1,7 @@
+import datetime
 import json
 from base64 import b64encode, b64decode
+from .utils import *
 from email.utils import decode_params
 from io import BytesIO
 import traceback
@@ -45,7 +47,18 @@ def HomePageView(request):
             email_forgot = request.POST.get('email_forgot')
             try:
                 user_obj = User.objects.get(email=email_forgot)
-                student_obj = Students.objects.get(auth_id=user_obj)
+                if user_obj.role == "Student":
+                    obj = Students.objects.get(auth_id=user_obj)
+                    name = str(obj.first_name) + " : " + str(obj.last_name)
+
+                elif user_obj.role == "Faculty":
+                    obj = Faculty.objects.get(auth_id=user_obj)
+                    name = str(obj.name)
+
+                else:
+                    obj = Principal.objects.get(auth_id=user_obj)
+                    name = str(obj.name)
+
             except Exception as e:
                 print(e)
                 context["error"] = "You are not a registered User."
@@ -56,9 +69,10 @@ def HomePageView(request):
             email_encrypted = b64encode(email_to.encode())
             url = st.BASE_URL + "changePassword/?email=" + email_encrypted.decode('utf-8')
             # print(email_to, email_from)
+            print(url)
             subject = "Recover Your Password."
             html_message = render_to_string('email_templates/recover_password_template.html',
-                                            {'first_name': student_obj.first_name, 'url': url})
+                                            {'first_name': name, 'url': url})
             plain_message = strip_tags(html_message)
             recipient_list = [str(email_to)]
             # print(plain_message)
@@ -353,66 +367,58 @@ def StudentDashboard(request):
 
 
 def StudentProfile(request):
+    context = {
+        "base_url": st.BASE_URL,
+    }
     if request.user.is_authenticated:
         student_obj = Students.objects.get(auth_id=request.user)
-        departments = Departments.objects.all()
-
-        context = {
-            "base_url": st.BASE_URL,
-            "std_obj": student_obj,
-            "departments": departments,
-            "name": str(student_obj.first_name) + " " + str(student_obj.last_name),
-            "email": request.user.email
-        }
-        dept_obj = Departments.objects.get(id=student_obj.dept_id.id)
-        context["department"] = dept_obj.dept_name
+        context["std_obj"] = student_obj
+        context["name"] = str(student_obj.first_name) + " " + str(student_obj.last_name)
+        context["email"] = request.user.email
 
         if request.method == "POST":
             if request.POST.get('fname') is not None:
-                student_obj = Students.objects.get(auth_id=request.user)
-                user_obj = User.objects.get(id=request.user.id)
-                fname = request.POST.get('fname')
-                lname = request.POST.get('lname')
-                email = request.POST.get('email')
+                try:
+                    user_obj = User.objects.get(id=request.user.id)
+                    fname = request.POST.get('fname')
+                    lname = request.POST.get('lname')
+                    email = request.POST.get('email')
 
-                student_obj.first_name = fname
-                student_obj.last_name = lname
-                student_obj.save()
+                    student_obj.first_name = fname
+                    student_obj.last_name = lname
+                    student_obj.save()
 
-                user_obj.email = email
-                user_obj.save()
-                request.user = user_obj
+                    user_obj.email = email
+                    user_obj.save()
+                    request.user = user_obj
 
-                context = {
-                    "base_url": st.BASE_URL,
-                    "std_obj": student_obj,
-                    "success": "Profile Updated Successfully",
-                    "name": str(student_obj.first_name) + " " + str(student_obj.last_name),
-                    "email": request.user.email
-                }
+                    context["std_obj"] = student_obj
+                    context["email"] = request.user.email
 
-                dept_obj = Departments.objects.get(id=student_obj.dept_id.id)
-                context["department"] = dept_obj.dept_name
-                return render(request, 'students/student_profile_page.html', context)
+                    context["success"] = "Profile has been updated successfully."
+                    return render(request, 'students/student_profile_page.html', context)
+
+                except Exception as e:
+                    traceback.print_exc()
+                    print(e)
+                    context["error"] = "Some technical problem occured. Please try again later."
+                    return render(request, 'students/student_profile_page.html', context)
 
             elif request.POST.get('sem') is not None:
-                student_obj = Students.objects.get(auth_id=request.user)
-                sem = request.POST.get('sem')
+                try:
+                    sem = request.POST.get('sem')
+                    student_obj.semester = sem
+                    student_obj.save()
 
-                student_obj.semester = sem
-                student_obj.save()
+                    context["std_obj"] = student_obj
+                    context["success"] = "Semester has been updated successfully."
+                    return render(request, 'students/student_profile_page.html', context)
 
-                context = {
-                    "base_url": st.BASE_URL,
-                    "std_obj": student_obj,
-                    "success": "Profile Updated Successfully",
-                    "name": str(student_obj.first_name) + " " + str(student_obj.last_name),
-                    "email": request.user.email
-                }
-
-                dept_obj = Departments.objects.get(id=student_obj.dept_id.id)
-                context["department"] = dept_obj.dept_name
-                return render(request, 'students/student_profile_page.html', context)
+                except Exception as e:
+                    traceback.print_exc()
+                    print(e)
+                    context["error"] = "Some technical problem occured. Please try again later."
+                    return render(request, 'students/student_profile_page.html', context)
 
             elif request.POST.get('newpwd') is not None:
                 oldpwd = request.POST.get('oldpwd')
@@ -420,51 +426,30 @@ def StudentProfile(request):
                 pwd = request.user.password
                 if check_password(oldpwd, pwd):
                     try:
-                        student_obj = Students.objects.get(auth_id=request.user)
                         user_obj = User.objects.get(id=request.user.id)
                         user_obj.set_password(str(newpwd))
                         user_obj.save()
                         update_session_auth_hash(request, user_obj)
 
-                        context = {
-                            "base_url": st.BASE_URL,
-                            "std_obj": student_obj,
-                            "success": "Password Changed Successfully.",
-                            "name": str(student_obj.first_name) + " " + str(student_obj.last_name),
-                            "email": request.user.email
-                        }
-
-                        dept_obj = Departments.objects.get(id=student_obj.dept_id.id)
-                        context["department"] = dept_obj.dept_name
+                        context["success"] = "Password has been changed successfully!"
                         return render(request, 'students/student_profile_page.html', context)
 
                     except Exception as e:
+                        print(e)
                         context["error"] = "Error in changing password. please try again later."
                         context["name"] = str(student_obj.first_name) + " " + str(student_obj.last_name)
                         context["email"] = request.user.email
-                        dept_obj = Departments.objects.get(id=student_obj.dept_id.id)
-                        context["department"] = dept_obj.dept_name
                         return render(request, 'students/student_profile_page.html', context)
-                else:
-                    student_obj = Students.objects.get(auth_id=request.user)
-                    context = {
-                        "base_url": st.BASE_URL, "std_obj": student_obj,
-                        "error": "Old Password does not match with the one you entered. Please enter correct password.",
-                        "name": str(student_obj.first_name) + " " + str(student_obj.last_name),
-                        "email": request.user.email
-                    }
 
-                    dept_obj = Departments.objects.get(id=student_obj.dept_id.id)
-                    context["department"] = dept_obj.dept_name
+                else:
+                    context[
+                        "error"] = "Old Password does not match with the one you entered. Please enter correct password."
                     return render(request, 'students/student_profile_page.html', context)
         else:
             return render(request, 'students/student_profile_page.html', context)
 
     else:
-        context = {
-            "base_url": st.BASE_URL,
-            "error": "Login to access profile page."
-        }
+        context["error"] = "Login to access your profile."
         return render(request, 'home_auth/index.html', context)
 
 
@@ -595,7 +580,8 @@ def StudentFeedbackSection(request, type):
                             obj.save()
 
                             context["success"] = "Thank you for giving your feedback."
-                            context["msg"] = "Mid Semester Feedback for " + str(fac_obj.name) + " has been saved successfully."
+                            context["msg"] = "Mid Semester Feedback for " + str(
+                                fac_obj.name) + " has been saved successfully."
                             return render(request, "students/student_mid_sem_feedback.html", context)
 
                         else:
@@ -732,7 +718,8 @@ def StudentFeedbackSection(request, type):
                             obj.save()
 
                             context["success"] = "Thank you for giving your feedback."
-                            context["msg"] = "End Semester Feedback for " + str(fac_obj.name) + " has been saved successfully."
+                            context["msg"] = "End Semester Feedback for " + str(
+                                fac_obj.name) + " has been saved successfully."
                             return render(request, "students/student_end_sem_feedback.html", context)
 
                         else:
@@ -759,49 +746,6 @@ def StudentFeedbackSection(request, type):
             }
             return render(request, 'home_auth/index.html', context)
 
-    else:
-        context = {
-            "base_url": st.BASE_URL,
-            "error": "Login to access this page."
-        }
-        return render(request, 'home_auth/index.html', context)
-
-
-def StudentComplaintSectionView(request):
-    if request.user.is_authenticated:
-        std_obj = Students.objects.get(auth_id=request.session["User"])
-        print(std_obj)
-        committeeqs = Committee_Details.objects.all()
-        complaints_of_students_qs = Complaints_of_Students.objects.filter(student_id=std_obj)
-        context = {
-            "base_url": st.BASE_URL,
-            "committees": committeeqs,
-            "complaints_of_students": complaints_of_students_qs,
-            "name": str(std_obj.first_name) + " " + str(std_obj.last_name)
-        }
-
-        if request.method == 'POST':
-            try:
-                std_obj = Students.objects.get(auth_id=request.user)
-
-                com_id = request.POST.get('committee')
-                com_obj = Committee_Details.objects.get(id=com_id)
-
-                complaint_details = request.POST.get('complaint')
-
-                complaints_of_student_obj = Complaints_of_Students.objects.create(
-                    student_id=std_obj,
-                    committee_id=com_obj,
-                    complaint_details=complaint_details
-                )
-                complaints_of_student_obj.save()
-                context["success"] = "Complaint registered successfully."
-                return render(request, "students/student_complaint_section.html", context)
-            except:
-                context["error"] = "Some technical problem occured."
-                return render(request, "students/student_complaint_section.html", context)
-        else:
-            return render(request, "students/student_complaint_section.html", context)
     else:
         context = {
             "base_url": st.BASE_URL,
@@ -891,6 +835,49 @@ def GetFeedback(request):
         }
         res = json.dumps(data)
         return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
+
+
+def StudentComplaintSectionView(request):
+    if request.user.is_authenticated:
+        std_obj = Students.objects.get(auth_id=request.session["User"])
+        print(std_obj)
+        committeeqs = Committee_Details.objects.all()
+        complaints_of_students_qs = Complaints_of_Students.objects.filter(student_id=std_obj)
+        context = {
+            "base_url": st.BASE_URL,
+            "committees": committeeqs,
+            "complaints_of_students": complaints_of_students_qs,
+            "name": str(std_obj.first_name) + " " + str(std_obj.last_name)
+        }
+
+        if request.method == 'POST':
+            try:
+                std_obj = Students.objects.get(auth_id=request.user)
+
+                com_id = request.POST.get('committee')
+                com_obj = Committee_Details.objects.get(id=com_id)
+
+                complaint_details = request.POST.get('complaint')
+
+                complaints_of_student_obj = Complaints_of_Students.objects.create(
+                    student_id=std_obj,
+                    committee_id=com_obj,
+                    complaint_details=complaint_details
+                )
+                complaints_of_student_obj.save()
+                context["success"] = "Complaint registered successfully."
+                return render(request, "students/student_complaint_section.html", context)
+            except:
+                context["error"] = "Some technical problem occured."
+                return render(request, "students/student_complaint_section.html", context)
+        else:
+            return render(request, "students/student_complaint_section.html", context)
+    else:
+        context = {
+            "base_url": st.BASE_URL,
+            "error": "Login to access this page."
+        }
+        return render(request, 'home_auth/index.html', context)
 
 
 # Student Related Views > End
@@ -1252,8 +1239,101 @@ def HodViewDetailedFeedback(request):
     return render(request, 'hod/hod_view_detailed_feedback.html', context={})
 
 
-def HodViewAverageFeedback(request):
-    return render(request, 'hod/hod_view_average_feedback.html', context={})
+def HodViewAverageFeedback(request, type):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated and request.user.getRole == "Faculty":
+        fac_object = Faculty.objects.get(auth_id=request.user)
+        context['name'] = fac_object.name
+        if fac_object.hod:
+            dept_faculties = Faculty.objects.filter(dept_id=fac_object.dept_id)
+            context["dept_faculties"] = dept_faculties
+            if type == "mid-sem":
+                questions = Mid_Sem_Feedback_Questions.objects.all()
+                context["questions"] = questions
+                return render(request, 'hod/hod_view_average_feedback.html', context)
+
+            elif type == "end-sem":
+                questions = End_Sem_Feedback_Questions.objects.all()
+                context["questions"] = questions
+                return render(request, 'hod/hod_view_average_feedback.html', context)
+
+            else:
+                context["error"] = "Page not found."
+                return render(request, 'hod/hod_view_average_feedback.html', context)
+
+        else:
+            context["error"] = "You are not authorized to view this page."
+            return render(request, 'home_auth/index.html', context)
+
+    else:
+        context["error"] = "Log in First."
+        return render(request, 'home_auth/index.html', context)
+
+
+def GetAverageFeedback(request):
+    if request.user.is_authenticated and (request.user.getRole == "Faculty" or request.user.getRole == "Principal"):
+        if request.GET.get('fac_id') is not None:
+            type = request.GET.get('type')
+            faculty_obj = Faculty.objects.get(id=int(request.GET.get('fac_id')))
+            if type == "mid":
+                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj)
+                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj)
+                print(rating_list)
+                try:
+                    data = {
+                        "ratings": rating_list,
+                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y, %H:%M:%S"))
+                    }
+
+                except Mid_Sem_Feedback_Answers.DoesNotExist:
+                    data = {
+                        "ratings": rating_list,
+                        "date": str(datetime.datetime.now().strftime("%d %B, %Y, %H:%M:%S"))
+                    }
+
+                res = json.dumps(data)
+                return HttpResponse(res, status=status.HTTP_200_OK)
+
+            elif type == "end":
+                feedback_qs = End_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj)
+                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj)
+                print(rating_list)
+                try:
+                    data = {
+                        "ratings": rating_list,
+                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y, %H:%M:%S"))
+                    }
+
+                except Mid_Sem_Feedback_Answers.DoesNotExist:
+                    data = {
+                        "ratings": rating_list,
+                        "date": str(datetime.datetime.now().strftime("%d %B, %Y, %H:%M:%S"))
+                    }
+                res = json.dumps(data)
+                return HttpResponse(res, status=status.HTTP_200_OK)
+
+            else:
+                data = {
+                    "error": "Can not find what you are looking for."
+                }
+                res = json.dumps(data)
+                return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            data = {
+                "error": "Faculty id not passed."
+            }
+            res = json.dumps(data)
+            return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        data = {
+            "error": "You are not authorized to access this."
+        }
+        res = json.dumps(data)
+        return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
 
 
 # HOD Related Views > End

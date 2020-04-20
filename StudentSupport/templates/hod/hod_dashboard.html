@@ -258,12 +258,12 @@
                                         </a>
                                         <ul class="pcoded-submenu">
                                             <li class=" ">
-                                                <a href="{% url 'hod_view_detailed_feedback' %}">
+                                                <a href="{% url 'hod_view_detailed_feedback' type='mid-sem' %}">
                                                     <span class="pcoded-mtext">Mid Semester</span>
                                                 </a>
                                             </li>
                                             <li class=" ">
-                                                <a href="#">
+                                                <a href="{% url 'hod_view_detailed_feedback' type='end-sem' %}">
                                                     <span class="pcoded-mtext">End Semester</span>
                                                 </a>
                                             </li>
@@ -283,12 +283,12 @@
                                         </a>
                                         <ul class="pcoded-submenu">
                                             <li class=" ">
-                                                <a href="{% url 'hod_view_average_feedback' %}">
+                                                <a href="{% url 'hod_view_average_feedback' type='mid-sem' %}">
                                                     <span class="pcoded-mtext">Mid Semester</span>
                                                 </a>
                                             </li>
                                             <li class=" ">
-                                                <a href="#">
+                                                <a href="{% url 'hod_view_average_feedback' type='end-sem' %}">
                                                     <span class="pcoded-mtext">End Semester</span>
                                                 </a>
                                             </li>

@@ -170,7 +170,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-4 col-form-label" for="add_teaching_faculty">Semester : </label>
+                            <label class="col-sm-4 col-form-label" for="add_teaching_faculty">Teaching Faculty : </label>
                             <div class="col-sm-8">
                                 <div id="add_teaching_faculty-div">
                                     <select name="add_teaching_faculty" id="add_teaching_faculty" class="form-control" onblur="build_form()" required>
@@ -181,7 +181,7 @@
                             </div>
                         </div>
                         <div class="form-group row f-right" style="padding-right: 15px;">
-                            <button type="button" class="btn btn-disabled" id="btn-confirm" disabled>
+                            <button type="submit" class="btn btn-disabled" id="btn-confirm" disabled>
                                 <i class="feather icon-plus"></i>  Add Subject
                             </button>
                         </div>
@@ -255,290 +255,211 @@
             </nav>
             <div class="pcoded-main-container">
                 <div class="pcoded-wrapper">
-                    <nav class="pcoded-navbar">
-                         <div class="pcoded-inner-navbar main-menu">
-                            <div class="pcoded-navigatio-lavel">Quick Links</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">My Profile</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">Manage Department</span>
-                                    </a>
-                                </li>
-                                <ul class="pcoded-item pcoded-left-item">
-                                    <li class="pcoded-hasmenu">
-                                        <a href="javascript:void(0)">
-                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                            <span class="pcoded-mtext">View Detaied Feedback</span>
-                                        </a>
-                                        <ul class="pcoded-submenu">
-                                            <li class=" ">
-                                                <a href="{% url 'hod_view_detailed_feedback' %}">
-                                                    <span class="pcoded-mtext">Mid Semester</span>
-                                                </a>
-                                            </li>
-                                            <li class=" ">
-                                                <a href="#">
-                                                    <span class="pcoded-mtext">End Semester</span>
-                                                </a>
-                                            </li>
-                                            <li class=" ">
-                                                <a href="#">
-                                                    <span class="pcoded-mtext">Program Exit Survey</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                                <ul class="pcoded-item pcoded-left-item">
-                                    <li class="pcoded-hasmenu">
-                                        <a href="javascript:void(0)">
-                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                            <span class="pcoded-mtext">View Average Feedback</span>
-                                        </a>
-                                        <ul class="pcoded-submenu">
-                                            <li class=" ">
-                                                <a href="{% url 'hod_view_average_feedback' %}">
-                                                    <span class="pcoded-mtext">Mid Semester</span>
-                                                </a>
-                                            </li>
-                                            <li class=" ">
-                                                <a href="#">
-                                                    <span class="pcoded-mtext">End Semester</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                                <li class="">
-                                    <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
-                                        <span class="pcoded-mtext" data-toggle="modal" data-target="#large-Modal">Publish News
-                                        </span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="{% url 'logout' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
-                                        <span class="pcoded-mtext">Logout</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                    <div class="pcoded-content">
-                        <div class="pcoded-inner-content">
-                            <div class="main-body">
-                                <div class="page-wrapper">
-                                    <div class="page-body">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="page-header">
-                                                    <div class="row align-items-end">
-                                                        <div class="col-lg-8">
-                                                            <div class="page-header-title">
-                                                                <div class="d-inline">
-                                                                    <h4>Manage Department</h4>
-                                                                </div>
+                    <div class="pcoded-inner-content">
+                        <div class="main-body">
+                            <div class="page-wrapper">
+                                <div class="page-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="page-header">
+                                                <div class="row align-items-end">
+                                                    <div class="col-lg-8">
+                                                        <div class="page-header-title">
+                                                            <div class="d-inline">
+                                                                <h4>Manage Department</h4>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-lg-4">
-                                                            <span class="f-right">
-                                                                <a href="{% url 'hod_dashboard' %}">
-                                                                    <i class="feather icon-arrow-left"></i>
-                                                                    Back to Dashboard
-                                                                </a>
-                                                            </span>
                                                         </div>
                                                     </div>
+                                                    <div class="col-lg-4">
+                                                        <span class="f-right">
+                                                            <a href="{% url 'hod_dashboard' %}">
+                                                                <i class="feather icon-arrow-left"></i>
+                                                                Back to Dashboard
+                                                            </a>
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                            <!-- List view card start -->
-                                    <div class="card">
-                                        <div class="card-block">
-                                            <div class="row">
-                                                <div class="col-lg-12 col-xl-12">
-                                                    <!-- Nav tabs -->
-                                                    <ul class="nav nav-tabs md-tabs tabs-left b-none" role="tablist">
-                                                        <li class="nav-item">
-                                                            <a class="nav-link active" data-toggle="tab" href="#faculties" role="tab" style="font-size: 12pt; width: 180px;">Faculties</a>
-                                                            <div class="slide"></div>
-                                                        </li>
-                                                        <li class="nav-item">
-                                                            <a class="nav-link" data-toggle="tab" href="#subjects" role="tab" style="font-size: 12pt; width: 180px;">Subjects</a>
-                                                            <div class="slide"></div>
-                                                        </li>
-                                                    </ul>
-                                                    <!-- Tab panes -->
-                                                    <div class="col-sm-10 col-md-10 col-lg-10 col-xl-10 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
-                                                        <div class="tab-pane active" id="faculties" role="tabpanel">
+                                            </div>
+                                        <!-- List view card start -->
+                                <div class="card">
+                                    <div class="card-block">
+                                        <div class="row">
+                                            <div class="col-lg-12 col-xl-12">
+                                                <!-- Nav tabs -->
+                                                <ul class="nav nav-tabs md-tabs tabs-left b-none" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" data-toggle="tab" href="#faculties" role="tab" style="font-size: 12pt; width: 180px;">Faculties</a>
+                                                        <div class="slide"></div>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" data-toggle="tab" href="#subjects" role="tab" style="font-size: 12pt; width: 180px;">Subjects</a>
+                                                        <div class="slide"></div>
+                                                    </li>
+                                                </ul>
+                                                <!-- Tab panes -->
+                                                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
+                                                    <div class="tab-pane active" id="faculties" role="tabpanel">
+                                                        <div class="row">
+                                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                                                <h5>List of all faculties registered in your Department</h5>
+                                                            </div>
+                                                        </div>
+                                                        <div class="table-responsive p-t-20">
+                                                            <table class="table table-hover">
+                                                                <thead>
+                                                                    <th>#</th>
+                                                                    <th>Name</th>
+                                                                    <th>Email ID</th>
+                                                                    <th>Action</th>
+                                                                </thead>
+                                                                <tbody>
+                                                                {% for f in faculties %}
+                                                                    {% ifnotequal f.auth_id request.user %}
+                                                                        <tr row_id="{{ f.id }}">
+                                                                            <th scope="row">
+                                                                                <div col_name="id">
+                                                                                    {{ forloop.counter }}
+                                                                                </div>
+                                                                            </th>
+                                                                            <td>
+                                                                                <div col_name="name" id="name">
+                                                                                    {{ f.name }}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div col_name="email" id="email">
+                                                                                    {{ f.auth_id.email }}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <span class="btn_remove">
+                                                                                    <a href="#" class="btn btn-link p-t-0 p-b-0">
+                                                                                        Remove
+                                                                                    </a>
+                                                                                </span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% else %}
+                                                                        <tr row_id="{{ f.id }}">
+                                                                            <th scope="row">
+                                                                                <div col_name="id">
+                                                                                    {{ forloop.counter }}
+                                                                                </div>
+                                                                            </th>
+                                                                            <td>
+                                                                                <div col_name="name" id="name">
+                                                                                    {{ f.name }}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div col_name="email" id="email">
+                                                                                    {{ f.auth_id.email }}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <a href="javascript:void(0)" class="btn btn-link p-t-0 p-b-0">
+                                                                                    HOD
+                                                                                </a>
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% endifnotequal %}
+                                                                {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                    <div class="tab-pane" id="subjects" role="tabpanel">
+                                                        <div class="loader-block" style="display: none">
+                                                            <svg id="loader2" viewBox="0 0 100 100">
+                                                                <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
+                                                            </svg>
+                                                        </div>
+                                                        <div class="subject-data" style="display: block">
                                                             <div class="row">
                                                                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                                    <h5>List of all faculties registered in your Department</h5>
+                                                                    <h5>List of Subjects of Department</h5>
+                                                                </div>
+                                                                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                                                    <button type="button" class="btn btn-primary f-right" data-toggle="modal" data-target="#add-subject-modal">
+                                                                        Add Subjects
+                                                                    </button>
                                                                 </div>
                                                             </div>
-                                                            <div class="table-responsive p-t-20">
-                                                                <table class="table table-hover">
-                                                                    <thead>
-                                                                        <th>#</th>
-                                                                        <th>Name</th>
-                                                                        <th>Email ID</th>
-                                                                        <th>Action</th>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                    {% for f in faculties %}
-                                                                        {% ifnotequal f.auth_id request.user %}
-                                                                            <tr row_id="{{ f.id }}">
+                                                            <div class="row">
+                                                                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 table-responsive p-t-20">
+                                                                    <table class="table table-hover">
+                                                                        <thead>
+                                                                            <th>#</th>
+                                                                            <th>Subject Name</th>
+                                                                            <th>Subject Code</th>
+                                                                            <th>Semester</th>
+                                                                            <th>Teaching Faculty</th>
+                                                                            <th>Action</th>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        {% for s in subjects %}
+                                                                            <tr row_id="{{ s.id }}">
                                                                                 <th scope="row">
-                                                                                    <div col_name="id">
+                                                                                    <div col_name="subject_id" id="subject_id">
                                                                                         {{ forloop.counter }}
                                                                                     </div>
                                                                                 </th>
                                                                                 <td>
-                                                                                    <div col_name="name" id="name">
-                                                                                        {{ f.name }}
+                                                                                    <div class="subject_data" col_name="subject_name" id="subject_name">
+                                                                                        {{ s.name }}
                                                                                     </div>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <div col_name="email" id="email">
-                                                                                        {{ f.auth_id.email }}
+                                                                                    <div class="subject_data" col_name="subject_code" id="subject_code">
+                                                                                        {{ s.code }}
                                                                                     </div>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <span class="btn_remove">
-                                                                                        <a href="#" class="btn btn-link p-t-0 p-b-0">
-                                                                                            Remove
-                                                                                        </a>
+                                                                                    <div class="subject_data" col_name="subject_sem" id="subject_sem">
+                                                                                        {{ s.sem }}
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <div class="subject_data" col_name="teaching_faculties" id="teaching_faculties" is_edited="0">
+                                                                                        {% for i in s.teaching_faculty %}
+                                                                                            <span class="faculty" fac_id="{{ i.faculty_id.id }}" fac_email="{{ i.faculty_id.auth_id.email }}">
+                                                                                                {{ i.faculty_id.name }}
+                                                                                            </span>
+                                                                                            <br/>
+                                                                                        {% endfor %}
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <span class="btn_subject_edit">
+                                                                                        <a href="#" class="btn btn-link p-0">Edit</a> |
+                                                                                    </span>
+                                                                                    <span class="btn_subject_remove">
+                                                                                        <a href="#" class="btn btn-link p-0">Remove</a>
+                                                                                    </span>
+                                                                                    <span class="btn_subject_save">
+                                                                                        <a href="#" class="btn btn-link p-0">Save</a> |
+                                                                                    </span>
+                                                                                    <span class="btn_subject_cancel">
+                                                                                        <a href="#" class="btn btn-link p-0">Cancel</a>
                                                                                     </span>
                                                                                 </td>
                                                                             </tr>
-                                                                        {% else %}
-                                                                            <tr row_id="{{ f.id }}">
-                                                                                <th scope="row">
-                                                                                    <div col_name="id">
-                                                                                        {{ forloop.counter }}
-                                                                                    </div>
-                                                                                </th>
-                                                                                <td>
-                                                                                    <div col_name="name" id="name">
-                                                                                        {{ f.name }}
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <div col_name="email" id="email">
-                                                                                        {{ f.auth_id.email }}
-                                                                                    </div>
-                                                                                </td>
-                                                                                <td>
-                                                                                    <a href="javascript:void(0)" class="btn btn-link p-t-0 p-b-0">
-                                                                                        HOD
-                                                                                    </a>
-                                                                                </td>
-                                                                            </tr>
-                                                                        {% endifnotequal %}
-                                                                    {% endfor %}
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
-                                                        </div>
-                                                        <div class="tab-pane" id="subjects" role="tabpanel">
-                                                            <div class="loader-block" style="display: none">
-                                                                <svg id="loader2" viewBox="0 0 100 100">
-                                                                    <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
-                                                                </svg>
-                                                            </div>
-                                                            <div class="subject-data" style="display: block">
-                                                                <div class="row">
-                                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                                        <h5>List of Subjects of Department</h5>
-                                                                    </div>
-                                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                                        <button type="button" class="btn btn-primary f-right" data-toggle="modal" data-target="#add-subject-modal">
-                                                                            Add Subjects
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row">
-                                                                    <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 table-responsive p-t-20">
-                                                                        <table class="table table-hover">
-                                                                            <thead>
-                                                                                <th>#</th>
-                                                                                <th>Subject Name</th>
-                                                                                <th>Subject Code</th>
-                                                                                <th>Semester</th>
-                                                                                <th>Teaching Faculty</th>
-                                                                                <th>Action</th>
-                                                                            </thead>
-                                                                            <tbody>
-                                                                            {% for s in subjects %}
-                                                                                <tr row_id="{{ s.id }}">
-                                                                                    <th scope="row">
-                                                                                        <div col_name="subject_id" id="subject_id">
-                                                                                            {{ forloop.counter }}
-                                                                                        </div>
-                                                                                    </th>
-                                                                                    <td>
-                                                                                        <div class="subject_data" col_name="subject_name" id="subject_name">
-                                                                                            {{ s.name }}
-                                                                                        </div>
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        <div class="subject_data" col_name="subject_code" id="subject_code">
-                                                                                            {{ s.code }}
-                                                                                        </div>
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        <div class="subject_data" col_name="subject_sem" id="subject_sem">
-                                                                                            {{ s.sem }}
-                                                                                        </div>
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        <div class="subject_data" col_name="teaching_faculties" id="teaching_faculties" is_edited="0">
-                                                                                            {% for i in s.teaching_faculty %}
-                                                                                                <span class="faculty" fac_id="{{ i.faculty_id.id }}" fac_email="{{ i.faculty_id.auth_id.email }}">
-                                                                                                    {{ i.faculty_id.name }}
-                                                                                                </span>
-                                                                                                <br/>
-                                                                                            {% endfor %}
-                                                                                        </div>
-                                                                                    </td>
-                                                                                    <td>
-                                                                                        <span class="btn_subject_edit">
-                                                                                            <a href="#" class="btn btn-link p-0">Edit</a> |
-                                                                                        </span>
-                                                                                        <span class="btn_subject_remove">
-                                                                                            <a href="#" class="btn btn-link p-0">Remove</a>
-                                                                                        </span>
-                                                                                        <span class="btn_subject_save">
-                                                                                            <a href="#" class="btn btn-link p-0">Save</a> |
-                                                                                        </span>
-                                                                                        <span class="btn_subject_cancel">
-                                                                                            <a href="#" class="btn btn-link p-0">Cancel</a>
-                                                                                        </span>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            {% endfor %}
-                                                                            </tbody>
-                                                                        </table>
-                                                                    </div>
+                                                                        {% endfor %}
+                                                                        </tbody>
+                                                                    </table>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                            </div>
+                                        </div>
+                                        </div>
 
-                                    </div>
-                                            <!-- List view card end -->
-                                            </div>
-                                    </div>
-                                    </div>
+                                </div>
+                                        <!-- List view card end -->
+                                        </div>
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -696,41 +617,51 @@
         // click event for add subject button with ajax.
         $(document).on('click', '#btn-confirm', function (event) {
             event.preventDefault();
-            var data = {
-                type: 'add',
-                subject_name: $(document).find('#add_Subject_Name').val(),
-                subject_code: $(document).find('#add_Subject_Code').val(),
-                subject_semester: $(document).find('#add_subject_semester option:selected').val(),
-                teaching_faculty: faculty_id
-            };
-            console.log("Adding Subject");
-            console.log(data);
-            $.ajax({
-                type:"GET",
-                url:"{{ base_url }}" + "modify-subjects/",
-                data: {
-                    info: JSON.stringify(data, null, 2),
-                },
+            var sub_name = $(document).find('#add_Subject_Name').val();
+            var sub_code = $(document).find('#add_Subject_Code').val();
+            var sub_sem = $(document).find('#add_subject_semester option:selected').val();
+            if(sub_name == "" || sub_code == "") {
+                alert("All the fields are required fields.");
+            }
+            else {
+                var data = {
+                    type: 'add',
+                    subject_name: sub_name,
+                    subject_code: sub_code,
+                    subject_semester: sub_sem,
+                    teaching_faculty: faculty_id
+                };
+                console.log("Adding Subject");
+                console.log(data);
+                $.ajax({
+                    type:"GET",
+                    url:"{{ base_url }}" + "modify-subjects/",
+                    data: {
+                        info: JSON.stringify(data, null, 2),
+                    },
 
-                success: function (msg) {
-                    console.log(msg);
-                    var response = JSON.parse(msg);
-                    swal({
-                        title: "Subject Added successfully!",
-                        text: response['subject'] + " has been added successfully.",
-                        type: "success",
-                    });
-                },
-                error: function (msg) {
-                    console.log(msg);
-                    var response = JSON.parse(msg.responseText);
-                    swal({
-                        title: "Error!",
-                        text: response['error'],
-                        type: "error",
-                    });
-                },
-            });
+                    success: function (msg) {
+                        console.log(msg);
+                        var response = JSON.parse(msg);
+                        setTimeout(swal({
+                            title: "Subject Added successfully!",
+                            text: response['subject'] + " has been added successfully.",
+                            type: "success",
+                        }, function () {
+                            location.href = location.href;
+                        }), 10);
+                    },
+                    error: function (msg) {
+                        console.log(msg);
+                        var response = JSON.parse(msg.responseText);
+                        swal({
+                            title: "Error!",
+                            text: response['error'],
+                            type: "error",
+                        });
+                    },
+                });
+            }
         });
     </script>
     <!-- Javascript for add subject modal > End -->

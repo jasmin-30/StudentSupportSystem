@@ -348,6 +348,9 @@ class Mid_Sem_Feedback_Answers(models.Model):
     remarks = models.TextField(null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        get_latest_by = ['timestamp']
+
     def __str__(self):
         return str(self.student_id) + " : " + str(self.faculty_id.name) + " : " + str(self.subject_id.subject_name)
 

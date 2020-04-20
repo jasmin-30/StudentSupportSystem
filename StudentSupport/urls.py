@@ -28,8 +28,8 @@ urlpatterns = [
     path('hod/manage-department/', views.HOD_Manage_department, name='hod_manage_department'),
     path('remove-faculty/', views.RemoveFaculty_AJAX, name='remove_faculty'),
     path('modify-subjects/', views.Modify_Subject_AJAX, name='ajax_modify_subject'),
-    path('hod/viewdetailedfeedback/', views.HodViewDetailedFeedback, name='hod_view_detailed_feedback'),
-    path('hod/viewaveragefeedback/', views.HodViewAverageFeedback, name='hod_view_average_feedback'),
+    path('hod/view-detailed-feedback/<str:type>/', views.HodViewDetailedFeedback, name='hod_view_detailed_feedback'),
+    path('hod/view-average-feedback/<str:type>/', views.HodViewAverageFeedback, name='hod_view_average_feedback'),
     # HOD Related urls > End
 
     # Faculty Related urls > Start
@@ -37,16 +37,15 @@ urlpatterns = [
     path('faculty/profile/', views.FacultyProfile, name='faculty_profile'),
     path('faculty/view-detailed-feedback/<str:type>/', views.FacultyViewDetailedFeedback, name='view_detailed_feedback'),
     path('faculty/view-average-feedback/<str:type>/', views.FacultyViewAverageFeedback, name='view_average_feedback'),
+    path('get-average-feedback/', views.GetAverageFeedback, name='get_average_feedback'),
     # Faculty Related urls > End
 
     # Student Related urls > Start
     path('student/dashboard/', views.StudentDashboard, name='student_dashboard'),
     path('student/feedback-section/<str:type>/', views.StudentFeedbackSection, name='student_feedback_section'),
-    # path('student/mid-sem-feedback/', views.StudentFeedbackSection, name='student_mid_sem_feedback'),
-    # path('student/end-sem-feedback/', views.StudentEndSemFeedbackView, name='student_end_sem_feedback'),
     path('student/dashboard/complaint/', views.StudentComplaintSectionView, name='student_complaint_section'),
     path('get-feedback/', views.GetFeedback, name='GetFeedback'),
-    path('student/dashboard/student_profile', views.StudentProfile, name='student_profile'),
+    path('student/profile/', views.StudentProfile, name='student_profile'),
     # Student Related urls > End
 
     # Committee Related urls > Start

@@ -21,6 +21,15 @@
        TODO : General department can download report department wise
      */
 
+    // TODO : Change all buttons to outline primary buttpns if looks good.
+
+    // TODO : Build Logging system for every action and also for error recovery.
+    // TODO : HOD Manage Department Javascript Modify.
+    // TODO : Implement base templates system. and change in all templates.
+    // TODO : Committees in every dashboard is still pending and also committee dashboard is also pending.
+    // TODO : Question wise average ratings.
+    // TODO : Detailed feedback.
+
 </script>
 <!-- TODO : Change every back to dashboard from this. -->
 <div class="col-sm-4 col-md-4 col-lg-4">
@@ -31,3 +40,30 @@
         </a>
     </span>
 </div>
+
+$.ajax({
+    type:"GET",
+    url:"{{ base_url }}" + "modify-subjects/",
+    data: {
+        info: JSON.stringify(data, null, 2),
+    },
+
+    success: function (msg) {
+        var response = JSON.parse(msg);
+    },
+    error: function (msg) {
+        var response = JSON.parse(msg.responseText);
+        swal({
+            title: "Error!",
+            text: response['error'],
+            type: "error",
+        });
+    },
+});
+
+<!-- sweet alert framework -->
+<link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+
+<!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+
