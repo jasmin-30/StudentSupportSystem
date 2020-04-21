@@ -297,11 +297,14 @@ class End_Sem_Feedback_Answers(models.Model):
     Q8 = models.IntegerField(choices=RATINGS, default=0)
     Q9 = models.IntegerField(choices=RATINGS, default=0)
     Q10 = models.IntegerField(choices=RATINGS, default=0)
-    remarks = models.TextField(null=True)
+    remarks = models.TextField(null=True, default=None)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        get_latest_by = ['timestamp']
+
     def __str__(self):
-        return str(self.student_id)
+        return str(self.student_id) + " : " + str(self.faculty_id.name) + " : " + str(self.subject_id.subject_name)
 
 
 class Mid_Sem_Feedback_Questions(models.Model):
@@ -345,7 +348,7 @@ class Mid_Sem_Feedback_Answers(models.Model):
     Q8 = models.IntegerField(choices=RATINGS, default=0)
     Q9 = models.IntegerField(choices=RATINGS, default=0)
     Q10 = models.IntegerField(choices=RATINGS, default=0)
-    remarks = models.TextField(null=True)
+    remarks = models.TextField(null=True, default=None)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:

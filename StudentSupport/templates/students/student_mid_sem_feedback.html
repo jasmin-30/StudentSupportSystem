@@ -84,7 +84,7 @@
     </div>
     <!-- Pre-loader end -->
 
-    <!-- Temporary modal -->
+    <!-- Feedback Form modal -->
     <div class="modal fade" id="feedback-modal" role="dialog" aria-labelledby="ModalLabel" data-current-step="1" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -409,6 +409,7 @@
                             for(i=1;i<=parseInt(ans);++i) {
                                 content += '<label class="rating"></label>';
                             }
+                            content += '</div>';
                             $(this).html(content);
                         });
                         modal.modal('show');

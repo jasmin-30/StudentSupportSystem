@@ -11,7 +11,7 @@
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/New/css/bootstrap.min.css' %}">
     <!-- themify-icons line icon -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
     <!-- ico font -->
@@ -175,38 +175,15 @@
         <div class="pcoded-container navbar-wrapper">
             <nav class="navbar header-navbar pcoded-header">
                 <div class="navbar-wrapper">
+                    <div class="navbar-container container-fluid p-l-0 d-inline">
                     <div class="navbar-logo">
                     <a class="mobile-menu" id="mobile-collapse" href="javascript:void(0)">
                         <i class="feather icon-menu"></i>
                     </a>
                     <a href="{% url 'hod_dashboard' %}">
-                        <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Theme-Logo" style="max-width:85%;">
+                        <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Theme-Logo" style="max-width:92%;">
                     </a>
                 </div>
-                    <div class="navbar-container container-fluid">
-                        <form action="#" class="m-t-0" method="post">
-                            {% csrf_token %}
-                        <ul class="nav-left">
-                                <li class="user-profile header-notification">
-                                    <div class="form-group">
-                                        <select name="select" class="form-control" style="border-radius:10px;">
-                                            <option>Semester</option>
-                                            <option value="odd">Odd</option>
-                                            <option value="even">Even</option>
-                                        </select>
-                                    </div>
-                                </li>
-                                <li class="header-search">
-                                    <div class="form-group">
-                                        <select name="select" class="form-control" onchange="this.form.submit()" style="border-radius:10px;">
-                                            <option>Year</option>
-                                            <option value="2020">2020</option>
-                                            <option value="2021">2021</option>
-                                        </select>
-                                    </div>
-                                </li>
-                    </ul>
-                            </form>
                         <ul class="nav-right">
                         <li class="user-profile header-notification">
                             <div class="dropdown-primary dropdown">
@@ -443,7 +420,7 @@
     <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap/New/js/bootstrap.min.js' %}"></script>
     <!-- jquery slimscroll js -->
     <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
     <!-- modernizr js -->

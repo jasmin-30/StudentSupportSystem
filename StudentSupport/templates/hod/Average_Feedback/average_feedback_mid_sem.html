@@ -1,0 +1,430 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>View Average Feedback</title>
+    <!-- Meta -->
+    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
+    <!-- Favicon icon -->
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
+    <!-- themify-icons line icon -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
+    <!-- ico font -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
+    <!-- Switch component css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
+    <!-- Tags css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
+    <!-- feather Awesome -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+
+    <!-- Style.css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
+</head>
+
+<body>
+    <!-- Pre-loader start -->
+    <div class="theme-loader">
+        <div class="ball-scale">
+            <div class='contain'>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pre-loader end -->
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-container navbar-wrapper">
+            <nav class="navbar header-navbar pcoded-header">
+                <div class="navbar-wrapper">
+                    <div class="navbar-logo">
+                        <a href="index-1.htm">
+                            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Theme-Logo">
+                        </a>
+                    </div>
+                    <div class="navbar-container container-fluid">
+
+                    <ul class="nav-right">
+
+                        <li class="user-profile header-notification">
+                            <div class="dropdown-primary dropdown">
+                                <div class="dropdown-toggle" data-toggle="dropdown">
+                                    <span>{{ name }}</span>
+                                    <i class="feather icon-chevron-down"></i>
+                                </div>
+                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                    <li>
+                                        <a href="#">
+                                            <i class="feather icon-user"></i> Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="feather icon-log-out"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+            </nav>
+            <div class="pcoded-main-container">
+                <div class="pcoded-wrapper">
+                <div class="pcoded-inner-content">
+                    <div class="main-body">
+                        <div class="page-wrapper">
+                             <div class="page-header">
+                                <div class="row align-items-end">
+                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                        <div class="page-header-title">
+                                            <div class="d-inline">
+                                                <h3>{{ dept_name }} Department</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                        <div class="page-header-title">
+                                            <div class="d-inline">
+                                                <h3>Mid Semester Average Feedback</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-8 col-md-8 col-lg-8 m-t-20">
+                                        <button type="button" class="btn btn-primary">Download Report</button>
+                                    </div>
+                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                        <span class="f-right">
+                                            <a href="{% url 'hod_dashboard' %}" class="btn" style="font-size: 15px">
+                                                <i class="feather icon-arrow-left"></i>
+                                                Back to Dashboard
+                                            </a>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="page-body">
+                                <div class="row">
+                                   <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                       <div class="card">
+{#                                           <div class="card-header">#}
+{#                                               <h4 style="font-size: 20px">Average Feedback</h4>#}
+{#                                           </div>#}
+                                           <div class="card-block">
+                                               <form>
+                                               <div class="form-group row">
+                                                        <label for="view_feedback_term" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Term :</label>
+                                                        <div class="col-md-4 col-lg-4">
+                                                            <select class="form-control" name="view_feedback_term" id="view_feedback_term">
+                                                                <option value="0">Odd</option>
+                                                                <option value="1">Even</option>
+                                                            </select>
+                                                        </div>
+                                                        <label for="view_feedback_year" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Year:</label>
+                                                        <div class="col-md-4 col-lg-4">
+                                                            <select class="form-control" name="view_feedback_year" id="view_feedback_year">
+                                                                <script type="text/javascript">
+                                                                    var start_year = 2010;
+                                                                    var current_year = new Date().getFullYear();
+                                                                    for(var i=start_year;i<=current_year;++i) {
+                                                                        document.write('<option value="'+ i +'">'+ i +'</option>');
+                                                                    }
+                                                                </script>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                   <div class="form-group row">
+                                                       <label for="view_feedback_faculty" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Faculty :</label>
+                                                       <div class="col-md-6 col-lg-6">
+                                                           <select class="form-control" name="view_feedback_faculty" id="view_feedback_faculty">
+                                                               <option value="-1" selected disabled>Select Faculty to view feedback</option>
+                                                           {% for f in dept_faculties %}
+                                                               <option value="{{ f.id }}">{{ f.name }}</option>
+                                                           {% endfor %}
+                                                           </select>
+                                                       </div>
+                                                       <div class="col-md-4 col-lg-4">
+                                                           <button type="button" class="btn btn-outline-primary" onclick="load_graph()">View Feedback</button>
+                                                       </div>
+                                                   </div>
+                                               </form>
+                                                <div class="col-sm-12">
+                                                       <button class="btn btn-sm btn-round btn-outline-info">
+                                                           End Semester <i class="feather icon-x"></i>
+                                                       </button>
+                                                       Filter Tabs goes here.
+                                                   </div>
+                                               <div class="loader-block" style="display: none">
+                                                   <svg id="loader2" viewBox="0 0 100 100">
+                                                       <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
+                                                    </svg>
+                                               </div>
+                                               <div id="content" style="display: none;">
+                                                   <div class="row m-t-20 m-b-20">
+                                                       <div class="col-sm-6">
+                                                           Updated On: <b><span id="feedback-date"></span></b>
+                                                       </div>
+                                                       <div class="col-sm-6">
+                                                           You can see all the question <a href="#questions_list" style="color: dodgerblue; font-size: inherit">here.</a>
+                                                       </div>
+                                                   </div>
+                                                   <canvas id="myChart"></canvas>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                                   <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                                       <div class="card">
+                                           <div class="card-header">
+                                               <h4 style="font-size: 20px">Filters</h4>
+                                           </div>
+                                           <div class="card-block">
+                                               <div class="d-inline">
+                                                   <h5 class="p-b-10">Term</h5>
+                                                   <ul class="d-inline-block">
+                                                       <li>Odd</li>
+                                                       <li>Even</li>
+                                                   </ul>
+                                               </div>
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                                <div class="row">
+                                    <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                        <div class="card" id="questions_list">
+                                            <div class="card-header">
+                                                <h4 style="font-size: 20px">Questions List</h4>
+                                            </div>
+                                            <div class="card-block">
+                                                <ul>
+                                                    {% for q in questions %}
+                                                        <li><b>Question : {{ forloop.counter }}</b> - {{ q.question_text }}</li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <!-- Required Jquery -->
+    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
+    <!-- jquery slimscroll js -->
+    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
+    <!-- modernizr js -->
+    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/css-scrollbars.js' %}"></script>
+
+    <!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+
+    <!-- Chart js -->
+    <script type="text/javascript" src="{% static 'assets/extra-js/Chart/Chart.js_2.9.3.js' %}"></script>
+
+    <!-- custom js -->
+    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/script.js' %}"></script>
+    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+
+    <!-- Javascript for Graph -->
+    <script type="text/javascript">
+        window.chartColors = {
+            red: 'rgb(255, 99, 132)',
+            orange: 'rgb(255, 159, 64)',
+            yellow: 'rgb(255, 205, 86)',
+            green: 'rgb(75, 192, 192)',
+            blue: 'rgb(54, 162, 235)',
+            purple: 'rgb(153, 102, 255)',
+            grey: 'rgb(201, 203, 207)'
+        };
+        var colorNames = Object.keys(window.chartColors);
+        question_label = [];
+        {% for q in questions %}
+            question_label.push('Question : ' + '{{ forloop.counter }}');
+        {% endfor %}
+        var color = Chart.helpers.color;
+		var barChartData = {
+			labels: question_label,
+			datasets : []
+            /* datasets: [{
+				label: 'Dataset 1',
+				backgroundColor: color(window.chartColors.red).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.red,
+				borderWidth: 1,
+				data: [50, 75, 25, 90, 52, 20, 10]
+			}, {
+				label: 'Dataset 2',
+				backgroundColor: color(window.chartColors.blue).alpha(0.5).rgbString(),
+				borderColor: window.chartColors.blue,
+				borderWidth: 1,
+				data: [10, 15, 20, 25, 35, 45, 50]
+			}] */
+
+		};
+        window.onload = function() {
+			var ctx = document.getElementById('myChart').getContext('2d');
+			window.myBar = new Chart(ctx, {
+				type: 'bar',
+				data: barChartData,
+				options: {
+				    scales: {
+				        yAxes: [{
+				            ticks: {
+				                beginAtZero: true,
+                                max: 5.0
+                            }
+                        }]
+                    },
+					responsive: true,
+					legend: {
+						position: 'top',
+					},
+					title: {
+						display: true,
+						text: 'Chart.js Bar Chart'
+					}
+				}
+			});
+		};
+
+        function update_graph(rating_list, fac_name) {
+            var len = rating_list.length;
+            barChartData.datasets = [];
+            for(var i=0;i<len;i++) {
+                var colorName = colorNames[barChartData.datasets.length % colorNames.length];
+			    var dsColor = window.chartColors[colorName];
+			    var question_length = question_label.length;
+			    var data = [];
+			    for(var j=0;j<question_length; j++) {
+			        var ind = 'Q'+(j+1);
+			        data.push(rating_list[i][ind]);
+                }
+                var newdataset = {
+                    label: rating_list[i]['subject_name'],
+                    backgroundColor: color(dsColor).alpha(0.5).rgbString(),
+                    borderColor: dsColor,
+                    borderWidth: 1,
+                    data: data
+                }
+			    //adding new dataset of subject into barchart datasets.
+			    barChartData.datasets.push(newdataset);
+            }
+
+            //Updating barchart.
+            myBar.options.title.text = "Average Feedback for " + fac_name;
+            window.myBar.update();
+        }
+
+        function load_graph() {
+            $(document).find('div.loader-block').css('display', 'block');
+            var selected_faculty = $(document).find('select#view_feedback_faculty option:selected');
+            var fac_id = selected_faculty.val();
+            var fac_name = selected_faculty.text();
+            var term = $(document).find('select#view_feedback_term option:selected').val();
+            var year = $(document).find('select#view_feedback_year option:selected').val();
+            if(fac_id == "-1") {
+                $(document).find('div.loader-block').css('display', 'none');
+                alert("Select Faculty to view feedback.");
+                $(document).find('select#view_feedback_faculty').focus();
+            }
+            else {
+                $.ajax({
+                    type: "GET",
+                    url: "{{ base_url }}" + "get-average-feedback/",
+                    data: {
+                        type: 'mid',
+                        fac_id: fac_id,
+                        term: term,
+                        year: year
+                    },
+
+                    success: function (msg) {
+                        $(document).find('div.loader-block').css('display', 'none');
+                        $(document).find('div#content').css('display', 'block');
+                        var response = JSON.parse(msg);
+                        console.log(response);
+                        console.log(response['ratings'].length);
+                        if(response['ratings'].length == 0) {
+                            $(document).find('div#content').css('display', 'none');
+                            window.myBar.clear();
+                            swal({
+                                title: "Feedback Not available.",
+                                text: "May be the faculty you have chosen has not been assigned any subject to taught. Therefore no feedback can be shown.",
+                                type: "error",
+                            });
+                        }
+                        else {
+                            $(document).find('span#feedback-date').html(response['date']);
+                            update_graph(response['ratings'], fac_name);
+                        }
+
+                    },
+                    error: function (msg) {
+                        var response = JSON.parse(msg.responseText);
+                        swal({
+                            title: "Error!",
+                            text: response['error'],
+                            type: "error",
+                        });
+                        $(document).find('div.loader-block').css('display', 'none');
+                        $(document).find('div#content').css('display', 'none');
+                    },
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>

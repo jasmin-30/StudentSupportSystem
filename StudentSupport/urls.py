@@ -37,7 +37,6 @@ urlpatterns = [
     path('faculty/profile/', views.FacultyProfile, name='faculty_profile'),
     path('faculty/view-detailed-feedback/<str:type>/', views.FacultyViewDetailedFeedback, name='view_detailed_feedback'),
     path('faculty/view-average-feedback/<str:type>/', views.FacultyViewAverageFeedback, name='view_average_feedback'),
-    path('get-average-feedback/', views.GetAverageFeedback, name='get_average_feedback'),
     # Faculty Related urls > End
 
     # Student Related urls > Start
@@ -51,5 +50,10 @@ urlpatterns = [
     # Committee Related urls > Start
     path('committee/<str:committee>/', views.CommitteeDashboard, name='committee_dashboard'),
     # Committee Related urls > End
+
+    # Feedback Ajax Endpoints url > Start
+    path('get-average-feedback/', views.GetAverageFeedback, name='get_average_feedback'),
+    path('get-all-feedback/', views.GetAllFeedback, name='get_all_feedback'),
+    # Feedback Ajax Endpoints url > End
 
 ]

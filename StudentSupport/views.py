@@ -524,12 +524,12 @@ def StudentFeedbackSection(request, type):
                         dept_obj = Departments.objects.get(id=std_obj.dept_id.id)
 
                         sub_id = request.POST.get('subject_id')
-                        sub_obj = Subjects.objects.get(id=sub_id)
+                        sub_obj = Subjects.objects.get(id=int(sub_id))
 
                         fac_id = request.POST.get('faculty_id')
-                        fac_obj = Faculty.objects.get(id=fac_id)
+                        fac_obj = Faculty.objects.get(id=int(fac_id))
 
-                        semester = std_obj.semester
+                        semester = sub_obj.semester
 
                         ans1 = request.POST.get('rating_1') if request.POST.get('rating_1') else 0
                         ans2 = request.POST.get('rating_2') if request.POST.get('rating_2') else 0
@@ -551,16 +551,8 @@ def StudentFeedbackSection(request, type):
                             faculty_id=fac_obj,
                             semester=semester,
                             defaults={
-                                'Q1': int(ans1),
-                                'Q2': int(ans2),
-                                'Q3': int(ans3),
-                                'Q4': int(ans4),
-                                'Q5': int(ans5),
-                                'Q6': int(ans6),
-                                'Q7': int(ans7),
-                                'Q8': int(ans8),
-                                'Q9': int(ans9),
-                                'Q10': int(ans10),
+                                'Q1': int(ans1), 'Q2': int(ans2), 'Q3': int(ans3), 'Q4': int(ans4), 'Q5': int(ans5),
+                                'Q6': int(ans6), 'Q7': int(ans7), 'Q8': int(ans8), 'Q9': int(ans9), 'Q10': int(ans10),
                                 'remarks': remarks
                             }
                         )
@@ -663,12 +655,12 @@ def StudentFeedbackSection(request, type):
                         dept_obj = Departments.objects.get(id=std_obj.dept_id.id)
 
                         sub_id = request.POST.get('subject_id')
-                        sub_obj = Subjects.objects.get(id=sub_id)
+                        sub_obj = Subjects.objects.get(id=int(sub_id))
 
                         fac_id = request.POST.get('faculty_id')
-                        fac_obj = Faculty.objects.get(id=fac_id)
+                        fac_obj = Faculty.objects.get(id=int(fac_id))
 
-                        semester = std_obj.semester
+                        semester = sub_obj.semester
 
                         ans1 = request.POST.get('rating_1') if request.POST.get('rating_1') else 0
                         ans2 = request.POST.get('rating_2') if request.POST.get('rating_2') else 0
@@ -689,16 +681,8 @@ def StudentFeedbackSection(request, type):
                             faculty_id=fac_obj,
                             semester=semester,
                             defaults={
-                                'Q1': int(ans1),
-                                'Q2': int(ans2),
-                                'Q3': int(ans3),
-                                'Q4': int(ans4),
-                                'Q5': int(ans5),
-                                'Q6': int(ans6),
-                                'Q7': int(ans7),
-                                'Q8': int(ans8),
-                                'Q9': int(ans9),
-                                'Q10': int(ans10),
+                                'Q1': int(ans1), 'Q2': int(ans2), 'Q3': int(ans3), 'Q4': int(ans4), 'Q5': int(ans5),
+                                'Q6': int(ans6), 'Q7': int(ans7), 'Q8': int(ans8), 'Q9': int(ans9), 'Q10': int(ans10),
                                 'remarks': remarks
                             }
                         )
@@ -768,16 +752,11 @@ def GetFeedback(request):
                         'id': feedback_obj.id,
                         'subject_name': feedback_obj.subject_id.subject_name,
                         'faculty_name': feedback_obj.faculty_id.name,
-                        'ans_1': feedback_obj.Q1,
-                        'ans_2': feedback_obj.Q2,
-                        'ans_3': feedback_obj.Q3,
-                        'ans_4': feedback_obj.Q4,
-                        'ans_5': feedback_obj.Q5,
-                        'ans_6': feedback_obj.Q6,
-                        'ans_7': feedback_obj.Q7,
-                        'ans_8': feedback_obj.Q8,
-                        'ans_9': feedback_obj.Q9,
-                        'ans_10': feedback_obj.Q10,
+                        'ans_1': feedback_obj.Q1, 'ans_2': feedback_obj.Q2,
+                        'ans_3': feedback_obj.Q3, 'ans_4': feedback_obj.Q4,
+                        'ans_5': feedback_obj.Q5, 'ans_6': feedback_obj.Q6,
+                        'ans_7': feedback_obj.Q7, 'ans_8': feedback_obj.Q8,
+                        'ans_9': feedback_obj.Q9, 'ans_10': feedback_obj.Q10,
                         'remarks': feedback_obj.remarks,
                         'date': str(feedback_obj.timestamp.strftime("%d %B, %Y, %H:%M:%S"))
                     }
@@ -792,16 +771,11 @@ def GetFeedback(request):
                         'id': feedback_obj.id,
                         'subject_name': feedback_obj.subject_id.subject_name,
                         'faculty_name': feedback_obj.faculty_id.name,
-                        'ans_1': feedback_obj.Q1,
-                        'ans_2': feedback_obj.Q2,
-                        'ans_3': feedback_obj.Q3,
-                        'ans_4': feedback_obj.Q4,
-                        'ans_5': feedback_obj.Q5,
-                        'ans_6': feedback_obj.Q6,
-                        'ans_7': feedback_obj.Q7,
-                        'ans_8': feedback_obj.Q8,
-                        'ans_9': feedback_obj.Q9,
-                        'ans_10': feedback_obj.Q10,
+                        'ans_1': feedback_obj.Q1, 'ans_2': feedback_obj.Q2,
+                        'ans_3': feedback_obj.Q3, 'ans_4': feedback_obj.Q4,
+                        'ans_5': feedback_obj.Q5, 'ans_6': feedback_obj.Q6,
+                        'ans_7': feedback_obj.Q7, 'ans_8': feedback_obj.Q8,
+                        'ans_9': feedback_obj.Q9, 'ans_10': feedback_obj.Q10,
                         'remarks': feedback_obj.remarks,
                         'date': str(feedback_obj.timestamp.strftime("%d %B, %Y, %H:%M:%S"))
                     }
@@ -1022,16 +996,12 @@ def HOD_Profile_View(request):
         context["name"] = fac_obj.name
         context["email"] = request.user.email
         context["dept"] = fac_obj.dept_id.dept_name
-        dept_qs = Departments.objects.all()
-        context["departments"] = dept_qs
         if request.method == "POST":
             if request.POST.get('name') is not None:
                 name = request.POST.get('name')
                 email = request.POST.get('email')
-                dept = request.POST.get('dept')
-                if name != fac_obj.name or email != request.user.email or dept != fac_obj.dept_id.id:
+                if name != fac_obj.name or email != request.user.email:
                     fac_obj.name = name
-                    fac_obj.dept_id = Departments.objects.get(id=int(dept))
                     fac_obj.save()
                     user_obj = User.objects.get(id=request.user.id)
                     user_obj.email = email
@@ -1235,33 +1205,46 @@ def Modify_Subject_AJAX(request):
         return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
 
 
-def HodViewDetailedFeedback(request):
-    return render(request, 'hod/hod_view_detailed_feedback.html', context={})
-
-
-def HodViewAverageFeedback(request, type):
+def HodViewDetailedFeedback(request, type):
     context = {
         "base_url": st.BASE_URL,
     }
     if request.user.is_authenticated and request.user.getRole == "Faculty":
         fac_object = Faculty.objects.get(auth_id=request.user)
         context['name'] = fac_object.name
+        context['dept_name'] = fac_object.dept_id.dept_name
         if fac_object.hod:
             dept_faculties = Faculty.objects.filter(dept_id=fac_object.dept_id)
             context["dept_faculties"] = dept_faculties
+            subjects_dict = {}
+            for i in dept_faculties:
+                subjects_dict[i.id] = []
+                subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=i.id)
+                for j in subject_qs:
+                    tmp1 = {
+                        "subject_id": j.subject_id.id,
+                        "subject_name": j.subject_id.subject_name,
+                        "subject_code": j.subject_id.subject_code,
+                        "subject_semester": j.subject_id.semester
+                    }
+                    subjects_dict[i.id].append(tmp1)
+
+            # print(subjects_dict)
+            context['fac_subjects'] = json.dumps(subjects_dict)
+
             if type == "mid-sem":
                 questions = Mid_Sem_Feedback_Questions.objects.all()
                 context["questions"] = questions
-                return render(request, 'hod/hod_view_average_feedback.html', context)
+                return render(request, 'hod/Detailed_Feedback/detailed_feedback_mid_sem.html', context)
 
             elif type == "end-sem":
                 questions = End_Sem_Feedback_Questions.objects.all()
                 context["questions"] = questions
-                return render(request, 'hod/hod_view_average_feedback.html', context)
+                return render(request, 'hod/Detailed_Feedback/detailed_feedback_end_sem.html', context)
 
             else:
                 context["error"] = "Page not found."
-                return render(request, 'hod/hod_view_average_feedback.html', context)
+                return render(request, 'hod/hod_dashboard.html', context)
 
         else:
             context["error"] = "You are not authorized to view this page."
@@ -1272,14 +1255,59 @@ def HodViewAverageFeedback(request, type):
         return render(request, 'home_auth/index.html', context)
 
 
+def HodViewAverageFeedback(request, type):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated and request.user.getRole == "Faculty":
+        fac_object = Faculty.objects.get(auth_id=request.user)
+        context['name'] = fac_object.name
+        context['dept_name'] = fac_object.dept_id.dept_name
+        if fac_object.hod:
+            dept_faculties = Faculty.objects.filter(dept_id=fac_object.dept_id)
+            context["dept_faculties"] = dept_faculties
+            if type == "mid-sem":
+                questions = Mid_Sem_Feedback_Questions.objects.all()
+                context["questions"] = questions
+                return render(request, 'hod/Average_Feedback/average_feedback_mid_sem.html', context)
+
+            elif type == "end-sem":
+                questions = End_Sem_Feedback_Questions.objects.all()
+                context["questions"] = questions
+                return render(request, 'hod/Average_Feedback/average_feedback_end_sem.html', context)
+
+            else:
+                context["error"] = "Page not found."
+                return render(request, 'hod/hod_dashboard.html', context)
+
+        else:
+            context["error"] = "You are not authorized to view this page."
+            return render(request, 'home_auth/index.html', context)
+
+    else:
+        context["error"] = "Log in First."
+        return render(request, 'home_auth/index.html', context)
+
+
+# HOD Related Views > End
+
+# Views for ajax related to feedbacks > Start
+
 def GetAverageFeedback(request):
     if request.user.is_authenticated and (request.user.getRole == "Faculty" or request.user.getRole == "Principal"):
         if request.GET.get('fac_id') is not None:
             type = request.GET.get('type')
+            term = int(request.GET.get('term'))
+            if (term == 0):
+                semester_list = [1, 3, 5, 7]
+            else:
+                semester_list = [2, 4, 6, 8]
+
+            year = int(request.GET.get('year'))
             faculty_obj = Faculty.objects.get(id=int(request.GET.get('fac_id')))
             if type == "mid":
-                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj)
-                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj)
+                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, semester__in=semester_list, timestamp__year=year)
+                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj, semester_list = semester_list)
                 print(rating_list)
                 try:
                     data = {
@@ -1297,8 +1325,8 @@ def GetAverageFeedback(request):
                 return HttpResponse(res, status=status.HTTP_200_OK)
 
             elif type == "end":
-                feedback_qs = End_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj)
-                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj)
+                feedback_qs = End_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, semester__in=semester_list, timestamp__year=year)
+                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj, semester_list=semester_list)
                 print(rating_list)
                 try:
                     data = {
@@ -1306,7 +1334,7 @@ def GetAverageFeedback(request):
                         "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y, %H:%M:%S"))
                     }
 
-                except Mid_Sem_Feedback_Answers.DoesNotExist:
+                except End_Sem_Feedback_Answers.DoesNotExist:
                     data = {
                         "ratings": rating_list,
                         "date": str(datetime.datetime.now().strftime("%d %B, %Y, %H:%M:%S"))
@@ -1336,7 +1364,78 @@ def GetAverageFeedback(request):
         return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
 
 
-# HOD Related Views > End
+def GetAllFeedback(request):
+    if request.user.is_authenticated and (request.user.getRole == "Faculty" or request.user.getRole == "Principal"):
+        if request.GET.get('fac_id') is not None or request.GET.get('sub_id') is not None:
+            type = request.GET.get('type')
+            term = int(request.GET.get('term'))
+            if(term == 0):
+                semester_list = [1, 3, 5, 7]
+            else:
+                semester_list = [2, 4, 6, 8]
+
+            year = int(request.GET.get('year'))
+            faculty_obj = Faculty.objects.get(id=int(request.GET.get('fac_id')))
+            subject_obj = Subjects.objects.get(id=int(request.GET.get('sub_id')))
+            if type == "mid":
+                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, subject_id=subject_obj, semester__in=semester_list, timestamp__year=year)
+                feedback_list = []
+                for i in feedback_qs:
+                    tmp = {
+                        'date': str(i.timestamp.strftime("%d %B, %Y, %H:%M:%S")),
+                        'q1': i.Q1, 'q2': i.Q2, 'q3': i.Q3, 'q4': i.Q4, 'q5': i.Q5,
+                        'q6': i.Q6, 'q7': i.Q7, 'q8': i.Q8, 'q9': i.Q9, 'q10': i.Q10,
+                        'remark': i.remarks
+                    }
+                    feedback_list.append(tmp)
+
+                data = {
+                    'feedback_list': feedback_list
+                }
+                res = json.dumps(data)
+                return HttpResponse(res, status=status.HTTP_200_OK)
+
+            elif type == "end":
+                feedback_qs = End_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, subject_id=subject_obj,
+                                                                      semester__in=semester_list, timestamp__year=year)
+                feedback_list = []
+                for i in feedback_qs:
+                    tmp = {
+                        'date': str(i.timestamp.strftime("%d %B, %Y, %H:%M:%S")),
+                        'q1': i.Q1, 'q2': i.Q2, 'q3': i.Q3, 'q4': i.Q4, 'q5': i.Q5,
+                        'q6': i.Q6, 'q7': i.Q7, 'q8': i.Q8, 'q9': i.Q9, 'q10': i.Q10,
+                        'remark': i.remarks
+                    }
+                    feedback_list.append(tmp)
+
+                data = {
+                    'feedback_list': feedback_list
+                }
+                res = json.dumps(data)
+                return HttpResponse(res, status=status.HTTP_200_OK)
+
+            else:
+                data = {
+                    "error": "Can not find what you are looking for."
+                }
+                res = json.dumps(data)
+                return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            data = {
+                "error": "Faculty id not passed."
+            }
+            res = json.dumps(data)
+            return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        data = {
+            "error": "You are not authorized to access this."
+        }
+        res = json.dumps(data)
+        return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
+
+# Views for ajax related to feedbacks > End
 
 # Principal Related Views > Start
 def PrincipalDashboard(request):

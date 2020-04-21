@@ -119,14 +119,14 @@
                                     <div class="col-sm-12 col-md-12 col-lg-6">
                                         <div class="page-header-title">
                                             <div class="d-inline">
-                                                <h3>Computer Engineering Department</h3>
+                                                <h3>{{ dept_name }} Department</h3>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-md-12 col-lg-6">
                                         <div class="page-header-title">
                                             <div class="d-inline">
-                                                <h3>Mid Semester Feedback</h3>
+                                                <h3>End Semester Average Feedback</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -147,12 +147,35 @@
                                 <div class="row">
                                    <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
                                        <div class="card">
-                                           <div class="card-header">
-                                               <h4 style="font-size: 20px">Average Feedback</h4>
-                                               <form action="#" method="post">
+{#                                           <div class="card-header">#}
+{#                                               <h4 style="font-size: 20px">Average Feedback</h4>#}
+{#                                           </div>#}
+                                           <div class="card-block">
+                                               <form>
+                                               <div class="form-group row">
+                                                        <label for="view_feedback_term" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Term :</label>
+                                                        <div class="col-md-4 col-lg-4">
+                                                            <select class="form-control" name="view_feedback_term" id="view_feedback_term">
+                                                                <option value="0">Odd</option>
+                                                                <option value="1">Even</option>
+                                                            </select>
+                                                        </div>
+                                                        <label for="view_feedback_year" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Year:</label>
+                                                        <div class="col-md-4 col-lg-4">
+                                                            <select class="form-control" name="view_feedback_year" id="view_feedback_year">
+                                                                <script type="text/javascript">
+                                                                    var start_year = 2020;
+                                                                    var current_year = new Date().getFullYear();
+                                                                    for(var i=start_year;i<=current_year;++i) {
+                                                                        document.write('<option value="'+ i +'">'+ i +'</option>');
+                                                                    }
+                                                                </script>
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                    <div class="form-group row">
-                                                       <label for="faculty" class="col-md-2 col-lg-2 col-form-label">Select Faculty :</label>
-                                                       <div class="col-md-8 col-lg-8">
+                                                       <label for="view_feedback_faculty" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Faculty :</label>
+                                                       <div class="col-md-6 col-lg-6">
                                                            <select class="form-control" name="view_feedback_faculty" id="view_feedback_faculty">
                                                                <option value="-1" selected disabled>Select Faculty to view feedback</option>
                                                            {% for f in dept_faculties %}
@@ -160,33 +183,33 @@
                                                            {% endfor %}
                                                            </select>
                                                        </div>
-                                                       <div class="col-md-2 col-lg-2">
-                                                           <button type="button" class="btn btn-outline-primary" onclick="load_graph()">View</button>
+                                                       <div class="col-md-4 col-lg-4">
+                                                           <button type="button" class="btn btn-outline-primary" onclick="load_graph()">View Feedback</button>
                                                        </div>
                                                    </div>
                                                </form>
-                                               <div class="col-sm-12">
-                                                   <button class="btn btn-sm btn-round btn-outline-info">
-                                                       End Semester <i class="feather icon-x"></i>
-                                                   </button>
-                                                   Filter Tabs goes here.
-                                               </div>
-                                           </div>
-                                           <div class="card-block">
+                                                <div class="col-sm-12">
+                                                       <button class="btn btn-sm btn-round btn-outline-info">
+                                                           End Semester <i class="feather icon-x"></i>
+                                                       </button>
+                                                       Filter Tabs goes here.
+                                                   </div>
                                                <div class="loader-block" style="display: none">
                                                    <svg id="loader2" viewBox="0 0 100 100">
                                                        <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
                                                     </svg>
                                                </div>
-                                               <div class="row">
-                                                   <div class="col-sm-6">
-                                                       Updated On: <b><span id="feedback-date"></span></b>
+                                               <div id="content" style="display: none;">
+                                                   <div class="row m-t-20 m-b-20">
+                                                       <div class="col-sm-6">
+                                                           Updated On: <b><span id="feedback-date"></span></b>
+                                                       </div>
+                                                       <div class="col-sm-6 d-flex justify-content-end">
+                                                           You can see all the question &nbsp;<a href="#questions_list" style="color: dodgerblue; font-size: inherit">here.</a>
+                                                       </div>
                                                    </div>
-                                                   <div class="col-sm-6">
-                                                       You can see all the question <a href="#questions_list" style="color: dodgerblue; font-size: inherit">here.</a>
-                                                   </div>
+                                                   <canvas id="myChart"></canvas>
                                                </div>
-                                               <canvas id="myChart"></canvas>
                                            </div>
                                        </div>
                                    </div>
@@ -349,6 +372,8 @@
             var selected_faculty = $(document).find('select#view_feedback_faculty option:selected');
             var fac_id = selected_faculty.val();
             var fac_name = selected_faculty.text();
+            var term = $(document).find('select#view_feedback_term option:selected').val();
+            var year = $(document).find('select#view_feedback_year option:selected').val();
             if(fac_id == "-1") {
                 $(document).find('div.loader-block').css('display', 'none');
                 alert("Select Faculty to view feedback.");
@@ -359,17 +384,20 @@
                     type: "GET",
                     url: "{{ base_url }}" + "get-average-feedback/",
                     data: {
-                        type: 'mid',
-                        fac_id: fac_id
+                        type: 'end',
+                        fac_id: fac_id,
+                        term: term,
+                        year: year
                     },
 
                     success: function (msg) {
                         $(document).find('div.loader-block').css('display', 'none');
+                        $(document).find('div#content').css('display', 'block');
                         var response = JSON.parse(msg);
                         console.log(response);
                         console.log(response['ratings'].length);
                         if(response['ratings'].length == 0) {
-                            $(document).find('canvas#myChart').css('display', 'none');
+                            $(document).find('div#content').css('display', 'none');
                             window.myBar.clear();
                             swal({
                                 title: "Feedback Not available.",
@@ -378,7 +406,6 @@
                             });
                         }
                         else {
-                            $(document).find('canvas#myChart').css('display', 'block');
                             $(document).find('span#feedback-date').html(response['date']);
                             update_graph(response['ratings'], fac_name);
                         }
@@ -392,6 +419,7 @@
                             type: "error",
                         });
                         $(document).find('div.loader-block').css('display', 'none');
+                        $(document).find('div#content').css('display', 'none');
                     },
                 });
             }

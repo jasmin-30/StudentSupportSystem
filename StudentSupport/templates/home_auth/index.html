@@ -141,7 +141,7 @@
                             </div>
                         </div>
                         <div class="form-group row" style="padding-right: 15px; float:right;">
-                            <button class="btn btn-outline-disabled"id="button-sign-in" name="button-sign-in" onfocus="validate_signin()" onclick="validate_signin()" onmouseover="validate_signin()" onmouseenter="validate_signin()" disabled>
+                            <button class="btn btn-outline-disabled" id="button-sign-in" name="button-sign-in" onfocus="validate_signin()" onclick="validate_signin()" onmouseover="validate_signin()" onmouseenter="validate_signin()">
                                 <i class="feather icon-check"></i> Sign in
                             </button>
 {#                            <input type="submit" value="Sign In" class="form-control submit btn btn-disabled" id="button-sign-in" name="button-sign-in" onfocus="validate_signin()" onclick="validate_signin()" onmouseover="validate_signin()" onmouseenter="validate_signin()">#}
@@ -255,7 +255,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group row f-right" style="padding-right: 15px;">
-                                    <button type="submit" id="button-register" class="btn btn-block btn-outline-disabled" onfocus="validate_form()" onclick="validate_form()" onmouseover="validate_form()" onmouseenter="validate_form()" disabled>
+                                    <button type="submit" id="button-register" class="btn btn-block btn-outline-disabled" onfocus="validate_form()" onclick="validate_form()" onmouseover="validate_form()" onmouseenter="validate_form()">
                                         <i class="feather icon-check"></i>
                                         Register
                                     </button>
@@ -313,7 +313,7 @@
                                 </div>
                                 <div class="form-group row f-right" style="padding-right: 15px;">
 {#                                    <input type="submit" value="Register" id="button-faculty-register" class="form-control submit btn-disabled" onfocus="validate_faculty_form()" onclick="validate_faculty_form()" onmouseover="validate_faculty_form()" onmouseenter="validate_faculty_form()">#}
-                                    <button type="submit" id="button-faculty-register" class="btn btn-block btn-outline-disabled" onfocus="validate_faculty_form()" onclick="validate_faculty_form()" onmouseover="validate_faculty_form()" onmouseenter="validate_faculty_form()" disabled>
+                                    <button type="submit" id="button-faculty-register" class="btn btn-block btn-outline-disabled" onfocus="validate_faculty_form()" onclick="validate_faculty_form()" onmouseover="validate_faculty_form()" onmouseenter="validate_faculty_form()">
                                         <i class="feather icon-check"></i>
                                         Register
                                     </button>
@@ -711,12 +711,15 @@
             if(email != "" && pwd != "" && validate_role()){
                 btn.classList.remove('btn-outline-disabled');
                 btn.classList.add('btn-outline-primary');
-                btn.disabled = false;
+                $(btn).removeAttr('disabled');
+                //$(btn).attr('disabled', 'false');
+                //btn.disabled = false;
             }
             else {
                 btn.classList.remove('btn-outline-primary');
                 btn.classList.add('btn-outline-disabled');
-                btn.disabled = true;
+                $(btn).attr('disabled', 'true');
+                //btn.disabled = true;
             }
         }
     </script>
@@ -861,12 +864,15 @@
             if(validate_fname() && validate_lname() && validate_email() && validate_password() && validate_enrollment() && validate_dept() && validate_sem()){
                 btn.classList.remove('btn-outline-disabled');
                 btn.classList.add('btn-outline-primary');
-                btn.disabled = false;
+                $(btn).removeAttr('disabled');
+                //$(btn).attr('disabled', 'false');
+                //btn.disabled = false;
             }
             else {
                 btn.classList.remove('btn-outline-primary');
                 btn.classList.add('btn-outline-disabled');
-                btn.disabled = true;
+                $(btn).attr('disabled', 'true');
+                //btn.disabled = true;
             }
         }
     </script>
@@ -955,12 +961,14 @@
             if(validate_faculty_name() && validate_faculty_email() && validate_faculty_password() && validate_faculty_dept()){
                 btn.classList.remove('btn-outline-disabled');
                 btn.classList.add('btn-outline-primary');
-                btn.disabled = false;
+                $(btn).removeAttr('disabled');
+                //btn.disabled = false;
             }
             else {
                 btn.classList.remove('btn-outline-primary');
                 btn.classList.add('btn-outline-disabled');
-                btn.disabled = true;
+                $(btn).attr('disabled', 'true');
+                //btn.disabled = true;
             }
         }
 

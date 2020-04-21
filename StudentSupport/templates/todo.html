@@ -29,6 +29,11 @@
     // TODO : Committees in every dashboard is still pending and also committee dashboard is also pending.
     // TODO : Question wise average ratings.
     // TODO : Detailed feedback.
+    // TODO : HOD Profile need to be updated please check it once.
+    // TODO : Make all the buttons consistent.
+    // TODO : Display at faculty side to let them know that which subjects are they taking. give link in quick links section and make new page with datatable.
+    // TODO : Make tour for every dashboard and every page.
+    // TODO :
 
 </script>
 <!-- TODO : Change every back to dashboard from this. -->
@@ -67,3 +72,47 @@ $.ajax({
 <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
 
+
+for pagination gap
+pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+
+
+Replace this navbar with below
+<nav class="navbar header-navbar pcoded-header">
+                <div class="navbar-wrapper">
+                    <div class="navbar-container container-fluid p-l-0 d-inline">
+                    <div class="navbar-logo">
+                    <a class="mobile-menu" id="mobile-collapse" href="javascript:void(0)">
+                        <i class="feather icon-menu"></i>
+                    </a>
+                    <a href="{% url 'hod_dashboard' %}">
+                        <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Theme-Logo" style="max-width:92%;">
+                    </a>
+                </div>
+                        <ul class="nav-right">
+                        <li class="user-profile header-notification">
+                            <div class="dropdown-primary dropdown">
+                                <div class="dropdown-toggle" data-toggle="dropdown">
+                                    <span>{{ name }}</span>
+                                    <i class="feather icon-chevron-down"></i>
+                                </div>
+                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                    <li>
+                                        <a href="{% url 'hod_profile' %}">
+                                            <i class="feather icon-user"></i> Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'logout' %}">
+                                            <i class="feather icon-log-out"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                    </div>
+                </div>
+            </nav>
+
+solution for the homepage javascript not working is use internal css for disabled and make

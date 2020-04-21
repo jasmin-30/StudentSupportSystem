@@ -71,109 +71,6 @@
         </div>
     </div>
     <!-- Pre-loader end -->
-    <div class="modal fade" id="large-Modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Publish News</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-               <div class="modal-body">
-                    <form>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">News Title</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">News Description</label>
-                            <div class="col-sm-10">
-                                <textarea rows="5" cols="5" class="form-control" placeholder="Default textarea"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Target Audience</label>
-                            <div class="col-sm-10">
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>All</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Computer Engineering</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Information & Technology</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Production Engineering</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Civil Engineering</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Electronic & Communication</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Mechanical Engineering</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="btn btn-large btn-primary" style="float:right;">Publish</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
     <div id="pcoded" class="pcoded">
         <div class="pcoded-overlay-box"></div>
         <div class="pcoded-container navbar-wrapper">
@@ -238,84 +135,6 @@
             </nav>
             <div class="pcoded-main-container">
                 <div class="pcoded-wrapper">
-                    <nav class="pcoded-navbar">
-                         <div class="pcoded-inner-navbar main-menu">
-                            <div class="pcoded-navigatio-lavel">Quick Links</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">My Profile</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">Manage Department</span>
-                                    </a>
-                                </li>
-                                <ul class="pcoded-item pcoded-left-item">
-                                    <li class="pcoded-hasmenu">
-                                        <a href="javascript:void(0)">
-                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                            <span class="pcoded-mtext">View Detaied Feedback</span>
-                                        </a>
-                                        <ul class="pcoded-submenu">
-                                            <li class=" ">
-                                                <a href="{% url 'hod_view_detailed_feedback' %}">
-                                                    <span class="pcoded-mtext">Mid Semester</span>
-                                                </a>
-                                            </li>
-                                            <li class=" ">
-                                                <a href="#">
-                                                    <span class="pcoded-mtext">End Semester</span>
-                                                </a>
-                                            </li>
-                                            <li class=" ">
-                                                <a href="#">
-                                                    <span class="pcoded-mtext">Program Exit Survey</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                                <ul class="pcoded-item pcoded-left-item">
-                                    <li class="pcoded-hasmenu">
-                                        <a href="javascript:void(0)">
-                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                            <span class="pcoded-mtext">View Average Feedback</span>
-                                        </a>
-                                        <ul class="pcoded-submenu">
-                                            <li class=" ">
-                                                <a href="{% url 'hod_view_average_feedback' %}">
-                                                    <span class="pcoded-mtext">Mid Semester</span>
-                                                </a>
-                                            </li>
-                                            <li class=" ">
-                                                <a href="#">
-                                                    <span class="pcoded-mtext">End Semester</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                                <li class="">
-                                    <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
-                                        <span class="pcoded-mtext" data-toggle="modal" data-target="#large-Modal">Publish News
-                                        </span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="{% url 'logout' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
-                                        <span class="pcoded-mtext">Logout</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                    <div class="pcoded-content">
                         <div class="pcoded-inner-content">
                             <div class="main-body">
                                 <div class="page-wrapper">
@@ -327,13 +146,13 @@
                                                         <div class="col-lg-8">
                                                             <div class="page-header-title">
                                                                 <div class="d-inline">
-                                                                    <h4>Profile</h4>
+                                                                    <h3>Profile</h3>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-lg-4">
+                                                        <div class="col-sm-4 col-md-4 col-lg-4">
                                                             <span class="f-right">
-                                                                <a href="{% url 'hod_dashboard' %}">
+                                                                <a href="{% url 'hod_dashboard' %}" class="btn" style="font-size: 15px">
                                                                     <i class="feather icon-arrow-left"></i>
                                                                     Back to Dashboard
                                                                 </a>
@@ -361,7 +180,7 @@
                                                     <!-- Tab panes -->
                                                     <div class="col-sm-10 col-md-10 col-lg-10 col-xl-10 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
                                                         <div class="tab-pane active" id="personaldetail" role="tabpanel">
-                                                            <form action="{% url 'faculty_profile' %}" method="post">
+                                                            <form action="{% url 'hod_profile' %}" method="post">
                                                                 {% csrf_token %}
                                                                 <div class="form-group row">
                                                                     <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Name :</label>
@@ -377,7 +196,7 @@
                                                                 </div>
                                                                 <div class="form-group row">
                                                                     <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Department :</label>
-                                                                    <div class="col-sm-8 col-md-10 col-lg-10" id="dept-div">
+                                                                    <div class="col-sm-8 col-md-10 col-lg-10">
                                                                         <label class="col-form-label">{{ dept }}</label>
                                                                     </div>
                                                                 </div>
@@ -391,7 +210,7 @@
                                                             </form>
                                                         </div>
                                                         <div class="tab-pane" id="changepassword" role="tabpanel">
-                                                            <form action="{% url 'faculty_profile' %}" method="post">
+                                                            <form action="{% url 'hod_profile' %}" method="post">
                                                                 {% csrf_token %}
                                                                 <div class="form-group row">
                                                                     <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="oldpwd">Old Password :</label>
@@ -434,7 +253,6 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -485,23 +303,10 @@
             var old_name = name_tag.html();
             var email_tag = $("div#email-div");
             var old_email = email_tag.html();
-            var dept_tag = $("div#dept-div");
-            var old_dept = dept_tag.html();
             function edit(event){
                 event.preventDefault();
                 name_tag.html('<input type="text" class="form-control" id="name" name="name" value="'+name_tag.find('label').html()+'" required/>');
                 email_tag.html('<input type="email" class="form-control" id="email" name="email" value="'+email_tag.find('label').html()+'" required/>');
-                var select_html = '';
-                select_html += '<select class="form-control" id="dept" name="dept">';
-                {% for d in departments %}
-                    {% if d.dept_name is dept %}
-                        select_html += '<option value="{{ d.id }}" selected>{{ d.dept_name }}</option>';
-                    {% else %}
-                        select_html += '<option value="{{ d.id }}">{{ d.dept_name }}</option>';
-                    {% endif %}
-                {% endfor %}
-                select_html += '</select>';
-                dept_tag.html(select_html);
                 btn.html('Save Changes');
                 btn.attr('type', 'submit');
                 btn_cancel.show();
@@ -515,7 +320,6 @@
                 btn.on('click', edit);
                 name_tag.html(old_name);
                 email_tag.html(old_email);
-                dept_tag.html(old_dept);
                 btn_cancel.hide();
             });
 

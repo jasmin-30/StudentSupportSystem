@@ -1,9 +1,9 @@
 from StudentSupport.models import *
 
 
-def serialize_feedback(feedback_qs, faculty_obj):
+def serialize_feedback(feedback_qs, faculty_obj, semester_list):
     # feedback_distinct = feedback_qs.filter()
-    subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=faculty_obj)
+    subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=faculty_obj, subject_id__semester__in=semester_list)
     ratings = []
     for i in subject_qs:
         tmp = {
