@@ -1266,6 +1266,22 @@ def HodViewAverageFeedback(request, type):
         if fac_object.hod:
             dept_faculties = Faculty.objects.filter(dept_id=fac_object.dept_id)
             context["dept_faculties"] = dept_faculties
+            subjects_dict = {}
+            for i in dept_faculties:
+                subjects_dict[i.id] = []
+                subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=i.id)
+                for j in subject_qs:
+                    tmp1 = {
+                        "subject_id": j.subject_id.id,
+                        "subject_name": j.subject_id.subject_name,
+                        "subject_code": j.subject_id.subject_code,
+                        "subject_semester": j.subject_id.semester
+                    }
+                    subjects_dict[i.id].append(tmp1)
+
+            # print(subjects_dict)
+            context['fac_subjects'] = json.dumps(subjects_dict)
+
             if type == "mid-sem":
                 questions = Mid_Sem_Feedback_Questions.objects.all()
                 context["questions"] = questions
@@ -1306,8 +1322,10 @@ def GetAverageFeedback(request):
             year = int(request.GET.get('year'))
             faculty_obj = Faculty.objects.get(id=int(request.GET.get('fac_id')))
             if type == "mid":
-                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, semester__in=semester_list, timestamp__year=year)
-                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj, semester_list = semester_list)
+                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj,
+                                                                      semester__in=semester_list, timestamp__year=year)
+                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj,
+                                                 semester_list=semester_list)
                 print(rating_list)
                 try:
                     data = {
@@ -1325,8 +1343,10 @@ def GetAverageFeedback(request):
                 return HttpResponse(res, status=status.HTTP_200_OK)
 
             elif type == "end":
-                feedback_qs = End_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, semester__in=semester_list, timestamp__year=year)
-                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj, semester_list=semester_list)
+                feedback_qs = End_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj,
+                                                                      semester__in=semester_list, timestamp__year=year)
+                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj,
+                                                 semester_list=semester_list)
                 print(rating_list)
                 try:
                     data = {
@@ -1369,7 +1389,7 @@ def GetAllFeedback(request):
         if request.GET.get('fac_id') is not None or request.GET.get('sub_id') is not None:
             type = request.GET.get('type')
             term = int(request.GET.get('term'))
-            if(term == 0):
+            if (term == 0):
                 semester_list = [1, 3, 5, 7]
             else:
                 semester_list = [2, 4, 6, 8]
@@ -1378,7 +1398,8 @@ def GetAllFeedback(request):
             faculty_obj = Faculty.objects.get(id=int(request.GET.get('fac_id')))
             subject_obj = Subjects.objects.get(id=int(request.GET.get('sub_id')))
             if type == "mid":
-                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, subject_id=subject_obj, semester__in=semester_list, timestamp__year=year)
+                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, subject_id=subject_obj,
+                                                                      semester__in=semester_list, timestamp__year=year)
                 feedback_list = []
                 for i in feedback_qs:
                     tmp = {
@@ -1434,6 +1455,7 @@ def GetAllFeedback(request):
         }
         res = json.dumps(data)
         return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
+
 
 # Views for ajax related to feedbacks > End
 
@@ -1715,4 +1737,77 @@ def CommitteeDashboard(request, committee):
     print(committee)
     return render(request, 'committees/committee_dashboard.html', context={})
 
+
 # Committee Related Views > End
+
+# Download Report Views > Start
+def DownloadDetailedFeedback(request, type):
+    if type == "mid":
+        if request.user.is_authenticated:
+            if request.method == "POST":
+                if request.POST.get('faculty') is not None:
+                    faculty_id = request.POST.get('faculty')
+                    term = request.POST.get('term')
+                    year = request.POST.get('year')
+                    print(faculty_id, term, year)
+                    print(request.META['HTTP_REFERER'])
+
+                    return HttpResponse("Detailed Feedback")
+
+    elif type == "end":
+        if request.user.is_authenticated:
+            if request.method == "POST":
+                if request.POST.get('faculty') is not None:
+                    faculty_id = request.POST.get('faculty')
+                    term = request.POST.get('term')
+                    year = request.POST.get('year')
+                    print(faculty_id, term, year)
+                    print(request.META['HTTP_REFERER'])
+
+                    return HttpResponse("Detailed Feedback")
+
+    else:
+        pass
+
+
+def DownloadAverageFeedback(request, type):
+    if type == "mid":
+        if request.user.is_authenticated:
+            if request.method == "POST":
+                if request.POST.get('faculty') is not None:
+                    faculty_id = request.POST.get('faculty')
+                    term = request.POST.get('term')
+                    year = request.POST.get('year')
+                    is_all_subject = request.POST.get('all_subject')
+                    if not is_all_subject:
+                        subject_id = request.POST.get('subject')
+                        print(faculty_id, term, year, is_all_subject, subject_id)
+                    else:
+                        print(faculty_id, term, year, is_all_subject)
+                    print(request.META['HTTP_REFERER'])
+
+                    return HttpResponse("Average Feedback")
+
+    elif type == "end":
+        if request.user.is_authenticated:
+            if request.method == "POST":
+                if request.POST.get('faculty') is not None:
+                    faculty_id = request.POST.get('faculty')
+                    term = request.POST.get('term')
+                    year = request.POST.get('year')
+                    is_all_subject = request.POST.get('all_subject')
+                    if not is_all_subject:
+                        subject_id = request.POST.get('subject')
+                        print(faculty_id, term, year, is_all_subject, subject_id)
+                    else:
+                        print(faculty_id, term, year, is_all_subject)
+                    print(request.META['HTTP_REFERER'])
+
+                    return HttpResponse("Average Feedback")
+
+    else:
+        pass
+# Download Report Views > End
+
+def Misc(request):
+    return render(request, 'home_auth/forgot_password.html', {})

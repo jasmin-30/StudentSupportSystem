@@ -56,4 +56,10 @@ urlpatterns = [
     path('get-all-feedback/', views.GetAllFeedback, name='get_all_feedback'),
     # Feedback Ajax Endpoints url > End
 
+    # Download Report > Start
+    path('download/detailed-feedback/<str:type>/', views.DownloadDetailedFeedback, name='download_detailed_feedback'),
+    path('download/average-feedback/<str:type>/', views.DownloadAverageFeedback, name='download_average_feedback'),
+    # Download Report > End
+    path('misc/', views.Misc),
+
 ]

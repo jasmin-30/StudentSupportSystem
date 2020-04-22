@@ -73,6 +73,75 @@
         </div>
     </div>
     <!-- Pre-loader end -->
+
+    <!-- Download Report > Start -->
+    <div class="modal fade" id="download-report-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Download Report</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'download_detailed_feedback' type="end" %}">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label" for="term" style="font-weight: 900;">Term : </label>
+                            <div class="col-sm-4">
+                                <select class="custom-select" name="term" id="term" style="width: 100%" required>
+                                    <option value="-1" selected disabled>Select Term</option>
+                                    <option value="0">Odd</option>
+                                    <option value="1">Even</option>
+                                </select>
+                            </div>
+
+                            <label class="col-sm-2 col-form-label" for="year" style="font-weight: 900;">Year : </label>
+                            <div class="col-sm-4">
+                                <select class="custom-select" name="year" id="year" style="width: 100%" required>
+                                    <option value="-1" selected disabled>Select Year</option>
+                                    <script type="text/javascript">
+                                        var start_year = 2020;
+                                        var current_year = new Date().getFullYear();
+                                        for(var i=start_year;i<=current_year;++i) {
+                                            document.write('<option value="'+ i +'">'+ i +'</option>');
+                                        }
+                                    </script>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label" for="faculty" style="font-weight: 900;">Faculty : </label>
+                            <div class="col-sm-4">
+                                <select class="custom-select" name="faculty" id="faculty" style="width: 100%" required>
+                                   <option value="-1" selected disabled>Select Faculty</option>
+                               {% for f in dept_faculties %}
+                                   <option value="{{ f.id }}">{{ f.name }}</option>
+                               {% endfor %}
+                               </select>
+                            </div>
+                            <label class="col-sm-2 col-form-label" for="subject" style="font-weight: 900;">Subject : </label>
+                                <div class="col-sm-4">
+                                    <select name="subject" id="subject" class="custom-select" style="width: 100%">
+                                        <option value="-1" disabled selected>Select Subject</option>
+                                    </select>
+                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-12 d-flex justify-content-center">
+                                <button type="submit" class="btn btn-outline-primary">
+                                    <i class="feather icon-check"></i>  Download
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Download Report > End -->
+
     <div id="pcoded" class="pcoded">
         <div class="pcoded-overlay-box"></div>
         <div class="pcoded-container navbar-wrapper">
@@ -131,7 +200,7 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-8 col-md-8 col-lg-8 m-t-20">
-                                            <button type="button" class="btn btn-primary">Download Report</button>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#download-report-modal">Download Report</button>
                                         </div>
                                         <div class="col-sm-4 col-md-4 col-lg-4">
                                             <span class="f-right">
@@ -152,36 +221,18 @@
                                                     <div id="feedback_parameters" style="display: block">
                                                         <form id="feedback_parameters_form">
                                                         <div class="form-group row">
-                                                            <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_faculty" style="font-weight: 900;">Select Faculty : </label>
-                                                            <div class="col-md-4 col-lg-4">
-                                                                <select class="form-control" id="view_feedback_faculty" name="view_feedback_faculty">
-                                                                    <option value="-1" selected disabled>Select Faculty</option>
-                                                                    {% for f in dept_faculties %}
-                                                                        <option value="{{ f.id }}">{{ f.name }}</option>
-                                                                    {% endfor %}
-                                                                </select>
-                                                                <div id="Error_view_feedback_faculty" style="color: red"></div>
-                                                            </div>
                                                             <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_term" style="font-weight: 900;">Select Term : </label>
                                                             <div class="col-md-4 col-lg-4">
-                                                                <select class="form-control" id="view_feedback_term" name="view_feedback_term" onchange="update_subjects()">
+                                                                <select class="custom-select" id="view_feedback_term" style="width: 100%" name="view_feedback_term">
                                                                     <option value="-1" selected disabled>Select Term</option>
                                                                     <option value="0">Odd</option>
                                                                     <option value="1">Even</option>
                                                                 </select>
                                                                 <div id="Error_view_feedback_term" style="color: red"></div>
                                                             </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_subject" style="font-weight: 900;">Select Subject : </label>
-                                                            <div class="col-md-4 col-lg-4">
-                                                                <select class="form-control" onclick="check_term()" id="view_feedback_subject" name="view_feedback_subject" data-toggle="tooltip" title="Subject list will be displayed dynamically according to the faculty and term you have chosen.">
-                                                                    <option value="-1">Select Subject</option>
-                                                                </select>
-                                                            </div>
                                                             <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_year" style="font-weight: 900;">Select Year : </label>
                                                             <div class="col-md-4 col-lg-4">
-                                                                <select class="form-control" id="view_feedback_year" name="view_feedback_year">
+                                                                <select class="custom-select" id="view_feedback_year" style="width: 100%" name="view_feedback_year">
                                                                     <option value="-1" selected disabled>Select Year</option>
                                                                     <script type="text/javascript">
                                                                         var start_year = 2020;
@@ -190,6 +241,24 @@
                                                                             document.write('<option value="'+ i +'">'+ i +'</option>');
                                                                         }
                                                                     </script>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_faculty" style="font-weight: 900;">Select Faculty : </label>
+                                                            <div class="col-md-4 col-lg-4">
+                                                                <select class="custom-select" id="view_feedback_faculty" name="view_feedback_faculty" style="width: 100%" onchange="update_subjects()">
+                                                                    <option value="-1" selected disabled>Select Faculty</option>
+                                                                    {% for f in dept_faculties %}
+                                                                        <option value="{{ f.id }}">{{ f.name }}</option>
+                                                                    {% endfor %}
+                                                                </select>
+                                                                <div id="Error_view_feedback_faculty" style="color: red"></div>
+                                                            </div>
+                                                            <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_subject" style="font-weight: 900;">Select Subject : </label>
+                                                            <div class="col-md-4 col-lg-4">
+                                                                <select class="custom-select" onclick="check_term()" id="view_feedback_subject" name="view_feedback_subject" style="width: 100%" data-toggle="tooltip" title="Subject list will be displayed dynamically according to the faculty and term you have chosen.">
+                                                                    <option value="-1">Select Subject</option>
                                                                 </select>
                                                             </div>
                                                         </div>
@@ -270,6 +339,13 @@
     <!-- custom js -->
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+
     <script type="text/javascript">
         var subjects_dict = JSON.parse('{{ fac_subjects|safe }}');
         var feedback_list;
@@ -526,6 +602,30 @@
                     },
                 });
             }
+        }
+    </script>
+
+    <script type="text/javascript">
+        var faculty_select = document.querySelector('#faculty');
+        faculty_select.onchange = function () {
+            var term = $(document).find('select#term').val();
+            var fac_id = $(document).find('select#faculty').val();
+            var sub_html = '<option value="-1" selected disabled>Select Subject</option>';
+            if(term == "0") {
+                $.each(subjects_dict[fac_id], function (index, value) {
+                    if(value['subject_semester'] % 2) {
+                        sub_html += '<option value="'+ value['subject_id'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
+                    }
+                });
+            }
+            else {
+                $.each(subjects_dict[fac_id], function (index, value) {
+                    if(!(value['subject_semester'] % 2)) {
+                        sub_html += '<option value="'+ value['subject_id'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
+                    }
+                });
+            }
+            $(document).find('select#subject').html(sub_html);
         }
     </script>
 

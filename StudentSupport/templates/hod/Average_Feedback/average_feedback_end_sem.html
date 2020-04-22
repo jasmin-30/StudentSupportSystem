@@ -71,6 +71,87 @@
         </div>
     </div>
     <!-- Pre-loader end -->
+
+    <!-- Download Report modal > Start -->
+    <div class="modal fade" id="download-report-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Download Report</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'download_average_feedback' type="end" %}">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label" for="term" style="font-weight: 900;">Term : </label>
+                            <div class="col-sm-4">
+                                <select class="custom-select" name="term" id="term" style="width: 100%" required>
+                                    <option value="-1" selected disabled>Select Term</option>
+                                    <option value="0">Odd</option>
+                                    <option value="1">Even</option>
+                                </select>
+                            </div>
+
+                            <label class="col-sm-2 col-form-label" for="year" style="font-weight: 900;">Year : </label>
+                            <div class="col-sm-4">
+                                <select class="custom-select" name="year" id="year" style="width: 100%" required>
+                                    <option value="-1" selected disabled>Select Year</option>
+                                    <script type="text/javascript">
+                                        var start_year = 2020;
+                                        var current_year = new Date().getFullYear();
+                                        for(var i=start_year;i<=current_year;++i) {
+                                            document.write('<option value="'+ i +'">'+ i +'</option>');
+                                        }
+                                    </script>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label" for="faculty" style="font-weight: 900;">Faculty : </label>
+                            <div class="col-sm-10">
+                                <select class="custom-select" name="faculty" id="faculty" style="width: 100%" required>
+                                   <option value="-1" selected disabled>Select Faculty</option>
+                               {% for f in dept_faculties %}
+                                   <option value="{{ f.id }}">{{ f.name }}</option>
+                               {% endfor %}
+                               </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="all_subject" style="font-weight: 900;">Download for all subjects : </label>
+                            <div class="col-sm-2">
+                                <input type="checkbox" name="all_subject" id="all_subject" class="js-single" checked>
+                            </div>
+                            <div class="col-sm-4">
+                                <button type="submit" id="button1" class="btn btn-outline-primary">
+                                    <i class="feather icon-check"></i>  Download
+                                </button>
+                            </div>
+                        </div>
+                        <div id="subject_list" style="display: none;">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label" for="subject" style="font-weight: 900;">Subject : </label>
+                                <div class="col-sm-4">
+                                    <select name="subject" id="subject" class="custom-select" style="width: 100%">
+                                    </select>
+                                </div>
+                                <div class="col-sm-4">
+                                    <button type="button" id="button2" class="btn btn-outline-primary">
+                                        <i class="feather icon-check"></i>  Download
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Download Report modal > End -->
+
     <div id="pcoded" class="pcoded">
         <div class="pcoded-overlay-box"></div>
         <div class="pcoded-container navbar-wrapper">
@@ -131,7 +212,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-8 col-md-8 col-lg-8 m-t-20">
-                                        <button type="button" class="btn btn-primary">Download Report</button>
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#download-report-modal">Download Report</button>
                                     </div>
                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                         <span class="f-right">
@@ -155,14 +236,14 @@
                                                <div class="form-group row">
                                                         <label for="view_feedback_term" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Term :</label>
                                                         <div class="col-md-4 col-lg-4">
-                                                            <select class="form-control" name="view_feedback_term" id="view_feedback_term">
+                                                            <select class="custom-select" name="view_feedback_term" id="view_feedback_term" style="width: 100%">
                                                                 <option value="0">Odd</option>
                                                                 <option value="1">Even</option>
                                                             </select>
                                                         </div>
                                                         <label for="view_feedback_year" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Year:</label>
                                                         <div class="col-md-4 col-lg-4">
-                                                            <select class="form-control" name="view_feedback_year" id="view_feedback_year">
+                                                            <select class="custom-select" name="view_feedback_year" id="view_feedback_year" style="width: 100%">
                                                                 <script type="text/javascript">
                                                                     var start_year = 2020;
                                                                     var current_year = new Date().getFullYear();
@@ -176,7 +257,7 @@
                                                    <div class="form-group row">
                                                        <label for="view_feedback_faculty" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Faculty :</label>
                                                        <div class="col-md-6 col-lg-6">
-                                                           <select class="form-control" name="view_feedback_faculty" id="view_feedback_faculty">
+                                                           <select class="custom-select" name="view_feedback_faculty" id="view_feedback_faculty" style="width: 100%">
                                                                <option value="-1" selected disabled>Select Faculty to view feedback</option>
                                                            {% for f in dept_faculties %}
                                                                <option value="{{ f.id }}">{{ f.name }}</option>
@@ -270,6 +351,8 @@
 
     <!-- Chart js -->
     <script type="text/javascript" src="{% static 'assets/extra-js/Chart/Chart.js_2.9.3.js' %}"></script>
+    <!-- Switch component js -->
+    <script type="text/javascript" src="{% static 'bower_components/switchery/js/switchery.min.js' %}"></script>
 
     <!-- custom js -->
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
@@ -277,6 +360,75 @@
     <script type="text/javascript" src="{% static 'assets/js/script.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+
+    <script type="text/javascript">
+        var subjects_dict = JSON.parse('{{ fac_subjects|safe }}');
+        console.log(subjects_dict);
+
+        // for switch
+        $(document).ready(function () {
+            // Single swithces
+            var subject_switch = document.querySelector('.js-single');
+            var switchery = new Switchery(subject_switch, { color: '#4680ff', jackColor: '#fff' });
+
+            subject_switch.onchange = function () {
+                var btn1 = $(document).find('button#button1');
+                var btn2 = $(document).find('button#button2');
+                var div = $(document).find('div#subject_list');
+                if(subject_switch.checked){
+                    div.hide();
+                    btn2.attr('type', 'button');
+                    btn1.show();
+                    $(document).find('select#subject').removeAttr('required');
+                    btn1.attr('type', 'submit');
+
+                    //clearing out subjects list
+                    $(document).find('select#subject').html();
+                }
+                else {
+                    div.show();
+                    btn2.attr('type', 'submit');
+                    $(document).find('select#subject').attr('required', 'true');
+                    btn1.hide();
+                    btn1.attr('type', 'button');
+
+                    // making subjects list
+                    update_subject();
+                }
+            }
+
+            var faculty_select = document.querySelector('#faculty');
+            faculty_select.onchange = function () {
+                update_subject();
+            }
+        });
+
+        function update_subject() {
+            var fac_id = $(document).find('select#faculty option:selected').val();
+            var term = $(document).find('select#term option:selected').val();
+            if(term == "-1") {
+                alert("Select Term");
+            }
+            else {
+                var sub_html = '<option value="-1" selected disabled>Select Subject</option>';
+                if(term == "0") {
+                    $.each(subjects_dict[fac_id], function (index, value) {
+                        if(value['subject_semester'] % 2) {
+                            sub_html += '<option value="'+ value['subject_id'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
+                        }
+                    });
+                }
+                else {
+                    $.each(subjects_dict[fac_id], function (index, value) {
+                        if(!(value['subject_semester'] % 2)) {
+                            sub_html += '<option value="'+ value['subject_id'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
+                        }
+                    });
+                }
+                $(document).find('select#subject').html(sub_html);
+            }
+        }
+    </script>
 
     <!-- Javascript for Graph -->
     <script type="text/javascript">
