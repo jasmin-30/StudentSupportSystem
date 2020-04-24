@@ -40,9 +40,11 @@ def serialize_feedback(feedback_qs, faculty_obj, semester_list):
             tmp['Q8'] = tmp['Q8'] / div
             tmp['Q9'] = tmp['Q9'] / div
             tmp['Q10'] = tmp['Q10'] / div
+            tmp['count'] = div
 
         else:
             # It is for that subjects whose feedback has not been submitted yet.
+            tmp['count'] = div
             pass
 
         # appending tmp dictionary into rating list

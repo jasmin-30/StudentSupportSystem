@@ -29,254 +29,6 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
-    <script type="text/javascript">
-    // TODO : Bring this table into table tag and add sweet alert also.
-    $(document).ready(function($)
-    {
-        //ajax row data
-        var ajax_data = [];
-        {% for i in dept %}
-            ajax_data.push({
-                id: '{{ i.id }}',
-                name : '{{ i.dept_name }}',
-                hod : '{{ i.hod.name }}',
-                fac_id:'{{ i.hod.id }}',
-            });
-        {% endfor %}
-
-        //--->create data table > start
-        var tbl = '';
-        tbl +='<table class="table table-hover">';
-
-            //--->create table header > start
-            tbl +='<thead>';
-                tbl +='<tr>';
-                tbl +='<th scope="col">#</th>';
-                tbl +='<th scope="col">Department</th>';
-                tbl +='<th scope="col">HOD</th>';
-                tbl +='<th scope="col">Action</th>';
-                tbl +='</tr>';
-            tbl +='</thead>';
-            //--->create table header > end
-
-
-            //--->create table body > start
-            tbl +='<tbody>';
-
-                //--->create table body rows > start
-                var count = 1;
-                $.each(ajax_data, function(index, val)
-                {
-                    //you can replace with your database row id
-                    var row_id = val['id'];
-                    //loop through ajax row data
-                    tbl +='<tr row_id="'+row_id+'">';
-                        tbl +='<th ><div scope="row" col_name="id">'+ count.toString() +'</div></th>';count+=1;
-                        tbl +='<td ><div col_name="name">'+val['name']+'</div></td>';
-                        if(val['hod']) {
-                            tbl +='<td ><div class="row_data" edit_type="click" id="hod" col_name="hod" fac_id="'+val["fac_id"]+'" original_entry="'+val['hod']+'">'+val['hod']+'</div></td>';
-                        }
-                        else {
-                            tbl +='<td ><div class="row_data" edit_type="click" id="hod" col_name="hod" original_entry="Not Assigned"><span style="color: red">Not Assigned</span></div></td>';
-                        }
-
-                        //--->edit options > start
-                        tbl +='<td>';
-
-                            tbl +='<span class="btn_edit" > <a href="#" class="btn btn-link " row_id="'+row_id+'" > Edit</a></span>';
-
-                            //only show this button if edit button is clicked
-                            tbl +='<span class="btn_save"> <a href="#" class="btn btn-link"  row_id="'+row_id+'"> Save</a> | </span>';
-                            tbl +='<span class="btn_cancel"> <a href="#" class="btn btn-link" row_id="'+row_id+'"> Cancel</a></span>';
-
-                        tbl +='</td>';
-                        //--->edit options > end
-
-                    tbl +='</tr>';
-                });
-
-                //--->create table body rows > end
-
-            tbl +='</tbody>';
-            //--->create table body > end
-
-        tbl +='</table>';
-        //--->create data table > end
-
-        //out put table data
-        $(document).find('.tbl_data').html(tbl);
-
-        $(document).find('.btn_save').hide();
-        $(document).find('.btn_cancel').hide();
-
-
-        //--->button > edit > start
-        $(document).on('click', '.btn_edit', function(event)
-        {
-            event.preventDefault();
-            var tbl_row = $(this).closest('tr');
-
-            var row_id = tbl_row.attr('row_id');
-
-            var arr = {
-                department_id:row_id,
-            };
-
-            $.ajax({
-                type:"GET",
-                url:"{{ base_url }}"+"fetch-faculties/",
-                data: {
-                    info: JSON.stringify(arr, null, 2),
-                },
-                statusCode:{
-                    400: function (msg) {
-                        alert(msg.responseText);
-                    },
-                    401: function (msg) {
-                        alert(msg);
-                    }
-                },
-                success: function (msg) {
-                    //console.log(msg);
-                    var faculty_select = '';
-                    faculty_select += '<span class="faculty">';
-                        faculty_select += '<select class="form-control" id="faculty_select" name="faculty_select">';
-                        $.each(msg, function( index, val ) {
-                            var tag = tbl_row.find('#hod');
-                            var fac_id = tag.attr('fac_id');
-                            if(val['id'] == fac_id) {
-                                faculty_select += '<option value="'+val['id']+'" selected>'+val['name']+'</option>';
-                            }
-                            else {
-                                faculty_select += '<option value="'+val['id']+'">'+val['name']+'</option>';
-                            }
-                        });
-                        faculty_select += '</select>';
-                    faculty_select += '</span>';
-                    tbl_row.find('#hod').html(faculty_select)
-                        .attr('contenteditable', 'false')
-                        .attr('edit_type', 'click')
-                        .css('padding', '');
-
-                    tbl_row.find('.btn_save').show();
-                    tbl_row.find('.btn_cancel').show();
-
-                    //hide edit button
-                    tbl_row.find('.btn_edit').hide();
-                },
-                failure: function (msg) {
-                    alert(msg);
-                },
-            });
-
-        });
-        //--->button > edit > end
-
-        //--->button > cancel > start
-        $(document).on('click', '.btn_cancel', function(event)
-        {
-            event.preventDefault();
-
-            var tbl_row = $(this).closest('tr');
-
-            var row_id = tbl_row.attr('row_id');
-
-            //hide save and cacel buttons
-            tbl_row.find('.btn_save').hide();
-            tbl_row.find('.btn_cancel').hide();
-
-            //show edit button
-            tbl_row.find('.btn_edit').show();
-
-            tbl_row.find('.row_data').each(function(index, val)
-            {
-                $(this).html( $(this).attr('original_entry') );
-            });
-        });
-        //--->button > cancel > end
-
-
-        //--->save whole row entery > start
-        $(document).on('click', '.btn_save', function(event)
-        {
-            event.preventDefault();
-            var tbl_row = $(this).closest('tr');
-
-            var row_id = tbl_row.attr('row_id');
-
-
-            //hide save and cacel buttons
-            tbl_row.find('.btn_save').hide();
-            tbl_row.find('.btn_cancel').hide();
-
-            //show edit button
-            tbl_row.find('.btn_edit').show();
-
-
-            //--->get row data > start
-            var arr = {};
-            tbl_row.find('.row_data').each(function(index, val)
-            {
-                var col_val;
-                var col_name = $(this).attr('col_name');
-                if(col_name == 'hod'){
-                    col_val = $(this).find('#faculty_select option:selected').val();
-                    arr['fac_id'] = col_val;
-                    var fac_name = $(this).find('#faculty_select option:selected').text();
-                    arr[col_name] = fac_name;
-                    var old_hod = $(this).attr('fac_id');
-                    if(old_hod) {
-                        arr['old_hod'] = old_hod
-                    }
-                    else {
-                        arr['old_hod'] = '-1'
-                    }
-                    $(this).attr('fac_id', col_val);
-                    $(this).attr('original_entry', fac_name);
-                    $(this).html(fac_name);
-
-                }
-            });
-            //--->get row data > end
-
-            //use the "arr"	object for your ajax call
-            $.extend(arr, {department_id:row_id});
-
-            //--->Making Ajax request > Start
-            $.ajax({
-                type:"GET",
-                url:"{{ base_url }}"+"change-hod/",
-                data: {
-                    info: JSON.stringify(arr, null, 2),
-                },
-                success: function (msg) {
-                    $('#response')
-                        .css('display', 'block')
-                        .removeClass('alert-danger')
-                        .removeClass('background-danger')
-                        .addClass('alert-success')
-                        .addClass('background-success')
-                        .html(msg);
-                },
-                failure: function (msg) {
-                    $('#response')
-                        .css('display', 'block')
-                        .removeClass('alert-success')
-                        .removeClass('background-success')
-                        .addClass('alert-danger')
-                        .addClass('background-danger')
-                        .html(msg);
-                },
-            });
-            //--->Making Ajax request > End
-
-
-        });
-        //--->save whole row entery > end
-
-
-    });
-</script>
 </head>
 
 <body>
@@ -364,65 +116,75 @@
             </nav>
             <div class="pcoded-main-container">
                 <div class="pcoded-wrapper">
-                    <nav class="pcoded-navbar">
-                         <div class="pcoded-inner-navbar main-menu">
-                            <div class="pcoded-navigatio-lavel">Quick Links</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="{% url 'principal_profile' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">My Profile</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="{% url 'manage_committees' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">Manage Committees</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="{% url 'manage_department' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">Manage Departments</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="{% url 'logout' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
-                                        <span class="pcoded-mtext">Logout</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                    <div class="pcoded-content">
-                        <div class="pcoded-inner-content">
-                            <div class="main-body">
-                                <div class="page-wrapper">
-                                     <div class="page-header">
-                                        <div class="row align-items-end">
-                                            <div class="col-lg-8">
-                                                <div class="page-header-title">
-                                                    <div class="d-inline">
-                                                        <h4>Manage Departments</h4>
+                    <div class="pcoded-inner-content">
+                        <div class="main-body">
+                            <div class="page-wrapper">
+                                <div class="page-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="page-header">
+                                                <div class="row align-items-end">
+                                                    <div class="col-lg-8">
+                                                        <div class="page-header-title">
+                                                            <div class="d-inline">
+                                                                <h3>Manage Departments</h3>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-4 col-md-4 col-lg-4">
+                                                        <span class="f-right">
+                                                            <a href="{% url 'principal_dashboard' %}" class="btn" style="font-size: 15px">
+                                                                <i class="feather icon-arrow-left"></i>
+                                                                Back to Dashboard
+                                                            </a>
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </div>
-                                    <div class="page-body">
-                                        <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="card">
-                                                    <div class="card-header">
-                                                        <p>
-                                                            Assign or change head of the department from here.
-{#                                                            <button type="button" class="btn btn-primary f-right" data-toggle="modal" data-target="#add-committee">Add Committee</button>#}
-                                                        </p>
-                                                    </div>
-                                                    <div class="card-block">
-                                                        <div id="response" class="alert" role="alert" style="display: none;"></div>
-                                                        <div class="tbl_data"></div>
+                                            <div class="card">
+                                                <div class="card-header">
+                                                    <h5>
+                                                        Assign or change head of the department from here.
+                                                    </h5>
+                                                </div>
+                                                <div class="card-block">
+                                                    <div class="table-responsive">
+                                                        <table class="table table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                <th scope="col">#</th>
+                                                                <th scope="col">Department</th>
+                                                                <th scope="col">HOD</th>
+                                                                <th scope="col">Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {% for d in dept %}
+                                                                <tr row_id="{{ d.id }}">
+                                                                    <th scope="row"><div col_name="id">{{ forloop.counter }}</div></th>
+                                                                    <td><div col_name="dept_name">{{ d.dept_name }}</div></td>
+                                                                    {% ifequal d.hod.id None %}
+                                                                        <td><div class="row_data" id="hod" col_name="hod" original_entry='<span style="color: red">Not Assigned</span>' fac_id="-1"><span style="color: red">Not Assigned</span></div></td>
+                                                                    {% else %}
+                                                                        <td><div class="row_data" id="hod" col_name="hod" original_entry="{{ d.hod.name }}" fac_id="{{ d.hod.id }}">{{ d.hod.name }}</div></td>
+                                                                    {% endifequal %}
+                                                                    <td>
+                                                                        <div class="btn-group btn-group-sm" style="float: none;">
+                                                                            <button type="button" class="btn_edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                <span class="icofont icofont-ui-edit"></span>
+                                                                            </button>
+                                                                            <button type="button" class="btn_save btn btn-primary waves-effect waves-light active" style="float: none;margin: 5px;">
+                                                                                <span class="icofont icofont-check"></span>
+                                                                            </button>
+                                                                            <button type="button" class="btn_cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                <span class="icofont icofont-close"></span>
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
@@ -466,6 +228,132 @@
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+
+    <!-- Javascript for table -->
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Hiding all save and delete buttons.
+            $(document).find('.btn_save').hide();
+            $(document).find('.btn_cancel').hide();
+
+            // Parsing departmentwise faculty list.
+            var dept_faculty_list = JSON.parse('{{ dept_faculty|safe }}');
+            console.log(dept_faculty_list);
+
+            //Click event of edit button
+            $(document).on('click', '.btn_edit', function(event) {
+                event.preventDefault();
+                var tbl_row = $(this).closest('tr');
+                var dept_id = tbl_row.attr('row_id');
+                var msg = dept_faculty_list[dept_id];
+                var tag = tbl_row.find('#hod');
+                var fac_id = tag.attr('fac_id');
+                if(msg.length == 0) {
+                    swal({
+                        title: "Error",
+                        text: "There are no faculty registered in this department.",
+                        dangerMode: true,
+                        type: "error",
+                    });
+                }
+                else {
+                    var faculty_select = '';
+                    faculty_select += '<select class="custom-select" id="faculty_select" name="faculty_select" style="width: 100%;">';
+                    $.each(msg, function( index, val ) {
+                        if(val['faculty_id'] == fac_id) {
+                            faculty_select += '<option value="'+val['faculty_id']+'" selected>'+val['faculty_name']+'</option>';
+                        }
+                        else {
+                            faculty_select += '<option value="'+val['faculty_id']+'">'+val['faculty_name']+'</option>';
+                        }
+                    });
+                    faculty_select += '</select>';
+                    tag.html(faculty_select);
+
+                    tbl_row.find('.btn_save').show();
+                    tbl_row.find('.btn_cancel').show();
+
+                    //hide edit button
+                    tbl_row.find('.btn_edit').hide();
+                }
+            });
+
+            //Click event for save button.
+            $(document).on('click', '.btn_save', function(event) {
+                event.preventDefault();
+                var tbl_row = $(this).closest('tr');
+                var dept_id = tbl_row.attr('row_id');
+                var hod_div_tag = tbl_row.find('div#hod');
+                var new_hod_id = hod_div_tag.find('select#faculty_select option:selected').val();
+                var new_hod_name = hod_div_tag.find('select#faculty_select option:selected').text();
+                var old_hod_id = hod_div_tag.attr('fac_id');
+
+                swal({
+                    title: "Are you sure?",
+                    text: "Changes will be reflected.",
+                    type: "warning",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                }, function () {
+                    $.ajax({
+                        type:"GET",
+                        url:"{{ base_url }}" + "change-hod/",
+                        data: {
+                            fac_id: new_hod_id,
+                            old_hod: old_hod_id
+                        },
+
+                        success: function (msg) {
+                            var response = JSON.parse(msg);
+                            swal({
+                                title: "Changes saved successfully!",
+                                text: "HOD for " + response['dept'] + " has been changed successfully.",
+                                type: "success",
+                            });
+                            hod_div_tag.attr('fac_id', new_hod_id);
+                            hod_div_tag.attr('original_entry', new_hod_name);
+                            hod_div_tag.html(new_hod_name);
+                        },
+                        error: function (msg) {
+                            var response = JSON.parse(msg.responseText);
+                            swal({
+                                title: "Error!",
+                                text: response['error'],
+                                type: "error",
+                            });
+                            hod_div_tag.attr('fac_id', old_hod_id);
+                            var old_value = hod_div_tag.attr('original_entry');
+                            hod_div_tag.attr('original_entry', old_value);
+                            hod_div_tag.html(old_value);
+                        },
+                    });
+                });
+                //hide save and cacel buttons
+                tbl_row.find('.btn_save').hide();
+                tbl_row.find('.btn_cancel').hide();
+
+                //show edit button
+                tbl_row.find('.btn_edit').show();
+            });
+
+            //Event for cancel button
+            $(document).on('click', '.btn_cancel', function(event) {
+                event.preventDefault();
+
+                var tbl_row = $(this).closest('tr');
+
+                //hide save and cacel buttons
+                tbl_row.find('.btn_save').hide();
+                tbl_row.find('.btn_cancel').hide();
+
+                //show edit button
+                tbl_row.find('.btn_edit').show();
+                var hod_div = tbl_row.find('div#hod');
+                hod_div.html(hod_div.attr('original_entry'));
+            });
+        });
+    </script>
 
     <script type="text/javascript">
         {% if success %}

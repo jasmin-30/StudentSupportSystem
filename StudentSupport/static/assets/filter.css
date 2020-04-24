@@ -1,0 +1,62 @@
+
+		.icard{
+  		width: 18rem; 
+  		margin-top: 15px;
+  		padding:15px;
+  		box-shadow: 0 1px 20px 0 rgba(69,90,100,0.08); border:none;
+  		}
+  		.icard-body{
+  			padding: 0px;
+  		}
+  		.icard-title{
+  		color: #999 !important;
+  		padding: 0px 0px 13px 0px;
+  		width :100%;
+  		font-weight: 230;
+  	}
+    .icard-subtitles{
+      border-bottom: 1px solid #e9e7e7;
+       text-transform: uppercase;
+    }
+  	.filter ul{
+  		list-style: none;
+  	}
+  	.filter ul li{
+  		line-height: 60px;
+  		/*border-bottom: 1px solid #e9e7e7;*/
+  	}
+  	.filter ul li a{
+  		position: relative;
+  		color: black;
+  		font-size: 14px;
+  		font-weight: 500;
+  		text-decoration: none;
+  		display: block;
+  		width: 100%;
+  		/*border-left: 3px solid transparent;*/
+  	}
+  	.filter ul li a:hover{
+  		color: #007bff;
+  		/*border-left-color: #007bff;*/
+  		/*background-color: grey;*/
+  	}
+  	.filter ul ul{
+  		position: static;
+  		display: block;
+  	}
+  	.filter ul ul li{
+  		line-height: 42px;
+  		border-bottom: none;
+  	}
+  	.filter ul li a span{
+  		position: absolute;
+  		top: 50%;
+  		right: 20px;
+  		transform: translateY(-50%);
+  		font-size: 20px;
+  		transition: transform 0.4s;
+  	}
+  	.filter ul li a span.rotate{
+  		transform: translateY(-50%) rotate(-180deg);
+  	}
+    

@@ -1,18 +1,10 @@
 <script>
-    // TODO : In every edit tables change links to glyphicon icons or feather icons.
     // TODO : make validation supported in chrome as well.
     // TODO : Add removed faculties by hod in manage departments.
     // TODO : Add removed subjects by hod in manage departments.
-    // TODO : Give Filters as right side navbar.
-    // TODO : year wise
-    // TODO : Subjects wise
-    // TODO : Semester wise
-    // TODO : Department wise
     // TODO : Add loader wherever can be possible.
 
     // TODO : Django Admin Customization.
-
-    // TODO : Change Bootstrap css and js in all files
     // TODO : Remove all unnecessary css and js from bower components and assets as well.
 
     /* TODO : Email encoding in change password.
@@ -27,15 +19,13 @@
     // TODO : HOD Manage Department Javascript Modify.
     // TODO : Implement base templates system. and change in all templates.
     // TODO : Committees in every dashboard is still pending and also committee dashboard is also pending.
-    // TODO : Question wise average ratings.
-    // TODO : Detailed feedback.
-    // TODO : HOD Profile need to be updated please check it once.
     // TODO : Make all the buttons consistent.
     // TODO : Display at faculty side to let them know that which subjects are they taking. give link in quick links section and make new page with datatable.
     // TODO : Make tour for every dashboard and every page.
     // TODO : Change Email Templates.
-    // TODO : change detailed feedback > Add parameters detailes above pagination.
-    // TODO : 
+    // TODO : make seperate pages for feedback for general department, mechanical department as well as applied mechanics department.
+    // TODO : Make editable table as shown in manage department for prinicpal
+    // TODO : Update all the icons accordingly use feather or icofont or font awesome.
     // TODO :
 
 </script>
@@ -48,36 +38,6 @@
         </a>
     </span>
 </div>
-
-$.ajax({
-    type:"GET",
-    url:"{{ base_url }}" + "modify-subjects/",
-    data: {
-        info: JSON.stringify(data, null, 2),
-    },
-
-    success: function (msg) {
-        var response = JSON.parse(msg);
-    },
-    error: function (msg) {
-        var response = JSON.parse(msg.responseText);
-        swal({
-            title: "Error!",
-            text: response['error'],
-            type: "error",
-        });
-    },
-});
-
-<!-- sweet alert framework -->
-<link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
-
-<!-- sweet alert js -->
-    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
-
-
-for pagination gap
-pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
 
 
 Replace this navbar with below
@@ -117,5 +77,3 @@ Replace this navbar with below
                     </div>
                 </div>
             </nav>
-
-solution for the homepage javascript not working is use internal css for disabled and make

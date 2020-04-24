@@ -1466,8 +1466,7 @@ def PrincipalDashboard(request):
     }
     if request.user.is_authenticated:
         committee_qs = Committee_Details.objects.all()
-        user_obj = User.objects.get(id=request.session["User"])
-        principal_obj = Principal.objects.get(auth_id=user_obj)
+        principal_obj = Principal.objects.get(auth_id=request.user)
         dept_qs = Departments.objects.all()
         context["departments"] = dept_qs
         context["name"] = principal_obj.name
@@ -1483,7 +1482,7 @@ def ManageCommitteesView(request):
         "base_url": st.BASE_URL,
     }
     if request.user.is_authenticated:
-        principal_obj = Principal.objects.get(auth_id=request.session["User"])
+        principal_obj = Principal.objects.get(auth_id=request.user)
         context["name"] = principal_obj.name
         committee_qs = Committee_Details.objects.all()
         context["committees"] = committee_qs
@@ -1524,40 +1523,79 @@ def ManageCommitteesView(request):
 def EditCommittees(request):
     if request.user.is_authenticated:
         if request.user.getRole == "Principal":
-            if request.method == "GET":
-                if request.GET.get('info') is not None:
-                    info = request.GET.get('info')
-                    data = eval(info)
-                    print(data)
-                    if data['action'] == 'update':
-                        try:
-                            committee_obj = Committee_Details.objects.get(id=data['row_id'])
-                            print(committee_obj)
-                            committee_obj.committee_name = data['name']
-                            committee_obj.committee_details = data['details']
-                            committee_obj.chairperson = Faculty.objects.get(id=data['fac_id'])
-                            committee_obj.save()
-                            return HttpResponse("Data Updated Successfully.", status=status.HTTP_200_OK)
+            if request.GET.get('committee_id') is not None:
+                committee_id = request.GET.get('committee_id')
+                action = request.GET.get('action')
+                if action == 'update':
+                    try:
+                        commitee_name = request.GET.get('committee_name')
+                        committee_details = request.GET.get('committee_details')
+                        chairperson_id = request.GET.get('chairperson_id')
+                        committee_obj = Committee_Details.objects.get(id=int(committee_id))
+                        print(committee_obj)
+                        committee_obj.committee_name = commitee_name
+                        committee_obj.committee_details = committee_details
+                        committee_obj.chairperson = Faculty.objects.get(id=int(chairperson_id))
+                        committee_obj.save()
+                        context = {
+                            'committee': committee_obj.committee_name
+                        }
+                        res = json.dumps(context)
+                        return HttpResponse(res, status=status.HTTP_200_OK)
 
-                        except Exception as e:
-                            print(e)
-                            return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
+                    except Exception as e:
+                        print(e)
+                        context = {
+                            'error': "Server Side error. Please contact Developer team."
+                        }
+                        res = json.dumps(context)
+                        return HttpResponse(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-                    if data['action'] == 'delete':
-                        try:
-                            committee_obj = Committee_Details.objects.get(id=data['row_id']).delete()
-                            return HttpResponse("Data Deleted Successfully.", status=status.HTTP_200_OK)
+                elif action == 'delete':
+                    try:
+                        committee_obj = Committee_Details.objects.get(id=int(committee_id))
+                        name = committee_obj.committee_name
+                        committee_obj.delete()
+                        context = {
+                            'committee': name
+                        }
+                        res = json.dumps(context)
+                        return HttpResponse(res, status=status.HTTP_200_OK)
 
-                        except Exception as e:
-                            print(e)
-                            return HttpResponse(e, status=status.HTTP_400_BAD_REQUEST)
+                    except Exception as e:
+                        print(e)
+                        context = {
+                            'error': "Server Side error. Please contact Developer team."
+                        }
+                        res = json.dumps(context)
+                        return HttpResponse(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
                 else:
-                    return HttpResponse("Error in parsing json data.", status=status.HTTP_400_BAD_REQUEST)
+                    context = {
+                        'error': "Error in parsing data."
+                    }
+                    res = json.dumps(context)
+                    return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+
+            else:
+                context = {
+                    'error': "Error in parsing data."
+                }
+                res = json.dumps(context)
+                return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
 
         else:
-            return HttpResponse("You are not authorized to perform this action.", status=status.HTTP_401_UNAUTHORIZED)
+            context = {
+                'error': "You are not authorized to perform this action."
+            }
+            res = json.dumps(context)
+            return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
     else:
-        return HttpResponse("Login First", status=status.HTTP_400_BAD_REQUEST)
+        context = {
+            'error': "Login First"
+        }
+        res = json.dumps(context)
+        return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
 
 
 def ManageDepartmentView(request):
@@ -1565,7 +1603,7 @@ def ManageDepartmentView(request):
         "base_url": st.BASE_URL,
     }
     if request.user.is_authenticated and request.user.getRole == "Principal":
-        principal_obj = Principal.objects.get(auth_id=request.session["User"])
+        principal_obj = Principal.objects.get(auth_id=request.user)
         context["name"] = principal_obj.name
         dept_qs = Departments.objects.all()
         fac_qs = Faculty.objects.all()
@@ -1576,10 +1614,23 @@ def ManageDepartmentView(request):
             tmp["dept_name"] = i.dept_name
             try:
                 tmp["hod"] = fac_qs.filter(dept_id=i.id, hod=True).values()[0]
-            except:
+            except IndexError:
                 tmp["hod"] = fac_qs.filter(dept_id=i.id, hod=True)
+            print(fac_qs.filter(dept_id=i.id, hod=True))
             dept.append(tmp)
         context["dept"] = dept
+        print(dept)
+        dept_faculty = {}
+        for i in dept_qs:
+            dept_faculty[i.id] = []
+            faculty_qs = fac_qs.filter(dept_id=i.id)
+            for j in faculty_qs:
+                tmp = {}
+                tmp['faculty_id'] = j.id
+                tmp['faculty_name'] = j.name
+                dept_faculty[i.id].append(tmp)
+
+        context['dept_faculty'] = json.dumps(dept_faculty)
         context["faculties"] = fac_qs
         return render(request, 'principal/manage_departments.html', context)
     else:
@@ -1587,75 +1638,67 @@ def ManageDepartmentView(request):
         return render(request, 'home_auth/index.html', context)
 
 
-def FetchFaculties(request):
-    if request.user.is_authenticated and request.user.getRole == "Principal":
-        if request.method == "GET":
-            if request.GET.get('info') is not None:
-                data = request.GET.get('info')
-                data = eval(data)
-                print(data)
-                try:
-                    fac_qs = Faculty.objects.filter(dept_id=int(data["department_id"]))
-                    if fac_qs.count() == 0:
-                        return HttpResponse("Error in loading Faculty List please try again later.",
-                                            status=status.HTTP_400_BAD_REQUEST)
-                    data = {}
-                    faculties = []
-                    for i in fac_qs:
-                        tmp = {}
-                        tmp["id"] = i.id
-                        tmp["name"] = i.name
-                        tmp["dept_id"] = i.dept_id.id
-                        tmp["auth_id"] = i.auth_id.id
-                        faculties.append(tmp)
-
-                    data["Faculties"] = faculties
-                    return HttpResponse(json.dumps(faculties), content_type='application/json',
-                                        status=status.HTTP_200_OK)
-                except:
-                    return HttpResponse("Error in loading Faculty List please try again later.",
-                                        status=status.HTTP_400_BAD_REQUEST)
-
-    return HttpResponse("Error in loading Faculty List please try again later.", status=status.HTTP_400_BAD_REQUEST)
-
 
 def EditHOD(request):
     if request.user.is_authenticated:
         if request.user.getRole == "Principal":
             if request.method == "GET":
-                if request.GET.get('info') is not None:
-                    data = request.GET.get('info')
-                    data = eval(data)
-                    print(data)
-                    try:
-                        if (data["old_hod"] != '-1'):
-                            old_hod = Faculty.objects.get(id=int(data["old_hod"]))
-                            old_hod.hod = False
-                            old_hod.save()
-                            print("Old HOD: ", old_hod)
-                            new_hod = Faculty.objects.get(id=int(data["fac_id"]))
-                            print("New HOD: ", new_hod)
-                            new_hod.hod = True
-                            new_hod.save()
-                            return HttpResponse(
-                                "Head Of Department changed for " + str(new_hod.dept_id.dept_name) + " Department.",
-                                status=status.HTTP_200_OK)
-                        else:
-                            new_hod = Faculty.objects.get(id=int(data["fac_id"]))
-                            print("New HOD: ", new_hod)
-                            new_hod.hod = True
-                            new_hod.save()
-                            return HttpResponse(
-                                "Head Of Department Assigned for " + str(new_hod.dept_id.dept_name) + " Department.",
-                                status=status.HTTP_200_OK)
-                    except:
-                        return HttpResponse("Error in changing Head ot the department. Please try again later.",
-                                            status=status.HTTP_400_BAD_REQUEST)
+                old_hod_id = request.GET.get('old_hod')
+                new_hod_id = request.GET.get('fac_id')
+                try:
+                    if (old_hod_id != '-1'):
+                        old_hod = Faculty.objects.get(id=int(old_hod_id))
+                        old_hod.hod = False
+                        old_hod.save()
+                        print("Old HOD: ", old_hod)
+                        new_hod = Faculty.objects.get(id=int(new_hod_id))
+                        print("New HOD: ", new_hod)
+                        new_hod.hod = True
+                        new_hod.save()
+                        context = {
+                            'dept':new_hod.dept_id.dept_name
+                        }
+                        res = json.dumps(context)
+                        return HttpResponse(res, status=status.HTTP_200_OK)
+
+                    else:
+                        new_hod = Faculty.objects.get(id=int(new_hod_id))
+                        print("New HOD: ", new_hod)
+                        new_hod.hod = True
+                        new_hod.save()
+                        context = {
+                            'dept': new_hod.dept_id.dept_name
+                        }
+                        res = json.dumps(context)
+                        return HttpResponse(res, status=status.HTTP_200_OK)
+
+                except Exception as e:
+                    print(e)
+                    context = {
+                        'error': "Server Side error. Please contact Developer team."
+                    }
+                    res = json.dumps(context)
+                    return HttpResponse(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+            else:
+                context = {
+                    'error': "Error in parsing data."
+                }
+                res = json.dumps(context)
+                return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+
         else:
-            return HttpResponse("You are not authorized to change Head of the department.",
-                                status=status.HTTP_401_UNAUTHORIZED)
+            context = {
+                'error': "You are not authorized to change Head of the department."
+            }
+            res = json.dumps(context)
+            return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
     else:
-        return HttpResponse("Login First", status=status.HTTP_400_BAD_REQUEST)
+        context = {
+            'error': "Login First"
+        }
+        res = json.dumps(context)
+        return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
 
 
 def PrincipalProfile(request):

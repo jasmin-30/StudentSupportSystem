@@ -18,7 +18,6 @@ urlpatterns = [
     path('edit-delete-committees/', views.EditCommittees, name="edit_committees"), # Only Principal Can Edit Committee
     path('principal/manage-department/', views.ManageDepartmentView, name='manage_department'),
     path('departments/<str:dept>/', views.DepartmentsView, name='departments'),
-    path('fetch-faculties/', views.FetchFaculties, name='fetch_faculties'),
     path('change-hod/', views.EditHOD, name='change_hod'),
     # Principal Related urls > End
 

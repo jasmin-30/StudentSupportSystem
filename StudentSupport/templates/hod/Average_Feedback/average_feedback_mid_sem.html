@@ -20,16 +20,16 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
     <!-- Tags css -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
-    <!-- feather Awesome -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
-
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
 
     <!-- Style.css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
+{#    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">#}
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/custom_style.css' %}">
 </head>
 
 <body>
@@ -226,13 +226,9 @@
                             </div>
                             <div class="page-body">
                                 <div class="row">
-                                   <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                   <div class="col-sm-12" id="div1">
                                        <div class="card">
-{#                                           <div class="card-header">#}
-{#                                               <h4 style="font-size: 20px">Average Feedback</h4>#}
-{#                                           </div>#}
                                            <div class="card-block">
-                                               <form>
                                                <div class="form-group row">
                                                         <label for="view_feedback_term" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Term :</label>
                                                         <div class="col-md-4 col-lg-4">
@@ -268,13 +264,6 @@
                                                            <button type="button" class="btn btn-outline-primary" onclick="load_graph()">View Feedback</button>
                                                        </div>
                                                    </div>
-                                               </form>
-                                                <div class="col-sm-12">
-                                                       <button class="btn btn-sm btn-round btn-outline-info">
-                                                           End Semester <i class="feather icon-x"></i>
-                                                       </button>
-                                                       Filter Tabs goes here.
-                                                   </div>
                                                <div class="loader-block" style="display: none">
                                                    <svg id="loader2" viewBox="0 0 100 100">
                                                        <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
@@ -285,8 +274,8 @@
                                                        <div class="col-sm-6">
                                                            Updated On: <b><span id="feedback-date"></span></b>
                                                        </div>
-                                                       <div class="col-sm-6">
-                                                           You can see all the question <a href="#questions_list" style="color: dodgerblue; font-size: inherit">here.</a>
+                                                       <div class="col-sm-6 d-flex justify-content-end">
+                                                           You can see all the question &nbsp; <a href="#questions_list" style="color: dodgerblue; font-size: inherit">here.</a>
                                                        </div>
                                                    </div>
                                                    <canvas id="myChart"></canvas>
@@ -294,25 +283,20 @@
                                            </div>
                                        </div>
                                    </div>
-                                   <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
-                                       <div class="card">
-                                           <div class="card-header">
-                                               <h4 style="font-size: 20px">Filters</h4>
-                                           </div>
-                                           <div class="card-block">
-                                               <div class="d-inline">
-                                                   <h5 class="p-b-10">Term</h5>
-                                                   <ul class="d-inline-block">
-                                                       <li>Odd</li>
-                                                       <li>Even</li>
-                                                   </ul>
-                                               </div>
-                                           </div>
-                                       </div>
-                                   </div>
+                                    <div class="col-sm-3" id="div2" style="display: none">
+                                        <div class="card">
+                                            <div class="card-header p-b-0 d-flex justify-content-center">
+                                                <h5>Subjects</h5>
+                                            </div>
+                                            <div class="card-body">
+                                                <ul class="list-group" id="subject_list_group">
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
                                </div>
                                 <div class="row">
-                                    <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                    <div class="col-sm-12">
                                         <div class="card" id="questions_list">
                                             <div class="card-header">
                                                 <h4 style="font-size: 20px">Questions List</h4>
@@ -547,9 +531,35 @@
                         $(document).find('div#content').css('display', 'block');
                         var response = JSON.parse(msg);
                         console.log(response);
-                        console.log(response['ratings'].length);
-                        if(response['ratings'].length == 0) {
+                        var subject_len = response['ratings'].length;
+
+                        //Displaying subject list
+                        var div1 = $(document).find('div#div1');
+                        var div2 = $(document).find('div#div2');
+                        div1.removeClass('col-sm-12');
+                        div1.addClass('col-sm-9');
+                        var list_group = div2.find('ul#subject_list_group');
+                        var subject_lis = '';
+                        for(var i=0;i<subject_len;++i) {
+                            subject_lis += '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                                subject_lis += response['ratings'][i]['subject_name'];
+                                subject_lis += '<span class="badge badge-primary badge-pill" data-toggle="popover" data-placement="left" title="Feedback Count" data-content="Total number of feedback received in this subject in selected year.">';
+                                    subject_lis += response['ratings'][i]['count'];
+                                subject_lis += '</span>';
+                            subject_lis += '</li>';
+                        }
+                        list_group.html(subject_lis);
+                        div2.show();
+
+
+                        if(subject_len == 0) {
                             $(document).find('div#content').css('display', 'none');
+                            //Displaying subject list
+                            var div1 = $(document).find('div#div1');
+                            var div2 = $(document).find('div#div2');
+                            div1.addClass('col-sm-12');
+                            div1.removeClass('col-sm-9');
+                            div2.hide();
                             window.myBar.clear();
                             swal({
                                 title: "Feedback Not available.",
@@ -576,6 +586,22 @@
                 });
             }
         }
+    </script>
+
+    <script type="text/javascript">
+        $(document).on('click', '.icard-subtitles', function (event) {
+            event.preventDefault();
+            if($(this).css('display') == "block") {
+                $(this).css('display', 'none');
+            }
+            else {
+                $(this).css('display', 'block');
+            }
+        })
+    </script>
+
+    <script type="text/javascript">
+        $('[data-toggle="popover"]').popover();
     </script>
 </body>
 
