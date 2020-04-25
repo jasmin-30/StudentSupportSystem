@@ -7,7 +7,7 @@
     <!-- Meta -->
     <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
     <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'assests/images/favicon.ico' %}" type="image/x-icon">
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
@@ -83,13 +83,14 @@
                     </a>
                 </div>
                     <div class="navbar-container container-fluid">
+
                     <ul class="nav-right">
 
                         <li class="user-profile header-notification">
                             <div class="dropdown-primary dropdown">
                                 <div class="dropdown-toggle" data-toggle="dropdown">
-                                    <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">
-                                    <span>Jasmin Makwana</span>
+{#                                    <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">#}
+                                    <span>{{ name }}</span>
                                     <i class="feather icon-chevron-down"></i>
                                 </div>
                                 <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
@@ -99,7 +100,7 @@
                                         </a>
                                     </li>
                                     <li>
-                                        <a href="../home_auth/change_password.html">
+                                        <a href="change_password.html">
                                             <i class="feather icon-log-out"></i> Logout
                                         </a>
                                     </li>
@@ -146,7 +147,7 @@
                                             <div class="col-lg-8">
                                                 <div class="page-header-title">
                                                     <div class="d-inline">
-                                                        <h4>Anti Ragging Committee</h4>
+                                                        <h4>{{ com_obj.committee_name }} Committee</h4>
                                                     </div>
                                                 </div>
                                             </div>
@@ -163,24 +164,17 @@
                                                     <div class="row card-block">
                                                         <div class="col-md-12 col-lg-12">
                                                             <ul class="basic-list list-icons">
-                                                                <li>
-                                                                    <i class="icofont icofont-warning  text-primary p-absolute text-center d-block f-30"></i>
-                                                                    <h6>Heading</h6>
-                                                                    <p>Laborum nihil aliquam nulla praesentium illo libero
-                                                                        nihil at odio maxime.</p>
-                                                                </li>
-                                                                <li>
-                                                                    <h6>Heading</h6>
-                                                                    <i class="icofont icofont-warning  text-primary p-absolute text-center d-block f-30"></i>
-                                                                    <p>Laborum nihil aliquam nulla praesentium illo libero
-                                                                        nihil at odio maxime.</p>
-                                                                </li>
-                                                                <li>
-                                                                    <h6>Heading</h6>
-                                                                    <i class="icofont icofont-warning  text-primary p-absolute text-center d-block f-30"></i>
-                                                                    <p>Laborum nihil aliquam nulla praesentium illo libero
-                                                                        nihil at odio maxime.</p>
-                                                                </li>
+                                                                {% for i in pending_complaints %}
+                                                                    <li>
+                                                                        <i class="icofont icofont-warning  text-primary p-absolute text-center d-block f-30"></i>
+                                                                        {% if i.student_id is not None %}
+                                                                            <h6>{{ i.student_id.first_name }}</h6>
+                                                                        {% elif i.faculty_id is not None %}
+                                                                            <h6>{{ i.faculty_id.name }}</h6>
+                                                                        {% endif %}
+                                                                        <p>{{ i.complaint_details }}</p>
+                                                                    </li>
+                                                                {% endfor %}
                                                             </ul>
                                                         </div>
                                                     </div>
@@ -199,24 +193,17 @@
                                                     <div class="row card-block">
                                                         <div class="col-md-12 col-lg-12">
                                                             <ul class="basic-list list-icons">
+                                                                {% for i in closed_complaints %}
                                                                 <li>
                                                                     <i class="icofont icofont-bell-alt text-primary p-absolute text-center d-block f-30"></i>
-                                                                    <h6>Heading</h6>
-                                                                    <p>Laborum nihil aliquam nulla praesentium illo libero
-                                                                        nihil at odio maxime.</p>
+                                                                    {% if i.student_id is not None %}
+                                                                        <h6>{{ i.student_id.first_name }}</h6>
+                                                                    {% elif i.faculty_id is not None %}
+                                                                        <h6>{{ i.faculty_id.name }}</h6>
+                                                                    {% endif %}
+                                                                    <p>{{ i.complaint_details }}</p>
                                                                 </li>
-                                                                <li>
-                                                                    <h6>Heading</h6>
-                                                                    <i class="icofont icofont-bell-alt text-primary p-absolute text-center d-block f-30"></i>
-                                                                    <p>Laborum nihil aliquam nulla praesentium illo libero
-                                                                        nihil at odio maxime.</p>
-                                                                </li>
-                                                                <li>
-                                                                    <h6>Heading</h6>
-                                                                    <i class="icofont icofont-bell-alt text-primary p-absolute text-center d-block f-30"></i>
-                                                                    <p>Laborum nihil aliquam nulla praesentium illo libero
-                                                                        nihil at odio maxime.</p>
-                                                                </li>
+                                                                {% endfor %}
                                                             </ul>
                                                         </div>
                                                     </div>

@@ -85,8 +85,18 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="{% url 'download_detailed_feedback' type="mid" %}">
+                    <form method="post" action="{% url 'principal_download_detailed_report' %}">
                         {% csrf_token %}
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="type" style="font-weight: 900;">Select Type of Feedback : </label>
+                            <div class="col-sm-8">
+                                <select class="custom-select" name="type" id="type" style="width: 100%" required>
+                                    <option value="-1" selected disabled>Select Type</option>
+                                    <option value="0">Mid Semester Feedback</option>
+                                    <option value="1">End Semester Feedback</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label" for="term" style="font-weight: 900;">Term : </label>
                             <div class="col-sm-4">
@@ -187,17 +197,17 @@
                             <div class="page-wrapper">
                                 <div class="page-header">
                                     <div class="row align-items-end">
-                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                        <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
                                             <div class="page-header-title">
                                                 <div class="d-inline">
                                                     <h3>{{ dept_name }} Department</h3>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                        <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
                                             <div class="page-header-title">
                                                 <div class="d-inline">
-                                                    <h3>Mid Semester Detailed Feedback</h3>
+                                                    <h3>Detailed Feedback</h3>
                                                 </div>
                                             </div>
                                         </div>
@@ -206,7 +216,7 @@
                                         </div>
                                         <div class="col-sm-4 col-md-4 col-lg-4">
                                             <span class="f-right">
-                                                <a href="{% url 'hod_dashboard' %}" class="btn" style="font-size: 15px">
+                                                <a href="{% url 'principal_dashboard' %}" class="btn" style="font-size: 15px">
                                                     <i class="feather icon-arrow-left"></i>
                                                     Back to Dashboard
                                                 </a>
@@ -223,8 +233,17 @@
                                                     <div id="feedback_parameters" style="display: block">
                                                         <form id="feedback_parameters_form">
                                                         <div class="form-group row">
+                                                            <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_type" style="font-weight: 900;">Type of feedback : </label>
+                                                            <div class="col-md-2 col-lg-2">
+                                                                <select class="custom-select" id="view_feedback_type" style="width: 100%" name="view_feedback_type">
+                                                                    <option value="-1" selected disabled>Type</option>
+                                                                    <option value="0">Mid Semester Feedback</option>
+                                                                    <option value="1">End Semester Feedback</option>
+                                                                </select>
+                                                                <div id="Error_view_feedback_type" style="color: red"></div>
+                                                            </div>
                                                             <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_term" style="font-weight: 900;">Select Term : </label>
-                                                            <div class="col-md-4 col-lg-4">
+                                                            <div class="col-md-2 col-lg-2">
                                                                 <select class="custom-select" id="view_feedback_term" style="width: 100%" name="view_feedback_term">
                                                                     <option value="-1" selected disabled>Select Term</option>
                                                                     <option value="0">Odd</option>
@@ -233,7 +252,7 @@
                                                                 <div id="Error_view_feedback_term" style="color: red"></div>
                                                             </div>
                                                             <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_year" style="font-weight: 900;">Select Year : </label>
-                                                            <div class="col-md-4 col-lg-4">
+                                                            <div class="col-md-2 col-lg-2">
                                                                 <select class="custom-select" id="view_feedback_year" style="width: 100%" name="view_feedback_year">
                                                                     <option value="-1" selected disabled>Select Year</option>
                                                                     <script type="text/javascript">
@@ -272,7 +291,8 @@
                                                     </form>
                                                     </div>
                                                 <div class="row" id="parameters_selected" style="display:none;">
-                                                    <div class="col-sm-12 d-flex justify-content-end"><a href="#" style="color: dodgerblue; font-size: inherit" id="modify_parameters">Modify Parameters</a></div>
+                                                    <div class="col-sm-10 d-flex justify-content-center"><h5 id="parameter_type"></h5></div>
+                                                    <div class="col-sm-2 d-flex justify-content-end"><a href="#" style="color: dodgerblue; font-size: inherit" id="modify_parameters">Modify Parameters</a></div>
                                                     <label class="col-sm-2 col-form-label" style="font-weight: 900;">Term : </label>
                                                     <label class="col-sm-4 col-form-label" id="parameter_term"></label>
                                                     <label class="col-md-2 col-form-label" style="font-weight: 900;">Faculty : </label>
@@ -304,14 +324,7 @@
                                                                     <th>Feedback</th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody>
-                                                            {% for q in questions %}
-                                                                <tr>
-                                                                    <th>{{ forloop.counter }}</th>
-                                                                    <td>{{ q.question_text }}</td>
-                                                                    <td><div class="ans"></div></td>
-                                                                </tr>
-                                                            {% endfor %}
+                                                            <tbody id="table_body">
                                                             </tbody>
                                                         </table>
                                                     </div>
@@ -353,16 +366,50 @@
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
 
     <script>
+        var fb_type;
+        var subjects_dict = JSON.parse('{{ fac_subjects|safe }}');
+        var feedback_list;
+        console.log(subjects_dict);
+        var questions_list = JSON.parse('{{ question_list|safe }}');
+        console.log(questions_list);
+
         $(document).ready(function(){
             $('[data-toggle="tooltip"]').tooltip();
+
+            // for changing table dynamically.
+            var table_body = $(document).find('#table_body');
+            $(document).on('change', 'select#view_feedback_type', function (event) {
+                event.preventDefault();
+                table_body.html();
+                var type = $(this).val();
+                if(type == "0") {
+                    fb_type = 'mid';
+                    var html = '';
+                    $.each(questions_list['mid'], function (index, value) {
+                        html += '<tr>';
+                        html += '<th scope="row">'+ index +'</th>';
+                        html += '<td>'+ value["question_text"] +'</td>';
+                        html += '<td><div class="ans"></div></td>';
+                        html += '</tr>';
+                    });
+                }
+                else {
+                    fb_type = 'end';
+                    var html = '';
+                    $.each(questions_list['end'], function (index, value) {
+                        html += '<tr>';
+                        html += '<th scope="row">'+ index +'</th>';
+                        html += '<td>'+ value["question_text"] +'</td>';
+                        html += '<td><div class="ans"></div></td>';
+                        html += '</tr>';
+                    });
+                }
+                table_body.html(html);
+            });
         });
     </script>
 
     <script type="text/javascript">
-        var subjects_dict = JSON.parse('{{ fac_subjects|safe }}');
-        var feedback_list;
-        console.log(subjects_dict);
-
         // for modify search click
         $(document).on('click', '#modify_parameters', function (event) {
             event.preventDefault();
@@ -570,7 +617,9 @@
             var subject_select_tag = $(document).find('select#view_feedback_subject option:selected');
             var term_select_tag = $(document).find('select#view_feedback_term option:selected');
             var year_select_tag = $(document).find('select#view_feedback_year option:selected');
+            var type_select_tag = $(document).find('select#view_feedback_type option:selected');
             // filling parameters_selected div
+            $(document).find('#parameter_type').html(type_select_tag.text());
             $(document).find('label#parameter_term').html(term_select_tag.text() +" "+ year_select_tag.text());
             $(document).find('label#parameter_faculty').html(faculty_select_tag.text());
             $(document).find('label#parameter_subject').html(subject_select_tag.text());
@@ -580,8 +629,9 @@
             var faculty_id = faculty_select_tag.val();
             var subject_id = subject_select_tag.val();
             var term = term_select_tag.val();
+            var type = type_select_tag.val();
             var year = year_select_tag.val();
-            if(faculty_id == "-1" || subject_id == "-1" || term == "-1" || year == "-1") {
+            if(faculty_id == "-1" || subject_id == "-1" || term == "-1" || year == "-1" || type == "-1") {
                 alert('All the fields are required.');
             }
             else {
@@ -592,7 +642,7 @@
                     type: "GET",
                     url: "{{ base_url }}" + "get-all-feedback/",
                     data: {
-                        type: 'mid',
+                        type: fb_type,
                         fac_id: faculty_id,
                         sub_id: subject_id,
                         term: term,
@@ -694,5 +744,19 @@
         $(document).on('change', 'select#term', load_faculty_modal);
     </script>
 
+    <script type="text/javascript">
+        {% if error %}
+            setTimeout(function () {
+                swal({
+                    title: "Error",
+                    text: "{{ error }}",
+                    dangerMode: true,
+                    type: "error",
+            }, function () {
+                    window.location = "{{ base_url }}";
+                });
+            }, 10);
+        {% endif %}
+    </script>
 </body>
 </html>

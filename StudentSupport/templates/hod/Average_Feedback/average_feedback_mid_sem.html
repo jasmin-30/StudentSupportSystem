@@ -286,7 +286,7 @@
                                     <div class="col-sm-3" id="div2" style="display: none">
                                         <div class="card">
                                             <div class="card-header p-b-0 d-flex justify-content-center">
-                                                <h5>Subjects</h5>
+                                                <h5>Feedback count per subject</h5>
                                             </div>
                                             <div class="card-body">
                                                 <ul class="list-group" id="subject_list_group">
@@ -351,6 +351,7 @@
 
         // for switch
         $(document).ready(function () {
+            $('[data-toggle="popover"]').popover();
             // Single swithces
             var subject_switch = document.querySelector('.js-single');
             var switchery = new Switchery(subject_switch, { color: '#4680ff', jackColor: '#fff' });
@@ -383,6 +384,11 @@
 
             var faculty_select = document.querySelector('#faculty');
             faculty_select.onchange = function () {
+                update_subject();
+            }
+
+            var term_select = document.querySelector('#term');
+            term_select.onchange = function () {
                 update_subject();
             }
         });
@@ -426,7 +432,7 @@
             grey: 'rgb(201, 203, 207)'
         };
         var colorNames = Object.keys(window.chartColors);
-        question_label = [];
+        var question_label = [];
         {% for q in questions %}
             question_label.push('Question : ' + '{{ forloop.counter }}');
         {% endfor %}
@@ -586,22 +592,6 @@
                 });
             }
         }
-    </script>
-
-    <script type="text/javascript">
-        $(document).on('click', '.icard-subtitles', function (event) {
-            event.preventDefault();
-            if($(this).css('display') == "block") {
-                $(this).css('display', 'none');
-            }
-            else {
-                $(this).css('display', 'block');
-            }
-        })
-    </script>
-
-    <script type="text/javascript">
-        $('[data-toggle="popover"]').popover();
     </script>
 </body>
 

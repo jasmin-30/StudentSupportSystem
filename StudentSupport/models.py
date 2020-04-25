@@ -214,11 +214,16 @@ class Students(models.Model):
         (7, 7),
         (8, 8)
     )
+    DIVISION = (
+        (1, 1),
+        (2, 2)
+    )
     enrollment_no = models.CharField(max_length=12, primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     auth_id = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='id', on_delete=models.CASCADE, default=None)
     dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.SET_NULL, null=True)
+    div = models.IntegerField(choices=DIVISION, default=1)
     semester = models.IntegerField(choices=SEMESTER, default=1)
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -508,24 +513,34 @@ class Complaints_of_Facultys(models.Model):
         return str(self.complaint_details)
 
 
+# class News(models.Model):
+#     SEMESTER = (
+#         (1, 1),
+#         (2, 2),
+#         (3, 3),
+#         (4, 4),
+#         (5, 5),
+#         (6, 6),
+#         (7, 7),
+#         (8, 8),
+#         (9, 9)  # 9 means all departments
+#     )
+#     news_subject = models.TextField()
+#     news_details = models.TextField()
+#     issuing_faculty = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
+#     target_audience = models.IntegerField(choices=SEMESTER, default=9)
+#     # start_date = models.DateField(auto_now_add=True)
+#     # expiry_date = models.DateField(auto_now_add=True)
+#     timestamp = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self):
+#         return self.news_details
+
 class News(models.Model):
-    SEMESTER = (
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4),
-        (5, 5),
-        (6, 6),
-        (7, 7),
-        (8, 8),
-        (9, 9)  # 9 means all departments
-    )
     news_subject = models.TextField()
     news_details = models.TextField()
     issuing_faculty = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
-    target_audience = models.IntegerField(choices=SEMESTER, default=9)
-    # start_date = models.DateField(auto_now_add=True)
-    # expiry_date = models.DateField(auto_now_add=True)
+    target_audience = models.ManyToManyField(Departments)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

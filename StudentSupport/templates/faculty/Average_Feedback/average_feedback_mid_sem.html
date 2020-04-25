@@ -12,19 +12,12 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- themify-icons line icon -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
-    <!-- ico font -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
-    <!-- Switch component css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
-    <!-- Tags css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
-
+    <!-- Switch component css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
     <!-- Style.css -->
 {#    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">#}
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
@@ -82,8 +75,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="{% url 'download_average_feedback' type="end" %}">
+                    <form method="post" action="{% url 'download_average_feedback' type="mid" %}">
                         {% csrf_token %}
+                        <input type="hidden" name="faculty" id="faculty" value="{{ fac_id }}" />
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label" for="term" style="font-weight: 900;">Term : </label>
                             <div class="col-sm-4">
@@ -106,17 +100,6 @@
                                         }
                                     </script>
                                 </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label" for="faculty" style="font-weight: 900;">Faculty : </label>
-                            <div class="col-sm-10">
-                                <select class="custom-select" name="faculty" id="faculty" style="width: 100%" required>
-                                   <option value="-1" selected disabled>Select Faculty</option>
-                               {% for f in dept_faculties %}
-                                   <option value="{{ f.id }}">{{ f.name }}</option>
-                               {% endfor %}
-                               </select>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -197,17 +180,10 @@
                         <div class="page-wrapper">
                              <div class="page-header">
                                 <div class="row align-items-end">
-                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                    <div class="col-sm-12 col-md-12 col-lg-12 d-flex justify-content-center">
                                         <div class="page-header-title">
                                             <div class="d-inline">
-                                                <h3>{{ dept_name }} Department</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-12 col-lg-6">
-                                        <div class="page-header-title">
-                                            <div class="d-inline">
-                                                <h3>End Semester Average Feedback</h3>
+                                                <h3>Mid Semester Average Feedback</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -216,7 +192,7 @@
                                     </div>
                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                         <span class="f-right">
-                                            <a href="{% url 'hod_dashboard' %}" class="btn" style="font-size: 15px">
+                                            <a href="{% url 'faculty_dashboard' %}" class="btn" style="font-size: 15px">
                                                 <i class="feather icon-arrow-left"></i>
                                                 Back to Dashboard
                                             </a>
@@ -231,14 +207,14 @@
                                            <div class="card-block">
                                                <div class="form-group row">
                                                         <label for="view_feedback_term" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Term :</label>
-                                                        <div class="col-md-4 col-lg-4">
+                                                        <div class="col-md-2 col-lg-2">
                                                             <select class="custom-select" name="view_feedback_term" id="view_feedback_term" style="width: 100%">
                                                                 <option value="0">Odd</option>
                                                                 <option value="1">Even</option>
                                                             </select>
                                                         </div>
                                                         <label for="view_feedback_year" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Year:</label>
-                                                        <div class="col-md-4 col-lg-4">
+                                                        <div class="col-md-2 col-lg-2">
                                                             <select class="custom-select" name="view_feedback_year" id="view_feedback_year" style="width: 100%;">
                                                                 <script type="text/javascript">
                                                                     var start_year = 2020;
@@ -249,21 +225,10 @@
                                                                 </script>
                                                             </select>
                                                         </div>
-                                                    </div>
-                                                   <div class="form-group row">
-                                                       <label for="view_feedback_faculty" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Faculty :</label>
-                                                       <div class="col-md-6 col-lg-6">
-                                                           <select class="custom-select" name="view_feedback_faculty" id="view_feedback_faculty" style="width: 100%">
-                                                               <option value="-1" selected disabled>Select Faculty to view feedback</option>
-                                                           {% for f in dept_faculties %}
-                                                               <option value="{{ f.id }}">{{ f.name }}</option>
-                                                           {% endfor %}
-                                                           </select>
-                                                       </div>
-                                                       <div class="col-md-4 col-lg-4">
+                                                        <div class="col-md-4 col-lg-4">
                                                            <button type="button" class="btn btn-outline-primary" onclick="load_graph()">View Feedback</button>
                                                        </div>
-                                                   </div>
+                                                    </div>
                                                <div class="loader-block" style="display: none">
                                                    <svg id="loader2" viewBox="0 0 100 100">
                                                        <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
@@ -275,7 +240,7 @@
                                                            Updated On: <b><span id="feedback-date"></span></b>
                                                        </div>
                                                        <div class="col-sm-6 d-flex justify-content-end">
-                                                           You can see all the question &nbsp; <a href="#questions_list" style="color: dodgerblue; font-size: inherit">here.</a>
+                                                           You can see all the question &nbsp; <a href="#questions_list_href" style="color: dodgerblue; font-size: inherit">here.</a>
                                                        </div>
                                                    </div>
                                                    <canvas id="myChart"></canvas>
@@ -295,9 +260,9 @@
                                         </div>
                                     </div>
                                </div>
-                                <div class="row">
+                                <div class="row" id="questions_list" style="display:none;">
                                     <div class="col-sm-12">
-                                        <div class="card" id="questions_list">
+                                        <div class="card" id="questions_list_href">
                                             <div class="card-header">
                                                 <h4 style="font-size: 20px">Questions List</h4>
                                             </div>
@@ -346,7 +311,7 @@
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
 
     <script type="text/javascript">
-        var subjects_dict = JSON.parse('{{ fac_subjects|safe }}');
+        var subjects_dict = JSON.parse('{{ subject_list|safe }}');
         console.log(subjects_dict);
 
         // for switch
@@ -377,15 +342,7 @@
                     $(document).find('select#subject').attr('required', 'true');
                     btn1.hide();
                     btn1.attr('type', 'button');
-
-                    // making subjects list
-                    update_subject();
                 }
-            }
-
-            var faculty_select = document.querySelector('#faculty');
-            faculty_select.onchange = function () {
-                update_subject();
             }
 
             var term_select = document.querySelector('#term');
@@ -395,7 +352,6 @@
         });
 
         function update_subject() {
-            var fac_id = $(document).find('select#faculty option:selected').val();
             var term = $(document).find('select#term option:selected').val();
             if(term == "-1") {
                 alert("Select Term");
@@ -403,17 +359,13 @@
             else {
                 var sub_html = '<option value="-1" selected disabled>Select Subject</option>';
                 if(term == "0") {
-                    $.each(subjects_dict[fac_id], function (index, value) {
-                        if(value['subject_semester'] % 2) {
-                            sub_html += '<option value="'+ value['subject_id'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
-                        }
+                    $.each(subjects_dict['odd'], function (index, value) {
+                        sub_html += '<option value="'+ value['subject_id'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
                     });
                 }
                 else {
-                    $.each(subjects_dict[fac_id], function (index, value) {
-                        if(!(value['subject_semester'] % 2)) {
-                            sub_html += '<option value="'+ value['subject_id'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
-                        }
+                    $.each(subjects_dict['even'], function (index, value) {
+                        sub_html += '<option value="'+ value['subject_id'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
                     });
                 }
                 $(document).find('select#subject').html(sub_html);
@@ -512,93 +464,88 @@
 
         function load_graph() {
             $(document).find('div.loader-block').css('display', 'block');
-            var selected_faculty = $(document).find('select#view_feedback_faculty option:selected');
-            var fac_id = selected_faculty.val();
-            var fac_name = selected_faculty.text();
+            var fac_id = '{{ fac_id }}';
+            var fac_name = '{{ name }}';
             var term = $(document).find('select#view_feedback_term option:selected').val();
             var year = $(document).find('select#view_feedback_year option:selected').val();
-            if(fac_id == "-1") {
-                $(document).find('div.loader-block').css('display', 'none');
-                alert("Select Faculty to view feedback.");
-                $(document).find('select#view_feedback_faculty').focus();
-            }
-            else {
-                $.ajax({
-                    type: "GET",
-                    url: "{{ base_url }}" + "get-average-feedback/",
-                    data: {
-                        type: 'end',
-                        fac_id: fac_id,
-                        term: term,
-                        year: year
-                    },
+            $.ajax({
+                type: "GET",
+                url: "{{ base_url }}" + "get-average-feedback/",
+                data: {
+                    type: 'mid',
+                    fac_id: fac_id,
+                    term: term,
+                    year: year
+                },
 
-                    success: function (msg) {
-                        $(document).find('div.loader-block').css('display', 'none');
-                        $(document).find('div#content').css('display', 'block');
-                        var response = JSON.parse(msg);
-                        console.log(response);
-                        var subject_len = response['ratings'].length;
+                success: function (msg) {
+                    $(document).find('div.loader-block').hide();
+                    $(document).find('div#content').show();
+                    $(document).find('div#questions_list').show();
+                    var response = JSON.parse(msg);
+                    console.log(response);
+                    var subject_len = response['ratings'].length;
 
-                        //Displaying subject list
-                        var div1 = $(document).find('div#div1');
-                        var div2 = $(document).find('div#div2');
-                        div1.removeClass('col-sm-12');
-                        div1.addClass('col-sm-9');
-                        var list_group = div2.find('ul#subject_list_group');
-                        var subject_lis = '';
-                        for(var i=0;i<subject_len;++i) {
-                            subject_lis += '<li class="list-group-item d-flex justify-content-between align-items-center">';
-                                subject_lis += response['ratings'][i]['subject_name'];
-                                subject_lis += '<span class="badge badge-primary badge-pill" data-toggle="popover" data-placement="left" title="Feedback Count" data-content="Total number of feedback received in this subject in selected year.">';
-                                    subject_lis += response['ratings'][i]['count'];
-                                subject_lis += '</span>';
-                            subject_lis += '</li>';
-                        }
-                        list_group.html(subject_lis);
-                        div2.show();
+                    //Displaying subject list
+                    var div1 = $(document).find('div#div1');
+                    var div2 = $(document).find('div#div2');
+                    div1.removeClass('col-sm-12');
+                    div1.addClass('col-sm-9');
+                    var list_group = div2.find('ul#subject_list_group');
+                    var subject_lis = '';
+                    for(var i=0;i<subject_len;++i) {
+                        subject_lis += '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                            subject_lis += response['ratings'][i]['subject_name'];
+                            subject_lis += '<span class="badge badge-primary badge-pill" data-toggle="popover" data-placement="left" title="Feedback Count" data-content="Total number of feedback received in this subject in selected year.">';
+                                subject_lis += response['ratings'][i]['count'];
+                            subject_lis += '</span>';
+                        subject_lis += '</li>';
+                    }
+                    list_group.html(subject_lis);
+                    div2.show();
 
 
-                        if(subject_len == 0) {
-                            $(document).find('div#content').css('display', 'none');
-                            //Displaying subject list
-                            var div1 = $(document).find('div#div1');
-                            var div2 = $(document).find('div#div2');
-                            div1.addClass('col-sm-12');
-                            div1.removeClass('col-sm-9');
-                            div2.hide();
-                            window.myBar.clear();
-                            swal({
-                                title: "Feedback Not available.",
-                                text: "May be the faculty you have chosen has not been assigned any subject to taught. Therefore no feedback can be shown.",
-                                type: "error",
-                            });
-                        }
-                        else {
-                            $(document).find('span#feedback-date').html(response['date']);
-                            update_graph(response['ratings'], fac_name);
-                        }
-
-                    },
-                    error: function (msg) {
-                        var response = JSON.parse(msg.responseText);
+                    if(subject_len == 0) {
+                        $(document).find('div#content').hide();
+                        $(document).find('div#questions_list').hide();
                         //Displaying subject list
                         var div1 = $(document).find('div#div1');
                         var div2 = $(document).find('div#div2');
                         div1.addClass('col-sm-12');
                         div1.removeClass('col-sm-9');
                         div2.hide();
-
-                        $(document).find('div.loader-block').css('display', 'none');
-                        $(document).find('div#content').css('display', 'none');
+                        window.myBar.clear();
                         swal({
-                            title: "Error!",
-                            text: response['error'],
+                            title: "Feedback Not available.",
+                            text: "May be You have not been assigned any subject to taught. Therefore no feedback can be shown.",
                             type: "error",
                         });
-                    },
-                });
-            }
+                    }
+                    else {
+                        $(document).find('span#feedback-date').html(response['date']);
+                        update_graph(response['ratings'], fac_name);
+                    }
+
+                },
+                error: function (msg) {
+                    var response = JSON.parse(msg.responseText);
+                    //Displaying subject list
+                    var div1 = $(document).find('div#div1');
+                    var div2 = $(document).find('div#div2');
+                    div1.addClass('col-sm-12');
+                    div1.removeClass('col-sm-9');
+                    div2.hide();
+
+                    $(document).find('div.loader-block').hide();
+                    $(document).find('div#content').hide();
+                    $(document).find('div#questions_list').hide();
+                    swal({
+                        title: "Error!",
+                        text: response['error'],
+                        type: "error",
+                    });
+                },
+            });
         }
     </script>
 </body>

@@ -4,7 +4,6 @@ from StudentSupport import views
 urlpatterns = [
     # Home Page and Authentication urls > Start
     path('', views.HomePageView, name='home'),
-    path('editable-table/', views.EditableTableView, name='editable-table'),
     path('register/', views.RegisterView, name='register'),
     path('changePassword/', views.ChangePasswordView, name='change_password'),
     path('activate/', views.ConfirmAccountView, name='activate'),
@@ -17,8 +16,11 @@ urlpatterns = [
     path('principal/profile/', views.PrincipalProfile, name='principal_profile'),
     path('edit-delete-committees/', views.EditCommittees, name="edit_committees"), # Only Principal Can Edit Committee
     path('principal/manage-department/', views.ManageDepartmentView, name='manage_department'),
-    path('departments/<str:dept>/', views.DepartmentsView, name='departments'),
+    path('principal/view-detailed-feedback/<int:id>/', views.DetailedFeedback, name='principal_detailed_feedback'),
+    path('principal/view-average-feedback/<int:id>/', views.AverageFeedback, name='principal_detailed_feedback'),
     path('change-hod/', views.EditHOD, name='change_hod'),
+    path('principal/download-detailed-report/', views.DownloadDetailedReport, name='principal_download_detailed_report'),
+    path('principal/download-average-report/', views.DownloadAverageReport, name='principal_download_average_report'),
     # Principal Related urls > End
 
     # HOD Related urls > Start
@@ -34,8 +36,11 @@ urlpatterns = [
     # Faculty Related urls > Start
     path('faculty/dashboard/', views.FacultyDashboard, name='faculty_dashboard'),
     path('faculty/profile/', views.FacultyProfile, name='faculty_profile'),
-    path('faculty/view-detailed-feedback/<str:type>/', views.FacultyViewDetailedFeedback, name='view_detailed_feedback'),
-    path('faculty/view-average-feedback/<str:type>/', views.FacultyViewAverageFeedback, name='view_average_feedback'),
+    path('faculty/complaint/', views.FacultyComplaintSectionView, name='faculty_complaint_section'),
+    # path('faculty/dashboard/', views.FacultyDashboard, name='faculty_dashboard'),
+    # path('faculty/profile/', views.FacultyProfile, name='faculty_profile'),
+    path('faculty/view-detailed-feedback/<str:type>/', views.FacultyViewDetailedFeedback, name='faculty_view_detailed_feedback'),
+    path('faculty/view-average-feedback/<str:type>/', views.FacultyViewAverageFeedback, name='faculty_view_average_feedback'),
     # Faculty Related urls > End
 
     # Student Related urls > Start
@@ -47,7 +52,8 @@ urlpatterns = [
     # Student Related urls > End
 
     # Committee Related urls > Start
-    path('committee/<str:committee>/', views.CommitteeDashboard, name='committee_dashboard'),
+    # path('committee/<str:committee>/', views.CommitteeDashboard, name='committee_dashboard'),
+    path('committee/dashboard/<int:com_id>/', views.CommitteeDashboard, name='committee_dashboard'),
     # Committee Related urls > End
 
     # Feedback Ajax Endpoints url > Start

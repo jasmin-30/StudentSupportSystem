@@ -117,147 +117,114 @@
             </nav>
             <div class="pcoded-main-container">
                 <div class="pcoded-wrapper">
-                    <nav class="pcoded-navbar">
-                         <div class="pcoded-inner-navbar main-menu">
-                            <div class="pcoded-navigatio-lavel">Quick Links</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="{% url 'principal_profile' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">My Profile</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="{% url 'manage_committees' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">Manage Committees</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="{% url 'manage_department' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">Manage Departments</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="{% url 'logout' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
-                                        <span class="pcoded-mtext">Logout</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                    <div class="pcoded-content">
-                        <div class="pcoded-inner-content">
-                            <div class="main-body">
-                                <div class="page-wrapper">
-                                    <div class="page-body">
+                    <div class="pcoded-inner-content">
+                        <div class="main-body">
+                            <div class="page-wrapper">
+                                <div class="page-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="page-header">
+                                            <div class="row align-items-end">
+                                                <div class="col-lg-8">
+                                                    <div class="page-header-title">
+                                                        <div class="d-inline">
+                                                            <h3>Profile</h3>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                                    <span class="f-right">
+                                                        <a href="{% url 'principal_dashboard' %}" class="btn" style="font-size: 15px">
+                                                            <i class="feather icon-arrow-left"></i>
+                                                            Back to Dashboard
+                                                        </a>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- List view card start -->
+                                <div class="card">
+                                    <div class="card-block">
                                         <div class="row">
-                                            <div class="col-sm-12">
-                                                <div class="page-header">
-                                                    <div class="row align-items-end">
-                                                        <div class="col-lg-8">
-                                                            <div class="page-header-title">
-                                                                <div class="d-inline">
-                                                                    <h4>Profile</h4>
+                                            <div class="col-xl-12 col-lg-12 col-md-12">
+                                                <div class="sub-title">{{ name }}</div>
+                                                <!-- Nav tabs -->
+                                                <ul class="nav nav-tabs md-tabs tabs-left b-none" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" data-toggle="tab" href="#personaldetail" role="tab" style="font-size: 12pt; width: 180px;">Personal Details</a>
+                                                        <div class="slide"></div>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" data-toggle="tab" href="#changepassword" role="tab" style="font-size: 12pt; width: 180px;">Change Password</a>
+                                                        <div class="slide"></div>
+                                                    </li>
+                                                </ul>
+                                                <!-- Tab panes -->
+                                                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
+                                                    <div class="tab-pane active" id="personaldetail" role="tabpanel">
+                                                        <form action="{% url 'principal_profile' %}" method="post">
+                                                            {% csrf_token %}
+                                                            <div class="form-group row">
+                                                                <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Name :</label>
+                                                                <div class="col-sm-8 col-md-10 col-lg-10" id="name-div">
+                                                                    <label class="col-form-label">{{ name }}</label>
                                                                 </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="col-lg-4">
-                                                            <span class="f-right">
-                                                                <a href="{% url 'principal_dashboard' %}">
-                                                                    <i class="feather icon-arrow-left"></i>
-                                                                    Back to Dashboard
-                                                                </a>
-                                                            </span>
-                                                        </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Email ID :</label>
+                                                                <div class="col-sm-8 col-md-10 col-lg-10" id="email-div">
+                                                                    <label class="col-form-label">{{ email }}</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;"></label>
+                                                                <div class="col-sm-8 col-md-10 col-lg-10">
+                                                                    <button type="button" class="btn btn-primary" id="button-submit">Edit Profile</button>
+                                                                    <button type="button" class="btn btn-primary" id="button-cancel">Cancel</button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
                                                     </div>
-                                                </div>
-                                            <!-- List view card start -->
-                                    <div class="card">
-                                        <div class="card-block">
-                                            <div class="row">
-                                                <div class="col-xl-12 col-lg-12 col-md-12">
-                                                    <div class="sub-title">{{ name }}</div>
-                                                    <!-- Nav tabs -->
-                                                    <ul class="nav nav-tabs md-tabs tabs-left b-none" role="tablist">
-                                                        <li class="nav-item">
-                                                            <a class="nav-link active" data-toggle="tab" href="#personaldetail" role="tab" style="font-size: 12pt; width: 180px;">Personal Details</a>
-                                                            <div class="slide"></div>
-                                                        </li>
-                                                        <li class="nav-item">
-                                                            <a class="nav-link" data-toggle="tab" href="#changepassword" role="tab" style="font-size: 12pt; width: 180px;">Change Password</a>
-                                                            <div class="slide"></div>
-                                                        </li>
-                                                    </ul>
-                                                    <!-- Tab panes -->
-                                                    <div class="col-sm-10 col-md-10 col-lg-10 col-xl-10 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
-                                                        <div class="tab-pane active" id="personaldetail" role="tabpanel">
-                                                            <form action="{% url 'principal_profile' %}" method="post">
-                                                                {% csrf_token %}
-                                                                <div class="form-group row">
-                                                                    <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Name :</label>
-                                                                    <div class="col-sm-8 col-md-10 col-lg-10" id="name-div">
-                                                                        <label class="col-form-label">{{ name }}</label>
-                                                                    </div>
+                                                    <div class="tab-pane" id="changepassword" role="tabpanel">
+                                                        <form action="{% url 'principal_profile' %}" method="post">
+                                                            {% csrf_token %}
+                                                            <div class="form-group row">
+                                                                <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="oldpwd">Old Password :</label>
+                                                                <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                                                    <input type="password" class="form-control" id="oldpwd" name="oldpwd" required/>
                                                                 </div>
-                                                                <div class="form-group row">
-                                                                    <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Email ID :</label>
-                                                                    <div class="col-sm-8 col-md-10 col-lg-10" id="email-div">
-                                                                        <label class="col-form-label">{{ email }}</label>
-                                                                    </div>
+                                                            </div>
+                                                            <div class="form-group row" id="newpwd-div">
+                                                                <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="newpwd">New Password :</label>
+                                                                <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                                                    <input type="password" class="form-control" minlength="6" maxlength="16" id="newpwd" name="newpwd" onblur="validate_password()" required/>
+                                                                    <div id="Error_newpwd" style="display: none; color: red;"></div>
                                                                 </div>
-                                                                <div class="form-group row">
-                                                                    <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;"></label>
-                                                                    <div class="col-sm-8 col-md-10 col-lg-10">
-                                                                        <button type="button" class="btn btn-primary" id="button-submit">Edit Profile</button>
-                                                                        <button type="button" class="btn btn-primary" id="button-cancel">Cancel</button>
-                                                                    </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="cnfrmpwd">Confirm Password :</label>
+                                                                <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9" id="cnfrmpwd-div">
+                                                                    <input type="password" class="form-control" minlength="6" maxlength="16" id="cnfrmpwd" name="cnfrmpwd" onchange="verify_pwd()" onkeyup="verify_pwd()" onclick="verify_pwd()" required/>
+                                                                    <div id="Error_cnfrmpwd" style="display: none; color: red;"></div>
                                                                 </div>
-                                                            </form>
-                                                        </div>
-                                                        <div class="tab-pane" id="changepassword" role="tabpanel">
-                                                            <form action="{% url 'principal_profile' %}" method="post">
-                                                                {% csrf_token %}
-                                                                <div class="form-group row">
-                                                                    <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="oldpwd">Old Password :</label>
-                                                                    <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
-                                                                        <input type="password" class="form-control" id="oldpwd" name="oldpwd" required/>
-                                                                    </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px;"></label>
+                                                                <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                                                    <button type="submit" class="btn btn-disabled" id="button-update" name="button-update" disabled>Update</button>
                                                                 </div>
-                                                                <div class="form-group row" id="newpwd-div">
-                                                                    <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="newpwd">New Password :</label>
-                                                                    <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
-                                                                        <input type="password" class="form-control" minlength="6" maxlength="16" id="newpwd" name="newpwd" onblur="validate_password()" required/>
-                                                                        <div id="Error_newpwd" style="display: none; color: red;"></div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="form-group row">
-                                                                    <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="cnfrmpwd">Confirm Password :</label>
-                                                                    <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9" id="cnfrmpwd-div">
-                                                                        <input type="password" class="form-control" minlength="6" maxlength="16" id="cnfrmpwd" name="cnfrmpwd" onchange="verify_pwd()" onkeyup="verify_pwd()" onclick="verify_pwd()" required/>
-                                                                        <div id="Error_cnfrmpwd" style="display: none; color: red;"></div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="form-group row">
-                                                                    <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px;"></label>
-                                                                    <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
-                                                                        <button type="submit" class="btn btn-disabled" id="button-update" name="button-update" disabled>Update</button>
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </div>
+                                                            </div>
+                                                        </form>
                                                     </div>
                                                 </div>
                                             </div>
-                                            </div>
+                                        </div>
+                                        </div>
 
-                                    </div>
-                                            <!-- List view card end -->
-                                            </div>
-                                    </div>
-                                    </div>
+                                </div>
+                                        <!-- List view card end -->
+                                        </div>
+                                </div>
                                 </div>
                             </div>
                         </div>

@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Detailed Feedback</title>
+    <title>Faculty - Detailed Feedback</title>
     <!-- Meta -->
     <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
     <!-- Favicon icon -->
@@ -12,10 +12,6 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- themify-icons line icon -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
-    <!-- ico font -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
     <!-- Font Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/star_ratings/display_rating.css' %}">
@@ -87,6 +83,7 @@
                 <div class="modal-body">
                     <form method="post" action="{% url 'download_detailed_feedback' type="mid" %}">
                         {% csrf_token %}
+                        <input type="hidden" name="faculty" id="faculty" value="{{ fac_id }}" />
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label" for="term" style="font-weight: 900;">Term : </label>
                             <div class="col-sm-4">
@@ -113,29 +110,19 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label" for="faculty" style="font-weight: 900;">Faculty : </label>
-                            <div class="col-sm-4">
-                                <select class="custom-select" name="faculty" id="faculty" style="width: 100%" required>
-                                   <option value="-1" selected disabled>Select Faculty</option>
-                               {% for f in dept_faculties %}
-                                   <option value="{{ f.id }}">{{ f.name }}</option>
-                               {% endfor %}
-                               </select>
-                                <div id="Error_faculty" style="color: red"></div>
-                            </div>
                             <label class="col-sm-2 col-form-label" for="subject" style="font-weight: 900;">Subject : </label>
-                                <div class="col-sm-4">
-                                    <select name="subject" id="subject" class="custom-select" style="width: 100%">
-                                        <option value="-1" disabled selected>Select Subject</option>
-                                    </select>
-                                </div>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-sm-12 d-flex justify-content-center">
+                            <div class="col-sm-4">
+                                <select name="subject" id="subject" class="custom-select" style="width: 100%" data-toggle="tooltip" data-placement="top" title="Subject list will be displayed dynamically according to the term you have chosen.">
+                                    <option value="-1" disabled selected>Select Subject</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6 d-flex justify-content-start">
                                 <button type="submit" class="btn btn-outline-primary">
                                     <i class="feather icon-check"></i>  Download
                                 </button>
                             </div>
+                        </div>
+                        <div class="form-group row">
                         </div>
                     </form>
                 </div>
@@ -186,15 +173,8 @@
                         <div class="main-body">
                             <div class="page-wrapper">
                                 <div class="page-header">
-                                    <div class="row align-items-end">
-                                        <div class="col-sm-12 col-md-12 col-lg-6">
-                                            <div class="page-header-title">
-                                                <div class="d-inline">
-                                                    <h3>{{ dept_name }} Department</h3>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-12 col-lg-6">
+                                    <div class="row">
+                                        <div class="col-sm-12 d-flex justify-content-center">
                                             <div class="page-header-title">
                                                 <div class="d-inline">
                                                     <h3>Mid Semester Detailed Feedback</h3>
@@ -206,7 +186,7 @@
                                         </div>
                                         <div class="col-sm-4 col-md-4 col-lg-4">
                                             <span class="f-right">
-                                                <a href="{% url 'hod_dashboard' %}" class="btn" style="font-size: 15px">
+                                                <a href="{% url 'faculty_dashboard' %}" class="btn" style="font-size: 15px">
                                                     <i class="feather icon-arrow-left"></i>
                                                     Back to Dashboard
                                                 </a>
@@ -247,36 +227,24 @@
                                                             </div>
                                                         </div>
                                                         <div class="form-group row">
-                                                            <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_faculty" style="font-weight: 900;">Select Faculty : </label>
-                                                            <div class="col-md-4 col-lg-4">
-                                                                <select class="custom-select" id="view_feedback_faculty" name="view_feedback_faculty" style="width: 100%">
-                                                                    <option value="-1" selected disabled>Select Faculty</option>
-                                                                    {% for f in dept_faculties %}
-                                                                        <option value="{{ f.id }}">{{ f.name }}</option>
-                                                                    {% endfor %}
-                                                                </select>
-                                                                <div id="Error_view_feedback_faculty" style="color: red"></div>
-                                                            </div>
                                                             <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_subject" style="font-weight: 900;">Select Subject : </label>
                                                             <div class="col-md-4 col-lg-4">
-                                                                <select class="custom-select" id="view_feedback_subject" name="view_feedback_subject" style="width: 100%" data-toggle="tooltip" data-placement="left" title="Subject list will be displayed dynamically according to the faculty and term you have chosen.">
+                                                                <select class="custom-select" id="view_feedback_subject" name="view_feedback_subject" style="width: 100%" data-toggle="tooltip" data-placement="top" title="Subject list will be displayed dynamically according to the term you have chosen.">
                                                                     <option value="-1">Select Subject</option>
                                                                 </select>
                                                             </div>
-                                                        </div>
-                                                        <div class="form-group row">
                                                             <div class="col-sm-2">
                                                                 <button type="button" class="btn btn-outline-primary" onclick="load_feedback()">View Feedback</button>
                                                             </div>
                                                         </div>
+                                                        <div class="form-group row">
+                                                        </div>
                                                     </form>
                                                     </div>
                                                 <div class="row" id="parameters_selected" style="display:none;">
-                                                    <div class="col-sm-12 d-flex justify-content-end"><a href="#" style="color: dodgerblue; font-size: inherit" id="modify_parameters">Modify Parameters</a></div>
                                                     <label class="col-sm-2 col-form-label" style="font-weight: 900;">Term : </label>
                                                     <label class="col-sm-4 col-form-label" id="parameter_term"></label>
-                                                    <label class="col-md-2 col-form-label" style="font-weight: 900;">Faculty : </label>
-                                                    <label class="col-md-4 col-form-label" id="parameter_faculty"></label>
+                                                    <div class="col-sm-6 d-flex justify-content-end"><a href="#" style="color: dodgerblue; font-size: inherit" id="modify_parameters">Modify Parameters</a></div>
                                                     <label class="col-md-2 col-form-label" style="font-weight: 900;">Subject : </label>
                                                     <label class="col-md-4 col-form-label" id="parameter_subject"></label>
                                                     <label class="col-md-2 col-form-label" style="font-weight: 900;">Semester : </label>
@@ -359,7 +327,7 @@
     </script>
 
     <script type="text/javascript">
-        var subjects_dict = JSON.parse('{{ fac_subjects|safe }}');
+        var subjects_dict = JSON.parse('{{ subject_list|safe }}');
         var feedback_list;
         console.log(subjects_dict);
 
@@ -372,62 +340,26 @@
             document.getElementById('feedback_parameters_form').reset();
         });
 
-        // Before selecting Subject it check whether faculty and term has been selected or not.
-        function check_term() {
-            var term = $(document).find('select#view_feedback_term option:selected').val();
-            var faculty = $(document).find('select#view_feedback_faculty option:selected').val();
-            var error = $(document).find('div#Error_view_feedback_term');
-            if(term == "-1") {
-                $(document).find('select#view_feedback_term').addClass('form-control-danger');
-                error.css('display', 'block');
-                error.html('Select Term');
-            }
-            else {
-                $(document).find('select#view_feedback_term').removeClass('form-control-danger');
-                error.css('display', 'none');
-            }
-
-            if(faculty == "-1") {
-                $(document).find('select#view_feedback_faculty').addClass('form-control-danger');
-                $(document).find('div#Error_view_feedback_faculty')
-                    .css('display', 'block')
-                    .html('Select Faculty');
-            }
-            else {
-                $(document).find('select#view_feedback_faculty').removeClass('form-control-danger');
-                $(document).find('div#Error_view_feedback_faculty').css('display', 'none')
-            }
-        }
 
         // To load subjects dynamically according to faculty and term chosen.
-        function update_subjects() {
-            check_term();
-            var fac_id = $(document).find('select#view_feedback_faculty option:selected').val();
-            var term = $(document).find('select#view_feedback_term option:selected').val();
+        function get_subject_list(id) {
             var sub_html = '<option value="-1" selected disabled>Select Subject</option>';
-            if(term == "0") {
-                $.each(subjects_dict[fac_id], function (index, value) {
-                    if(value['subject_semester'] % 2) {
-                        sub_html += '<option value="'+ value['subject_id'] +'" sem="'+ value['subject_semester'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
-                    }
+            if(id == "0") {
+                $.each(subjects_dict['odd'], function (index, value) {
+                    sub_html += '<option value="'+ value['subject_id'] +'" sem="'+ value['subject_semester'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
                 });
             }
             else {
-                $.each(subjects_dict[fac_id], function (index, value) {
-                    if(!(value['subject_semester'] % 2)) {
-                        sub_html += '<option value="'+ value['subject_id'] +'" sem="'+ value['subject_semester'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
-                    }
+                $.each(subjects_dict['even'], function (index, value) {
+                    sub_html += '<option value="'+ value['subject_id'] +'" sem="'+ value['subject_semester'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
                 });
             }
-            $(document).find('select#view_feedback_subject').html(sub_html);
+            return sub_html;
         }
 
-        $(document).on('change', 'select#view_feedback_faculty', function () {
-            update_subjects();
-        });
 
         $(document).on('change', 'select#view_feedback_term', function () {
-            update_subjects();
+            $(document).find('select#view_feedback_subject').html(get_subject_list($(this).val()));
         });
 
         // This function is for designing pagination for the first time.
@@ -566,22 +498,20 @@
 
         // this is the function to load feedback from server to display all the feedback.
         function load_feedback() {
-            var faculty_select_tag = $(document).find('select#view_feedback_faculty option:selected');
             var subject_select_tag = $(document).find('select#view_feedback_subject option:selected');
             var term_select_tag = $(document).find('select#view_feedback_term option:selected');
             var year_select_tag = $(document).find('select#view_feedback_year option:selected');
             // filling parameters_selected div
             $(document).find('label#parameter_term').html(term_select_tag.text() +" "+ year_select_tag.text());
-            $(document).find('label#parameter_faculty').html(faculty_select_tag.text());
             $(document).find('label#parameter_subject').html(subject_select_tag.text());
             $(document).find('label#parameter_semester').html(subject_select_tag.attr('sem'));
 
             feedback_list = [];
-            var faculty_id = faculty_select_tag.val();
+            var faculty_id = '{{ fac_id }}';
             var subject_id = subject_select_tag.val();
             var term = term_select_tag.val();
             var year = year_select_tag.val();
-            if(faculty_id == "-1" || subject_id == "-1" || term == "-1" || year == "-1") {
+            if(subject_id == "-1" || term == "-1" || year == "-1") {
                 alert('All the fields are required.');
             }
             else {
@@ -642,56 +572,10 @@
 
     <script type="text/javascript">
 
-        function check_modal_data() {
-            var term = $(document).find('select#term option:selected').val();
-            var faculty = $(document).find('select#faculty option:selected').val();
-            var error = $(document).find('div#Error_term');
-            if(term == "-1") {
-                $(document).find('select#term').addClass('form-control-danger');
-                error.css('display', 'block');
-                error.html('Select Term');
-            }
-            else {
-                $(document).find('select#term').removeClass('form-control-danger');
-                error.css('display', 'none');
-            }
-
-            if(faculty == "-1") {
-                $(document).find('select#faculty').addClass('form-control-danger');
-                $(document).find('div#Error_faculty')
-                    .css('display', 'block')
-                    .html('Select Faculty');
-            }
-            else {
-                $(document).find('select#faculty').removeClass('form-control-danger');
-                $(document).find('div#Error_faculty').css('display', 'none')
-            }
-        }
-
-        function load_faculty_modal() {
-            check_modal_data();
-            var term = $(document).find('select#term').val();
-            var fac_id = $(document).find('select#faculty').val();
-            var sub_html = '<option value="-1" selected disabled>Select Subject</option>';
-            if(term == "0") {
-                $.each(subjects_dict[fac_id], function (index, value) {
-                    if(value['subject_semester'] % 2) {
-                        sub_html += '<option value="'+ value['subject_id'] +'" sem="'+ value['subject_semester'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
-                    }
-                });
-            }
-            else {
-                $.each(subjects_dict[fac_id], function (index, value) {
-                    if(!(value['subject_semester'] % 2)) {
-                        sub_html += '<option value="'+ value['subject_id'] +'" sem="'+ value['subject_semester'] +'">'+ value['subject_name'] + ' (' + value['subject_code'] + ')' + '</option>';
-                    }
-                });
-            }
-            $(document).find('select#subject').html(sub_html);
-        }
-
-        $(document).on('change', 'select#faculty', load_faculty_modal);
-        $(document).on('change', 'select#term', load_faculty_modal);
+        // Load data into modal
+        $(document).on('change', 'select#term', function () {
+            $(document).find('select#subject').html(get_subject_list($(this).val()));
+        });
     </script>
 
 </body>

@@ -12,22 +12,26 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- themify-icons line icon -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
-    <!-- ico font -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
-    <!-- Switch component css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
-    <!-- Tags css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
-    <!-- Radial.css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/chart/radial/css/radial.css' %}">
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
+    <style>
+        .btn-outline-info {
+            color: #0ac282;
+            border-color: #0ac282;
+        }
+        .btn-outline-info:hover {
+            color: #fff;
+            background-color: #0ac282;
+            border-color: #0ac282;
+        }
+    </style>
 </head>
 
 <body>
@@ -197,17 +201,23 @@
                                                     </div>
                                                     <div class="row">
                                                         {% for i in departments %}
-                                                            <div class="col-md-6 col-lg-3">
-                                                                <div class="card">
-                                                                    <a href="{% url 'departments' dept=i.accronym %}">
-                                                                    <div class="card-block user-radial-card">
-{#                                                                        <div data-label="50%">#}
-{#                                                                            <img src="{% static 'assets/images/ce.png' %}" alt="User-Image">#}
-{#                                                                        </div>#}
-{#                                                                        <br>#}
-                                                                        <h6>{{ i.dept_name }}</h6>
+                                                            <div class="col-md-6 col-xl-4">
+                                                                <div class="card widget-statstic-card">
+                                                                    <div class="card-header">
+                                                                        <div class="card-header-left">
+                                                                            <h5>{{ i.dept_name }}</h5>
+                                                                        </div>
                                                                     </div>
-                                                                    </a>
+                                                                    <div class="card-block">
+                                                                        <script type="text/javascript">
+                                                                            var icon_color = ['bg-simple-c-green', 'bg-c-blue', 'bg-c-pink'];
+                                                                            var btn_class = ['btn-outline-info', 'btn-outline-primary', 'btn-outline-danger'];
+                                                                            var index = parseInt('{{ forloop.counter }}') % 3;
+                                                                            var html = '<i class="feather icon-monitor st-icon '+ icon_color[index] +' txt-lite-color"></i>';
+                                                                            html += '<div class="text-left"><button type="button" dept_id="{{ i.id }}" class="btn btn-round '+ btn_class[index] +'">View Feedback</button></div>';
+                                                                            document.write(html);
+                                                                        </script>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         {% endfor %}
@@ -301,12 +311,64 @@
     <!-- modernizr js -->
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
 
+    <!-- sweet alert js -->
+{#    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>#}
+    <script src="{% static 'assets/sweetalert/new_sweetalert.min.js' %}"></script>
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <!-- custom js -->
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(document).on('click', '.btn', function (event) {
+                event.preventDefault();
+                var dept_id = $(this).attr('dept_id');
+                swal({
+                    title: "Select Feedback Type",
+                    buttons: {
+                        detailed: {
+                            text: "Detailed Feedback",
+                            value: "detailed",
+                        },
+                        average: {
+                            text: "Average Feedback",
+                            value: "average",
+                        },
+                    },
+                })
+                .then((value) => {
+                    switch (value) {
+                        case "detailed":
+                            window.location = "{{ base_url }}" + "principal/view-detailed-feedback/" + dept_id + "/";
+                            break;
+
+                        case "average":
+                            window.location = "{{ base_url }}" + "principal/view-average-feedback/" + dept_id + "/";
+                            break;
+
+                        default:
+                        swal("Error", "Please Select Feedback type", "error");
+                  }
+                });
+            });
+        });
+    </script>
+    <script type="text/javascript">
+        {% if error %}
+            setTimeout(function () {
+                swal({
+                    title: "Error",
+                    text: "{{ error }}",
+                    dangerMode: true,
+                    type: "error",
+            }, function () {
+                    window.location = "{{ base_url }}";
+                });
+            }, 10);
+        {% endif %}
+    </script>
 
 </body>
 

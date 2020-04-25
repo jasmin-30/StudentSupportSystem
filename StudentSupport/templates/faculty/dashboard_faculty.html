@@ -7,28 +7,15 @@
     <!-- Meta -->
     <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
     <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'assests/images/favicon.ico' %}" type="image/x-icon">
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- themify-icons line icon -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
-    <!-- ico font -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
-    <!-- Switch component css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
-    <!-- Tags css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
-    <!-- notify js Fremwork -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.brighttheme.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.buttons.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.history.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/pnotify/css/pnotify.mobile.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/pnotify/notify.css' %}">
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
@@ -84,17 +71,18 @@
                     </button>
                 </div>
                <div class="modal-body">
-                    <form>
+                    <form method="post" action="{% url 'faculty_dashboard' %}">
+                        {% csrf_token %}
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">News Title</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control">
+                                <input type="text" class="form-control" id="newstitle" name="newstitle" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label">News Description</label>
                             <div class="col-sm-10">
-                                <textarea rows="5" cols="5" class="form-control" placeholder="Default textarea"></textarea>
+                                <textarea rows="5" cols="5" class="form-control" placeholder="Default textarea" id="newsdesc" name="newsdesc" required></textarea>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -102,7 +90,7 @@
                             <div class="col-sm-10">
                                 <div class="checkbox-fade fade-in-primary">
                                     <label>
-                                        <input type="checkbox" value="">
+                                        <input type="checkbox" value="0" id="dept_all" name="dept_all">
                                         <span class="cr">
                                             <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
                                         </span>
@@ -110,68 +98,80 @@
                                     </label>
                                 </div>
                                 <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Computer Engineering</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Information & Technology</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Production Engineering</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Civil Engineering</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Electronic & Communication</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Mechanical Engineering</span>
-                                    </label>
-                                </div>
+                                {% for i in departments %}
+                                    <div class="checkbox-fade fade-in-primary">
+                                        <label>
+                                            <input type="checkbox" value="{{ i.id }}" id="dept{{ forloop.counter }}" name="dept{{ forloop.counter }}" class="chkclass">
+                                            <span class="cr">
+                                                <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
+                                            </span>
+                                            <span>{{ i.dept_name }}</span>
+                                        </label>
+                                    </div>
+                                    <br>
+                                {% endfor %}
+{#                                <div class="checkbox-fade fade-in-primary">#}
+{#                                    <label>#}
+{#                                        <input type="checkbox" value="">#}
+{#                                        <span class="cr">#}
+{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
+{#                                        </span>#}
+{#                                        <span>Computer Engineering</span>#}
+{#                                    </label>#}
+{#                                </div>#}
+{#                                <br>#}
+{#                                <div class="checkbox-fade fade-in-primary">#}
+{#                                    <label>#}
+{#                                        <input type="checkbox" value="">#}
+{#                                        <span class="cr">#}
+{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
+{#                                        </span>#}
+{#                                        <span>Information & Technology</span>#}
+{#                                    </label>#}
+{#                                </div>#}
+{#                                <br>#}
+{#                                <div class="checkbox-fade fade-in-primary">#}
+{#                                    <label>#}
+{#                                        <input type="checkbox" value="">#}
+{#                                        <span class="cr">#}
+{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
+{#                                        </span>#}
+{#                                        <span>Production Engineering</span>#}
+{#                                    </label>#}
+{#                                </div>#}
+{#                                <br>#}
+{#                                <div class="checkbox-fade fade-in-primary">#}
+{#                                    <label>#}
+{#                                        <input type="checkbox" value="">#}
+{#                                        <span class="cr">#}
+{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
+{#                                        </span>#}
+{#                                        <span>Civil Engineering</span>#}
+{#                                    </label>#}
+{#                                </div>#}
+{#                                <br>#}
+{#                                <div class="checkbox-fade fade-in-primary">#}
+{#                                    <label>#}
+{#                                        <input type="checkbox" value="">#}
+{#                                        <span class="cr">#}
+{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
+{#                                        </span>#}
+{#                                        <span>Electronic & Communication</span>#}
+{#                                    </label>#}
+{#                                </div>#}
+{#                                <br>#}
+{#                                <div class="checkbox-fade fade-in-primary">#}
+{#                                    <label>#}
+{#                                        <input type="checkbox" value="">#}
+{#                                        <span class="cr">#}
+{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
+{#                                        </span>#}
+{#                                        <span>Mechanical Engineering</span>#}
+{#                                    </label>#}
+{#                                </div>#}
                             </div>
                         </div>
-                        <button class="btn btn-large btn-primary" style="float:right;">Publish</button>
+                        <button type="submit" class="btn btn-large btn-primary" style="float:right;">Publish</button>
                     </form>
                 </div>
             </div>
@@ -184,43 +184,43 @@
             <nav class="navbar header-navbar pcoded-header">
                 <div class="navbar-wrapper">
                     <div class="navbar-logo">
-                        <a class="mobile-menu" id="mobile-collapse" href="javascript:void(0)">
-                            <i class="feather icon-menu"></i>
-                        </a>
-                        <a href="{% url 'faculty_dashboard' %}">
-                            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Theme-Logo">
-                        </a>
-                        <a class="mobile-options">
-                            <i class="feather icon-more-horizontal"></i>
-                        </a>
-                    </div>
-
+                    <a class="mobile-menu" id="mobile-collapse" href="#!">
+                        <i class="feather icon-menu"></i>
+                    </a>
+                    <a href="index-1.htm">
+                        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Theme-Logo">
+                    </a>
+                    <a class="mobile-options">
+                        <i class="feather icon-more-horizontal"></i>
+                    </a>
+                </div>
                     <div class="navbar-container container-fluid">
 
-                        <ul class="nav-right">
-                            <li class="user-profile header-notification">
-                                <div class="dropdown-primary dropdown">
-                                    <div class="dropdown-toggle" data-toggle="dropdown">
-                                        <span>{{ name }}</span>
-                                        <i class="feather icon-chevron-down"></i>
-                                    </div>
-                                    <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                        <li>
-                                            <a href="{% url 'faculty_profile' %}">
-                                                <i class="feather icon-settings"></i> My Profile
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="{% url 'logout' %}">
-                                                <i class="feather icon-log-out"></i> Logout
-                                            </a>
-                                        </li>
-                                    </ul>
+                    <ul class="nav-right">
 
+                        <li class="user-profile header-notification">
+                            <div class="dropdown-primary dropdown">
+                                <div class="dropdown-toggle" data-toggle="dropdown">
+{#                                    <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">#}
+                                    <span>{{ name }}</span>
+                                    <i class="feather icon-chevron-down"></i>
                                 </div>
-                            </li>
-                        </ul>
-                    </div>
+                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                    <li>
+                                        <a href="{% url 'faculty_profile' %}">
+                                            <i class="feather icon-user"></i> My Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'logout' %}">
+                                            <i class="feather icon-log-out"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
                 </div>
             </nav>
             <div class="pcoded-main-container">
@@ -235,53 +235,67 @@
                                         <span class="pcoded-mtext">My Profile</span>
                                     </a>
                                 </li>
+                                <li class="">
+                                    <a href="#">
+                                        <span class="pcoded-micon"><i class="feather icon-book"></i></span>
+                                        <span class="pcoded-mtext">Assigned Subjects</span>
+                                    </a>
+                                </li>
+                                <li class="">
+                                    <a href="{% url 'faculty_complaint_section'  %}">
+                                        <span class="pcoded-micon"><i class="feather icon-server"></i></span>
+                                        <span class="pcoded-mtext">Complaints Section</span>
+                                    </a>
+                                </li>
+                                <ul class="pcoded-item pcoded-left-item">
                                     <li class="pcoded-hasmenu">
-                                        <a href="javascript:void(0)">
+                                        <a href="#">
                                             <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                            <span class="pcoded-mtext">View Detailed Feedback</span>
+                                            <span class="pcoded-mtext">View Detaied Feedback</span>
                                         </a>
                                         <ul class="pcoded-submenu">
                                             <li class=" ">
-                                                <a href="{% url 'view_detailed_feedback' type='mid-sem' %}">
+                                                <a href="{% url 'faculty_view_detailed_feedback' type="mid-sem" %}">
                                                     <span class="pcoded-mtext">Mid Semester</span>
                                                 </a>
                                             </li>
                                             <li class=" ">
-                                                <a href="{% url 'view_detailed_feedback' type='end-sem' %}">
+                                                <a href="{% url 'faculty_view_detailed_feedback' type="end-sem" %}">
                                                     <span class="pcoded-mtext">End Semester</span>
                                                 </a>
                                             </li>
                                             <li class=" ">
                                                 <a href="#">
-                                                    <span class="pcoded-mtext">Program Exit Survey</span>
+                                                    <span class="pcoded-mtext">Course Exit Survey</span>
                                                 </a>
                                             </li>
                                         </ul>
                                     </li>
-
-
+                                </ul>
+                                <ul class="pcoded-item pcoded-left-item">
                                     <li class="pcoded-hasmenu">
-                                        <a href="javascript:void(0)">
+                                        <a href="#">
                                             <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
                                             <span class="pcoded-mtext">View Average Feedback</span>
                                         </a>
                                         <ul class="pcoded-submenu">
                                             <li class=" ">
-                                                <a href="{% url 'view_average_feedback' type='mid-sem' %}">
+                                                <a href="{% url 'faculty_view_average_feedback' type="mid-sem" %}">
                                                     <span class="pcoded-mtext">Mid Semester</span>
                                                 </a>
                                             </li>
                                             <li class=" ">
-                                                <a href="{% url 'view_average_feedback' type='end-sem' %}">
+                                                <a href="{% url 'faculty_view_average_feedback' type="end-sem" %}">
                                                     <span class="pcoded-mtext">End Semester</span>
                                                 </a>
                                             </li>
                                         </ul>
                                     </li>
+                                </ul>
                                 <li class="">
-                                    <a href="javascript:void(0)">
+                                    <a href="#" data-toggle="modal" data-target="#large-Modal">
                                         <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
-                                        <span class="pcoded-mtext" data-toggle="modal" data-target="#large-Modal">Publish News
+                                        <span class="pcoded-mtext">Publish News
                                         </span>
                                     </a>
                                 </li>
@@ -311,60 +325,64 @@
                                     </div>
                                     <div class="page-body">
                                         <div class="row">
-                                            <div class="col-xl-4 col-md-6">
-                                                <a href="#">
-                                                    <div class="card social-card bg-simple-c-blue">
-                                                        <div class="card-block">
-                                                            <div class="row align-items-center">
-                                                                <div class="col-auto">
-                                                                    <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <h4>Anti Ragging</h4>
-                                                                    <p>ABC</p>
-                                                                    <p>Total Members : 120</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-xl-4 col-md-6">
-                                                <a href="#">
-                                                    <div class="card social-card bg-simple-c-yellow">
-                                                        <div class="card-block">
-                                                            <div class="row align-items-center">
-                                                                <div class="col-auto">
-                                                                    <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <h4>Women Cell</h4>
-                                                                    <p>ABC</p>
-                                                                    <p>Total Members : 120</p>
+                                            {% for i in committees %}
+                                                <div class="col-xl-4 col-md-6">
+                                                    <a href="{% url 'committee_dashboard' com_id=i.committee_id.id  %}">
+                                                        <div class="card social-card bg-simple-c-blue">
+                                                            <div class="card-block">
+                                                                <div class="row align-items-center">
+                                                                    <div class="col-auto">
+                                                                        <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
+                                                                    </div>
+                                                                    <div class="col">
+                                                                        <h4>{{ i.committee_id.committee_name }}</h4>
+                                                                        <p>{{ i.committee_id.chairperson.name }}</p>
+                                                                        <p>Total Members : 120</p>
+                                                                    </div>
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </a>
-                                            </div>
-                                            <div class="col-xl-4 col-md-6">
-                                                <a href="#">
-                                                    <div class="card social-card bg-simple-c-green">
-                                                        <div class="card-block">
-                                                            <div class="row align-items-center">
-                                                                <div class="col-auto">
-                                                                    <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
-                                                                </div>
-                                                                <div class="col">
-                                                                    <h4>Grievance</h4>
-                                                                    <p>ABC</p>
-                                                                    <p>Total Members : 120</p>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </a>
-                                            </div>
+                                                    </a>
+                                                </div>
+                                            {% endfor %}
+{#                                            <div class="col-xl-4 col-md-6">#}
+{#                                                <a href="#">#}
+{#                                                    <div class="card social-card bg-simple-c-yellow">#}
+{#                                                        <div class="card-block">#}
+{#                                                            <div class="row align-items-center">#}
+{#                                                                <div class="col-auto">#}
+{#                                                                    <i class="feather icon-mail f-34 text-c-blue social-icon"></i>#}
+{#                                                                </div>#}
+{#                                                                <div class="col">#}
+{#                                                                    <h4>Women Cell</h4>#}
+{#                                                                    <p>ABC</p>#}
+{#                                                                    <p>Total Members : 120</p>#}
+{#                                                                </div>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                </a>#}
+{#                                            </div>#}
+{#                                            <div class="col-xl-4 col-md-6">#}
+{#                                                <a href="#">#}
+{#                                                    <div class="card social-card bg-simple-c-green">#}
+{#                                                        <div class="card-block">#}
+{#                                                            <div class="row align-items-center">#}
+{#                                                                <div class="col-auto">#}
+{#                                                                    <i class="feather icon-mail f-34 text-c-blue social-icon"></i>#}
+{#                                                                </div>#}
+{#                                                                <div class="col">#}
+{#                                                                    <h4>Grievance</h4>#}
+{#                                                                    <p>ABC</p>#}
+{#                                                                    <p>Total Members : 120</p>#}
+{#                                                                </div>#}
+{#                                                            </div>#}
+{#                                                        </div>#}
+{#                                                    </div>#}
+{#                                                </a>#}
+{#                                            </div>#}
+
+                                            <!-- Recent News -->
                                             <div class="col-sm-12">
                                                 <div class="page-header">
                                                     <div class="row align-items-end">
@@ -376,10 +394,10 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                 </div>
+                                                </div>
                                             <!-- List view card start -->
                                                 <div class="card">
-                                                <div class="row card-block">
+                                                    <div class="row card-block">
                                                     <div class="col-md-12">
                                                         <ul class="list-view">
                                                             {% if news %}
@@ -409,8 +427,7 @@
                                                         </ul>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <!-- List view card end -->
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -431,34 +448,48 @@
     <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
     <!-- modernizr js -->
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
-    <!-- pnotify js -->
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.desktop.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.buttons.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.confirm.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.callbacks.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.animate.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.history.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.mobile.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/pnotify/js/pnotify.nonblock.js' %}"></script>
-
+    <!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+    <!-- Chart js -->
+    <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>
+    <!-- amchart js -->
+    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>
+    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>
+    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <!-- custom js -->
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+
     <script type="text/javascript">
-        {% ifnotequal pnotify None %}
-            $(document).ready(function () {
-                new PNotify({
-                    title: 'Notice',
-                    text: '{{ pnotify }}',
-                    type: 'info'
-                });
-            });
-        {% endifnotequal %}
+        $("#dept_all").click(function () {
+            $(".chkclass").prop('checked', $(this).prop('checked'));
+        });
     </script>
+
+     <script type="text/javascript">
+        {% if success %}
+            swal({
+                title: "{{ success }}",
+                type: "success"
+            });
+        {% endif %}
+
+        {% if error %}
+            swal({
+                title: "Error",
+                text: "{{ error }}",
+                dangerMode: true,
+                type: "error"
+            });
+        {% endif %}
+    </script>
+
+
 </body>
 
 </html>
+

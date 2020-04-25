@@ -12,24 +12,12 @@
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- themify-icons line icon -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
-    <!-- ico font -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
-    <!-- Switch component css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
-    <!-- Tags css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
-    <!-- Data Table Css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/data-table/css/buttons.dataTables.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css' %}">
 </head>
 
 <body>
@@ -71,109 +59,6 @@
         </div>
     </div>
     <!-- Pre-loader end -->
-    <div class="modal fade" id="large-Modal" tabindex="-1" role="dialog">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Publish News</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-               <div class="modal-body">
-                    <form>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">News Title</label>
-                            <div class="col-sm-10">
-                                <input type="text" class="form-control">
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">News Description</label>
-                            <div class="col-sm-10">
-                                <textarea rows="5" cols="5" class="form-control" placeholder="Default textarea"></textarea>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Target Audience</label>
-                            <div class="col-sm-10">
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>All</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Computer Engineering</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Information & Technology</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Production Engineering</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Civil Engineering</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Electronic & Communication</span>
-                                    </label>
-                                </div>
-                                <br>
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>Mechanical Engineering</span>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="btn btn-large btn-primary" style="float:right;">Publish</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
     <div id="pcoded" class="pcoded">
         <div class="pcoded-overlay-box"></div>
         <div class="pcoded-container navbar-wrapper">
@@ -198,7 +83,7 @@
                             <div class="dropdown-primary dropdown">
                                 <div class="dropdown-toggle" data-toggle="dropdown">
                                     <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">
-                                    <span>Jasmin Makwana</span>
+                                    <span>{{ name }}</span>
                                     <i class="feather icon-chevron-down"></i>
                                 </div>
                                 <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
@@ -221,219 +106,145 @@
             </nav>
             <div class="pcoded-main-container">
                 <div class="pcoded-wrapper">
-                    <nav class="pcoded-navbar">
-                         <div class="pcoded-inner-navbar main-menu">
-                            <div class="pcoded-navigatio-lavel">Quick Links</div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">My Profile</span>
-                                    </a>
-                                </li>
-
-                                <ul class="pcoded-item pcoded-left-item">
-                                    <li class="pcoded-hasmenu">
-                                        <a href="javascript:void(0)">
-                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                            <span class="pcoded-mtext">View Detaied Feedback</span>
-                                        </a>
-                                        <ul class="pcoded-submenu">
-                                            <li class=" ">
-                                                <a href="#">
-                                                    <span class="pcoded-mtext">Mid Semester</span>
-                                                </a>
-                                            </li>
-                                            <li class=" ">
-                                                <a href="form-elements-add-on.htm">
-                                                    <span class="pcoded-mtext">End Semester</span>
-                                                </a>
-                                            </li>
-                                            <li class=" ">
-                                                <a href="form-elements-advance.htm">
-                                                    <span class="pcoded-mtext">Course Exit Survey</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                                <ul class="pcoded-item pcoded-left-item">
-                                    <li class="pcoded-hasmenu">
-                                        <a href="javascript:void(0)">
-                                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                            <span class="pcoded-mtext">View Average Feedback</span>
-                                        </a>
-                                        <ul class="pcoded-submenu">
-                                            <li class=" ">
-                                                <a href="form-elements-component.htm">
-                                                    <span class="pcoded-mtext">Mid Semester</span>
-                                                </a>
-                                            </li>
-                                            <li class=" ">
-                                                <a href="form-elements-add-on.htm">
-                                                    <span class="pcoded-mtext">End Semester</span>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                                <li class="">
-                                    <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
-                                        <span class="pcoded-mtext" data-toggle="modal" data-target="#large-Modal">Publish News
-                                        </span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
-                                        <span class="pcoded-mtext">Logout</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                    <div class="pcoded-content">
-                        <div class="pcoded-inner-content">
-                            <div class="main-body">
-                                <div class="page-wrapper">
-                                     <div class="page-header">
-                                        <div class="row align-items-end">
-                                            <div class="col-lg-8">
-                                                <div class="page-header-title">
-                                                    <div class="d-inline">
-                                                        <h4>Mid Semester Detailed Feedback</h4>
-                                                    </div>
+                    <div class="pcoded-inner-content">
+                        <div class="main-body">
+                            <div class="page-wrapper">
+                                 <div class="page-header">
+                                    <div class="row align-items-end">
+                                        <div class="col-lg-8">
+                                            <div class="page-header-title">
+                                                <div class="d-inline">
+                                                    <h4>Mid Semester Detailed Feedback</h4>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="page-body">
-                                       <div class="row">
-                                            <div class="col-sm-12">
-                                                <!-- Basic Form Inputs card start -->
-                                                <div class="card">
-                                                    <div class="card-block">
-                                                        <form>
-                                                            <div class="form-group row">
-                                                            <label class="col-sm-4 col-form-label">Select Subject To View Feedback</label>
-                                                            <div class="col-sm-8">
-                                                                <select name="select" class="form-control">
-                                                                    <option value="opt1">Select Subject</option>
-                                                                    <option value="opt2">Computer Network</option>
-                                                                    <option value="opt3">Compiler Design</option>
-                                                                    <option value="opt4">Theory Of Computation</option>
-                                                                    <option value="opt5">Cyber Security</option>
-                                                                    <option value="opt6">Mathematics 1</option>
-                                                                    <option value="opt7">Mathematics 2</option>
-                                                                    <option value="opt8">Mathematics 3</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        </form>
-                                                    </div>
-                                                    <!-- Zero config.table start -->
-                                                        <div class="card-block">
-                                                            <div class="dt-responsive table-responsive">
-                                                                <table id="simpletable" class="table table-striped table-bordered nowrap">
-                                                                    <thead>
-                                                                    <tr>
-                                                                        <th>Sr. No.</th>
-                                                                        <th>Questions</th>
-                                                                        <th>Answers</th>
-                                                                    </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                        <tr>
-                                                                            <td>1</td>
-                                                                            <td>System Architect</td>
-                                                                            <td>Edinburgh</td>
-
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>2</td>
-                                                                            <td>Accountant</td>
-                                                                            <td>Tokyo</td>
-
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>3</td>
-                                                                            <td>Junior Technical Author</td>
-                                                                            <td>San Francisco</td>
-
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>4</td>
-                                                                            <td>Senior Javascript Developer</td>
-                                                                            <td>Edinburgh</td>
-
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>5</td>
-                                                                            <td>System Architect</td>
-                                                                            <td>Edinburgh</td>
-
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>6</td>
-                                                                            <td>Accountant</td>
-                                                                            <td>Tokyo</td>
-
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>7</td>
-                                                                            <td>Junior Technical Author</td>
-                                                                            <td>San Francisco</td>
-
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>8</td>
-                                                                            <td>Senior Javascript Developer</td>
-                                                                            <td>Edinburgh</td>
-
-                                                                        </tr>
-                                                                         <tr>
-                                                                            <td>9</td>
-                                                                            <td>System Architect</td>
-                                                                            <td>Edinburgh</td>
-
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>10</td>
-                                                                            <td>Accountant</td>
-                                                                            <td>Tokyo</td>
-
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>11</td>
-                                                                            <td>Junior Technical Author</td>
-                                                                            <td>San Francisco</td>
-
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>12</td>
-                                                                            <td>Senior Javascript Developer</td>
-                                                                            <td>Edinburgh</td>
-
-                                                                        </tr>
-                                                                    </tbody>
-                                                                    <tfoot>
-                                                                    <tr>
-                                                                        <th>Sr. No.</th>
-                                                                        <th>Questions</th>
-                                                                        <th>Answers</th>
-                                                                    </tr>
-                                                                    </tfoot>
-                                                                </table>
-                                                            </div>
+                                </div>
+                                <div class="page-body">
+                                   <div class="row">
+                                        <div class="col-sm-12">
+                                            <!-- Basic Form Inputs card start -->
+                                            <div class="card">
+                                                <div class="card-block">
+                                                    <form>
+                                                        <div class="form-group row">
+                                                        <label class="col-sm-4 col-form-label">Select Subject To View Feedback</label>
+                                                        <div class="col-sm-8">
+                                                            <select name="select" class="form-control">
+                                                                <option value="opt1">Select Subject</option>
+                                                                <option value="opt2">Computer Network</option>
+                                                                <option value="opt3">Compiler Design</option>
+                                                                <option value="opt4">Theory Of Computation</option>
+                                                                <option value="opt5">Cyber Security</option>
+                                                                <option value="opt6">Mathematics 1</option>
+                                                                <option value="opt7">Mathematics 2</option>
+                                                                <option value="opt8">Mathematics 3</option>
+                                                            </select>
                                                         </div>
                                                     </div>
-                                                    <!-- Zero config.table end -->
+                                                    </form>
                                                 </div>
-                                                <!-- Basic Form Inputs card end -->
+                                                <!-- Zero config.table start -->
+                                                    <div class="card-block">
+                                                        <div class="dt-responsive table-responsive">
+                                                            <table id="simpletable" class="table table-striped table-bordered nowrap">
+                                                                <thead>
+                                                                <tr>
+                                                                    <th>Sr. No.</th>
+                                                                    <th>Questions</th>
+                                                                    <th>Answers</th>
+                                                                </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <td>1</td>
+                                                                        <td>System Architect</td>
+                                                                        <td>Edinburgh</td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>2</td>
+                                                                        <td>Accountant</td>
+                                                                        <td>Tokyo</td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>3</td>
+                                                                        <td>Junior Technical Author</td>
+                                                                        <td>San Francisco</td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>4</td>
+                                                                        <td>Senior Javascript Developer</td>
+                                                                        <td>Edinburgh</td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>5</td>
+                                                                        <td>System Architect</td>
+                                                                        <td>Edinburgh</td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>6</td>
+                                                                        <td>Accountant</td>
+                                                                        <td>Tokyo</td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>7</td>
+                                                                        <td>Junior Technical Author</td>
+                                                                        <td>San Francisco</td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>8</td>
+                                                                        <td>Senior Javascript Developer</td>
+                                                                        <td>Edinburgh</td>
+
+                                                                    </tr>
+                                                                     <tr>
+                                                                        <td>9</td>
+                                                                        <td>System Architect</td>
+                                                                        <td>Edinburgh</td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>10</td>
+                                                                        <td>Accountant</td>
+                                                                        <td>Tokyo</td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>11</td>
+                                                                        <td>Junior Technical Author</td>
+                                                                        <td>San Francisco</td>
+
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>12</td>
+                                                                        <td>Senior Javascript Developer</td>
+                                                                        <td>Edinburgh</td>
+
+                                                                    </tr>
+                                                                </tbody>
+                                                                <tfoot>
+                                                                <tr>
+                                                                    <th>Sr. No.</th>
+                                                                    <th>Questions</th>
+                                                                    <th>Answers</th>
+                                                                </tr>
+                                                                </tfoot>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- Zero config.table end -->
                                             </div>
-                                       </div>
-                                    </div>
+                                            <!-- Basic Form Inputs card end -->
+                                        </div>
+                                   </div>
                                 </div>
                             </div>
                         </div>
@@ -450,43 +261,14 @@
     <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
     <!-- modernizr js -->
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
-    <!-- amchart js -->
-    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>
+
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <!-- custom js -->
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
-    <script src="{% static 'assets/pages/data-table/js/data-table-custom.js' %}"></script>
-    <!-- data-table js -->
-    <script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
-    <script src="{% static 'bower_components/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
-    <script src="{% static 'assets/pages/data-table/js/jszip.min.js' %}"></script>
-    <script src="{% static 'assets/pages/data-table/js/pdfmake.min.js' %}"></script>
-    <script src="{% static 'assets/pages/data-table/js/vfs_fonts.js' %}"></script>
-    <script src="{% static 'bower_components/datatables.net-buttons/js/buttons.print.min.js' %}"></script>
-    <script src="{% static 'bower_components/datatables.net-buttons/js/buttons.html5.min.js' %}"></script>
-    <script src="{% static 'bower_components/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'bower_components/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
-    <script src="{% static 'bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
-    <!-- i18next.min.js -->
-    <script type="text/javascript" src="{% static 'bower_components/i18next/js/i18next.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/i18next-xhr-backend/js/i18nextXHRBackend.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/i18next-browser-languagedetector/js/i18nextBrowserLanguageDetector.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/jquery-i18next/js/jquery-i18next.min.js' %}"></script>
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async="" src="https://www.googletagmanager.com/gtag/js?id=UA-23581568-13"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
 
-      gtag('config', 'UA-23581568-13');
-    </script>
 
 </body>
 

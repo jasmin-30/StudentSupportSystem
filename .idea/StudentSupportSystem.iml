@@ -18,6 +18,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="jquery.tabledit" level="application" />
     <orderEntry type="library" name="Chart" level="application" />
+    <orderEntry type="library" name="sweetalert" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />

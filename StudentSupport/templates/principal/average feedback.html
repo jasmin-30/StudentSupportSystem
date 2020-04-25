@@ -82,8 +82,18 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form method="post" action="{% url 'download_average_feedback' type="end" %}">
+                    <form method="post" action="{% url 'principal_download_average_report' %}">
                         {% csrf_token %}
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="type" style="font-weight: 900;">Select Type of Feedback : </label>
+                            <div class="col-sm-8">
+                                <select class="custom-select" name="type" id="type" style="width: 100%" required>
+                                    <option value="-1" selected disabled>Select Type</option>
+                                    <option value="0">Mid Semester Feedback</option>
+                                    <option value="1">End Semester Feedback</option>
+                                </select>
+                            </div>
+                        </div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label" for="term" style="font-weight: 900;">Term : </label>
                             <div class="col-sm-4">
@@ -197,17 +207,17 @@
                         <div class="page-wrapper">
                              <div class="page-header">
                                 <div class="row align-items-end">
-                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                    <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
                                         <div class="page-header-title">
                                             <div class="d-inline">
                                                 <h3>{{ dept_name }} Department</h3>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-sm-12 col-md-12 col-lg-6">
+                                    <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
                                         <div class="page-header-title">
                                             <div class="d-inline">
-                                                <h3>End Semester Average Feedback</h3>
+                                                <h3>Average Feedback</h3>
                                             </div>
                                         </div>
                                     </div>
@@ -216,7 +226,7 @@
                                     </div>
                                     <div class="col-sm-4 col-md-4 col-lg-4">
                                         <span class="f-right">
-                                            <a href="{% url 'hod_dashboard' %}" class="btn" style="font-size: 15px">
+                                            <a href="{% url 'principal_dashboard' %}" class="btn" style="font-size: 15px">
                                                 <i class="feather icon-arrow-left"></i>
                                                 Back to Dashboard
                                             </a>
@@ -230,15 +240,24 @@
                                        <div class="card">
                                            <div class="card-block">
                                                <div class="form-group row">
+                                                   <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_type" style="font-weight: 900;">Type of feedback : </label>
+                                                   <div class="col-md-2 col-lg-2">
+                                                       <select class="custom-select" id="view_feedback_type" style="width: 100%" name="view_feedback_type">
+                                                           <option value="-1" selected disabled>Type</option>
+                                                           <option value="0">Mid Semester Feedback</option>
+                                                           <option value="1">End Semester Feedback</option>
+                                                       </select>
+                                                       <div id="Error_view_feedback_type" style="color: red"></div>
+                                                   </div>
                                                         <label for="view_feedback_term" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Term :</label>
-                                                        <div class="col-md-4 col-lg-4">
+                                                        <div class="col-md-2 col-lg-2">
                                                             <select class="custom-select" name="view_feedback_term" id="view_feedback_term" style="width: 100%">
                                                                 <option value="0">Odd</option>
                                                                 <option value="1">Even</option>
                                                             </select>
                                                         </div>
                                                         <label for="view_feedback_year" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Year:</label>
-                                                        <div class="col-md-4 col-lg-4">
+                                                        <div class="col-md-2 col-lg-2">
                                                             <select class="custom-select" name="view_feedback_year" id="view_feedback_year" style="width: 100%;">
                                                                 <script type="text/javascript">
                                                                     var start_year = 2020;
@@ -275,7 +294,7 @@
                                                            Updated On: <b><span id="feedback-date"></span></b>
                                                        </div>
                                                        <div class="col-sm-6 d-flex justify-content-end">
-                                                           You can see all the question &nbsp; <a href="#questions_list" style="color: dodgerblue; font-size: inherit">here.</a>
+                                                           You can see all the question &nbsp; <a href="#questions_list_href" style="color: dodgerblue; font-size: inherit">here.</a>
                                                        </div>
                                                    </div>
                                                    <canvas id="myChart"></canvas>
@@ -295,17 +314,14 @@
                                         </div>
                                     </div>
                                </div>
-                                <div class="row">
+                                <div class="row" id="questions_list" style="display: none;">
                                     <div class="col-sm-12">
-                                        <div class="card" id="questions_list">
+                                        <div class="card" id="questions_list_href">
                                             <div class="card-header">
                                                 <h4 style="font-size: 20px">Questions List</h4>
                                             </div>
                                             <div class="card-block">
-                                                <ul>
-                                                    {% for q in questions %}
-                                                        <li><b>Question : {{ forloop.counter }}</b> - {{ q.question_text }}</li>
-                                                    {% endfor %}
+                                                <ul id="questions">
                                                 </ul>
                                             </div>
                                         </div>
@@ -346,13 +362,48 @@
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
 
     <script type="text/javascript">
+        var questions_list = JSON.parse('{{ question_list|safe }}');
+        console.log(questions_list);
+        var fb_type;
+        var question_label;
+        $(document).on('change', 'select#view_feedback_type', function (event) {
+            event.preventDefault();
+            var type = $(this).val();
+            var ul_tag = $(document).find('#questions');
+            if(type == "0") {
+                fb_type = "mid";
+                var html = '';
+                ul_tag.html();
+                question_label = [];
+                $.each(questions_list['mid'], function (index, value) {
+                    html += '<li><b>Question : '+ (index + 1) +'</b> - '+ value["question_text"] +'</li>';
+                    question_label.push('Question : ' + (index + 1));
+                });
+                ul_tag.html(html);
+            }
+            else {
+                fb_type = "end";
+                var html = '';
+                ul_tag.html();
+                question_label = [];
+                $.each(questions_list['end'], function (index, value) {
+                    html += '<li><b>Question : '+ index +'</b> - '+ value["question_text"] +'</li>';
+                    question_label.push('Question : ' + value["question_text"]);
+                });
+                ul_tag.html(html);
+            }
+        });
+
+    </script>
+
+    <script type="text/javascript">
         var subjects_dict = JSON.parse('{{ fac_subjects|safe }}');
         console.log(subjects_dict);
 
         // for switch
         $(document).ready(function () {
-
             $('[data-toggle="popover"]').popover();
+
             // Single swithces
             var subject_switch = document.querySelector('.js-single');
             var switchery = new Switchery(subject_switch, { color: '#4680ff', jackColor: '#fff' });
@@ -379,7 +430,6 @@
                     btn1.attr('type', 'button');
 
                     // making subjects list
-                    update_subject();
                 }
             }
 
@@ -433,10 +483,6 @@
             grey: 'rgb(201, 203, 207)'
         };
         var colorNames = Object.keys(window.chartColors);
-        var question_label = [];
-        {% for q in questions %}
-            question_label.push('Question : ' + '{{ forloop.counter }}');
-        {% endfor %}
         var color = Chart.helpers.color;
 		var barChartData = {
 			labels: question_label,
@@ -503,6 +549,7 @@
                 }
 			    //adding new dataset of subject into barchart datasets.
 			    barChartData.datasets.push(newdataset);
+			    barChartData.labels = question_label;
             }
 
             //Updating barchart.
@@ -527,15 +574,16 @@
                     type: "GET",
                     url: "{{ base_url }}" + "get-average-feedback/",
                     data: {
-                        type: 'end',
+                        type: fb_type,
                         fac_id: fac_id,
                         term: term,
                         year: year
                     },
 
                     success: function (msg) {
-                        $(document).find('div.loader-block').css('display', 'none');
-                        $(document).find('div#content').css('display', 'block');
+                        $(document).find('div.loader-block').hide();
+                        $(document).find('div#content').show();
+                        $(document).find('div#questions_list').show();
                         var response = JSON.parse(msg);
                         console.log(response);
                         var subject_len = response['ratings'].length;
@@ -560,7 +608,8 @@
 
 
                         if(subject_len == 0) {
-                            $(document).find('div#content').css('display', 'none');
+                            $(document).find('div#content').hide();
+                            $(document).find('div#questions_list').hide();
                             //Displaying subject list
                             var div1 = $(document).find('div#div1');
                             var div2 = $(document).find('div#div2');
@@ -582,20 +631,14 @@
                     },
                     error: function (msg) {
                         var response = JSON.parse(msg.responseText);
-                        //Displaying subject list
-                        var div1 = $(document).find('div#div1');
-                        var div2 = $(document).find('div#div2');
-                        div1.addClass('col-sm-12');
-                        div1.removeClass('col-sm-9');
-                        div2.hide();
-
-                        $(document).find('div.loader-block').css('display', 'none');
-                        $(document).find('div#content').css('display', 'none');
                         swal({
                             title: "Error!",
                             text: response['error'],
                             type: "error",
                         });
+                        $(document).find('div.loader-block').hide();
+                        $(document).find('div#content').hide();
+                        $(document).find('div#questions_list').hide();
                     },
                 });
             }
