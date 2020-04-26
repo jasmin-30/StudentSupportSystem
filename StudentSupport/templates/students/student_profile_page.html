@@ -14,6 +14,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
     <!-- Style.css -->
@@ -204,12 +205,25 @@
                                                                                         <label class="col-form-label">{{ std_obj.semester }}</label>
                                                                                     </div>
                                                                                     <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
-                                                                                        <button type="button" class="btn btn-link p-b-0 p-t-0" id="link-edit" style="font-size: 20px">
-                                                                                            <i class="feather icon-edit"></i>
-                                                                                        </button>
-                                                                                        <button type="button" class="btn btn-link p-b-0 p-t-0" id="link-cancel" style="font-size: 20px">
-                                                                                            <i class="feather icon-x-square"></i>
-                                                                                        </button>
+                                                                                        <div class="btn-toolbar" style="text-align: left;">
+                                                                                            <div class="btn-group btn-group-sm" style="float: none;">
+                                                                                                <button type="button" class=" link-edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                                    <span class="icofont icofont-ui-edit"></span>
+                                                                                                </button>
+                                                                                                <button type="submit" class=" link-save btn btn-info waves-effect waves-light active" style="float: none;margin: 5px;">
+                                                                                                    <span class="icofont icofont-ui-check"></span>
+                                                                                                </button>
+                                                                                                <button type="button" class="link-cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                                    <span class="icofont icofont-ui-close"></span>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </div>
+{#                                                                                        <button type="button" class="btn btn-link p-b-0 p-t-0" id="link-edit" style="font-size: 20px">#}
+{#                                                                                            <i class="feather icon-edit"></i>#}
+{#                                                                                        </button>#}
+{#                                                                                        <button type="button" class="btn btn-link p-b-0 p-t-0" id="link-cancel" style="font-size: 20px">#}
+{#                                                                                            <i class="feather icon-x-square"></i>#}
+{#                                                                                        </button>#}
                                                                                     </div>
                                                                                 </div>
                                                                             </div>
@@ -338,9 +352,11 @@
     </script>
     <script type="text/javascript">
         // For semester Field.
-        var link_cancel = $('button#link-cancel');
+        var link_cancel = $('button.link-cancel');
+        var link_save = $('button.link-save');
+        link_save.hide();
         link_cancel.hide();
-        var link_edit = $('button#link-edit');
+        var link_edit = $('button.link-edit');
         var sem_tag = $('div#sem-div');
         var old_content;
         function edit_sem(event){
@@ -359,20 +375,18 @@
             }
             sem_select += '</select>';
             sem_tag.html(sem_select);
+            link_edit.hide();
             link_cancel.show();
-            link_edit.attr('type', 'submit');
-            link_edit.html('<i class="feather icon-check-square"></i>');
-            link_edit.off('click');
+            link_save.show();
         }
         link_edit.on('click', edit_sem);
 
-        $(document).on('click', '#link-cancel', function (event) {
+        $(document).on('click', 'button.link-cancel', function (event) {
             event.preventDefault();
-            link_edit.html('<i class="feather icon-edit"></i>');
-            link_edit.attr('type', 'button');
-            link_edit.on('click', edit_sem);
             sem_tag.html(old_content);
             link_cancel.hide();
+            link_save.hide();
+            link_edit.show();
         });
     </script>
 

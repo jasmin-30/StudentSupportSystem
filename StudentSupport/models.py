@@ -58,6 +58,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     active = models.BooleanField(default=False)
     staff = models.BooleanField(default=False)
     admin = models.BooleanField(default=False)
+    requested_change_password = models.BooleanField(default=False)
 
     objects = UserManager()
 

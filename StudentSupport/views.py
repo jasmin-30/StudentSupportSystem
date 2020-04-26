@@ -288,7 +288,6 @@ def ConfirmAccountView(request):
     return HttpResponseRedirect("/")
 
 
-# TODO : There are some pending changes in change password templates.
 def ChangePasswordView(request):
     context = {
         "base_url": st.BASE_URL,
@@ -298,7 +297,8 @@ def ChangePasswordView(request):
             raw_email = str(request.GET.get('email'))
             email = b64decode(raw_email.encode()).decode('utf-8')
             request.session["email"] = email
-            return render(request, "home_auth/change_password.html", {})
+            print(email)
+            return render(request, "home_auth/forgot_password.html", {})
 
     if request.method == "POST":
         if "email" in request.session and request.POST.get('password') is not None:
@@ -306,6 +306,7 @@ def ChangePasswordView(request):
             password = request.POST.get('password')
             try:
                 user_obj = User.objects.get(email=email)
+                print(user_obj)
                 user_obj.set_password(password)
                 user_obj.save()
             except User.DoesNotExist:
@@ -2312,6 +2313,3 @@ def DownloadAverageFeedback(request, type):
 
 
 # Download Report Views > End
-
-def Misc(request):
-    return render(request, 'home_auth/forgot_password.html', {})

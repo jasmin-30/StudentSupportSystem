@@ -1,95 +1,42 @@
-.title{
-    font-size: 20px;
-    color: black;
-    height: 7.5%;
-    padding-left: 10.5%;
-}
 
-.example2 {
+.navbar{
+    height:10%;
+}
+.form-box {
+
     border: 1px solid;
     padding: 20px;
     margin-top: 3%;
     width: 30%;
-    color:black;
     font-size: 18px;
 }
 
-.txtbox{
-    width: 100%;
-}
 
-.btn.btn-secondary {
-    background: gray;
-    border-radius: 0;
-    border: 0px solid #fda638;
-}
-
-.p-2{
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-}
-
-.question{
-    font-size: 53px;
-    margin-top: -1.5%;
-}
-
-.alert{
-    font-size: 14px;
-    color:red;
-}
-
-.body{
-    background-image: url('./background9.jpg');
+.wrapp{
+    background-image: url('background9.jpg');
     background-repeat: no-repeat;
     background-size: 100% 100%;
     height: 89.5%;
+    padding-top:40px;
+
 }
 
 @media only screen and (max-width: 767px) {
-    .example2 {
+    .form-box {
         border: 1px solid;
         padding: 20px;
         margin-top: 4%;
         width: 90%;
-        color:black;
         font-size: 18px;
     }
-    
-    .question{
-        font-size: 43px;
-        margin-top: -3%;
-    }
-    
-        .title{
-        font-size: 20px;
-        color: black;
-        height: 9%;
-        padding-left: 10.5%;
-    }
-
 }
 
 @media only screen and (max-width: 1024px) and (min-width: 768px){
-    .example2 {
+    .form-box {
         border: 1px solid;
         padding: 20px;
         margin-top: 4%;
         width: 50%;
-        color:black;
         font-size: 18px;
     }
-    
-    .question{
-        font-size: 43px;
-        margin-top: -1.5%;
-    }
-    
-        .title{
-        font-size: 20px;
-        color: black;
-        height: 9%;
-        padding-left: 10.5%;
-    }
-
 }

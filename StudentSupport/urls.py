@@ -65,6 +65,5 @@ urlpatterns = [
     path('download/detailed-feedback/<str:type>/', views.DownloadDetailedFeedback, name='download_detailed_feedback'),
     path('download/average-feedback/<str:type>/', views.DownloadAverageFeedback, name='download_average_feedback'),
     # Download Report > End
-    path('misc/', views.Misc),
 
 ]
