@@ -195,37 +195,36 @@
                                                                                             {{ c.date }}
                                                                                         </p>
                                                                                     </div>
-                                                                                    <div class="col-sm-2">
-                                                                                    </div>
-                                                                                    <div class="col-sm-10">
-                                                                                        <div class="btn-group btn-group-sm" style="float: none;">
-                                                                                            <button type="button" class="take_action btn btn-primary waves-effect waves-light" com_id="{{ c.id }}" action="show" style="float: none;margin: 5px;">
-                                                                                                Take Action
-                                                                                            </button>
+                                                                                    {% ifequal role "Faculty" %}
+                                                                                        <div class="col-sm-2"></div>
+                                                                                        <div class="col-sm-10">
+                                                                                            <div class="btn-group btn-group-sm" style="float: none;">
+                                                                                                <button type="button" class="take_action btn btn-primary waves-effect waves-light" com_id="{{ c.id }}" action="show" style="float: none;margin: 5px;">
+                                                                                                    Take Action
+                                                                                                </button>
+                                                                                            </div>
                                                                                         </div>
-{#                                                                                        <button class="take_action btn btn-primary" com_id="{{ c.id }}" type="button">Take Action</button>#}
-{#                                                                                        <button class="cancel cancel-{{ c.id }} btn btn-primary" com_id="{{ c.id }}" type="button" style="display: none;">Cancel</button>#}
-                                                                                    </div>
-                                                                                    <div class="col-sm-2"></div>
-                                                                                    <div class="col-sm-10" id="div-{{ c.id }}" style="display: none">
-                                                                                        <form action="{% url 'member_dashboard' com_id=committee_id %}" method="post">
-                                                                                            {% csrf_token %}
-                                                                                            <input type="hidden" name="complaint_id" id="complaint_id" value="{{ c.id }}">
-                                                                                            <input type="hidden" name="status" id="status" value="Pending">
-                                                                                            <div class="form-group row">
-                                                                                                <div class="col-sm-10">
-                                                                                                    <textarea class="form-control" rows="3" name="action" id="action" placeholder="Type your response here." required></textarea>
-                                                                                                </div>
-                                                                                                <div class="col-sm-2">
-                                                                                                    <div class="btn-group btn-group-sm" style="float: none;">
-                                                                                                        <button type="submit" class="btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                                            Submit
-                                                                                                        </button>
+                                                                                        <div class="col-sm-2"></div>
+                                                                                        <div class="col-sm-10" id="div-{{ c.id }}" style="display: none">
+                                                                                            <form action="{% url 'member_dashboard' com_id=committee_id %}" method="post">
+                                                                                                {% csrf_token %}
+                                                                                                <input type="hidden" name="complaint_id" id="complaint_id" value="{{ c.id }}">
+                                                                                                <input type="hidden" name="status" id="status" value="Pending">
+                                                                                                <div class="form-group row">
+                                                                                                    <div class="col-sm-10">
+                                                                                                        <textarea class="form-control" rows="3" name="action" id="action" placeholder="Type your response here." required></textarea>
+                                                                                                    </div>
+                                                                                                    <div class="col-sm-2">
+                                                                                                        <div class="btn-group btn-group-sm" style="float: none;">
+                                                                                                            <button type="submit" class="btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                                                Submit
+                                                                                                            </button>
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
-                                                                                            </div>
-                                                                                        </form>
-                                                                                    </div>
+                                                                                            </form>
+                                                                                        </div>
+                                                                                    {% endifequal %}
                                                                                 </div>
                                                                             </li>
                                                                         {% endfor %}
@@ -281,40 +280,40 @@
                                                                                                 </div>
                                                                                             </div>
                                                                                         {% endfor %}
-                                                                                        <div class="col-sm-12">
-                                                                                            <div class="row">
-                                                                                                <div class="col-sm-3"></div>
-                                                                                                <div class="col-sm-9">
-                                                                                                    <div class="btn-group btn-group-sm" style="float: none;">
-                                                                                                        <button type="button" class="btn_comment btn btn-info waves-effect waves-light" com_id="{{ c.id }}" action="show" style="float: none;margin: 5px;">
-                                                                                                            Comment
-                                                                                                        </button>
+                                                                                        {% ifequal role "Faculty" %}
+                                                                                            <div class="col-sm-12">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-sm-3"></div>
+                                                                                                    <div class="col-sm-9">
+                                                                                                        <div class="btn-group btn-group-sm" style="float: none;">
+                                                                                                            <button type="button" class="btn_comment btn btn-info waves-effect waves-light" com_id="{{ c.id }}" action="show" style="float: none;margin: 5px;">
+                                                                                                                Comment
+                                                                                                            </button>
+                                                                                                        </div>
                                                                                                     </div>
-{#                                                                                                    <button type="button" class="btn_comment btn btn-info" com_id="{{ c.id }}">Comment</button>#}
-{#                                                                                                    <button type="button" class="cancel_comment btn_cancel_comment-{{ c.id }} btn btn-info" com_id="{{ c.id }}" style="display: none;">Cancel</button>#}
-                                                                                                </div>
-                                                                                                <div class="col-sm-3"></div>
-                                                                                                <div class="col-sm-9" id="div-{{ c.id }}" style="display: none;">
-                                                                                                    <form action="{% url 'member_dashboard' com_id=committee_id %}" method="post">
-                                                                                                        {% csrf_token %}
-                                                                                                        <input type="hidden" name="complaint_id" id="complaint_id" value="{{ c.id }}">
-                                                                                                        <input type="hidden" name="status" id="status" value="Re-opened">
-                                                                                                        <div class="form-group row">
-                                                                                                            <div class="col-sm-10">
-                                                                                                                <textarea class="form-control" rows="3" name="comment" id="comment" placeholder="Type your response here." required></textarea>
-                                                                                                            </div>
-                                                                                                            <div class="col-sm-2">
-                                                                                                                <div class="btn-group btn-group-sm" style="float: none;">
-                                                                                                                    <button type="submit" class="btn btn-info waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                                                        Submit
-                                                                                                                    </button>
+                                                                                                    <div class="col-sm-3"></div>
+                                                                                                    <div class="col-sm-9" id="div-{{ c.id }}" style="display: none;">
+                                                                                                        <form action="{% url 'member_dashboard' com_id=committee_id %}" method="post">
+                                                                                                            {% csrf_token %}
+                                                                                                            <input type="hidden" name="complaint_id" id="complaint_id" value="{{ c.id }}">
+                                                                                                            <input type="hidden" name="status" id="status" value="Re-opened">
+                                                                                                            <div class="form-group row">
+                                                                                                                <div class="col-sm-10">
+                                                                                                                    <textarea class="form-control" rows="3" name="comment" id="comment" placeholder="Type your response here." required></textarea>
+                                                                                                                </div>
+                                                                                                                <div class="col-sm-2">
+                                                                                                                    <div class="btn-group btn-group-sm" style="float: none;">
+                                                                                                                        <button type="submit" class="btn btn-info waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                                                            Submit
+                                                                                                                        </button>
+                                                                                                                    </div>
                                                                                                                 </div>
                                                                                                             </div>
-                                                                                                        </div>
-                                                                                                    </form>
+                                                                                                        </form>
+                                                                                                    </div>
                                                                                                 </div>
                                                                                             </div>
-                                                                                        </div>
+                                                                                        {% endifequal %}
                                                                                     </div>
                                                                                 </div>
                                                                             </li>

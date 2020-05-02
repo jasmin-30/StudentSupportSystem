@@ -2782,6 +2782,7 @@ def CommitteeMemberDashboard(request, com_id):
         if request.user.getRole == "Faculty":
             fac_obj = Faculty.objects.get(auth_id=request.user)
             context["name"] = fac_obj.name
+            context["role"] = "Faculty"
             try:
                 mapping_obj = Committee_to_Members_Mapping.objects.get(committee_id=committee_obj, faculty_id=fac_obj)
             except Committee_to_Members_Mapping.DoesNotExist:
@@ -2790,6 +2791,7 @@ def CommitteeMemberDashboard(request, com_id):
         elif request.user.getRole == "Principal":
             principal_obj = Principal.objects.get(auth_id=request.user)
             context["name"] = principal_obj.name
+            context["role"] = "Principal"
 
         else:
             return HttpResponse("You are not authorized to view this page.")
