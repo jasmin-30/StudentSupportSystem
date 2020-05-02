@@ -1530,6 +1530,9 @@ def HodDashboard(request):
         fac_obj = Faculty.objects.get(auth_id=request.user)
         context["name"] = fac_obj.name
         return render(request, 'hod/hod_dashboard.html', context)
+    else:
+        context["error"] = "login First"
+        return render(request, 'home_auth/index.html', context)
 
 
 def HOD_Profile_View(request):
@@ -3116,11 +3119,13 @@ def CommitteeManageMembers(request, com_id):
             if request.POST.get('faculty_id') is not None:
                 fac_id = request.POST.get('faculty_id')
                 print(fac_id)
-                mapping_obj = Committee_to_Members_Mapping.objects.get(committee_id=committee_obj, faculty_id=int(fac_id))
-                name = mapping_obj.faculty_id.name
+                fac_member_obj = Faculty.objects.get(id=int(fac_id))
+                print(fac_member_obj)
+                mapping_obj = Committee_to_Members_Mapping.objects.get(committee_id=committee_obj, faculty_id=fac_member_obj)
+                print(mapping_obj)
                 mapping_obj.delete()
 
-                context["success"] = name + " has been removed successfully."
+                context["success"] = fac_member_obj.name + " has been removed successfully."
 
             if request.POST.get('member') is not None:
                 member_id = request.POST.get('member')
@@ -3155,7 +3160,7 @@ def CommitteeManageMembers(request, com_id):
                 'faculties': Faculty.objects.filter(dept_id=i)
             }
             dept_faculties.append(tmp)
-
+        print(dept_faculties)
         context['dept_faculties'] = dept_faculties
 
 

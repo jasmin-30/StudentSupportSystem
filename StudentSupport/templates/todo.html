@@ -99,65 +99,6 @@ Replace this navbar with below
     //TODO : Add loaders in pages.
     //TODO : Subject wise average ratings.
     //TODO : all select should be changed to custom-select
+    //TODO : reload every page after sweet alert as in chrome previous action gets repeated.
+    //TODO :
 </script>
-
-<div class="row">
-                                                                            <div class="col-sm-3 d-flex justify-content-center">
-                                                                                <h6 class="text-primary"><strong>Action taken</strong></h6>
-                                                                            </div>
-                                                                            <div class="col-sm-12">
-                                                                                {% ifnotequal c.action_count 0 %}
-                                                                                    {% for i in c.actions %}
-                                                                                        <div class="row">
-                                                                                            <div class="col-sm-3 d-flex justify-content-end">
-                                                                                                <p class="p-t-2 b-b-default">
-                                                                                                    <strong>{{ i.reacting_faculty.name }}</strong>
-                                                                                                </p>
-                                                                                            </div>
-                                                                                            <div class="col-sm-9">
-                                                                                                <textarea class="form-control" rows="3" readonly style="background-color: white">{{ i.action_report }}</textarea>
-                                                                                                <div class="btn-toolbar" style="text-align: left;">
-                                                                                                    <div class="btn-group btn-group-sm" style="float: none;" data-toggle="tooltip" title="Not satisfied with the solution? want to reopen Complaint again.">
-                                                                                                        <button type="button" class="btn_reopen btn btn-danger waves-effect waves-light" com_id="{{ c.id }}" reopen_count="{{ c.reopened_count }}" style="float: none;margin: 5px;">
-                                                                                                            <span class="icofont icofont-retweet"></span>
-                                                                                                        </button>
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                                <div class="form-group" id="div-{{ c.id }}" style="display: none">
-                                                                                                    <form>
-                                                                                                        {% csrf_token %}
-                                                                                                        <input type="hidden" name="reopen_complaint_id" id="reopen_complaint_id" value="{{ c.id }}">
-                                                                                                        <input type="hidden" name="reopen_count" id="reopen_count" value="{{ c.reopened_count }}">
-                                                                                                        <label class="col-form-label" for="reopen_comment">Comment : </label>
-                                                                                                        <textarea class="form-control" name="reopen_comment" id="reopen_comment" rows="3"></textarea>
-                                                                                                        <button type="submit" class="btn btn-sm btn-primary m-t-10">Reopen</button>
-                                                                                                    </form>
-                                                                                                </div>
-                                                                                                <p class="text-muted">{{ i.timestamp }}</p>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    {% endfor %}
-                                                                                {% else %}
-                                                                                    <p class="text-danger" style="margin-left: 15%">
-                                                                                        <strong>
-                                                                                            No one has reacted to your complaints yet.
-                                                                                        </strong>
-                                                                                    </p>
-                                                                                {% endifnotequal %}
-                                                                            </div>
-                                                                        </div>
-
-
-
-
-{% ifequal c.status "Closed" %}
-                                                                                    <div class="row">
-                                                                                        <div class="col-sm-2" style="padding: 8px 10px">
-                                                                                            <label class="label label-success">{{ c.status }}</label>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                {% endifequal %}
-                                                                                {% ifequal c.status "Re-Opened" %}
-                                                                                    <label class="label label-warning">{{ c.status }}</label>
-                                                                                    <label class="badge badge-danger">{{ c.reopened_count }}</label>
-                                                                                {% endifequal %}

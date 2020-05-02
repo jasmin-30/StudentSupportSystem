@@ -213,10 +213,10 @@
                                                                     <td>{{ m.faculty_id.name }}</td>
                                                                     <td>{{ m.faculty_id.dept_id.dept_name }}</td>
                                                                     <td>
-                                                                        <form action="{% url 'manage_members' com_id=committee_id %}" method="post" id="remove_form">
+                                                                        <form action="{% url 'manage_members' com_id=committee_id %}" method="post" id="remove_form-{{ m.faculty_id.id }}">
                                                                             {% csrf_token %}
                                                                             <input type="hidden" name="faculty_id" id="faculty_id" value="{{ m.faculty_id.id }}">
-                                                                            <button type="button" class="btn_remove btn btn-danger waves-effect waves-light" style="padding: .5rem .75rem">
+                                                                            <button type="button" class="btn_remove btn btn-danger waves-effect waves-light" fac_id="{{ m.faculty_id.id }}" style="padding: .5rem .75rem">
                                                                                 <span class="icofont icofont-ui-delete"></span>
                                                                             </button>
                                                                         </form>
@@ -279,6 +279,9 @@
     <script type="text/javascript">
         $('button.btn_remove').on('click', function (event) {
             event.preventDefault();
+            var fac_id = $(this).attr('fac_id');
+            var ind = 'form#remove_form-'+fac_id;
+            console.log(ind);
             swal({
                     title: "Are you sure?",
 					text: "Member will be removed from this committee.",
@@ -287,7 +290,8 @@
 				},
 				function(isConfirm) {
 					if (isConfirm) {
-						$('#remove_form').submit();
+
+						$(ind).submit();
 					}
 				});
         });
