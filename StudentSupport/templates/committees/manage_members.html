@@ -165,12 +165,10 @@
                                         </div>
                                         <div class="col-sm-4 col-md-4 col-lg-4">
                                             <span class="f-right">
-                                                <form action="{% url 'chaiperson_dashboard' com_id=committee_id %}">
-                                                    <button class="btn btn-round btn-outline-primary" type="submit">
-                                                        <i class="feather icon-arrow-left"></i>
-                                                        Back to Committee Dashboard
-                                                    </button>
-                                                </form>
+                                                <a class="btn btn-round btn-outline-primary" href="{% url 'chaiperson_dashboard' com_id=committee_id %}">
+                                                    <i class="feather icon-arrow-left"></i>
+                                                    Back to Committee Dashboard
+                                                </a>
                                             </span>
                                         </div>
                                     </div>

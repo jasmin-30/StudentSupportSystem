@@ -815,59 +815,272 @@ def StudentComplaintSectionView(request):
         context["committees"] = committee_qs
 
         if request.method == 'POST':
+            if request.POST.get('complaint') is not None:
+                complaint = request.POST.get('complaint')
+                committee_id = request.POST.get('committee')
+                complaint_obj = Complaints.objects.create(
+                    student_id=std_obj,
+                    complaint_details=complaint,
+                    committee_id=Committees.objects.get(id=int(committee_id)),
+                    status="Pending"
+                )
+                complaint_obj.save()
+
+                context["success"] = "Complaint Registered successfully."
+
             if request.POST.get('complaint_id') is not None:
                 complaint_id = request.POST.get('complaint_id')
                 complaint_obj = Complaints.objects.get(id=int(complaint_id))
-                revoke_reason = request.POST.get('comments')
-                complaint_obj.status = "Revoked"
-                complaint_obj.revoked_reason = revoke_reason
-                complaint_obj.revoked = True
-                complaint_obj.save()
+                status = request.POST.get('status')
 
-                context["success"] = "Complaint Revoked Successfully."
+                if status == "Pending" or status == "Revoke":
+                    revoke_reason = request.POST.get('revoke_reason')
+                    complaint_obj.status = "Revoked"
+                    complaint_obj.revoked_reason = revoke_reason
+                    complaint_obj.revoked = True
+                    complaint_obj.revoked_date = datetime.datetime.now()
+                    complaint_obj.save()
 
-            if request.POST.get('complaint') is not None:
-                try:
-                    com_id = request.POST.get('committee')
-                    com_obj = Committees.objects.get(id=com_id)
+                    context["success"] = "Complaint Revoked Successfully."
 
-                    complaint_details = request.POST.get('complaint')
+                elif status == "Re-Open":
+                    comment = request.POST.get('comment')
+                    complaint_obj.status = "Re-Opened"
+                    complaint_obj.reopened_count += 1
+                    complaint_obj.save()
 
-                    complaints_of_student_obj = Complaints.objects.create(
-                        student_id=std_obj,
-                        committee_id=com_obj,
-                        complaint_details=complaint_details
+                    new_comment_obj = Complaint_Reopen_comments.objects.create(
+                        complaint_id = complaint_obj,
+                        reopen_count=complaint_obj.reopened_count,
+                        comments=comment
                     )
-                    complaints_of_student_obj.save()
-                    context["success"] = "Complaint registered successfully."
+                    new_comment_obj.save()
 
-                except:
-                    context["error"] = "Some technical problem occured."
-                    return render(request, "students/student_complaint_section.html", context)
+                    context["success"] = "Complaint thread has been re-opened."
 
-        complaints_qs = Complaints.objects.filter(student_id=std_obj).filter(revoked=False)
-        if complaints_qs.count() == 0:
-            context["No_Complaints"] = True
+
+        complaints_qs = Complaints.objects.filter(student_id=std_obj)
+        # ======================== Pending Complaints ===================================
+        pending_qs = complaints_qs.filter(status="Pending").filter(revoked=False).order_by('-timestamp')
+        pending_count = pending_qs.count()
+        if pending_count == 0:
+            context["no_pending_complaints"] = True
 
         else:
-            context["No_Complaints"] = False
+            context["no_pending_complaints"] = False
 
-            complaint_dict = []
-            for i in complaints_qs:
-                tmp = {
-                    'id': i.id,
-                    'complaint_details': i.complaint_details,
-                    'committee': Committees.objects.get(id=i.committee_id.id),
-                    'status': i.status,
-                    'reopened_count': i.reopened_count,
-                    'timestamp': i.timestamp.strftime("%d %B, %Y, %I:%M %p"),
-                }
-                solution_qs = Complaints_Solutions.objects.filter(complaint_id=i.id)
-                tmp['action_count'] = solution_qs.count()
-                tmp['actions'] = solution_qs
-                complaint_dict.append(tmp)
+        context["pending_count"] = pending_count
 
-            context["complaints_qs"] = complaint_dict
+        pending_dict = []
+
+        for i in pending_qs:
+            tmp = {
+                'id': i.id,
+                'complaint_details': i.complaint_details,
+                'committee': Committees.objects.get(id=i.committee_id.id).committee_name,
+                'status': i.status,
+                'timestamp': i.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+            }
+            pending_dict.append(tmp)
+
+        context["pending_complaints"] = pending_dict
+        # ======================== Re-Opened Complaints =================================
+        reopened_qs = complaints_qs.filter(status="Re-Opened").filter(revoked=False).order_by('-timestamp')
+        reopened_count = reopened_qs.count()
+        if reopened_count == 0:
+            context["no_reopened_complaints"] = True
+
+        else:
+            context["no_reopened_complaints"] = False
+
+        context["reopened_count"] = reopened_count
+
+        reopened_dict = []
+
+        for i in reopened_qs:
+            tmp = {
+                'id': i.id,
+                'complaint_details': i.complaint_details,
+                'committee': Committees.objects.get(id=i.committee_id.id).committee_name,
+                'reopened_count': i.reopened_count,
+                'status': i.status,
+                'timestamp': i.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+            }
+            actions_count = i.reopened_count
+            tmp["actions"] = []
+            j = 0
+            while j <= actions_count:
+                # print("yes")
+                if j < 1:
+                    response_obj = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': response_obj.reacting_faculty.name,
+                        'comment': response_obj.action,
+                        'dept': response_obj.reacting_faculty.dept_id.dept_name,
+                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Closed'
+                    }
+                    tmp["actions"].append(tmp1)
+                else:
+                    student_response = Complaint_Reopen_comments.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': str(std_obj.first_name) + " " + str(std_obj.last_name),
+                        'comment': student_response.comments,
+                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Re-Opened'
+                    }
+                    tmp["actions"].append(tmp1)
+                    try:
+                        faculty_response = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                        tmp1 = {
+                            'name': faculty_response.reacting_faculty.name,
+                            'comment': faculty_response.action,
+                            'dept': faculty_response.reacting_faculty.dept_id.dept_name,
+                            'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'action': 'Closed'
+                        }
+                        tmp["actions"].append(tmp1)
+
+                    except Complaints_Solutions.DoesNotExist:
+                        pass
+
+                j += 1
+
+            reopened_dict.append(tmp)
+
+        context["reopened_complaints"] = reopened_dict
+        # ======================== Closed Complaints ====================================
+        closed_qs = complaints_qs.filter(status="Closed").filter(revoked=False).order_by('-timestamp')
+        closed_count = closed_qs.count()
+        if closed_count == 0:
+            context["no_closed_complaints"] = True
+
+        else:
+            context["no_closed_complaints"] = False
+
+        context["closed_count"] = closed_count
+
+        closed_dict = []
+
+        for i in closed_qs:
+            tmp = {
+                'id': i.id,
+                'complaint_details': i.complaint_details,
+                'committee': Committees.objects.get(id=i.committee_id.id).committee_name,
+                'reopened_count': i.reopened_count,
+                'status': i.status,
+                'timestamp': i.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+            }
+            actions_count = i.reopened_count
+            tmp["actions"] = []
+            j = 0
+            while j <= actions_count:
+                # print("yes")
+                if j < 1:
+                    response_obj = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': response_obj.reacting_faculty.name,
+                        'comment': response_obj.action,
+                        'dept': response_obj.reacting_faculty.dept_id.dept_name,
+                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Closed'
+                    }
+                    tmp["actions"].append(tmp1)
+                else:
+                    student_response = Complaint_Reopen_comments.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': str(std_obj.first_name) + " " + str(std_obj.last_name),
+                        'comment': student_response.comments,
+                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Re-Opened'
+                    }
+                    tmp["actions"].append(tmp1)
+
+                    faculty_response = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': faculty_response.reacting_faculty.name,
+                        'comment': faculty_response.action,
+                        'dept': faculty_response.reacting_faculty.dept_id.dept_name,
+                        'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Closed'
+                    }
+                    tmp["actions"].append(tmp1)
+
+                j += 1
+
+            closed_dict.append(tmp)
+
+        context["closed_complaints"] = closed_dict
+        # ======================== Revoked Complaints ===================================
+        revoked_qs = complaints_qs.filter(status="Revoked").filter(revoked=True).order_by('-timestamp')
+        revoked_count = revoked_qs.count()
+        if revoked_count == 0:
+            context["no_revoked_complaints"] = True
+
+        else:
+            context["no_revoked_complaints"] = False
+
+        context["revoked_count"] = revoked_count
+
+        revoked_dict = []
+
+        for i in revoked_qs:
+            tmp = {
+                'id': i.id,
+                'complaint_details': i.complaint_details,
+                'committee': Committees.objects.get(id=i.committee_id.id).committee_name,
+                'reopened_count': i.reopened_count,
+                'status': i.status,
+                'revoked_reason': i.revoked_reason,
+                'revoked_date': str(i.revoked_date.strftime("%d %B, %Y, %I:%M %p")),
+                'timestamp': i.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+            }
+            actions_count = i.reopened_count
+            tmp["actions"] = []
+            if actions_count > 0:
+                j = 0
+                while j <= actions_count:
+                    # print("yes")
+                    if j < 1:
+                        response_obj = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                        tmp1 = {
+                            'name': response_obj.reacting_faculty.name,
+                            'comment': response_obj.action,
+                            'dept': response_obj.reacting_faculty.dept_id.dept_name,
+                            'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'action': 'Closed'
+                        }
+                        tmp["actions"].append(tmp1)
+                    else:
+                        student_response = Complaint_Reopen_comments.objects.get(complaint_id=i, reopen_count=j)
+                        tmp1 = {
+                            'name': str(std_obj.first_name) + " " + str(std_obj.last_name),
+                            'comment': student_response.comments,
+                            'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'action': 'Re-Opened'
+                        }
+                        tmp["actions"].append(tmp1)
+                        try:
+                            faculty_response = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                            tmp1 = {
+                                'name': faculty_response.reacting_faculty.name,
+                                'comment': faculty_response.action,
+                                'dept': faculty_response.reacting_faculty.dept_id.dept_name,
+                                'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                                'action': 'Closed'
+                            }
+                            tmp["actions"].append(tmp1)
+
+                        except Complaints_Solutions.DoesNotExist:
+                            pass
+
+                    j += 1
+            else:
+                tmp["actions"] = []
+
+            revoked_dict.append(tmp)
+
+        context["revoked_complaints"] = revoked_dict
 
         return render(request, "students/student_complaint_section.html", context)
 
