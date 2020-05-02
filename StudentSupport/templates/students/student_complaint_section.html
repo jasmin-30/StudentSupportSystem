@@ -14,8 +14,12 @@
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+    <!-- ico font -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/list-scroll/list.css' %}">
     <!-- Style.css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
@@ -60,13 +64,85 @@
         </div>
     </div>
     <!-- Pre-loader end -->
-       <div id="pcoded" class="pcoded">
+    <!-- Add Complaints Modal > Start -->
+    <div class="modal fade" id="add-complaint-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Complaints</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'student_complaint_section' %}" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="complaint" style="font-weight: 900">Complaint Description: </label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" name="complaint" id="complaint" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="committee" style="font-weight: 900">Committee : </label>
+                            <div class="col-sm-8">
+                                <select class="custom-select" name="committee" id="committee" style="width: 100%" required>
+                                    <option value="-1" selected disabled>Select Committee for complaint</option>
+                                    {% for c in committees %}
+                                        <option value="{{ c.id }}">{{ c.committee_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row f-right" style="padding-right: 15px;">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="feather icon-plus"></i>  Add Complaint
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Add Complaints Modal > End -->
+
+    <!-- Revoke Complaint Modal > Start -->
+    <div class="modal fade" id="revoke-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Revoke Complaint</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="{% url 'student_complaint_section' %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="complaint_id" id="complaint_id" value="" />
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="comments" style="font-weight: 900">Reason of Revoking: </label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" name="comments" id="comments" rows="3" required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row f-right" style="padding-right: 15px;">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="feather icon-x"></i>  Revoke Complaint
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Revoke Complaint Modal > End -->
+
+    <div id="pcoded" class="pcoded">
         <div class="pcoded-overlay-box"></div>
         <div class="pcoded-container navbar-wrapper">
-
             <nav class="navbar header-navbar pcoded-header">
                 <div class="navbar-wrapper">
-
                     <div class="navbar-logo">
                         <a href="{% url 'student_dashboard' %}">
                             <img class="img-fluid" src="{% static 'assets/images/logo_sss.png' %}" alt="Theme-Logo">
@@ -101,151 +177,152 @@
                     </div>
                 </div>
             </nav>
-
             <div class="pcoded-main-container">
                 <div class="pcoded-wrapper">
-                    <nav class="pcoded-navbar">
-                        <div class="pcoded-inner-navbar main-menu">
-                            <div class="pcoded-navigatio-lavel" menu-title-theme="theme5">
-                                Quick Links
-                            </div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="{% url 'student_profile' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">My Profile</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                  <!-- Add Complaint -->
-                                    <a href="{% url 'student_complaint_section' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-server"></i></span>
-                                        <span class="pcoded-mtext">Complaints Section</span>
-                                    </a>
-                                </li>
-                                <li class="pcoded-hasmenu">
-                                    <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                        <span class="pcoded-mtext">Feedback Section</span>
-                                    </a>
-                                    <ul class="pcoded-submenu">
-                                        <li class="">
-                                            <a href="{% url 'student_mid_sem_feedback'  %}">
-                                                <span class="pcoded-mtext">Mid Semester Feedback</span>
-                                            </a>
-                                        </li>
-                                        <li class="">
-                                            <a href="{% url 'student_end_sem_feedback'  %}">
-                                                <span class="pcoded-mtext">End Semester Feedback</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="">
-                                    <a href="{% url 'logout' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
-                                        <span class="pcoded-mtext">Logout</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                    <div class="pcoded-content">
-                        <div class="pcoded-inner-content">
-                            <div class="main-body">
-                                <div class="page-wrapper">
-                                    <div class="page-body">
-                                        <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="page-header">
-                                                <div class="row align-items-end">
-                                                    <div class="col-lg-8">
-                                                        <div class="page-header-title">
-                                                            <div class="d-inline">
-                                                                <h4>Complaint Section</h4>
-                                                            </div>
+                    <div class="pcoded-inner-content">
+                        <div class="main-body">
+                            <div class="page-wrapper">
+                                <div class="page-body">
+                                    <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="page-header">
+                                            <div class="row align-items-end">
+                                                <div class="col-lg-8">
+                                                    <div class="page-header-title">
+                                                        <div class="d-inline">
+                                                            <h3>Complaint Section</h3>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div class="col-sm-4 col-md-4 col-lg-4">
+                                                    <span class="f-right">
+                                                        <a href="{% url 'student_dashboard' %}" class="btn" style="font-size: 15px">
+                                                            <i class="feather icon-arrow-left"></i>
+                                                            Back to Dashboard
+                                                        </a>
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <div class="col-md-12">
-                                                <ul class="list-view">
-                                                  <!-- Model -->
-                                                  <div class="modal fade modal-flex" id="studentcomplainmodal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
-                                                      <div class="modal-dialog" role="document">
-                                                          <div class="modal-content" style="width: 181%; margin-left: -14%;">
-                                                              <div class="modal-body">
-                                                                <form method="post" action="{% url 'student_complaint_section' %}">
-                                                                    {% csrf_token %}
-                                                                    <div class="form-group row">
-                                                                        <label class="col-sm-3 col-form-label" for="complaint">Complaint Description : </label>
-                                                                        <div class="col-sm-8">
-                                                                          <textarea name="complaint" id="complaint" rows="8" cols="70" required></textarea>
+                                        </div>
+                                        <div class="card">
+                                            <div class="card-header">
+                                                <div class="row">
+                                                    <div class="col-md-12 d-flex justify-content-end">
+                                                          <button class="btn btn-outline-primary" data-toggle="modal" data-target="#add-complaint-modal">
+                                                              Add Complaint
+                                                          </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-block b-t-default">
+                                                {% ifequal No_Complaints True %}
+                                                    <p>
+                                                        <strong>No Complaint issued yet.</strong>
+                                                    </p>
+                                                {% else %}
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <ul class="basic-list">
+                                                                {% for c in complaints_qs %}
+                                                                    <li class="" style="border-bottom: 1px solid black">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-2">
+                                                                            <h6 class="m-0 p-l-30 p-t-5" ><strong>Description : </strong></h6>
+                                                                        </div>
+                                                                        <div class="col-sm-10">
+                                                                            <textarea class="form-control" rows="3" readonly style="background-color: white">{{ c.complaint_details }}</textarea>
+                                                                        </div>
+                                                                        <div class="col-sm-2">
+                                                                            <h6 class="m-0 p-l-30 p-t-5" ><strong>Committee : </strong></h6>
+                                                                        </div>
+                                                                        <div class="col-sm-10">
+                                                                            <p>{{ c.committee.committee_name }}</p>
+                                                                        </div>
+                                                                        <div class="col-sm-2">
+                                                                            <h6 class="m-0 p-l-30 p-t-5" ></h6>
+                                                                        </div>
+                                                                        <div class="col-sm-10">
+                                                                            {% ifequal c.status "Pending" %}
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-2" style="padding: 8px 10px">
+                                                                                        <label class="label label-primary">{{ c.status }}</label>
+                                                                                    </div>
+                                                                                    <div class="col-sm-10">
+                                                                                        <div class="btn-toolbar" style="text-align: left;">
+                                                                                            <div class="btn-group btn-group-sm" style="float: none;" data-toggle="tooltip" title="Revoke Complaint">
+                                                                                                <button type="button" class="btn_revoke btn btn-danger waves-effect waves-light" com_id="{{ c.id }}" style="float: none;margin: 5px;" data-toggle="modal" data-target="#revoke-modal">
+                                                                                                    <span class="icofont icofont-ui-close"></span>
+                                                                                                </button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            {% endifequal %}
+                                                                            {% ifequal c.status "Closed" %}
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-2" style="padding: 8px 10px">
+                                                                                        <label class="label label-success">{{ c.status }}</label>
+                                                                                    </div>
+                                                                                </div>
+                                                                            {% endifequal %}
+                                                                            {% ifequal c.status "Re-Opened" %}
+                                                                                <label class="label label-warning">{{ c.status }}</label>
+                                                                                <label class="badge badge-danger">{{ c.reopened_count }}</label>
+                                                                            {% endifequal %}
                                                                         </div>
                                                                     </div>
-
-                                                                    <div class="form-group row" id="role-div">
-                                                                        <label class="col-sm-3 col-form-label" for="role">Committee : </label>
-                                                                        <div class="col-sm-8">
-                                                                            <select onblur="validate_role()" name="committee" id="committee" class="form-control" style = "width: 107%;" required>
-                                                                                <option value="-1" selected disabled>Select Committee</option>
-                                                                                {% for i in committees %}
-                                                                                    <option value="{{ i.id }}">{{ i.committee_name }}</option>
+                                                                    <hr />
+                                                                    <div class="row">
+                                                                        <div class="col-sm-3 d-flex justify-content-center">
+                                                                            <h6 class="text-primary"><strong>Action taken</strong></h6>
+                                                                        </div>
+                                                                        <div class="col-sm-12">
+                                                                            {% ifnotequal c.action_count 0 %}
+                                                                                {% for i in c.actions %}
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-3 d-flex justify-content-end">
+                                                                                            <p class="p-t-2 b-b-default">
+                                                                                                <strong>{{ i.reacting_faculty.name }}</strong>
+                                                                                            </p>
+                                                                                        </div>
+                                                                                        <div class="col-sm-9">
+                                                                                            <textarea class="form-control" rows="3" readonly style="background-color: white">{{ i.action_report }}</textarea>
+                                                                                            <div class="btn-toolbar" style="text-align: left;">
+                                                                                                <div class="btn-group btn-group-sm" style="float: none;" data-toggle="tooltip" title="Not satisfied with the solution? want to reopen Complaint again.">
+                                                                                                    <button type="button" class="btn_reopen btn btn-danger waves-effect waves-light" com_id="{{ c.id }}" reopen_count="{{ c.reopened_count }}" style="float: none;margin: 5px;">
+                                                                                                        <span class="icofont icofont-retweet"></span>
+                                                                                                    </button>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="form-group" id="div-{{ c.id }}" style="display: none">
+                                                                                                <form>
+                                                                                                    {% csrf_token %}
+                                                                                                    <input type="hidden" name="reopen_complaint_id" id="reopen_complaint_id" value="{{ c.id }}">
+                                                                                                    <input type="hidden" name="reopen_count" id="reopen_count" value="{{ c.reopened_count }}">
+                                                                                                    <label class="col-form-label" for="reopen_comment">Comment : </label>
+                                                                                                    <textarea class="form-control" name="reopen_comment" id="reopen_comment" rows="3"></textarea>
+                                                                                                    <button type="submit" class="btn btn-sm btn-primary m-t-10">Reopen</button>
+                                                                                                </form>
+                                                                                            </div>
+                                                                                            <p class="text-muted">{{ i.timestamp }}</p>
+                                                                                        </div>
+                                                                                    </div>
                                                                                 {% endfor %}
-                                                                            </select>
-                                                                            <div id="Error_role" style="display: none; color: red;"></div>
+                                                                            {% else %}
+                                                                                <p class="text-danger" style="margin-left: 15%">
+                                                                                    <strong>
+                                                                                        No one has reacted to your complaints yet.
+                                                                                    </strong>
+                                                                                </p>
+                                                                            {% endifnotequal %}
                                                                         </div>
                                                                     </div>
-                                                                    <div class="form-group row f-right" style="padding-right: 15px;">
-                                                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                                                    </div>
-                                                                </form>
-                                                              </div>
-                                                          </div>
-                                                      </div>
-                                                  </div>
-
-                                                  <button class="mdc-button btn btn-primary" data-toggle="modal" data-target="#studentcomplainmodal" style="color: #404E67;">
-                                                      <span class="mdc-button__ripple"></span>
-                                                      Add Complaint
-                                                  </button>
-                                                </ul>
-                                            </div>
-                                            <div class="col-md-12" style="margin-top: 2%;">
-                                                <table class="table table-hover">
-                                                  <thead>
-                                                    <tr>
-                                                      <th scope="col">#</th>
-                                                      <th scope="col">Complain Details</th>
-                                                      <th scope="col">Status</th>
-                                                      <th scope="col">Action Taken</th>
-                                                      <th scope="col">Report</th>
-                                                      <th scope="col">Committee</th>
-                                                      <th scope="col">Reacting Faculty</th>
-                                                      <th scope="col">Enrollment Number</th>
-                                                    </tr>
-                                                  </thead>
-                                                  <tbody>
-                                                    {% for i in complaints_of_students %}
-                                                        <tr>
-                                                          <th scope="row">{{ forloop.counter }}</th>
-                                                          <td>{{ i.complaint_details }}</td>
-                                                          {% if i.status == '0' %}
-                                                              <td>Closed</td>
-                                                          {% elif i.status == '1' %}
-                                                              <td>Active/Pending</td>
-                                                          {% elif i.status == '2' %}
-                                                              <td>Re-Opened</td>
-                                                          {% endif %}
-                                                          <td>{{ i.action_taken }}</td>
-                                                          <td>{{ i.report }}</td>
-                                                          <td>{{ i.committee_id.committee_name }}</td>
-                                                          <td>{{ i.reacting_faculty }}</td>
-                                                          <td>{{ i.student_id.enrollment_no }}</td>
-                                                        </tr>
-                                                    {% endfor %}
-                                                  </tbody>
-                                                </table>
+                                                                </li>
+                                                                {% endfor %}
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                {% endifequal %}
                                             </div>
                                         </div>
                                     </div>
@@ -254,7 +331,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -271,18 +347,12 @@
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
-    <!-- Chart js -->
-    <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>
-    <!-- amchart js -->
-    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>
+
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <!-- custom js -->
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
 
     <script type="text/javascript">
@@ -301,6 +371,22 @@
                 type: "error"
             });
         {% endif %}
+    </script>
+
+    <script type="text/javascript">
+        $(document).on('click', '.btn_revoke', function (event) {
+            event.preventDefault();
+            modal = $(document).find('#revoke-modal');
+            modal.find('input#complaint_id').val($(this).attr('com_id'));
+            modal.modal('show');
+        });
+
+        $(document).on('click', '.btn_reopen', function (event) {
+            event.preventDefault();
+            var id = $(this).attr('com_id');
+            var ind = 'div#div-'+id;
+            $(document).find(ind).show();
+        });
     </script>
 
 </body>

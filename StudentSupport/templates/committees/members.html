@@ -1,0 +1,543 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Committee Dashboard</title>
+    <!-- Meta -->
+    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
+    <!-- Favicon icon -->
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
+    <!-- feather Awesome -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+    <!-- Style.css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
+    <!-- ico font -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
+    <!-- themify-icons line icon -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+
+    <!-- list css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/list-scroll/list.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/custom_style.css' %}">
+    <style type="text/css">
+        #card-rounded {
+            border-radius: 25px;
+        }
+
+        .expandable {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Pre-loader start -->
+    <div class="theme-loader">
+        <div class="ball-scale">
+            <div class='contain'>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pre-loader end -->
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-container navbar-wrapper">
+
+            <nav class="navbar header-navbar pcoded-header">
+                <div class="navbar-wrapper">
+                    <div class="navbar-logo">
+                    <a href="index-1.htm">
+                        <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Theme-Logo">
+                    </a>
+                </div>
+                    <div class="navbar-container container-fluid">
+
+                    <ul class="nav-right">
+
+                        <li class="user-profile header-notification">
+                            <div class="dropdown-primary dropdown">
+                                <div class="dropdown-toggle" data-toggle="dropdown">
+{#                                    <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">#}
+                                    <span>{{ name }}</span>
+                                    <i class="feather icon-chevron-down"></i>
+                                </div>
+                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                                    <li>
+                                        <a href="user-profile.htm">
+                                            <i class="feather icon-user"></i> Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="change_password.html">
+                                            <i class="feather icon-log-out"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                </div>
+            </nav>
+            <div class="pcoded-main-container">
+                <div class="pcoded-wrapper">
+                    <div class="pcoded-inner-content">
+                        <div class="main-body">
+                            <div class="page-wrapper">
+                                 <div class="page-header">
+                                    <div class="row align-items-end">
+                                        <div class="col-lg-8">
+                                            <div class="page-header-title">
+                                                <div class="d-inline">
+                                                    <h3>{{ committee_name }} Committee</h3>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4 col-md-4 col-lg-4">
+                                            <span class="f-right">
+                                                <form action="{% url 'view_members' com_id=committee_id %}">
+                                                    <button class="btn btn-round btn-outline-primary" type="submit">View Committee Members</button>
+                                                </form>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="page-body">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <div class="card" id="card-rounded">
+                                                <div class="card-header expandable">
+                                                    <h5 class="text-primary" style="font-size: 1.1rem; font-weight: inherit;">Pending Complaints</h5>
+                                                    <label class="badge badge-lg bg-primary">{{ pending_count }}</label>
+                                                    <div class="card-header-right">
+                                                        <ul class="list-unstyled card-option">
+                                                            <li><i class="feather icon-plus" style="color: black"></i></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="card-block" style="display: none;">
+                                                    {% ifequal no_pending_complaints True %}
+                                                        <p>
+                                                            <strong>No pending complaint.</strong>
+                                                        </p>
+                                                    {% else %}
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <ul class="basic-list">
+                                                                    {% for c in pending_complaints %}
+                                                                        <li class="p-b-20" style="border-bottom: 1px solid black; border-top: 1px solid black;">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12 p-10">
+                                                                                    <p style="font-size: 12pt">
+                                                                                        <strong>{{ c.student_name }}</strong> ({{ c.student_dept }})
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div class="col-sm-2">
+                                                                                    <h6 class="m-0 p-l-10 p-t-5" ><strong>Complaint : </strong></h6>
+                                                                                </div>
+                                                                                <div class="col-sm-10 m-b-15">
+                                                                                    <textarea class="form-control" rows="3" readonly style="background-color: white">{{ c.description }}</textarea>
+                                                                                    <p class="text-muted">
+                                                                                        {{ c.date }}
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div class="col-sm-2">
+                                                                                </div>
+                                                                                <div class="col-sm-10 m-b-15">
+                                                                                    <button class="take_action btn btn-primary" com_id="{{ c.id }}" type="button">Take Action</button>
+                                                                                    <button class="cancel cancel-{{ c.id }} btn btn-primary" com_id="{{ c.id }}" type="button" style="display: none;">Cancel</button>
+                                                                                </div>
+                                                                                <div class="col-sm-2"></div>
+                                                                                <div class="col-sm-10" id="div-{{ c.id }}" style="display: none">
+                                                                                    <form action="{% url 'member_dashboard' com_id=committee_id %}" method="post">
+                                                                                        {% csrf_token %}
+                                                                                        <input type="hidden" name="complaint_id" id="complaint_id" value="{{ c.id }}">
+                                                                                        <input type="hidden" name="status" id="status" value="Pending">
+                                                                                        <div class="form-group row">
+                                                                                            <div class="col-sm-10">
+                                                                                                <textarea class="form-control" rows="3" name="action" id="action" placeholder="Type your response here." required></textarea>
+                                                                                            </div>
+                                                                                            <div class="col-sm-2">
+                                                                                                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </form>
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    {% endifequal %}
+                                                </div>
+                                            </div>
+
+                                            <div class="card" id="card-rounded">
+                                                <div class="card-header expandable">
+                                                    <h5 class="text-info" style="font-size: 1.1rem; font-weight: inherit;">Re-opened Complaints</h5>
+                                                    <label class="badge badge-lg bg-info">{{ reopened_count }}</label>
+                                                    <div class="card-header-right">
+                                                        <ul class="list-unstyled card-option">
+                                                            <li><i class="feather icon-plus" style="color: black"></i></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="card-block" style="display: none;">
+                                                    {% ifequal no_reopened_complaints True %}
+                                                        <p>
+                                                            <strong>No complaint has been re-opened.</strong>
+                                                        </p>
+                                                    {% else %}
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <ul class="basic-list">
+                                                                    {% for c in reopened_complaints %}
+                                                                        <li class="p-b-20" style="border-bottom: 1px solid black; border-top: 1px solid black;">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12 p-10">
+                                                                                    <p style="font-size: 12pt">
+                                                                                        <strong>{{ c.student_name }}</strong> ({{ c.student_dept }})
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div class="col-sm-2">
+                                                                                    <h6 class="m-0 p-l-10 p-t-5" ><strong>Complaint : </strong></h6>
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <textarea class="form-control" rows="3" readonly style="background-color: white">{{ c.description }}</textarea>
+                                                                                    <p class="text-muted">
+                                                                                        {{ c.date }}
+                                                                                    </p>
+                                                                                    <p class="text-danger"><label class="badge badge-md bg-danger">{{ c.reopened_count }}</label> time{{ c.reopened_count|pluralize }} reopened.</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr />
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <h5 class="text-info" style="font-size: 14px; font-weight: 600;">Response</h5>
+                                                                                </div>
+                                                                                <div class="col-sm-12">
+                                                                                    {% for r in c.actions %}
+                                                                                        <div class="col-sm-12 m-b-20">
+                                                                                            <div class="row">
+                                                                                                <div class="col-sm-4 d-flex justify-content-end">{{ r.name }} : </div>
+                                                                                                <div class="col-sm-8">
+                                                                                                    <textarea class="form-control" rows="3" readonly>{{ r.comment }}</textarea>
+                                                                                                    <p class="text-muted"><span class="text-info">Complaint {{ r.action }} on, </span>{{ r.date }}</p>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    {% endfor %}
+                                                                                    <div class="col-sm-12">
+                                                                                        <div class="row">
+                                                                                            <div class="col-sm-4"></div>
+                                                                                            <div class="col-sm-8 m-b-15">
+                                                                                                <button type="button" class="btn_comment btn btn-info" com_id="{{ c.id }}">Comment</button>
+                                                                                                <button type="button" class="cancel_comment btn_cancel_comment-{{ c.id }} btn btn-info" com_id="{{ c.id }}" style="display: none;">Cancel</button>
+                                                                                            </div>
+                                                                                            <div class="col-sm-4"></div>
+                                                                                            <div class="col-sm-8" id="div-{{ c.id }}" style="display: none;">
+                                                                                                <form action="{% url 'member_dashboard' com_id=committee_id %}" method="post">
+                                                                                                    {% csrf_token %}
+                                                                                                    <input type="hidden" name="complaint_id" id="complaint_id" value="{{ c.id }}">
+                                                                                                    <input type="hidden" name="status" id="status" value="Re-opened">
+                                                                                                    <div class="form-group row">
+                                                                                                        <div class="col-sm-10">
+                                                                                                            <textarea class="form-control" rows="3" name="comment" id="comment" placeholder="Type your response here." required></textarea>
+                                                                                                        </div>
+                                                                                                        <div class="col-sm-2">
+                                                                                                            <button type="submit" class="btn btn-sm btn-info">Submit</button>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </form>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    {% endifequal %}
+                                                </div>
+                                            </div>
+
+                                            <div class="card" id="card-rounded">
+                                                <div class="card-header expandable">
+                                                    <h5 class="text-success" style="font-size: 1.1rem; font-weight: inherit;">Closed Complaints</h5>
+                                                    <label class="badge badge-lg bg-success">{{ closed_count }}</label>
+                                                    <div class="card-header-right">
+                                                        <ul class="list-unstyled card-option">
+                                                            <li><i class="feather icon-plus" style="color: black"></i></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="card-block" style="display: none;">
+                                                    {% ifequal no_closed_complaints True %}
+                                                        <p>
+                                                            <strong>No complaint closed.</strong>
+                                                        </p>
+                                                    {% else %}
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <ul class="basic-list">
+                                                                    {% for c in closed_complaints %}
+                                                                        <li class="p-b-20" style="border-bottom: 1px solid black; border-top: 1px solid black;">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12 p-10">
+                                                                                    <p style="font-size: 12pt">
+                                                                                        <strong>{{ c.student_name }}</strong> ({{ c.student_dept }})
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div class="col-sm-2">
+                                                                                    <h6 class="m-0 p-l-10 p-t-5" ><strong>Complaint : </strong></h6>
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <textarea class="form-control" rows="3" readonly style="background-color: white">{{ c.description }}</textarea>
+                                                                                    <p class="text-muted">
+                                                                                        {{ c.date }}
+                                                                                    </p>
+                                                                                    <p class="text-danger"><label class="badge badge-md bg-danger">{{ c.reopened_count }}</label> time{{ c.reopened_count|pluralize }} reopened.</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr />
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <h5 class="text-success" style="font-size: 14px; font-weight: 600;">Response</h5>
+                                                                                </div>
+                                                                                <div class="col-sm-12">
+                                                                                    {% for r in c.actions %}
+                                                                                        <div class="col-sm-12 m-b-20">
+                                                                                            <div class="row">
+                                                                                                <div class="col-sm-4 d-flex justify-content-end">{{ r.name }} : </div>
+                                                                                                <div class="col-sm-8">
+                                                                                                    <textarea class="form-control" rows="3" readonly>{{ r.comment }}</textarea>
+                                                                                                    <p class="text-muted"><span class="text-success">Complaint {{ r.action }} on, </span>{{ r.date }}</p>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    {% endfor %}
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    {% endifequal %}
+                                                </div>
+                                            </div>
+
+                                            <div class="card" id="card-rounded">
+                                                <div class="card-header expandable">
+                                                    <h5 class="text-warning" style="font-size: 1.1rem; font-weight: inherit;">Revoked Complaints</h5>
+                                                    <label class="badge badge-lg bg-warning">{{ revoked_count }}</label>
+                                                    <div class="card-header-right">
+                                                        <ul class="list-unstyled card-option">
+                                                            <li><i class="feather icon-plus" style="color: black"></i></li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="card-block" style="display: none;">
+                                                    {% ifequal no_revoked_complaints True %}
+                                                        <p>
+                                                            <strong>No complaint revoked.</strong>
+                                                        </p>
+                                                    {% else %}
+                                                        <div class="row">
+                                                            <div class="col-sm-12">
+                                                                <ul class="basic-list">
+                                                                    {% for c in revoked_complaints %}
+                                                                        <li class="p-b-20" style="border-bottom: 1px solid black; border-top: 1px solid black;">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12 p-10">
+                                                                                    <p style="font-size: 12pt">
+                                                                                        <strong>{{ c.student_name }}</strong> ({{ c.student_dept }})
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div class="col-sm-2">
+                                                                                    <h6 class="m-0 p-l-10 p-t-5" ><strong>Complaint : </strong></h6>
+                                                                                </div>
+                                                                                <div class="col-sm-10">
+                                                                                    <textarea class="form-control" rows="3" readonly style="background-color: white">{{ c.description }}</textarea>
+                                                                                    <p class="text-muted">
+                                                                                        {{ c.date }}
+                                                                                    </p>
+                                                                                    <p class="text-danger"><label class="badge badge-md bg-danger">{{ c.reopened_count }}</label> time{{ c.reopened_count|pluralize }} reopened.</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            {% if c.reopened_count > 0 %}
+                                                                                <hr />
+                                                                                <div class="row">
+                                                                                    <div class="col-sm-12">
+                                                                                        <h5 class="text-warning" style="font-size: 14px; font-weight: 600;">Response</h5>
+                                                                                    </div>
+                                                                                    <div class="col-sm-12">
+                                                                                        {% for r in c.actions %}
+                                                                                            <div class="col-sm-12 m-b-20">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-sm-4 d-flex justify-content-end">{{ r.name }} : </div>
+                                                                                                    <div class="col-sm-8">
+                                                                                                        <textarea class="form-control" rows="3" readonly>{{ r.comment }}</textarea>
+                                                                                                        <p class="text-muted"><span class="text-warning">Complaint {{ r.action }} on, </span>{{ r.date }}</p>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        {% endfor %}
+                                                                                    </div>
+                                                                                </div>
+                                                                            {% endif %}
+                                                                            <hr />
+                                                                            <div class="row">
+                                                                                <div class="col-sm-12">
+                                                                                    <div class="row">
+                                                                                        <div class="col-sm-3 d-flex justify-content-end text-warning">Revoked Reason : </div>
+                                                                                        <div class="col-sm-9">
+                                                                                            <textarea class="form-control text-warning" rows="3" readonly>{{ c.revoked_reason }}</textarea>
+                                                                                            <p class="text-muted"><span class="text-warning">Complaint Revoked on, </span>{{ c.revoked_date }}</p>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </li>
+                                                                    {% endfor %}
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    {% endifequal %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Required Jquery -->
+    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
+    <!-- jquery slimscroll js -->
+    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
+    <!-- modernizr js -->
+    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+
+    <!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+
+    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
+    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
+    <!-- custom js -->
+    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+
+    <script type="text/javascript">
+        {% if success %}
+            swal({
+                title: "{{ success|safe }}",
+                type: "success"
+            });
+        {% endif %}
+
+        {% if error %}
+            swal({
+                title: "Error",
+                text: "{{ error }}",
+                dangerMode: true,
+                type: "error"
+            });
+        {% endif %}
+    </script>
+
+    <script type="text/javascript">
+        $(".expandable").on('click', function() {
+            var $this = $(this);
+            var port = $($this.parents('.card'));
+            var card = $(port).children('.card-block').slideToggle();
+            $(this).find('i.feather').toggleClass("icon-minus").fadeIn('slow');
+            $(this).find('i.feather').toggleClass("icon-plus").fadeIn('slow');
+        });
+
+        $("button.take_action").on('click', function (event) {
+            event.preventDefault();
+            var id = $(this).attr('com_id');
+            var ind = 'div#div-'+id;
+            var btn_ind = 'button.cancel-'+id;
+            $(document).find(btn_ind).show();
+            $(document).find(ind).show();
+        });
+
+        $("button.cancel").on('click', function (event) {
+            event.preventDefault();
+            var id = $(this).attr('com_id');
+            var ind = 'div#div-'+id;
+            $(document).find(ind).hide();
+            $(this).hide();
+        });
+
+        $("button.btn_comment").on('click', function (event) {
+            event.preventDefault();
+            var id = $(this).attr('com_id');
+            var ind = 'div#div-'+id;
+            var btn_ind = 'button.btn_cancel_comment-'+id;
+            $(document).find(btn_ind).show();
+            $(document).find(ind).show();
+        });
+
+        $("button.cancel_comment").on('click', function (event) {
+            event.preventDefault();
+            var id = $(this).attr('com_id');
+            var ind = 'div#div-'+id;
+            $(document).find(ind).hide();
+            $(this).hide();
+        });
+
+    </script>
+</body>
+
+</html>

@@ -456,7 +456,7 @@ class Program_Exit_Survey_Answers(models.Model):
         return str(self.student_id)
 
 
-class Committee_Details(models.Model):
+class Committees(models.Model):
     committee_name = models.CharField(max_length=100)
     committee_details = models.TextField()
     chairperson = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
@@ -467,7 +467,7 @@ class Committee_Details(models.Model):
 
 
 class Committee_to_Members_Mapping(models.Model):
-    committee_id = models.ForeignKey(Committee_Details, to_field='id', on_delete=models.CASCADE)
+    committee_id = models.ForeignKey(Committees, to_field='id', on_delete=models.CASCADE)
     faculty_id = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -475,43 +475,64 @@ class Committee_to_Members_Mapping(models.Model):
         return str(self.committee_id) + "->" + str(self.faculty_id)
 
 
-class Complaints_of_Students(models.Model):
+class Complaints(models.Model):
     STATUS = (
-        (0, "Closed"),
-        (1, "Active/Pending"),
-        (2, "Re-Opened")
+        ("Closed", "Closed"),
+        ("Pending", "Pending"),
+        ("Re-Opened", "Re-Opened"),
+        ("Revoked", "Revoked"),
     )
     student_id = models.ForeignKey(Students, to_field='enrollment_no', on_delete=models.CASCADE)
-    committee_id = models.ForeignKey(Committee_Details, to_field='id', on_delete=models.CASCADE)
+    committee_id = models.ForeignKey(Committees, to_field='id', on_delete=models.CASCADE)
     complaint_details = models.TextField()
-    status = models.CharField(max_length=30, choices=STATUS, default=1)
-    reacting_faculty = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='id', on_delete=models.CASCADE, null=True,
-                                         blank=True)
-    action_taken = models.TextField(null=True, blank=True)
-    report = models.TextField(null=True, blank=True)
+    status = models.CharField(max_length=30, choices=STATUS, default="Pending")
+    reopened_count = models.IntegerField(default=0)  # 0 means first time complaints and 1 means first time reopened
+    revoked = models.BooleanField(default=False)
+    revoked_reason = models.TextField(null=True, blank=True)
+    revoked_date = models.DateTimeField(null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return str(self.complaint_details)
 
 
-class Complaints_of_Facultys(models.Model):
-    STATUS = (
-        (0, "Closed"),
-        (1, "Active/Pending"),
-        (2, "Re-Opened")
-    )
-    faculty_id = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
-    committee_id = models.ForeignKey(Committee_Details, to_field='id', on_delete=models.CASCADE)
-    complaint_details = models.TextField()
-    status = models.CharField(max_length=30, choices=STATUS, default=1)
-    reacting_faculty = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='id', on_delete=models.CASCADE)
-    action_taken = models.TextField()
-    report = models.TextField()
+class Complaints_Solutions(models.Model):
+    complaint_id = models.ForeignKey(Complaints, to_field='id', on_delete=models.CASCADE)
+    reopen_count = models.IntegerField(default=0) # for which complaint faculty reacted.
+    reacting_faculty = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
+    action = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.complaint_details)
+        return str(self.complaint_id) + str(self.reacting_faculty)
+
+
+class Complaint_Reopen_comments(models.Model):
+    complaint_id = models.ForeignKey(Complaints, to_field='id', on_delete=models.CASCADE)
+    reopen_count = models.IntegerField() # it will start from one like first time reopened likewise.
+    comments = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.complaint_id) + " > " + str(self.reopen_count) + " : " + str(self.comments)
+
+
+# class Complaints_of_Facultys(models.Model):
+#     STATUS = (
+#         ("Closed", "Closed"),
+#         ("Active/Pending", "Active/Pending"),
+#         ("Re-Opened", "Re-Opened")
+#     )
+#     faculty_id = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE)
+#     committee_id = models.ForeignKey(Committees, to_field='id', on_delete=models.CASCADE)
+#     complaint_details = models.TextField()
+#     status = models.CharField(max_length=30, choices=STATUS, default="Active/Pending")
+#     reacting_faculty = models.ForeignKey(Faculty, to_field='id', on_delete=models.CASCADE, null=True, blank=True)
+#     report = models.TextField(null=True, blank=True)
+#     timestamp = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self):
+#         return str(self.complaint_details)
 
 
 # class News(models.Model):

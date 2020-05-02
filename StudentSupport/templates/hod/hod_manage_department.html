@@ -11,7 +11,8 @@
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/New/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bower_components/bootstrap-selectpicker/css_bootstrap-select.css' %}" />
     <!-- themify-icons line icon -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
     <!-- ico font -->
@@ -71,62 +72,6 @@
         </div>
     </div>
     <!-- Pre-loader end -->
-    <!-- Change Faculty for Subject > Start -->
-    <div class="modal fade" id="change-faculty-modal" data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Change Faculty for Subject : <span id="change_subject">Data Structure</span></h4>
-                </div>
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                            <button type="button" class="btn btn-primary f-right" id="btn_add_new_teaching_faculty">
-                                <i class="feather icon-plus-circle"></i>
-                                Add More Faculty
-                            </button>
-                        </div>
-                    </div>
-                    <div class="table-responsive m-t-10">
-                        <table class="table table-hover" id="teaching_faculty_table">
-                            <thead>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Action</th>
-                            </thead>
-                            <tbody>
-
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="add_new_teaching_faculty-div" style="display: none;">
-                        <div class="form-group row">
-                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" for="faculty_select">Add Teaching Faculty : </label>
-                            <div id="faculty_select-div" class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                <select class="form-control" name="faculty_select" id="faculty_select" onblur="verify_select()" onchange="verify_select()">
-                                </select>
-                                <div id="Error_faculty_select" style="color: red; display: none;"></div>
-                            </div>
-                            <div class="col-sm-2 col-md-2 col-lg-2 col-xl-2">
-                                <button type="button" class="btn btn-disabled" id="btn_add_new_faculty" onmouseover="activate_btn()" disabled>Add</button>
-                            </div>
-                            <div class="col-sm-1 col-md-1 col-lg-1 col-xl-1">
-                                <a href="#" class="btn btn-link" id="btn_icon_cancel">
-                                    <i class="feather icon-x-circle"></i>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" id="btn_close" class="btn btn-default waves-effect " data-dismiss="modal">Close</button>
-                    <button type="button" id="btn_save_changes" class="btn btn-primary waves-effect waves-light">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Change Faculty for Subject > End -->
 
     <!-- Add Subject modal > Start -->
     <div class="modal fade" id="add-subject-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
@@ -139,7 +84,8 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form action="{% url 'hod_manage_department' %}" method="post">
+                        {% csrf_token %}
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label" for="add_Subject_Name">Subject Name : </label>
                             <div class="col-sm-8">
@@ -155,7 +101,7 @@
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label" for="add_subject_semester">Semester : </label>
                             <div class="col-sm-8">
-                                <select name="add_subject_semester" id="add_subject_semester" class="form-control" onchange="load_faculty()" required>
+                                <select name="add_subject_semester" id="add_subject_semester" class="form-control" required>
                                     <option value="-1" disabled selected>Select Semester</option>
                                     <option value="1">Sem 1</option>
                                     <option value="2">Sem 2</option>
@@ -171,16 +117,15 @@
                         <div class="form-group row">
                             <label class="col-sm-4 col-form-label" for="add_teaching_faculty">Teaching Faculty : </label>
                             <div class="col-sm-8">
-                                <div id="add_teaching_faculty-div">
-                                    <select name="add_teaching_faculty" id="add_teaching_faculty" class="form-control" onblur="build_form()" required>
-
-                                    </select>
-                                </div>
-                                <a href="#" class="btn btn-link p-l-0" id="add_new_select_faculty">Add More Teaching Faculty</a>
+                                <select name="add_teaching_faculty" id="add_teaching_faculty" class="selectpicker form-control" multiple data-live-search="true" title="Select Teaching Faculty" required>
+                                    {% for f in all_faculty %}
+                                        <option value="{{ f.id }}">{{ f.name }} ({{ f.dept_id.accronym }})</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <div class="form-group row f-right" style="padding-right: 15px;">
-                            <button type="submit" class="btn btn-disabled" id="btn-confirm" disabled>
+                            <button type="submit" class="btn btn-outline-primary">
                                 <i class="feather icon-plus"></i>  Add Subject
                             </button>
                         </div>
@@ -190,11 +135,13 @@
         </div>
     </div>
     <!-- Add Subject modal > End -->
+
     <div id="pcoded" class="pcoded">
         <div class="pcoded-overlay-box"></div>
         <div class="pcoded-container navbar-wrapper">
             <nav class="navbar header-navbar pcoded-header">
                 <div class="navbar-wrapper">
+                    <div class="navbar-container container-fluid p-l-0">
                     <div class="navbar-logo">
                     <a class="mobile-menu" id="mobile-collapse" href="javascript:void(0)">
                         <i class="feather icon-menu"></i>
@@ -203,35 +150,11 @@
                         <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Theme-Logo" style="max-width:85%;">
                     </a>
                 </div>
-                    <div class="navbar-container container-fluid">
-                        <form action="#" class="m-t-0" method="post">
-                            {% csrf_token %}
-                        <ul class="nav-left">
-                                <li class="user-profile header-notification">
-                                    <div class="form-group">
-                                        <select name="select" class="form-control" style="border-radius:10px;">
-                                            <option>Semester</option>
-                                            <option value="odd">Odd</option>
-                                            <option value="even">Even</option>
-                                        </select>
-                                    </div>
-                                </li>
-                                <li class="header-search">
-                                    <div class="form-group">
-                                        <select name="select" class="form-control" onchange="this.form.submit()" style="border-radius:10px;">
-                                            <option>Year</option>
-                                            <option value="2020">2020</option>
-                                            <option value="2021">2021</option>
-                                        </select>
-                                    </div>
-                                </li>
-                    </ul>
-                            </form>
                         <ul class="nav-right">
                         <li class="user-profile header-notification">
                             <div class="dropdown-primary dropdown">
                                 <div class="dropdown-toggle" data-toggle="dropdown">
-                                    <span>{{ faculty.name }}</span>
+                                    <span>{{ name }}</span>
                                     <i class="feather icon-chevron-down"></i>
                                 </div>
                                 <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
@@ -332,9 +255,13 @@
                                                                             </td>
                                                                             <td>
                                                                                 <span class="btn_remove">
-                                                                                    <a href="#" class="btn btn-link p-t-0 p-b-0">
-                                                                                        Remove
-                                                                                    </a>
+                                                                                    <div class="btn-toolbar" style="text-align: left;">
+                                                                                        <div class="btn-group btn-group-sm" style="float: none;">
+                                                                                            <button type="button" class="btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                                <span class="icofont icofont-ui-delete"></span>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
                                                                                 </span>
                                                                             </td>
                                                                         </tr>
@@ -356,9 +283,9 @@
                                                                                 </div>
                                                                             </td>
                                                                             <td>
-                                                                                <a href="javascript:void(0)" class="btn btn-link p-t-0 p-b-0">
-                                                                                    HOD
-                                                                                </a>
+                                                                                <div class="label-main">
+                                                                                    <label class="label label-lg label-primary">HOD</label>
+                                                                                </div>
                                                                             </td>
                                                                         </tr>
                                                                     {% endifnotequal %}
@@ -368,11 +295,6 @@
                                                         </div>
                                                     </div>
                                                     <div class="tab-pane" id="subjects" role="tabpanel">
-                                                        <div class="loader-block" style="display: none">
-                                                            <svg id="loader2" viewBox="0 0 100 100">
-                                                                <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
-                                                            </svg>
-                                                        </div>
                                                         <div class="subject-data" style="display: block">
                                                             <div class="row">
                                                                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
@@ -423,25 +345,29 @@
                                                                                     <div class="subject_data" col_name="teaching_faculties" id="teaching_faculties" is_edited="0">
                                                                                         {% for i in s.teaching_faculty %}
                                                                                             <span class="faculty" fac_id="{{ i.faculty_id.id }}" fac_email="{{ i.faculty_id.auth_id.email }}">
-                                                                                                {{ i.faculty_id.name }}
+                                                                                                {{ i.faculty_id.name }} ({{ i.faculty_id.dept_id.accronym }})
                                                                                             </span>
                                                                                             <br/>
                                                                                         {% endfor %}
                                                                                     </div>
                                                                                 </td>
                                                                                 <td>
-                                                                                    <span class="btn_subject_edit">
-                                                                                        <a href="#" class="btn btn-link p-0">Edit</a> |
-                                                                                    </span>
-                                                                                    <span class="btn_subject_remove">
-                                                                                        <a href="#" class="btn btn-link p-0">Remove</a>
-                                                                                    </span>
-                                                                                    <span class="btn_subject_save">
-                                                                                        <a href="#" class="btn btn-link p-0">Save</a> |
-                                                                                    </span>
-                                                                                    <span class="btn_subject_cancel">
-                                                                                        <a href="#" class="btn btn-link p-0">Cancel</a>
-                                                                                    </span>
+                                                                                    <div class="btn-toolbar" style="text-align: left;">
+                                                                                        <div class="btn-group btn-group-sm" style="float: none;">
+                                                                                            <button type="button" class="btn_subject_edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                                <span class="icofont icofont-ui-edit"></span>
+                                                                                            </button>
+                                                                                            <button type="button" class="btn_subject_remove btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                                <span class="icofont icofont-ui-delete"></span>
+                                                                                            </button>
+                                                                                            <button type="button" class="btn_subject_save btn btn-primary waves-effect waves-light active" style="float: none;margin: 5px;">
+                                                                                                <span class="icofont icofont-ui-check"></span>
+                                                                                            </button>
+                                                                                            <button type="button" class="btn_subject_cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                                <span class="icofont icofont-ui-close"></span>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                    </div>
                                                                                 </td>
                                                                             </tr>
                                                                         {% endfor %}
@@ -472,7 +398,9 @@
     <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap/New/js/bootstrap.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap/New/js/bootstrap.bundle.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap-selectpicker/js_bootstrap-select.js' %}"></script>
     <!-- jquery slimscroll js -->
     <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
     <!-- modernizr js -->
@@ -490,230 +418,37 @@
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
 
-    <!-- Javascript for add subject modal > start -->
+    <!-- Enabling Select Picker -->
     <script type="text/javascript">
-        var faculty_id = {};
-        var div_content = '';
-        var all_faculty = '<option value="-1" selected disabled>Select Faculty</option>';
-        {% for f in all_faculty %}
-            all_faculty += '<option value="{{ f.id }}">{{ f.name }} ({{ f.dept_id.dept_name }})</option>'
-        {% endfor %}
-
-        var dept_faculty = '<option value="-1" selected disabled>Select Faculty</option>';
-        {% for f in faculties %}
-            dept_faculty += '<option value="{{ f.id }}">{{ f.name }} ({{ f.dept_id.dept_name }})</option>'
-        {% endfor %}
-
-
-        function load_faculty() {
-            var sem_value = $(document).find('#add_subject_semester option:selected').val();
-            var faculty_select_tag = $(document).find('#add_teaching_faculty');
-            if(sem_value < 5) {
-                faculty_select_tag.html(all_faculty);
-            }
-            else {
-                faculty_select_tag.html(dept_faculty);
-            }
-        }
-
-        function build_form() {
-            var div_tag = $(document).find('#add_teaching_faculty-div');
-            var faculty_select_tag = $(document).find('#add_teaching_faculty option:selected');
-            if (typeof faculty_select_tag.val() != 'undefined') {
-                var faculty_value = faculty_select_tag.val();
-                if(faculty_value == "-1") {
-                    if(Object.keys(faculty_id).length == 0) {
-                        alert("Select valid faculty");
-                    }
-                }
-                else {
-                    faculty_id[faculty_value] = faculty_select_tag.text();
-                    console.log(faculty_id);
-                    div_content += '<div class="added_faculty" fac_id="'+faculty_value+'">' + faculty_select_tag.text() + '<a id="delete_added" href="javascript:void(0)" class="btn btn-link p-0 m-l-5"><i class="feather icon-x-circle"></i></a></div>';
-                    div_tag.html(div_content + '<br />');
-                    var btn = $(document).find('#btn-confirm');
-                    btn.removeAttr('disabled');
-                    btn.removeClass('btn-disabled');
-                    btn.addClass('btn-outline-primary');
-                }
-            }
-        }
-
-        $(document).on('click', '#delete_added', function (event) {
-            event.preventDefault();
-            var div = $(this).closest('div');
-            var id_tobe_removed = div.attr('fac_id');
-            delete faculty_id[id_tobe_removed];
-            console.log(faculty_id);
-            div_content = '';
-            if(Object.keys(faculty_id).length > 0) {
-                $.each(faculty_id, function (index, value) {
-                    div_content += '<div class="added_faculty" fac_id="'+index+'">' + value + '<a id="delete_added" href="javascript:void(0)" class="btn btn-link p-0 m-l-5"><i class="feather icon-x-circle"></i></a></div>';
-                });
-            }
-            else {
-                var faculty_select_template = '<select name="add_teaching_faculty" id="add_teaching_faculty" class="form-control" onblur="build_form()" required>';
-                var sem_value = $(document).find('#add_subject_semester option:selected').val();
-                if(sem_value < 5) {
-                    faculty_select_template += all_faculty;
-                }
-                else {
-                    faculty_select_template += dept_faculty;
-                }
-                faculty_select_template += '</select>';
-                var div_tag = $(document).find('#add_teaching_faculty-div');
-                div_tag.html(faculty_select_template);
-                var btn = $(document).find('#btn-confirm');
-                btn.attr('disabled', 'true');
-                btn.addClass('btn-disabled');
-                btn.removeClass('btn-outline-primary');
-            }
-            div.remove();
-        });
-
-
-        $(document).on('click', '#add_new_select_faculty', function (event) {
-            event.preventDefault();
-            var faculty_select_template = '<select name="add_teaching_faculty" id="add_teaching_faculty" class="form-control" onblur="build_form()" required>';
-            var div_tag = $(document).find('#add_teaching_faculty-div');
-            var faculty_select_tag = $(document).find('#add_teaching_faculty option:selected');
-            if (typeof faculty_select_tag.val() == 'undefined') {
-                var sem_value = $(document).find('#add_subject_semester option:selected').val();
-                if(sem_value < 5) {
-                    faculty_select_template += all_faculty;
-                }
-                else {
-                    faculty_select_template += dept_faculty;
-                }
-                faculty_select_template += '</select>';
-                div_tag.html(div_content + '<br />' + faculty_select_template);
-            }
-            else {
-                var faculty_value = faculty_select_tag.val();
-                if(faculty_value == "-1") {
-                    alert("Select valid Faculty");
-                }
-                else{
-                    faculty_id[faculty_value] = faculty_select_tag.text();
-                    console.log(faculty_id);
-                    div_content += '<div class="added_faculty" fac_id="'+faculty_value+'">' + faculty_select_tag.text() + '<a id="delete_added" href="javascript:void(0)" class="btn btn-link p-0 m-l-5"><i class="feather icon-x-circle"></i></a></div>';
-                    var sem_value = $(document).find('#add_subject_semester option:selected').val();
-                    if(sem_value < 5) {
-                        faculty_select_template += all_faculty;
-                    }
-                    else {
-                        faculty_select_template += dept_faculty;
-                    }
-                    faculty_select_template += '</select>';
-                    div_tag.html(div_content + '<br />' + faculty_select_template);
-                    var btn = $(document).find('#btn-confirm');
-                    btn.removeAttr('disabled');
-                    btn.removeClass('btn-disabled');
-                    btn.addClass('btn-outline-primary');
-                }
-            }
-        });
-
-        // click event for add subject button with ajax.
-        $(document).on('click', '#btn-confirm', function (event) {
-            event.preventDefault();
-            var sub_name = $(document).find('#add_Subject_Name').val();
-            var sub_code = $(document).find('#add_Subject_Code').val();
-            var sub_sem = $(document).find('#add_subject_semester option:selected').val();
-            if(sub_name == "" || sub_code == "") {
-                alert("All the fields are required fields.");
-            }
-            else {
-                var data = {
-                    type: 'add',
-                    subject_name: sub_name,
-                    subject_code: sub_code,
-                    subject_semester: sub_sem,
-                    teaching_faculty: faculty_id
-                };
-                console.log("Adding Subject");
-                console.log(data);
-                $.ajax({
-                    type:"GET",
-                    url:"{{ base_url }}" + "modify-subjects/",
-                    data: {
-                        info: JSON.stringify(data, null, 2),
-                    },
-
-                    success: function (msg) {
-                        console.log(msg);
-                        var response = JSON.parse(msg);
-                        setTimeout(swal({
-                            title: "Subject Added successfully!",
-                            text: response['subject'] + " has been added successfully.",
-                            type: "success",
-                        }, function () {
-                            location.href = location.href;
-                        }), 10);
-                    },
-                    error: function (msg) {
-                        console.log(msg);
-                        var response = JSON.parse(msg.responseText);
-                        swal({
-                            title: "Error!",
-                            text: response['error'],
-                            type: "error",
-                        });
-                    },
-                });
-            }
+        $(document).ready(function () {
+            $('select.selectpicker').selectpicker();
         });
     </script>
-    <!-- Javascript for add subject modal > End -->
 
     <script type="text/javascript">
-        var btn_add = document.getElementById('btn_add_new_faculty');
-        function verify_select() {
-            var selected_value = document.getElementById('faculty_select').value.toString();
-            var tag = document.getElementById('Error_faculty_select');
-            var div_tag = document.getElementById('faculty_select-div');
-            if(selected_value === '-1') {
-                tag.innerHTML = "Select Valid Faculty."
-                tag.style.display = "block";
-                div_tag.classList.add("has-danger");
-                document.getElementById('faculty_select').classList.add('form-control-danger');
-                return false;
-            }
-            else {
-                tag.style.display = "none";
-                div_tag.classList.remove("has-danger");
-                document.getElementById('faculty_select').classList.remove('form-control-danger');
-                btn_add.classList.remove('btn-disabled');
-                btn_add.classList.add('btn-outline-primary');
-                btn_add.disabled = false;
-                return true;
-            }
-        }
-
-        function activate_btn() {
-            if(!verify_select()) {
-                btn_add.classList.add('btn-disabled');
-                btn_add.classList.remove('btn-outline-primary');
-                btn_add.disabled = true;
-            }
-        }
-    </script>
-
-    <script type="text/javascript">
+        var faculty_json = JSON.parse('{{ faculty_json|safe }}');
+        console.log(faculty_json);
         {% if success %}
-            swal({
-                title: "{{ success }}",
-                type: "success",
-            });
+            setTimeout(function () {
+                swal({
+                    title: "{{ success }}",
+                    type: "success",
+            }, function () {
+                    location.href = location.href;
+                });
+            }, 10);
         {% endif %}
-
         {% if error %}
-            swal({
-                title: "Error",
-                text: "{{ error }}",
-                dangerMode: true,
-                type: "error",
-            });
+            setTimeout(function () {
+                swal({
+                    title: "Error",
+                    text: "{{ error }}",
+                    dangerMode: true,
+                    type: "error",
+            }, function () {
+                    location.href = location.href;
+                });
+            }, 10);
         {% endif %}
     </script>
 
@@ -731,25 +466,24 @@
             tbl_row.find('.btn_subject_save').show();
             tbl_row.find('.btn_subject_cancel').show();
             var row_id = tbl_row.attr('row_id');
+
             tbl_row.find('.subject_data').each(function (index, val) {
                 $(this).attr('original_entry', $(this).html().toString().trim());
-            });
-            tbl_row.find('.subject_data').each(function (index, val) {
                 if($(this).attr('col_name') == "subject_name") {
                     var value = $(this).html().toString().trim();
-                    var name_input = '<input class="form-control" id="subject_name" name="subject_name" value="'+value+'"></input>'
+                    var name_input = '<input class="form-control" id="new_subject_name" name="new_subject_name" value="'+value+'"></input>'
                     $(this).html(name_input);
                 }
                 else if($(this).attr('col_name') == "subject_code") {
                     var value = $(this).html().toString().trim();
-                    var code_input = '<input class="form-control" id="subject_code" name="subject_code" value="'+value+'"></input>'
+                    var code_input = '<input class="form-control" id="new_subject_code" name="new_subject_code" value="'+value+'"></input>'
                     $(this).html(code_input);
                 }
                 else if($(this).attr('col_name') == "subject_sem") {
                     var value = $(this).html().toString().trim();
-                    var sem_select = '<select class="form-control" name="sem" id="sem">';
+                    var sem_select = '<select class="form-control" name="new_subject_sem" id="new_subject_sem">';
                     var i;
-                    for(i=1;i<9;++i){
+                    for(i=1;i<=8;++i){
                         if(i == value){
                             sem_select += '<option value="'+i.toString()+'" selected>Sem '+i.toString()+'</option>';
                         }
@@ -766,128 +500,22 @@
 
                     // creating object for displaying in modal
                     spans.each(function (ind, val) {
-                        faculty_id[$(this).attr('fac_id')] = {
-                            id:$(this).attr('fac_id'),
-                            name:$(this).html().toString().trim(),
-                            email:$(this).attr('fac_email')
-                        };
+                        faculty_id[$(this).attr('fac_id')] = true;
                     });
 
-                    // taking subject data from table to display into modal
-                    var sub_sem = tbl_row.find('#subject_sem').attr('original_entry');
-                    var sub_name = tbl_row.find('#subject_name').attr('original_entry');
-                    var sub_code = tbl_row.find('#subject_code').attr('original_entry');
-
-                    $(this).html('<button class="btn btn-link p-0" data-toggle="modal" data-target="#change-faculty-modal">Change Faculties</button>')
-
-                    // creating instance of table body of modal.
-                    var table_body = $('#teaching_faculty_table tbody');
-
-                    // Creating select tag for adding new teaching faculty according to subject semester.
-                    // if subject is taken in first 4 semester than all the faculty will be displayed.
-                    // if subject is being taken after 4th semester than only department faculties will be displayed.
-                    table_body.html('');
-                    $(document).find('#change_subject').html(sub_name);
-                    var faculty_select_options = '<option value="-1" selected disabled>Select Teaching Faculty</option>';
-                    if(parseInt(sub_sem) < 5) {
-                        {% for f in all_faculty %}
-                            var tmp_id = '{{ f.id }}' || '-1';
-                            if(parseInt(tmp_id) in faculty_id){ }
-                            else {
-                                faculty_select_options += '<option value="{{ f.id }}" fac_name="{{ f.name }}" fac_email="{{ f.auth_id.email }}">{{ f.name }} ({{ f.dept_id.dept_name }})</option>';
-                            }
-                        {% endfor %}
-                    }
-                    else {
-                        {% for f in faculties %}
-                            var tmp_id = '{{ f.id }}' || '-1';
-                            if(parseInt(tmp_id) in faculty_id){ }
-                            else {
-                                faculty_select_options += '<option value="{{ f.id }}" fac_name="{{ f.name }}" fac_email="{{ f.auth_id.email }}">{{ f.name }} ({{ f.dept_id.dept_name }})</option>';
-                            }
-                        {% endfor %}
-                    }
-                    $(document).find('#faculty_select').html(faculty_select_options);
-
-                    // Forming Table data.
-                    var tr_data = '';
-                    var count = 1;
-                    $.each(faculty_id, function (index, value) {
-                        tr_data += '<tr teaching_faculty_id='+value['id']+'>';
-                        tr_data += '<td><div scope="row" col_name="id">'+ count++ +'</div></td>';
-                        tr_data += '<td><div class="faculty_data" col_name="teaching_faculty_name">'+value['name']+'</div></td>';
-                        tr_data += '<td><div class="faculty_data" col_name="teaching_faculty_email">'+value['email']+'</div></td>';
-                        tr_data += '<td><span class="btn_remove_teaching_faculty"><a href="#" class="btn btn-link p-t-0 p-b-0"><i class="feather icon-trash-2"></i></a></span></td>';
-                        tr_data += '</tr>';
-                    });
-                    table_body.append(tr_data);
-
-                    // Click event of add more faculty button
-                    $(document).on('click', '#btn_add_new_teaching_faculty', function (event) {
-                        event.preventDefault();
-                        var div_tag = $(document).find('#add_new_teaching_faculty-div');
-                        div_tag.css('display', 'block');
-                    });
-
-                    //click event of that delete icon in table.
-                    $(document).on('click', '.btn_remove_teaching_faculty', function (event) {
-                        event.preventDefault();
-                        var modal_tbl_row = $(this).closest('tr');
-                        var row_faculty_id = modal_tbl_row.attr('teaching_faculty_id');
-                        delete faculty_id[row_faculty_id];
-                        //faculty_id = faculty_id.filter(item => item !== row_faculty_id);
-                        console.log(faculty_id);
-                        modal_tbl_row.remove();
-                    });
-
-                    // click of add button after selecting faculty.
-                    $(document).on('click', '#btn_add_new_faculty', function (event) {
-                        event.preventDefault();
-                        var select_tag = $(document).find('#faculty_select-div option:selected');
-                        faculty_id[select_tag.val()] = {
-                            id:select_tag.val(),
-                            name:select_tag.attr('fac_name'),
-                            email:select_tag.attr('fac_email')
-                        };
-                        tr_data = '';
-                        tr_data += '<tr teaching_faculty_id='+select_tag.val()+'>';
-                        tr_data += '<td><div scope="row" col_name="id">'+ count++ +'</div></td>';
-                        tr_data += '<td><div class="faculty_data" col_name="teaching_faculty_name">'+select_tag.attr('fac_name')+'</div></td>';
-                        tr_data += '<td><div class="faculty_data" col_name="teaching_faculty_email">'+select_tag.attr('fac_email')+'</div></td>';
-                        tr_data += '<td><span class="btn_remove_teaching_faculty"><a href="#" class="btn btn-link p-t-0 p-b-0"><i class="feather icon-trash-2"></i></a></span></td>';
-                        tr_data += '</tr>';
-                        table_body.append(tr_data);
-                        var div_tag = $(document).find('#add_new_teaching_faculty-div');
-                        div_tag.css('display', 'none');
-                    });
-
-                    // click event of cancel icon
-                    $(document).on('click', '#btn_icon_cancel', function (event) {
-                        event.preventDefault();
-                        $(document).find('#add_new_teaching_faculty-div').css('display', 'none');
-                    });
-
-                    // click event of save changes button
-                    $(document).on('click', '#btn_save_changes', function (event) {
-                        event.preventDefault();
-                        var div_tag = tbl_row.find('#teaching_faculties');
-                        div_tag.attr('is_edited', '1');
-                        var span_html = '';
-                        $.each(faculty_id, function (id, obj) {
-                            span_html += '<span class="faculty" fac_id="'+obj['id']+'" fac_email="'+obj['email']+'">'+obj['name']+'</span><br/>';
-                        });
-                        div_tag.html(span_html);
-                        $("#change-faculty-modal").modal("hide");
-                    });
-
-                    // click event for close button
-                    $(document).on('click', '#btn_close', function (event) {
-                        event.preventDefault();
-                        var div_tag = tbl_row.find('#teaching_faculties');
-                        div_tag.html(div_tag.attr('original_entry'));
-                        div_tag.attr('is_edited', '1');
-                        $("#change-faculty-modal").modal("hide");
-                    });
+                    var select = '<select class="selectpicker form-control" id="new_teaching_faculties" name="new_teaching_faculties" multiple data-live-search="true" title="Select Teaching Faculty">';
+                    {% for f in all_faculty %}
+                        var fac_id = '{{ f.id }}';
+                        if(faculty_id[fac_id]) {
+                            select += '<option value="{{ f.id }}" selected>{{ f.name }} ({{ f.dept_id.accronym }})</option>';
+                        }
+                        else {
+                            select += '<option value="{{ f.id }}">{{ f.name }} ({{ f.dept_id.accronym }})</option>';
+                        }
+                    {% endfor %}
+                    select += '</select>';
+                    $(this).html(select);
+                    $('select.selectpicker').selectpicker();
                 }
 
             });
@@ -906,102 +534,105 @@
                 $(this).html($(this).attr('original_entry'));
             });
         });
-
         // click event for save button
         $(document).on('click', '.btn_subject_save', function (event) {
             event.preventDefault();
             var tbl_row = $(this).closest('tr');
-            tbl_row.find('.btn_subject_edit').show();
-            tbl_row.find('.btn_subject_remove').show();
-            tbl_row.find('.btn_subject_save').hide();
-            tbl_row.find('.btn_subject_cancel').hide();
-            var row_id = tbl_row.attr('row_id');
+            var subject_id = tbl_row.attr('row_id');
+            var new_subject_name = tbl_row.find('[name=new_subject_name]').val();
+            var new_subject_code = tbl_row.find('[name=new_subject_code]').val();
+            var new_subject_sem = tbl_row.find('[name=new_subject_sem]').val();
+            var new_teaching_faculties_id = tbl_row.find('[name=new_teaching_faculties]').val();
 
-            //checking whether teaching faculties has been changed or not
-            var teaching_faculties_div = tbl_row.find('[id=teaching_faculties]');
-            if(teaching_faculties_div.attr('is_edited') == "0") {
-                teaching_faculties_div.html(teaching_faculties_div.attr('original_entry'));
-            }
-            var data = {};
-            data['subject_id'] = row_id;
-            tbl_row.find('.subject_data').each(function (index, value) {
-                if($(this).attr('col_name') == 'subject_name') {
-                    data['subject_name'] = $(this).find('[name=subject_name]').val();
-                    $(this).html(data['subject_name']);
-                }
-                else if($(this).attr('col_name') == 'subject_code') {
-                    data['subject_code'] = $(this).find('[name=subject_code]').val();
-                    $(this).html(data['subject_code']);
-                }
-                else if($(this).attr('col_name') == 'subject_sem') {
-                    data['subject_semester'] = $(this).find('[name=sem] option:selected').val();
-                    $(this).html(data['subject_semester']);
-                }
-                else if($(this).attr('col_name') == 'teaching_faculties') {
-                    var spans = $(this).find('.faculty');
-                    var faculty_id = {};
-
-                    // creating object for displaying in modal
-                    spans.each(function (ind, val) {
-                        faculty_id[ind] = {
-                            id:$(this).attr('fac_id'),
-                            name:$(this).html().toString().trim(),
-                            email:$(this).attr('fac_email')
-                        };
-                    });
-                    data['teaching_faculty'] = faculty_id;
-                }
-                data['type'] = 'update';
-            });
-            console.log(data);
+            //Ajax request
             swal({
-                    title: "Are you sure?",
-                    text: "Changes will be reflected.",
-                    type: "warning",
-                    showCancelButton: true,
-                    closeOnConfirm: false,
-                    showLoaderOnConfirm: true
-                }, function () {
-                    $.ajax({
-                        type:"GET",
-                        url:"{{ base_url }}" + "modify-subjects/",
-                        data: {
-                            info: JSON.stringify(data, null, 2),
-                        },
+                title: "Are you sure?",
+                text: "Changes will be reflected.",
+                type: "warning",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            }, function () {
+                $.ajax({
+                    type:"GET",
+                    url:"{{ base_url }}" + "modify-subjects/",
+                    data: {
+                        subject_id:subject_id,
+                        new_subject_name: new_subject_name,
+                        new_subject_code: new_subject_code,
+                        new_subject_sem: new_subject_sem,
+                        new_teaching_faculties: new_teaching_faculties_id,
+                        type: 'update'
+                    },
 
-                        success: function (msg) {
-                            var response = JSON.parse(msg);
-                            swal({
-                                title: "Changes saved successfully!",
-                                text: response['subject'] + " has been updated successfully.",
-                                type: "success",
-                            });
-                        },
-                        error: function (msg) {
-                            var response = JSON.parse(msg.responseText);
-                            swal({
-                                title: "Error!",
-                                text: response['error'],
-                                type: "error",
-                            });
-                        },
-                    });
+                    success: function (msg) {
+                        var response = JSON.parse(msg);
+                        swal({
+                            title: "Changes saved successfully!",
+                            text: response['subject'] + " has been updated successfully.",
+                            type: "success",
+                        });
+                        //Writing new values
+                        tbl_row.find('.subject_data').each(function (index, value) {
+                            if($(this).attr('col_name') == 'subject_name') {
+                                $(this).html(new_subject_name);
+                            }
+                            else if($(this).attr('col_name') == 'subject_code') {
+                                $(this).html(new_subject_code);
+                            }
+                            else if($(this).attr('col_name') == 'subject_sem') {
+                                $(this).html(new_subject_sem);
+                            }
+                            else if($(this).attr('col_name') == 'teaching_faculties') {
+                                var faculty_id = new_teaching_faculties_id;
+                                var html = '';
+                                var len = faculty_id.length;
+                                for(var i=0;i<len;++i) {
+                                    html += '<span class="faculty" fac_id="'+ faculty_json[parseInt(faculty_id[i])]['id'] +'" fac_email="'+ faculty_json[parseInt(faculty_id[i])]['email'] +'">';
+                                    html += faculty_json[parseInt(faculty_id[i])]['name'] + '(' + faculty_json[parseInt(faculty_id[i])]['dept_accronym'] + ')';
+                                    html += '</span><br />';
+                                }
+                                $(this).html(html);
+                            }
+                        });
+
+                        //buttons
+                        tbl_row.find('.btn_subject_edit').show();
+                        tbl_row.find('.btn_subject_remove').show();
+                        tbl_row.find('.btn_subject_save').hide();
+                        tbl_row.find('.btn_subject_cancel').hide();
+                    },
+                    error: function (msg) {
+                        var response = JSON.parse(msg.responseText);
+                        swal({
+                            title: "Error!",
+                            text: response['error'],
+                            type: "error",
+                        });
+                        // Re-assigning old values
+                        tbl_row.find('.subject_data').each(function (index, value) {
+                            $(this).html($(this).attr('original_entry'));
+                        });
+
+                        //buttons
+                        tbl_row.find('.btn_subject_edit').show();
+                        tbl_row.find('.btn_subject_remove').show();
+                        tbl_row.find('.btn_subject_save').hide();
+                        tbl_row.find('.btn_subject_cancel').hide();
+                    },
                 });
+            });
         });
 
         // click event for remove button
         $(document).on('click', '.btn_subject_remove', function (event) {
             event.preventDefault();
             var tbl_row = $(this).closest('tr');
-            var row_id = tbl_row.attr('row_id');
+            var subject_id = tbl_row.attr('row_id');
             var sub_name = tbl_row.find('#subject_name').html().toString().trim();
-            var data = {
-                subject_id: row_id,
-                type: 'delete'
-            }
             swal({
                     title: "Are you sure?",
-                    text: sub_name + " Will be deleted.",
+                    text: sub_name + " will be deleted.",
                     type: "warning",
                     showCancelButton: true,
                     closeOnConfirm: false,
@@ -1011,7 +642,8 @@
                         type:"GET",
                         url:"{{ base_url }}" + "modify-subjects/",
                         data: {
-                            info: JSON.stringify(data, null, 2),
+                            subject_id: subject_id,
+                            type: 'delete'
                         },
 
                         success: function (msg) {
@@ -1037,6 +669,7 @@
     </script>
     <!-- Javascripts for Subjects > End -->
 
+    <!-- Javascript for faculty -->
     <script type="text/javascript">
         $(document).ready(function () {
             $(document).on('click', '.btn_remove', function (event) {

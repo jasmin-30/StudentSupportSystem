@@ -241,12 +241,6 @@
                                         <span class="pcoded-mtext">Assigned Subjects</span>
                                     </a>
                                 </li>
-                                <li class="">
-                                    <a href="{% url 'faculty_complaint_section'  %}">
-                                        <span class="pcoded-micon"><i class="feather icon-server"></i></span>
-                                        <span class="pcoded-mtext">Complaints Section</span>
-                                    </a>
-                                </li>
                                 <ul class="pcoded-item pcoded-left-item">
                                     <li class="pcoded-hasmenu">
                                         <a href="#">
@@ -317,7 +311,7 @@
                                             <div class="col-lg-8">
                                                 <div class="page-header-title">
                                                     <div class="d-inline">
-                                                        <h4>Committees</h4>
+                                                        <h3>Committees</h3>
                                                     </div>
                                                 </div>
                                             </div>
@@ -327,60 +321,31 @@
                                         <div class="row">
                                             {% for i in committees %}
                                                 <div class="col-xl-4 col-md-6">
-                                                    <a href="{% url 'committee_dashboard' com_id=i.committee_id.id  %}">
-                                                        <div class="card social-card bg-simple-c-blue">
-                                                            <div class="card-block">
-                                                                <div class="row align-items-center">
-                                                                    <div class="col-auto">
-                                                                        <i class="feather icon-mail f-34 text-c-blue social-icon"></i>
-                                                                    </div>
-                                                                    <div class="col">
-                                                                        <h4>{{ i.committee_id.committee_name }}</h4>
-                                                                        <p>{{ i.committee_id.chairperson.name }}</p>
-                                                                        <p>Total Members : 120</p>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                                    <a href="{% url 'member_dashboard' com_id=i.id %}">
+                                                        <script type="text/javascript">
+                                                            var bg_color = ['bg-simple-c-green', 'bg-c-blue', 'bg-c-pink'];
+                                                            var text_color = ['text-c-green', 'text-c-blue', 'text-c-pink'];
+                                                            var index = parseInt('{{ forloop.counter }}') % 3;
+                                                            var html = '';
+                                                            html += '<div class="card social-card '+ bg_color[index] +'">';
+                                                                html += '<div class="card-block">';
+                                                                    html += '<div class="row align-items-center">';
+                                                                        html += '<div class="col-auto">';
+                                                                            html += '<i class="feather icon-users f-34 '+ text_color[index] +' social-icon"></i>';
+                                                                        html += '</div>';
+                                                                        html += '<div class="col">';
+                                                                            html += '<h4>{{ i.name }}</h4>';
+                                                                            html += '<p>{{ i.chairperson }}</p>';
+                                                                            html += '<p>Total Members : {{ i.members }}</p>';
+                                                                        html += '</div>';
+                                                                    html += '</div>';
+                                                                html += '</div>';
+                                                            html += '</div>';
+                                                            document.write(html);
+                                                        </script>
                                                     </a>
                                                 </div>
                                             {% endfor %}
-{#                                            <div class="col-xl-4 col-md-6">#}
-{#                                                <a href="#">#}
-{#                                                    <div class="card social-card bg-simple-c-yellow">#}
-{#                                                        <div class="card-block">#}
-{#                                                            <div class="row align-items-center">#}
-{#                                                                <div class="col-auto">#}
-{#                                                                    <i class="feather icon-mail f-34 text-c-blue social-icon"></i>#}
-{#                                                                </div>#}
-{#                                                                <div class="col">#}
-{#                                                                    <h4>Women Cell</h4>#}
-{#                                                                    <p>ABC</p>#}
-{#                                                                    <p>Total Members : 120</p>#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                    </div>#}
-{#                                                </a>#}
-{#                                            </div>#}
-{#                                            <div class="col-xl-4 col-md-6">#}
-{#                                                <a href="#">#}
-{#                                                    <div class="card social-card bg-simple-c-green">#}
-{#                                                        <div class="card-block">#}
-{#                                                            <div class="row align-items-center">#}
-{#                                                                <div class="col-auto">#}
-{#                                                                    <i class="feather icon-mail f-34 text-c-blue social-icon"></i>#}
-{#                                                                </div>#}
-{#                                                                <div class="col">#}
-{#                                                                    <h4>Grievance</h4>#}
-{#                                                                    <p>ABC</p>#}
-{#                                                                    <p>Total Members : 120</p>#}
-{#                                                                </div>#}
-{#                                                            </div>#}
-{#                                                        </div>#}
-{#                                                    </div>#}
-{#                                                </a>#}
-{#                                            </div>#}
 
                                             <!-- Recent News -->
                                             <div class="col-sm-12">
@@ -389,7 +354,7 @@
                                                         <div class="col-lg-8">
                                                             <div class="page-header-title">
                                                                 <div class="d-inline">
-                                                                    <h4>Recent News</h4>
+                                                                    <h3>Recent News</h3>
                                                                 </div>
                                                             </div>
                                                         </div>

@@ -179,8 +179,8 @@
                                                             <div class="form-group row">
                                                                 <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;"></label>
                                                                 <div class="col-sm-8 col-md-10 col-lg-10">
-                                                                    <button type="button" class="btn btn-primary" id="button-submit">Edit Profile</button>
-                                                                    <button type="button" class="btn btn-primary" id="button-cancel">Cancel</button>
+                                                                    <button type="button" class="btn btn-round btn-outline-primary" id="button-submit">Edit Profile</button>
+                                                                    <button type="button" class="btn btn-round btn-outline-primary" id="button-cancel">Cancel</button>
                                                                 </div>
                                                             </div>
                                                         </form>
@@ -204,14 +204,14 @@
                                                             <div class="form-group row">
                                                                 <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="cnfrmpwd">Confirm Password :</label>
                                                                 <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9" id="cnfrmpwd-div">
-                                                                    <input type="password" class="form-control" minlength="6" maxlength="16" id="cnfrmpwd" name="cnfrmpwd" onchange="verify_pwd()" onkeyup="verify_pwd()" onclick="verify_pwd()" required/>
+                                                                    <input type="password" class="form-control" minlength="6" maxlength="16" id="cnfrmpwd" name="cnfrmpwd" oninput="verify_pwd()" required/>
                                                                     <div id="Error_cnfrmpwd" style="display: none; color: red;"></div>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group row">
                                                                 <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px;"></label>
                                                                 <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
-                                                                    <button type="submit" class="btn btn-disabled" id="button-update" name="button-update" disabled>Update</button>
+                                                                    <button type="submit" class="btn btn-round btn-disabled" id="button-update" name="button-update" disabled>Update</button>
                                                                 </div>
                                                             </div>
                                                         </form>
@@ -333,7 +333,7 @@
                 tag.innerHTML = "Password does not match";
                 document.getElementById('cnfrmpwd').classList.add('form-control-danger');
                 div.classList.add("has-danger");
-                btn.classList.remove('btn-primary');
+                btn.classList.remove('btn-outline-primary');
                 btn.classList.add('btn-disabled');
                 btn.disabled = true;
             }
@@ -343,11 +343,11 @@
                 div.classList.remove("has-danger");
                 if(validate_password()) {
                     btn.classList.remove('btn-disabled');
-                    btn.classList.add('btn-primary');
+                    btn.classList.add('btn-outline-primary');
                     btn.disabled = false;
                 }
                 else {
-                    btn.classList.remove('btn-primary');
+                    btn.classList.remove('btn-outline-primary');
                     btn.classList.add('btn-disabled');
                     btn.disabled = true;
                 }

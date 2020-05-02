@@ -76,6 +76,8 @@ def HomePageView(request):
             )
             print(status)
             if status == 1:
+                user_obj.requested_change_password = True
+                user_obj.save()
                 context["success"] = "Email Sent Successfully"
                 context["msg"] = "Check your inbox for further instructions to change your password."
                 return render(request, "home_auth/index.html", context)
@@ -296,9 +298,15 @@ def ChangePasswordView(request):
         if request.GET.get('email') is not None:
             raw_email = str(request.GET.get('email'))
             email = b64decode(raw_email.encode()).decode('utf-8')
-            request.session["email"] = email
-            print(email)
-            return render(request, "home_auth/forgot_password.html", {})
+            user_obj = User.objects.get(email=email)
+            if user_obj.requested_change_password:
+                request.session["email"] = email
+                print(email)
+                return render(request, "home_auth/forgot_password.html", context)
+            else:
+                # Send mail to owner that someone tried to change password.
+                context["error"] = "Request to change password can not be processed. Please try again."
+                return render(request, "home_auth/index.html", context)
 
     if request.method == "POST":
         if "email" in request.session and request.POST.get('password') is not None:
@@ -308,6 +316,7 @@ def ChangePasswordView(request):
                 user_obj = User.objects.get(email=email)
                 print(user_obj)
                 user_obj.set_password(password)
+                user_obj.requested_change_password = False
                 user_obj.save()
             except User.DoesNotExist:
                 context["error"] = "Email Address Does not exist."
@@ -715,17 +724,10 @@ def StudentFeedbackSection(request, type):
                 return render(request, "students/student_end_sem_feedback.html", context)
 
         else:
-            context = {
-                "base_url": st.BASE_URL,
-                "error": "Page Not Found."
-            }
-            return render(request, 'home_auth/index.html', context)
+            return HttpResponse("<h1>404 Page Not Found</h1>")
 
     else:
-        context = {
-            "base_url": st.BASE_URL,
-            "error": "Login to access this page."
-        }
+        context["error"] = "Login First"
         return render(request, 'home_auth/index.html', context)
 
 
@@ -749,7 +751,7 @@ def GetFeedback(request):
                         'ans_7': feedback_obj.Q7, 'ans_8': feedback_obj.Q8,
                         'ans_9': feedback_obj.Q9, 'ans_10': feedback_obj.Q10,
                         'remarks': feedback_obj.remarks,
-                        'date': str(feedback_obj.timestamp.strftime("%d %B, %Y, %H:%M:%S"))
+                        'date': str(feedback_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"))
                     }
                     res = json.dumps(data)
                     return HttpResponse(res, status=status.HTTP_200_OK)
@@ -768,7 +770,7 @@ def GetFeedback(request):
                         'ans_7': feedback_obj.Q7, 'ans_8': feedback_obj.Q8,
                         'ans_9': feedback_obj.Q9, 'ans_10': feedback_obj.Q10,
                         'remarks': feedback_obj.remarks,
-                        'date': str(feedback_obj.timestamp.strftime("%d %B, %Y, %H:%M:%S"))
+                        'date': str(feedback_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"))
                     }
                     res = json.dumps(data)
                     return HttpResponse(res, status=status.HTTP_200_OK)
@@ -803,45 +805,74 @@ def GetFeedback(request):
 
 
 def StudentComplaintSectionView(request):
+    context = {
+        "base_url": st.BASE_URL,
+    }
     if request.user.is_authenticated:
-        std_obj = Students.objects.get(auth_id=request.session["User"])
-        print(std_obj)
-        committeeqs = Committee_Details.objects.all()
-        complaints_of_students_qs = Complaints_of_Students.objects.filter(student_id=std_obj)
-        context = {
-            "base_url": st.BASE_URL,
-            "committees": committeeqs,
-            "complaints_of_students": complaints_of_students_qs,
-            "name": str(std_obj.first_name) + " " + str(std_obj.last_name)
-        }
+        std_obj = Students.objects.get(auth_id=request.user)
+        context["name"] = str(std_obj.first_name) + " " + str(std_obj.last_name)
+        committee_qs = Committees.objects.all()
+        context["committees"] = committee_qs
 
         if request.method == 'POST':
-            try:
-                std_obj = Students.objects.get(auth_id=request.user)
+            if request.POST.get('complaint_id') is not None:
+                complaint_id = request.POST.get('complaint_id')
+                complaint_obj = Complaints.objects.get(id=int(complaint_id))
+                revoke_reason = request.POST.get('comments')
+                complaint_obj.status = "Revoked"
+                complaint_obj.revoked_reason = revoke_reason
+                complaint_obj.revoked = True
+                complaint_obj.save()
 
-                com_id = request.POST.get('committee')
-                com_obj = Committee_Details.objects.get(id=com_id)
+                context["success"] = "Complaint Revoked Successfully."
 
-                complaint_details = request.POST.get('complaint')
+            if request.POST.get('complaint') is not None:
+                try:
+                    com_id = request.POST.get('committee')
+                    com_obj = Committees.objects.get(id=com_id)
 
-                complaints_of_student_obj = Complaints_of_Students.objects.create(
-                    student_id=std_obj,
-                    committee_id=com_obj,
-                    complaint_details=complaint_details
-                )
-                complaints_of_student_obj.save()
-                context["success"] = "Complaint registered successfully."
-                return render(request, "students/student_complaint_section.html", context)
-            except:
-                context["error"] = "Some technical problem occured."
-                return render(request, "students/student_complaint_section.html", context)
+                    complaint_details = request.POST.get('complaint')
+
+                    complaints_of_student_obj = Complaints.objects.create(
+                        student_id=std_obj,
+                        committee_id=com_obj,
+                        complaint_details=complaint_details
+                    )
+                    complaints_of_student_obj.save()
+                    context["success"] = "Complaint registered successfully."
+
+                except:
+                    context["error"] = "Some technical problem occured."
+                    return render(request, "students/student_complaint_section.html", context)
+
+        complaints_qs = Complaints.objects.filter(student_id=std_obj).filter(revoked=False)
+        if complaints_qs.count() == 0:
+            context["No_Complaints"] = True
+
         else:
-            return render(request, "students/student_complaint_section.html", context)
+            context["No_Complaints"] = False
+
+            complaint_dict = []
+            for i in complaints_qs:
+                tmp = {
+                    'id': i.id,
+                    'complaint_details': i.complaint_details,
+                    'committee': Committees.objects.get(id=i.committee_id.id),
+                    'status': i.status,
+                    'reopened_count': i.reopened_count,
+                    'timestamp': i.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                }
+                solution_qs = Complaints_Solutions.objects.filter(complaint_id=i.id)
+                tmp['action_count'] = solution_qs.count()
+                tmp['actions'] = solution_qs
+                complaint_dict.append(tmp)
+
+            context["complaints_qs"] = complaint_dict
+
+        return render(request, "students/student_complaint_section.html", context)
+
     else:
-        context = {
-            "base_url": st.BASE_URL,
-            "error": "Login to access this page."
-        }
+        context["error"] = "Login to access this page."
         return render(request, 'home_auth/index.html', context)
 
 
@@ -877,14 +908,25 @@ def StudentComplaintSectionView(request):
 #         return render(request, 'faculty/dashboard_faculty.html', context)
 
 def FacultyDashboard(request):
+    context = {
+        "base_url": st.BASE_URL,
+    }
     if request.user.is_authenticated:
-        user_obj = User.objects.get(id=request.session["User"])
-        print(user_obj)
-        fac_obj = Faculty.objects.get(auth_id=user_obj)
+        fac_obj = Faculty.objects.get(auth_id=request.user)
         print(fac_obj)
         if fac_obj.hod:
             return HttpResponseRedirect('/hod/dashboard/')
         committeeqs = Committee_to_Members_Mapping.objects.filter(faculty_id=fac_obj)
+        committee_list = []
+        for i in committeeqs:
+            tmp = {
+                'id': i.committee_id.id,
+                'name': i.committee_id.committee_name,
+                'chairperson': i.committee_id.chairperson.name,
+                'members': Committee_to_Members_Mapping.objects.filter(committee_id=i.committee_id.id).count()
+            }
+            committee_list.append(tmp)
+        context["committees"] = committee_list
         departments = Departments.objects.all()
 
         try:
@@ -894,15 +936,10 @@ def FacultyDashboard(request):
             news_qs = News.objects.order_by('-timestamp')
             print(news_qs)
 
-        context = {
-            "base_url": st.BASE_URL,
-        }
-
         print(news_qs)
         context["news"] = news_qs
         context["name"] = str(fac_obj.name)
         context["dept"] = fac_obj.dept_id
-        context["committees"] = committeeqs
         context["departments"] = departments
 
         if request.method == 'POST':
@@ -1225,48 +1262,48 @@ def FacultyProfile(request):
         return render(request, 'home_auth/index.html', context)
 
 
-def FacultyComplaintSectionView(request):
-    if request.user.is_authenticated:
-        fac_obj = Faculty.objects.get(auth_id=request.session["User"])
-        print(fac_obj)
-        committeeqs = Committee_Details.objects.all()
-        complaints_of_faculties_qs = Complaints_of_Facultys.objects.filter(faculty_id=fac_obj)
-        context = {
-            "base_url": st.BASE_URL,
-            "committees": committeeqs,
-            "complaints_of_faculties": complaints_of_faculties_qs
-
-        }
-        context["name"] = str(fac_obj.name)
-
-        if request.method == 'POST':
-            try:
-                fac_obj = Faculty.objects.get(auth_id=request.user)
-
-                com_id = request.POST.get('committee')
-                com_obj = Committee_Details.objects.get(id=com_id)
-
-                complaint_details = request.POST.get('complaint')
-
-                complaints_of_faculty_obj = Complaints_of_Facultys.objects.create(
-                    faculty_id=fac_obj,
-                    committee_id=com_obj,
-                    complaint_details=complaint_details
-                )
-                complaints_of_faculty_obj.save()
-                context["success"] = "Complaint registered successfully."
-                return render(request, "faculty/faculty_complaint_section.html", context)
-            except:
-                context["error"] = "Some technical problem occured."
-                return render(request, "faculty/faculty_complaint_section.html", context)
-        else:
-            return render(request, "faculty/faculty_complaint_section.html", context)
-    else:
-        context = {
-            "base_url": st.BASE_URL
-        }
-        context["error"] = "Login to access this page."
-        return render(request, 'home_auth/index.html', context)
+# def FacultyComplaintSectionView(request):
+#     if request.user.is_authenticated:
+#         fac_obj = Faculty.objects.get(auth_id=request.session["User"])
+#         print(fac_obj)
+#         committeeqs = Committees.objects.all()
+#         complaints_of_faculties_qs = Complaints_of_Facultys.objects.filter(faculty_id=fac_obj)
+#         context = {
+#             "base_url": st.BASE_URL,
+#             "committees": committeeqs,
+#             "complaints_of_faculties": complaints_of_faculties_qs
+#
+#         }
+#         context["name"] = str(fac_obj.name)
+#
+#         if request.method == 'POST':
+#             try:
+#                 fac_obj = Faculty.objects.get(auth_id=request.user)
+#
+#                 com_id = request.POST.get('committee')
+#                 com_obj = Committees.objects.get(id=com_id)
+#
+#                 complaint_details = request.POST.get('complaint')
+#
+#                 complaints_of_faculty_obj = Complaints_of_Facultys.objects.create(
+#                     faculty_id=fac_obj,
+#                     committee_id=com_obj,
+#                     complaint_details=complaint_details
+#                 )
+#                 complaints_of_faculty_obj.save()
+#                 context["success"] = "Complaint registered successfully."
+#                 return render(request, "faculty/faculty_complaint_section.html", context)
+#             except:
+#                 context["error"] = "Some technical problem occured."
+#                 return render(request, "faculty/faculty_complaint_section.html", context)
+#         else:
+#             return render(request, "faculty/faculty_complaint_section.html", context)
+#     else:
+#         context = {
+#             "base_url": st.BASE_URL
+#         }
+#         context["error"] = "Login to access this page."
+#         return render(request, 'home_auth/index.html', context)
 
 
 # Faculty Related Views > End
@@ -1345,25 +1382,75 @@ def HOD_Manage_department(request):
     }
     if request.user.is_authenticated:
         fac_obj = Faculty.objects.get(auth_id=request.user)
-        context["faculty"] = fac_obj
-        # context["name"] = fac_obj.name
-        fac_qs = Faculty.objects.filter(dept_id=fac_obj.dept_id, active=True)
-        context["faculties"] = fac_qs
-        sub_qs = Subjects.objects.filter(dept_id=fac_obj.dept_id, is_active=True)
-        subjects_qs = []
-        for s in sub_qs:
-            tmp = {}
-            tmp["id"] = s.id
-            tmp["name"] = s.subject_name
-            tmp["code"] = s.subject_code
-            tmp["sem"] = s.semester
-            subject_to_faculty_qs = Subject_to_Faculty_Mapping.objects.filter(subject_id=s.id)
-            tmp["teaching_faculty"] = subject_to_faculty_qs
-            subjects_qs.append(tmp)
-        context["subjects"] = subjects_qs
-        faculty_all = Faculty.objects.filter(active=True)
-        context["all_faculty"] = faculty_all
-        return render(request, 'hod/hod_manage_department.html', context)
+        # context["faculty"] = fac_obj
+        if fac_obj.hod:
+            context["name"] = fac_obj.name
+            fac_qs = Faculty.objects.filter(dept_id=fac_obj.dept_id, active=True)
+            context["faculties"] = fac_qs
+            sub_qs = Subjects.objects.filter(dept_id=fac_obj.dept_id, is_active=True)
+            subjects_qs = []
+            for s in sub_qs:
+                tmp = {}
+                tmp["id"] = s.id
+                tmp["name"] = s.subject_name
+                tmp["code"] = s.subject_code
+                tmp["sem"] = s.semester
+                subject_to_faculty_qs = Subject_to_Faculty_Mapping.objects.filter(subject_id=s.id)
+                tmp["teaching_faculty"] = subject_to_faculty_qs
+                subjects_qs.append(tmp)
+            context["subjects"] = subjects_qs
+            faculty_all = Faculty.objects.filter(active=True)
+            context["all_faculty"] = faculty_all
+            faculty_dict = {}
+            for i in faculty_all:
+                faculty_dict[i.id] = {
+                    'id': i.id,
+                    'name': i.name,
+                    'email': i.auth_id.email,
+                    'dept_name': i.dept_id.dept_name,
+                    'dept_accronym': i.dept_id.accronym
+                }
+
+            context['faculty_json'] = json.dumps(faculty_dict)
+
+            if request.method == "POST":
+                if request.POST.get('add_Subject_Name') is not None:
+                    subject_name = request.POST.get('add_Subject_Name')
+                    subject_code = request.POST.get('add_Subject_Code')
+                    subject_sem = request.POST.get('add_subject_semester')
+                    teaching_faculties_id = request.POST.getlist('add_teaching_faculty')
+                    subject_obj, is_created = Subjects.objects.get_or_create(
+                        subject_name=subject_name,
+                        subject_code=subject_code,
+                        semester=subject_sem,
+                        dept_id=fac_obj.dept_id,
+                    )
+                    print(subject_obj, is_created)
+                    if is_created:
+                        subject_obj.save()
+                        for i in teaching_faculties_id:
+                            mapping_obj, created = Subject_to_Faculty_Mapping.objects.get_or_create(
+                                faculty_id=Faculty.objects.get(id=int(i)),
+                                subject_id=subject_obj
+                            )
+
+                        context["success"] = str(subject_obj.subject_name) + " has been added successfully"
+                        return render(request, 'hod/hod_manage_department.html', context)
+                    else:
+                        context["error"] = "Subject you are trying to add, already exists"
+                        return render(request, 'hod/hod_manage_department.html', context)
+                else:
+                    context["error"] = "Error in creating subject. Please try again later."
+                    return render(request, 'hod/hod_manage_department.html', context)
+
+            else:
+                return render(request, 'hod/hod_manage_department.html', context)
+
+        else:
+            context["error"] = "You are not authorized to view this page."
+            return render(request, 'home_auth/index.html', context)
+
+
     else:
         context["error"] = "Log in First"
         return render(request, 'home_auth/index.html', context)
@@ -1411,22 +1498,23 @@ def Modify_Subject_AJAX(request):
         fac_obj = Faculty.objects.get(auth_id=request.user)
         if fac_obj.hod:
             if request.method == "GET":
-                if request.GET.get('info') is not None:
-                    data = eval(request.GET.get('info'))
-                    print(data)
-                    if data['type'] == 'update':
+                if request.GET.get('subject_id') is not None:
+                    subject_id = request.GET.get('subject_id')
+                    type = request.GET.get('type')
+                    if type == 'update':
                         try:
-                            subject_obj = Subjects.objects.get(id=int(data['subject_id']), dept_id=fac_obj.dept_id)
-                            subject_obj.subject_name = str(data['subject_name'])
-                            subject_obj.subject_code = str(data['subject_code'])
-                            subject_obj.semester = int(data['subject_semester'])
+                            subject_obj = Subjects.objects.get(id=int(subject_id), dept_id=fac_obj.dept_id)
+                            subject_obj.subject_name = str(request.GET.get('new_subject_name'))
+                            subject_obj.subject_code = str(request.GET.get('new_subject_code'))
+                            subject_obj.semester = int(request.GET.get('new_subject_sem'))
                             subject_obj.save()
+                            new_faculty_list = request.GET.getlist('new_teaching_faculties[]')
+                            print(new_faculty_list)
                             Subject_to_Faculty_Mapping.objects.filter(subject_id=subject_obj).delete()
-                            for i in data['teaching_faculty']:
-                                faculty_obj = Faculty.objects.get(id=int(data['teaching_faculty'][i]['id']))
+                            for i in new_faculty_list:
                                 mapping_obj = Subject_to_Faculty_Mapping.objects.create(
                                     subject_id=subject_obj,
-                                    faculty_id=faculty_obj
+                                    faculty_id=Faculty.objects.get(id=i)
                                 )
                                 mapping_obj.save()
 
@@ -1440,47 +1528,21 @@ def Modify_Subject_AJAX(request):
                             res = json.dumps(context)
                             return HttpResponse(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-                    elif data['type'] == 'delete':
+                    elif type == 'delete':
                         try:
-                            subject_obj = Subjects.objects.get(id=int(data['subject_id']))
+                            subject_obj = Subjects.objects.get(id=int(subject_id))
                             subject_obj.is_active = False
                             subject_obj.save()
                             context['subject'] = subject_obj.subject_name
                             res = json.dumps(context)
                             return HttpResponse(res, status=status.HTTP_200_OK)
-                        except Exception as e:
-                            print(e)
-                            context['error'] = "Server Side error. Please contact Developer team."
-                            res = json.dumps(context)
-                            return HttpResponse(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-                    elif data['type'] == 'add':
-                        try:
-                            subject_obj = Subjects.objects.create(
-                                subject_name=str(data['subject_name']),
-                                subject_code=str(data['subject_code']),
-                                dept_id=fac_obj.dept_id,
-                                semester=int(data['subject_semester'])
-                            )
-                            subject_obj.save()
-                            for i in data['teaching_faculty']:
-                                print(i)
-                                faculty_obj = Faculty.objects.get(id=int(i))
-                                mapping_obj = Subject_to_Faculty_Mapping.objects.create(
-                                    subject_id=subject_obj,
-                                    faculty_id=faculty_obj
-                                )
-                                mapping_obj.save()
-
-                            context['subject'] = subject_obj.subject_name
-                            res = json.dumps(context)
-                            return HttpResponse(res, status=status.HTTP_200_OK)
 
                         except Exception as e:
                             print(e)
                             context['error'] = "Server Side error. Please contact Developer team."
                             res = json.dumps(context)
                             return HttpResponse(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
                 else:
                     context["error"] = "Subject id not passed."
@@ -1625,13 +1687,13 @@ def GetAverageFeedback(request):
                 try:
                     data = {
                         "ratings": rating_list,
-                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y, %H:%M:%S"))
+                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y, %I:%M %p"))
                     }
 
                 except Mid_Sem_Feedback_Answers.DoesNotExist:
                     data = {
                         "ratings": rating_list,
-                        "date": str(datetime.datetime.now().strftime("%d %B, %Y, %H:%M:%S"))
+                        "date": str(datetime.datetime.now().strftime("%d %B, %Y, %I:%M %p"))
                     }
 
                 res = json.dumps(data)
@@ -1646,13 +1708,13 @@ def GetAverageFeedback(request):
                 try:
                     data = {
                         "ratings": rating_list,
-                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y, %H:%M:%S"))
+                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y, %I:%M %p"))
                     }
 
                 except End_Sem_Feedback_Answers.DoesNotExist:
                     data = {
                         "ratings": rating_list,
-                        "date": str(datetime.datetime.now().strftime("%d %B, %Y, %H:%M:%S"))
+                        "date": str(datetime.datetime.now().strftime("%d %B, %Y, %I:%M %p"))
                     }
                 res = json.dumps(data)
                 return HttpResponse(res, status=status.HTTP_200_OK)
@@ -1698,7 +1760,7 @@ def GetAllFeedback(request):
                 feedback_list = []
                 for i in feedback_qs:
                     tmp = {
-                        'date': str(i.timestamp.strftime("%d %B, %Y, %H:%M:%S")),
+                        'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p")),
                         'q1': i.Q1, 'q2': i.Q2, 'q3': i.Q3, 'q4': i.Q4, 'q5': i.Q5,
                         'q6': i.Q6, 'q7': i.Q7, 'q8': i.Q8, 'q9': i.Q9, 'q10': i.Q10,
                         'remark': i.remarks
@@ -1717,7 +1779,7 @@ def GetAllFeedback(request):
                 feedback_list = []
                 for i in feedback_qs:
                     tmp = {
-                        'date': str(i.timestamp.strftime("%d %B, %Y, %H:%M:%S")),
+                        'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p")),
                         'q1': i.Q1, 'q2': i.Q2, 'q3': i.Q3, 'q4': i.Q4, 'q5': i.Q5,
                         'q6': i.Q6, 'q7': i.Q7, 'q8': i.Q8, 'q9': i.Q9, 'q10': i.Q10,
                         'remark': i.remarks
@@ -1760,12 +1822,21 @@ def PrincipalDashboard(request):
         "base_url": st.BASE_URL,
     }
     if request.user.is_authenticated:
-        committee_qs = Committee_Details.objects.all()
         principal_obj = Principal.objects.get(auth_id=request.user)
         dept_qs = Departments.objects.all()
         context["departments"] = dept_qs
         context["name"] = principal_obj.name
-        context["committees"] = committee_qs
+        committee_qs = Committees.objects.all()
+        committee_list = []
+        for i in committee_qs:
+            tmp = {
+                'id': i.id,
+                'name': i.committee_name,
+                'chairperson': i.chairperson.name,
+                'members': Committee_to_Members_Mapping.objects.filter(committee_id=i).count()
+            }
+            committee_list.append(tmp)
+        context["committees"] = committee_list
         return render(request, 'principal/principal_dashboard.html', context)
     else:
         context["error"] = "Login to access dashboard."
@@ -1779,7 +1850,7 @@ def ManageCommitteesView(request):
     if request.user.is_authenticated:
         principal_obj = Principal.objects.get(auth_id=request.user)
         context["name"] = principal_obj.name
-        committee_qs = Committee_Details.objects.all()
+        committee_qs = Committees.objects.all()
         context["committees"] = committee_qs
         faculty_qs = Faculty.objects.all()
         context["faculties"] = faculty_qs
@@ -1790,7 +1861,7 @@ def ManageCommitteesView(request):
                 details = request.POST.get('details')
                 chairperson = request.POST.get('chairperson')
                 try:
-                    obj = Committee_Details.objects.create(
+                    obj = Committees.objects.create(
                         committee_name=name,
                         committee_details=details,
                         chairperson=Faculty.objects.get(id=chairperson)
@@ -1823,14 +1894,11 @@ def EditCommittees(request):
                 action = request.GET.get('action')
                 if action == 'update':
                     try:
-                        commitee_name = request.GET.get('committee_name')
-                        committee_details = request.GET.get('committee_details')
-                        chairperson_id = request.GET.get('chairperson_id')
-                        committee_obj = Committee_Details.objects.get(id=int(committee_id))
+                        committee_obj = Committees.objects.get(id=int(committee_id))
                         print(committee_obj)
-                        committee_obj.committee_name = commitee_name
-                        committee_obj.committee_details = committee_details
-                        committee_obj.chairperson = Faculty.objects.get(id=int(chairperson_id))
+                        committee_obj.committee_name = request.GET.get('committee_name')
+                        committee_obj.committee_details = request.GET.get('committee_details')
+                        committee_obj.chairperson = Faculty.objects.get(id=int(request.GET.get('chairperson_id')))
                         committee_obj.save()
                         context = {
                             'committee': committee_obj.committee_name
@@ -1848,7 +1916,7 @@ def EditCommittees(request):
 
                 elif action == 'delete':
                     try:
-                        committee_obj = Committee_Details.objects.get(id=int(committee_id))
+                        committee_obj = Committees.objects.get(id=int(committee_id))
                         name = committee_obj.committee_name
                         committee_obj.delete()
                         context = {
@@ -2208,37 +2276,682 @@ def DownloadAverageReport(request):
 # Principal Related Views > End
 
 # Committee Related Views > Start
-def CommitteeDashboard(request, com_id):
+def CommitteeChairpersonDashboard(request, com_id):
     context = {
         "base_url": st.BASE_URL,
     }
     if request.user.is_authenticated:
-        user_obj = User.objects.get(id=request.session["User"])
-        fac_obj = Faculty.objects.get(auth_id=user_obj)
-        com_obj = Committee_Details.objects.get(id=com_id)
+        committee_obj = Committees.objects.get(id=com_id)
+        context["committee_name"] = committee_obj.committee_name
+        context["committee_id"] = committee_obj.id
+        fac_obj = Faculty.objects.get(auth_id=request.user)
+        context["name"] = fac_obj.name
+        if committee_obj.chairperson != fac_obj:
+            return HttpResponse("You are not authorized to view this page.")
 
-        pendingstudentcomplaintsqs = Complaints_of_Students.objects.filter(committee_id=com_obj, status=1)
-        pendingfacultycomplaintsqs = Complaints_of_Facultys.objects.filter(committee_id=com_obj, status=1)
-        result_list = list(chain(pendingstudentcomplaintsqs, pendingfacultycomplaintsqs))
+        if request.POST.get('complaint_id') is not None:
+            complaint_id = request.POST.get('complaint_id')
+            complaint_obj = Complaints.objects.get(id=int(complaint_id))
+            status = request.POST.get('status')
+            if status == "Pending":
+                action = request.POST.get('action')
+                complaint_obj.status = "Closed"
+                complaint_obj.save()
 
-        closedstudentcomplaintsqs = Complaints_of_Students.objects.filter(committee_id=com_obj, status=0)
-        closedfacultycomplaintsqs = Complaints_of_Facultys.objects.filter(committee_id=com_obj, status=0)
-        result_list2 = list(chain(closedstudentcomplaintsqs, closedfacultycomplaintsqs))
+                solution_obj = Complaints_Solutions.objects.create(
+                    complaint_id=complaint_obj,
+                    reacting_faculty=fac_obj,
+                    action=action
+                )
+                solution_obj.save()
+                context["success"] = "Action has been taken against " + str(
+                    complaint_obj.student_id.first_name) + " " + str(
+                    complaint_obj.student_id.last_name) + "'s complaint."
 
-        # print(result_list)
-        context['pending_complaints'] = result_list
-        context['closed_complaints'] = result_list2
-        context["com_obj"] = com_obj
-        context["name"] = str(fac_obj.name)
-        context["dept"] = fac_obj.dept_id
+            elif status == "Re-opened":
+                comment = request.POST.get('comment')
+                complaint_obj.status = "Closed"
+                complaint_obj.save()
 
-        return render(request, 'committees/committee_dashboard.html', context)
+                solution_obj = Complaints_Solutions.objects.create(
+                    complaint_id=complaint_obj,
+                    reacting_faculty=fac_obj,
+                    reopen_count=int(complaint_obj.reopened_count),
+                    action=comment
+                )
+                solution_obj.save()
+                context["success"] = "Action has been taken against " + str(
+                    complaint_obj.student_id.first_name) + " " + str(
+                    complaint_obj.student_id.last_name) + "'s complaint."
+
+        complaints_qs = Complaints.objects.filter(committee_id=committee_obj)
+        # ===================== For pending Complaints ==================================
+        pending_qs = complaints_qs.filter(status="Pending").filter(revoked=False).order_by('-timestamp')
+        pending_count = pending_qs.count()
+        if pending_count == 0:
+            context["no_pending_complaints"] = True
+
+        else:
+            context["no_pending_complaints"] = False
+
+        context["pending_count"] = pending_count
+
+        pending_dict = []
+        for i in pending_qs:
+            tmp = {
+                'id': i.id,
+                'student_name': str(i.student_id.first_name) + " " + str(i.student_id.last_name),
+                'student_enrl': i.student_id.enrollment_no,
+                'student_dept': i.student_id.dept_id.dept_name,
+                'description': i.complaint_details,
+                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+            }
+            pending_dict.append(tmp)
+
+        context["pending_complaints"] = pending_dict
+
+        # ===================== For Re-opened Complaints ==================================
+        reopened_qs = complaints_qs.filter(status="Re-Opened").filter(revoked=False).order_by('-timestamp')
+        reopened_count = reopened_qs.count()
+        if reopened_count == 0:
+            context["no_reopened_complaints"] = True
+
+        else:
+            context["no_reopened_complaints"] = False
+
+        context["reopened_count"] = reopened_count
+
+        reopened_dict = []
+        for i in reopened_qs:
+            student_name = str(i.student_id.first_name) + " " + str(i.student_id.last_name)
+            tmp = {
+                'id': i.id,
+                'student_name': student_name,
+                'student_enrl': i.student_id.enrollment_no,
+                'student_dept': i.student_id.dept_id.dept_name,
+                'description': i.complaint_details,
+                'reopened_count': i.reopened_count,
+                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+            }
+            actions_count = i.reopened_count
+            tmp["actions"] = []
+            j = 0
+            while j <= actions_count:
+                # print("yes")
+                if j < 1:
+                    response_obj = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': response_obj.reacting_faculty.name,
+                        'comment': response_obj.action,
+                        'dept': response_obj.reacting_faculty.dept_id.dept_name,
+                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Closed'
+                    }
+                    tmp["actions"].append(tmp1)
+                else:
+                    student_response = Complaint_Reopen_comments.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': student_name,
+                        'comment': student_response.comments,
+                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Re-Opened'
+                    }
+                    tmp["actions"].append(tmp1)
+                    try:
+                        faculty_response = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                        tmp1 = {
+                            'name': faculty_response.reacting_faculty.name,
+                            'comment': faculty_response.action,
+                            'dept': faculty_response.reacting_faculty.dept_id.dept_name,
+                            'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'action': 'Closed'
+                        }
+                        tmp["actions"].append(tmp1)
+
+                    except Complaints_Solutions.DoesNotExist:
+                        pass
+
+                j += 1
+
+            reopened_dict.append(tmp)
+        # print(reopened_dict)
+
+        context["reopened_complaints"] = reopened_dict
+        # ===================== For Closed Complaints =====================================
+        closed_qs = complaints_qs.filter(status="Closed").filter(revoked=False).order_by('-timestamp')
+        closed_count = closed_qs.count()
+        if closed_count == 0:
+            context["no_closed_complaints"] = True
+
+        else:
+            context["no_closed_complaints"] = False
+
+        context["closed_count"] = closed_count
+
+        closed_dict = []
+        for i in closed_qs:
+            student_name = str(i.student_id.first_name) + " " + str(i.student_id.last_name)
+            tmp = {
+                'id': i.id,
+                'student_name': student_name,
+                'student_enrl': i.student_id.enrollment_no,
+                'student_dept': i.student_id.dept_id.dept_name,
+                'description': i.complaint_details,
+                'reopened_count': i.reopened_count,
+                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+            }
+            actions_count = i.reopened_count
+            tmp["actions"] = []
+            j = 0
+            while j <= actions_count:
+                # print("yes")
+                if j < 1:
+                    response_obj = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': response_obj.reacting_faculty.name,
+                        'comment': response_obj.action,
+                        'dept': response_obj.reacting_faculty.dept_id.dept_name,
+                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Closed'
+                    }
+                    tmp["actions"].append(tmp1)
+                else:
+                    student_response = Complaint_Reopen_comments.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': student_name,
+                        'comment': student_response.comments,
+                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Re-Opened'
+                    }
+                    tmp["actions"].append(tmp1)
+
+                    faculty_response = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': faculty_response.reacting_faculty.name,
+                        'comment': faculty_response.action,
+                        'dept': faculty_response.reacting_faculty.dept_id.dept_name,
+                        'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Closed'
+                    }
+                    tmp["actions"].append(tmp1)
+                j += 1
+
+            closed_dict.append(tmp)
+        # print(closed_dict)
+
+        context["closed_complaints"] = closed_dict
+        # ===================== For Revoked Complaints ====================================
+        revoked_qs = complaints_qs.filter(status="Revoked").filter(revoked=True).order_by('-timestamp')
+        revoked_count = revoked_qs.count()
+        if revoked_count == 0:
+            context["no_revoked_complaints"] = True
+
+        else:
+            context["no_revoked_complaints"] = False
+
+        context["revoked_count"] = revoked_count
+
+        revoked_dict = []
+        for i in revoked_qs:
+            student_name = str(i.student_id.first_name) + " " + str(i.student_id.last_name)
+            tmp = {
+                'id': i.id,
+                'student_name': student_name,
+                'student_enrl': i.student_id.enrollment_no,
+                'student_dept': i.student_id.dept_id.dept_name,
+                'description': i.complaint_details,
+                'reopened_count': i.reopened_count,
+                'revoked_reason': i.revoked_reason,
+                'revoked_date': str(i.revoked_date.strftime("%d %B, %Y, %I:%M %p")),
+                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+            }
+            actions_count = i.reopened_count
+            tmp["actions"] = []
+            if actions_count > 0:
+                j = 0
+                while j <= actions_count:
+                    if j < 1:
+                        response_obj = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                        tmp1 = {
+                            'name': response_obj.reacting_faculty.name,
+                            'comment': response_obj.action,
+                            'dept': response_obj.reacting_faculty.dept_id.dept_name,
+                            'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'action': 'Closed'
+                        }
+                        tmp["actions"].append(tmp1)
+                    else:
+                        student_response = Complaint_Reopen_comments.objects.get(complaint_id=i, reopen_count=j)
+                        tmp1 = {
+                            'name': student_name,
+                            'comment': student_response.comments,
+                            'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'action': 'Re-Opened'
+                        }
+                        tmp["actions"].append(tmp1)
+                        try:
+                            faculty_response = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                            tmp1 = {
+                                'name': faculty_response.reacting_faculty.name,
+                                'comment': faculty_response.action,
+                                'dept': faculty_response.reacting_faculty.dept_id.dept_name,
+                                'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                                'action': 'Closed'
+                            }
+                            tmp["actions"].append(tmp1)
+
+                        except Complaints_Solutions.DoesNotExist:
+                            pass
+
+                    j += 1
+            else:
+                tmp["actions"] = []
+
+            revoked_dict.append(tmp)
+        # print(revoked_dict)
+
+        context["revoked_complaints"] = revoked_dict
+
+        return render(request, 'committees/chairperson.html', context)
     else:
-        context = {
-            "base_url": st.BASE_URL,
-        }
-        context["error"] = "Login First."
-        return render(request, "home_auth/index.html", context)
+        context["error"] = "Log in First"
+        return render(request, 'home_auth/index.html', context)
+
+
+def CommitteeMemberDashboard(request, com_id):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        committee_obj = Committees.objects.get(id=com_id)
+        context["committee_name"] = committee_obj.committee_name
+        context["committee_id"] = committee_obj.id
+        if request.user.getRole == "Faculty":
+            fac_obj = Faculty.objects.get(auth_id=request.user)
+            context["name"] = fac_obj.name
+            try:
+                mapping_obj = Committee_to_Members_Mapping.objects.get(committee_id=committee_obj, faculty_id=fac_obj)
+            except Committee_to_Members_Mapping.DoesNotExist:
+                return HttpResponse("You are not member of this committee")
+
+        elif request.user.getRole == "Principal":
+            principal_obj = Principal.objects.get(auth_id=request.user)
+            context["name"] = principal_obj.name
+
+        else:
+            return HttpResponse("You are not authorized to view this page.")
+
+        if request.POST.get('complaint_id') is not None:
+            complaint_id = request.POST.get('complaint_id')
+            complaint_obj = Complaints.objects.get(id=int(complaint_id))
+            status = request.POST.get('status')
+            if status == "Pending":
+                action = request.POST.get('action')
+                complaint_obj.status = "Closed"
+                complaint_obj.save()
+
+                solution_obj = Complaints_Solutions.objects.create(
+                    complaint_id=complaint_obj,
+                    reacting_faculty=fac_obj,
+                    action=action
+                )
+                solution_obj.save()
+                context["success"] = "Action has been taken against " + str(
+                    complaint_obj.student_id.first_name) + " " + str(
+                    complaint_obj.student_id.last_name) + "'s complaint."
+
+            elif status == "Re-opened":
+                comment = request.POST.get('comment')
+                complaint_obj.status = "Closed"
+                complaint_obj.save()
+
+                solution_obj = Complaints_Solutions.objects.create(
+                    complaint_id=complaint_obj,
+                    reacting_faculty=fac_obj,
+                    reopen_count=int(complaint_obj.reopened_count),
+                    action=comment
+                )
+                solution_obj.save()
+                context["success"] = "Action has been taken against " + str(
+                    complaint_obj.student_id.first_name) + " " + str(
+                    complaint_obj.student_id.last_name) + "'s complaint."
+
+        complaints_qs = Complaints.objects.filter(committee_id=committee_obj)
+        # ===================== For pending Complaints ==================================
+        pending_qs = complaints_qs.filter(status="Pending").filter(revoked=False).order_by('-timestamp')
+        pending_count = pending_qs.count()
+        if pending_count == 0:
+            context["no_pending_complaints"] = True
+
+        else:
+            context["no_pending_complaints"] = False
+
+        context["pending_count"] = pending_count
+
+        pending_dict = []
+        for i in pending_qs:
+            tmp = {
+                'id': i.id,
+                'student_name': str(i.student_id.first_name) + " " + str(i.student_id.last_name),
+                'student_enrl': i.student_id.enrollment_no,
+                'student_dept': i.student_id.dept_id.dept_name,
+                'description': i.complaint_details,
+                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+            }
+            pending_dict.append(tmp)
+
+        context["pending_complaints"] = pending_dict
+
+        # ===================== For Re-opened Complaints ==================================
+        reopened_qs = complaints_qs.filter(status="Re-Opened").filter(revoked=False).order_by('-timestamp')
+        reopened_count = reopened_qs.count()
+        if reopened_count == 0:
+            context["no_reopened_complaints"] = True
+
+        else:
+            context["no_reopened_complaints"] = False
+
+        context["reopened_count"] = reopened_count
+
+        reopened_dict = []
+        for i in reopened_qs:
+            student_name = str(i.student_id.first_name) + " " + str(i.student_id.last_name)
+            tmp = {
+                'id': i.id,
+                'student_name': student_name,
+                'student_enrl': i.student_id.enrollment_no,
+                'student_dept': i.student_id.dept_id.dept_name,
+                'description': i.complaint_details,
+                'reopened_count': i.reopened_count,
+                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+            }
+            actions_count = i.reopened_count
+            tmp["actions"] = []
+            j = 0
+            while j <= actions_count:
+                # print("yes")
+                if j < 1:
+                    response_obj = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': response_obj.reacting_faculty.name,
+                        'comment': response_obj.action,
+                        'dept': response_obj.reacting_faculty.dept_id.dept_name,
+                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Closed'
+                    }
+                    tmp["actions"].append(tmp1)
+                else:
+                    student_response = Complaint_Reopen_comments.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': student_name,
+                        'comment': student_response.comments,
+                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Re-Opened'
+                    }
+                    tmp["actions"].append(tmp1)
+                    try:
+                        faculty_response = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                        tmp1 = {
+                            'name': faculty_response.reacting_faculty.name,
+                            'comment': faculty_response.action,
+                            'dept': faculty_response.reacting_faculty.dept_id.dept_name,
+                            'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'action': 'Closed'
+                        }
+                        tmp["actions"].append(tmp1)
+
+                    except Complaints_Solutions.DoesNotExist:
+                        pass
+
+                j += 1
+
+            reopened_dict.append(tmp)
+        # print(reopened_dict)
+
+        context["reopened_complaints"] = reopened_dict
+        # ===================== For Closed Complaints =====================================
+        closed_qs = complaints_qs.filter(status="Closed").filter(revoked=False).order_by('-timestamp')
+        closed_count = closed_qs.count()
+        if closed_count == 0:
+            context["no_closed_complaints"] = True
+
+        else:
+            context["no_closed_complaints"] = False
+
+        context["closed_count"] = closed_count
+
+        closed_dict = []
+        for i in closed_qs:
+            student_name = str(i.student_id.first_name) + " " + str(i.student_id.last_name)
+            tmp = {
+                'id': i.id,
+                'student_name': student_name,
+                'student_enrl': i.student_id.enrollment_no,
+                'student_dept': i.student_id.dept_id.dept_name,
+                'description': i.complaint_details,
+                'reopened_count': i.reopened_count,
+                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+            }
+            actions_count = i.reopened_count
+            tmp["actions"] = []
+            j = 0
+            while j <= actions_count:
+                # print("yes")
+                if j < 1:
+                    response_obj = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': response_obj.reacting_faculty.name,
+                        'comment': response_obj.action,
+                        'dept': response_obj.reacting_faculty.dept_id.dept_name,
+                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Closed'
+                    }
+                    tmp["actions"].append(tmp1)
+                else:
+                    student_response = Complaint_Reopen_comments.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': student_name,
+                        'comment': student_response.comments,
+                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Re-Opened'
+                    }
+                    tmp["actions"].append(tmp1)
+
+                    faculty_response = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                    tmp1 = {
+                        'name': faculty_response.reacting_faculty.name,
+                        'comment': faculty_response.action,
+                        'dept': faculty_response.reacting_faculty.dept_id.dept_name,
+                        'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'action': 'Closed'
+                    }
+                    tmp["actions"].append(tmp1)
+                j += 1
+
+            closed_dict.append(tmp)
+        # print(closed_dict)
+
+        context["closed_complaints"] = closed_dict
+        # ===================== For Revoked Complaints ====================================
+        revoked_qs = complaints_qs.filter(status="Revoked").filter(revoked=True).order_by('-timestamp')
+        revoked_count = revoked_qs.count()
+        if revoked_count == 0:
+            context["no_revoked_complaints"] = True
+
+        else:
+            context["no_revoked_complaints"] = False
+
+        context["revoked_count"] = revoked_count
+
+        revoked_dict = []
+        for i in revoked_qs:
+            student_name = str(i.student_id.first_name) + " " + str(i.student_id.last_name)
+            tmp = {
+                'id': i.id,
+                'student_name': student_name,
+                'student_enrl': i.student_id.enrollment_no,
+                'student_dept': i.student_id.dept_id.dept_name,
+                'description': i.complaint_details,
+                'reopened_count': i.reopened_count,
+                'revoked_reason': i.revoked_reason,
+                'revoked_date': str(i.revoked_date.strftime("%d %B, %Y, %I:%M %p")),
+                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+            }
+            actions_count = i.reopened_count
+            tmp["actions"] = []
+            if actions_count > 0:
+                j = 0
+                while j <= actions_count:
+                    if j < 1:
+                        response_obj = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                        tmp1 = {
+                            'name': response_obj.reacting_faculty.name,
+                            'comment': response_obj.action,
+                            'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'dept': response_obj.reacting_faculty.dept_id.dept_name,
+                            'action': 'Closed'
+                        }
+                        tmp["actions"].append(tmp1)
+                    else:
+                        student_response = Complaint_Reopen_comments.objects.get(complaint_id=i, reopen_count=j)
+                        tmp1 = {
+                            'name': student_name,
+                            'comment': student_response.comments,
+                            'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'action': 'Re-Opened'
+                        }
+                        tmp["actions"].append(tmp1)
+                        try:
+                            faculty_response = Complaints_Solutions.objects.get(complaint_id=i, reopen_count=j)
+                            tmp1 = {
+                                'name': faculty_response.reacting_faculty.name,
+                                'comment': faculty_response.action,
+                                'dept':faculty_response.reacting_faculty.dept_id.dept_name,
+                                'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                                'action': 'Closed'
+                            }
+                            tmp["actions"].append(tmp1)
+
+                        except Complaints_Solutions.DoesNotExist:
+                            pass
+
+                    j += 1
+            else:
+                tmp["actions"] = []
+
+            revoked_dict.append(tmp)
+        # print(revoked_dict)
+
+        context["revoked_complaints"] = revoked_dict
+
+        return render(request, 'committees/members.html', context)
+    else:
+        context["error"] = "Log in First"
+        return render(request, 'home_auth/index.html', context)
+
+
+def CommitteeViewMembers(request, com_id):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        committee_obj = Committees.objects.get(id=com_id)
+        context["committee_name"] = committee_obj.committee_name
+        context["committee_id"] = committee_obj.id
+        context["chairperson_name"] = committee_obj.chairperson.name
+        context["chairperson_dept"] = committee_obj.chairperson.dept_id.dept_name
+        if request.user.getRole == "Faculty":
+            fac_obj = Faculty.objects.get(auth_id=request.user)
+            context["name"] = fac_obj.name
+            try:
+                mapping_obj = Committee_to_Members_Mapping.objects.get(committee_id=committee_obj, faculty_id=fac_obj)
+            except Committee_to_Members_Mapping.DoesNotExist:
+                return HttpResponse("You are not member of this committee")
+
+        elif request.user.getRole == "Principal":
+            principal_obj = Principal.objects.get(auth_id=request.user)
+            context["name"] = principal_obj.name
+
+        else:
+            return HttpResponse("You are not authorized to view this page.")
+
+        members_qs = Committee_to_Members_Mapping.objects.filter(committee_id=committee_obj)
+        context["members"] = members_qs
+
+        return render(request, 'committees/view_members.html', context)
+
+    else:
+        context["error"] = "Login First"
+        return render(request, 'home_auth/index.html', context)
+
+
+def CommitteeManageMembers(request, com_id):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        committee_obj = Committees.objects.get(id=com_id)
+        fac_obj = Faculty.objects.get(auth_id=request.user)
+        context["name"] = fac_obj.name
+
+        if committee_obj.chairperson != fac_obj:
+            return HttpResponse("You are not authorized to view this page.")
+
+        if request.method == "POST":
+            if request.POST.get('faculty_id') is not None:
+                fac_id = request.POST.get('faculty_id')
+                print(fac_id)
+                mapping_obj = Committee_to_Members_Mapping.objects.get(committee_id=committee_obj, faculty_id=int(fac_id))
+                name = mapping_obj.faculty_id.name
+                mapping_obj.delete()
+
+                context["success"] = name + " has been removed successfully."
+
+            if request.POST.get('member') is not None:
+                member_id = request.POST.get('member')
+                try:
+                    mapping_obj, is_created = Committee_to_Members_Mapping.objects.get_or_create(
+                        committee_id=committee_obj,
+                        faculty_id=Faculty.objects.get(id=int(member_id))
+                    )
+                    if is_created:
+                        mapping_obj.save()
+                        context["success"] = mapping_obj.faculty_id.name + " has been successfully added as member."
+                    else:
+                        context["success"] = 'Selected faculty is already member of this committee.'
+
+                except Exception as e:
+                    print(e)
+                    context["error"] = "Server Error has been occured."
+
+
+
+        context["committee_name"] = committee_obj.committee_name
+        context["committee_id"] = committee_obj.id
+        context["chairperson_name"] = committee_obj.chairperson.name
+        context["chairperson_dept"] = committee_obj.chairperson.dept_id.dept_name
+        context["chairperson_id"] = committee_obj.chairperson.id
+
+        all_dept = Departments.objects.all()
+        dept_faculties = []
+        for i in all_dept:
+            tmp = {
+                'name':i.dept_name,
+                'faculties': Faculty.objects.filter(dept_id=i)
+            }
+            dept_faculties.append(tmp)
+
+        context['dept_faculties'] = dept_faculties
+
+
+        members_qs = Committee_to_Members_Mapping.objects.filter(committee_id=committee_obj)
+        context["members"] = members_qs
+
+        return render(request, 'committees/manage_members.html', context)
+
+    else:
+        context["error"] = "Login First"
+        return render(request, 'home_auth/index.html', context)
 
 
 # Committee Related Views > End
@@ -2310,6 +3023,5 @@ def DownloadAverageFeedback(request, type):
 
     else:
         pass
-
 
 # Download Report Views > End
