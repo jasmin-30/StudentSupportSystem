@@ -7,13 +7,15 @@
     <!-- Meta -->
     <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
     <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assests/images/favicon.ico' %}" type="image/x-icon">
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
     <!-- Google font-->
     <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
     <!-- Required Fremwork -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
     <!-- feather Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+    <!-- ico font -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
     <!-- Style.css -->
@@ -110,65 +112,6 @@
                                     </div>
                                     <br>
                                 {% endfor %}
-{#                                <div class="checkbox-fade fade-in-primary">#}
-{#                                    <label>#}
-{#                                        <input type="checkbox" value="">#}
-{#                                        <span class="cr">#}
-{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
-{#                                        </span>#}
-{#                                        <span>Computer Engineering</span>#}
-{#                                    </label>#}
-{#                                </div>#}
-{#                                <br>#}
-{#                                <div class="checkbox-fade fade-in-primary">#}
-{#                                    <label>#}
-{#                                        <input type="checkbox" value="">#}
-{#                                        <span class="cr">#}
-{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
-{#                                        </span>#}
-{#                                        <span>Information & Technology</span>#}
-{#                                    </label>#}
-{#                                </div>#}
-{#                                <br>#}
-{#                                <div class="checkbox-fade fade-in-primary">#}
-{#                                    <label>#}
-{#                                        <input type="checkbox" value="">#}
-{#                                        <span class="cr">#}
-{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
-{#                                        </span>#}
-{#                                        <span>Production Engineering</span>#}
-{#                                    </label>#}
-{#                                </div>#}
-{#                                <br>#}
-{#                                <div class="checkbox-fade fade-in-primary">#}
-{#                                    <label>#}
-{#                                        <input type="checkbox" value="">#}
-{#                                        <span class="cr">#}
-{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
-{#                                        </span>#}
-{#                                        <span>Civil Engineering</span>#}
-{#                                    </label>#}
-{#                                </div>#}
-{#                                <br>#}
-{#                                <div class="checkbox-fade fade-in-primary">#}
-{#                                    <label>#}
-{#                                        <input type="checkbox" value="">#}
-{#                                        <span class="cr">#}
-{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
-{#                                        </span>#}
-{#                                        <span>Electronic & Communication</span>#}
-{#                                    </label>#}
-{#                                </div>#}
-{#                                <br>#}
-{#                                <div class="checkbox-fade fade-in-primary">#}
-{#                                    <label>#}
-{#                                        <input type="checkbox" value="">#}
-{#                                        <span class="cr">#}
-{#                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>#}
-{#                                        </span>#}
-{#                                        <span>Mechanical Engineering</span>#}
-{#                                    </label>#}
-{#                                </div>#}
                             </div>
                         </div>
                         <button type="submit" class="btn btn-large btn-primary" style="float:right;">Publish</button>
@@ -243,9 +186,9 @@
                                 </li>
                                 <ul class="pcoded-item pcoded-left-item">
                                     <li class="pcoded-hasmenu">
-                                        <a href="#">
+                                        <a href="javascript:void(0)">
                                             <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                            <span class="pcoded-mtext">View Detaied Feedback</span>
+                                            <span class="pcoded-mtext">View Detailed Feedback</span>
                                         </a>
                                         <ul class="pcoded-submenu">
                                             <li class=" ">
@@ -268,7 +211,7 @@
                                 </ul>
                                 <ul class="pcoded-item pcoded-left-item">
                                     <li class="pcoded-hasmenu">
-                                        <a href="#">
+                                        <a href="javascript:void(0)">
                                             <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
                                             <span class="pcoded-mtext">View Average Feedback</span>
                                         </a>
@@ -287,9 +230,9 @@
                                     </li>
                                 </ul>
                                 <li class="">
-                                    <a href="#" data-toggle="modal" data-target="#large-Modal">
+                                    <a href="{% url 'faculty_manage_news' %}">
                                         <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
-                                        <span class="pcoded-mtext">Publish News
+                                        <span class="pcoded-mtext"> Manage News
                                         </span>
                                     </a>
                                 </li>
@@ -335,8 +278,8 @@
                                                                         html += '</div>';
                                                                         html += '<div class="col">';
                                                                             html += '<h4>{{ i.name }}</h4>';
-                                                                            html += '<p>{{ i.chairperson }}</p>';
-                                                                            html += '<p>Total Members : {{ i.members }}</p>';
+                                                                            html += '<p style="font-size: 12pt;"><i class="icofont icofont-king-crown"></i> {{ i.chairperson }}</p>';
+                                                                            html += '<p style="font-size: 12pt;"><i class="icofont icofont-users-alt-5"></i> Total Members : {{ i.members }}</p>';
                                                                         html += '</div>';
                                                                     html += '</div>';
                                                                 html += '</div>';
@@ -415,18 +358,12 @@
     <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
-    <!-- Chart js -->
-    <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>
-    <!-- amchart js -->
-    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>
+
     <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
     <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
     <!-- custom js -->
     <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
 
     <script type="text/javascript">

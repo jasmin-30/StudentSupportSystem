@@ -566,7 +566,7 @@ class News(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.news_details
+        return self.news_subject
 
 
 class Student_Feedback_Status(models.Model):

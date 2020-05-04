@@ -1,17 +1,25 @@
 import datetime
 import json
+import os
 from base64 import b64encode, b64decode
-from itertools import chain
+
+from reportlab.graphics.charts.legends import Legend
+from reportlab.graphics.charts.piecharts import Pie
+from reportlab.graphics.charts.barcharts import VerticalBarChart
+from reportlab.graphics.charts.textlabels import LabelOffset
+from reportlab.graphics.shapes import Drawing, Image, String, Line
+from reportlab.lib import colors
+from reportlab.lib.formatters import DecimalFormatter
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, TableStyle, Spacer, Table, PageBreak
 
 from .utils import *
-from email.utils import decode_params
-from io import BytesIO
 import traceback
 
 from django.contrib.auth.hashers import check_password
 from django.core.mail import send_mail
-from django.db.models import Q
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.template.loader import render_to_string
@@ -751,7 +759,7 @@ def GetFeedback(request):
                         'ans_7': feedback_obj.Q7, 'ans_8': feedback_obj.Q8,
                         'ans_9': feedback_obj.Q9, 'ans_10': feedback_obj.Q10,
                         'remarks': feedback_obj.remarks,
-                        'date': str(feedback_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                        'date': str(feedback_obj.timestamp.strftime("%d %B, %Y %I:%M %p"))
                     }
                     res = json.dumps(data)
                     return HttpResponse(res, status=status.HTTP_200_OK)
@@ -770,7 +778,7 @@ def GetFeedback(request):
                         'ans_7': feedback_obj.Q7, 'ans_8': feedback_obj.Q8,
                         'ans_9': feedback_obj.Q9, 'ans_10': feedback_obj.Q10,
                         'remarks': feedback_obj.remarks,
-                        'date': str(feedback_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                        'date': str(feedback_obj.timestamp.strftime("%d %B, %Y %I:%M %p"))
                     }
                     res = json.dumps(data)
                     return HttpResponse(res, status=status.HTTP_200_OK)
@@ -850,14 +858,13 @@ def StudentComplaintSectionView(request):
                     complaint_obj.save()
 
                     new_comment_obj = Complaint_Reopen_comments.objects.create(
-                        complaint_id = complaint_obj,
+                        complaint_id=complaint_obj,
                         reopen_count=complaint_obj.reopened_count,
                         comments=comment
                     )
                     new_comment_obj.save()
 
                     context["success"] = "Complaint thread has been re-opened."
-
 
         complaints_qs = Complaints.objects.filter(student_id=std_obj)
         # ======================== Pending Complaints ===================================
@@ -879,7 +886,7 @@ def StudentComplaintSectionView(request):
                 'complaint_details': i.complaint_details,
                 'committee': Committees.objects.get(id=i.committee_id.id).committee_name,
                 'status': i.status,
-                'timestamp': i.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                'timestamp': i.timestamp.strftime("%d %B, %Y %I:%M %p"),
             }
             pending_dict.append(tmp)
 
@@ -904,7 +911,7 @@ def StudentComplaintSectionView(request):
                 'committee': Committees.objects.get(id=i.committee_id.id).committee_name,
                 'reopened_count': i.reopened_count,
                 'status': i.status,
-                'timestamp': i.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                'timestamp': i.timestamp.strftime("%d %B, %Y %I:%M %p"),
             }
             actions_count = i.reopened_count
             tmp["actions"] = []
@@ -917,7 +924,7 @@ def StudentComplaintSectionView(request):
                         'name': response_obj.reacting_faculty.name,
                         'comment': response_obj.action,
                         'dept': response_obj.reacting_faculty.dept_id.dept_name,
-                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': response_obj.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Closed'
                     }
                     tmp["actions"].append(tmp1)
@@ -926,7 +933,7 @@ def StudentComplaintSectionView(request):
                     tmp1 = {
                         'name': str(std_obj.first_name) + " " + str(std_obj.last_name),
                         'comment': student_response.comments,
-                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': student_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Re-Opened'
                     }
                     tmp["actions"].append(tmp1)
@@ -936,7 +943,7 @@ def StudentComplaintSectionView(request):
                             'name': faculty_response.reacting_faculty.name,
                             'comment': faculty_response.action,
                             'dept': faculty_response.reacting_faculty.dept_id.dept_name,
-                            'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'date': faculty_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                             'action': 'Closed'
                         }
                         tmp["actions"].append(tmp1)
@@ -969,7 +976,7 @@ def StudentComplaintSectionView(request):
                 'committee': Committees.objects.get(id=i.committee_id.id).committee_name,
                 'reopened_count': i.reopened_count,
                 'status': i.status,
-                'timestamp': i.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                'timestamp': i.timestamp.strftime("%d %B, %Y %I:%M %p"),
             }
             actions_count = i.reopened_count
             tmp["actions"] = []
@@ -982,7 +989,7 @@ def StudentComplaintSectionView(request):
                         'name': response_obj.reacting_faculty.name,
                         'comment': response_obj.action,
                         'dept': response_obj.reacting_faculty.dept_id.dept_name,
-                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': response_obj.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Closed'
                     }
                     tmp["actions"].append(tmp1)
@@ -991,7 +998,7 @@ def StudentComplaintSectionView(request):
                     tmp1 = {
                         'name': str(std_obj.first_name) + " " + str(std_obj.last_name),
                         'comment': student_response.comments,
-                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': student_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Re-Opened'
                     }
                     tmp["actions"].append(tmp1)
@@ -1001,7 +1008,7 @@ def StudentComplaintSectionView(request):
                         'name': faculty_response.reacting_faculty.name,
                         'comment': faculty_response.action,
                         'dept': faculty_response.reacting_faculty.dept_id.dept_name,
-                        'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': faculty_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Closed'
                     }
                     tmp["actions"].append(tmp1)
@@ -1032,8 +1039,8 @@ def StudentComplaintSectionView(request):
                 'reopened_count': i.reopened_count,
                 'status': i.status,
                 'revoked_reason': i.revoked_reason,
-                'revoked_date': str(i.revoked_date.strftime("%d %B, %Y, %I:%M %p")),
-                'timestamp': i.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                'revoked_date': str(i.revoked_date.strftime("%d %B, %Y %I:%M %p")),
+                'timestamp': i.timestamp.strftime("%d %B, %Y %I:%M %p"),
             }
             actions_count = i.reopened_count
             tmp["actions"] = []
@@ -1047,7 +1054,7 @@ def StudentComplaintSectionView(request):
                             'name': response_obj.reacting_faculty.name,
                             'comment': response_obj.action,
                             'dept': response_obj.reacting_faculty.dept_id.dept_name,
-                            'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'date': response_obj.timestamp.strftime("%d %B, %Y %I:%M %p"),
                             'action': 'Closed'
                         }
                         tmp["actions"].append(tmp1)
@@ -1056,7 +1063,7 @@ def StudentComplaintSectionView(request):
                         tmp1 = {
                             'name': str(std_obj.first_name) + " " + str(std_obj.last_name),
                             'comment': student_response.comments,
-                            'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'date': student_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                             'action': 'Re-Opened'
                         }
                         tmp["actions"].append(tmp1)
@@ -1066,7 +1073,7 @@ def StudentComplaintSectionView(request):
                                 'name': faculty_response.reacting_faculty.name,
                                 'comment': faculty_response.action,
                                 'dept': faculty_response.reacting_faculty.dept_id.dept_name,
-                                'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                                'date': faculty_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                                 'action': 'Closed'
                             }
                             tmp["actions"].append(tmp1)
@@ -1475,48 +1482,20 @@ def FacultyProfile(request):
         return render(request, 'home_auth/index.html', context)
 
 
-# def FacultyComplaintSectionView(request):
-#     if request.user.is_authenticated:
-#         fac_obj = Faculty.objects.get(auth_id=request.session["User"])
-#         print(fac_obj)
-#         committeeqs = Committees.objects.all()
-#         complaints_of_faculties_qs = Complaints_of_Facultys.objects.filter(faculty_id=fac_obj)
-#         context = {
-#             "base_url": st.BASE_URL,
-#             "committees": committeeqs,
-#             "complaints_of_faculties": complaints_of_faculties_qs
-#
-#         }
-#         context["name"] = str(fac_obj.name)
-#
-#         if request.method == 'POST':
-#             try:
-#                 fac_obj = Faculty.objects.get(auth_id=request.user)
-#
-#                 com_id = request.POST.get('committee')
-#                 com_obj = Committees.objects.get(id=com_id)
-#
-#                 complaint_details = request.POST.get('complaint')
-#
-#                 complaints_of_faculty_obj = Complaints_of_Facultys.objects.create(
-#                     faculty_id=fac_obj,
-#                     committee_id=com_obj,
-#                     complaint_details=complaint_details
-#                 )
-#                 complaints_of_faculty_obj.save()
-#                 context["success"] = "Complaint registered successfully."
-#                 return render(request, "faculty/faculty_complaint_section.html", context)
-#             except:
-#                 context["error"] = "Some technical problem occured."
-#                 return render(request, "faculty/faculty_complaint_section.html", context)
-#         else:
-#             return render(request, "faculty/faculty_complaint_section.html", context)
-#     else:
-#         context = {
-#             "base_url": st.BASE_URL
-#         }
-#         context["error"] = "Login to access this page."
-#         return render(request, 'home_auth/index.html', context)
+def FacultyManageNews(request):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        fac_obj = Faculty.objects.get(auth_id=request.user)
+        context["name"] = fac_obj.name
+        news_qs = News.objects.filter(issuing_faculty=fac_obj).order_by('-timestamp')
+        context["news_qs"] = news_qs
+        return render(request, 'faculty/manage_news.html', context)
+
+    else:
+        context["error"] = "Login First"
+        return render(request, 'home_auth/index.html', context)
 
 
 # Faculty Related Views > End
@@ -1903,13 +1882,13 @@ def GetAverageFeedback(request):
                 try:
                     data = {
                         "ratings": rating_list,
-                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p"))
                     }
 
                 except Mid_Sem_Feedback_Answers.DoesNotExist:
                     data = {
                         "ratings": rating_list,
-                        "date": str(datetime.datetime.now().strftime("%d %B, %Y, %I:%M %p"))
+                        "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
                     }
 
                 res = json.dumps(data)
@@ -1924,13 +1903,13 @@ def GetAverageFeedback(request):
                 try:
                     data = {
                         "ratings": rating_list,
-                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p"))
                     }
 
                 except End_Sem_Feedback_Answers.DoesNotExist:
                     data = {
                         "ratings": rating_list,
-                        "date": str(datetime.datetime.now().strftime("%d %B, %Y, %I:%M %p"))
+                        "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
                     }
                 res = json.dumps(data)
                 return HttpResponse(res, status=status.HTTP_200_OK)
@@ -1976,7 +1955,7 @@ def GetAllFeedback(request):
                 feedback_list = []
                 for i in feedback_qs:
                     tmp = {
-                        'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p")),
+                        'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p")),
                         'q1': i.Q1, 'q2': i.Q2, 'q3': i.Q3, 'q4': i.Q4, 'q5': i.Q5,
                         'q6': i.Q6, 'q7': i.Q7, 'q8': i.Q8, 'q9': i.Q9, 'q10': i.Q10,
                         'remark': i.remarks
@@ -1995,7 +1974,7 @@ def GetAllFeedback(request):
                 feedback_list = []
                 for i in feedback_qs:
                     tmp = {
-                        'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p")),
+                        'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p")),
                         'q1': i.Q1, 'q2': i.Q2, 'q3': i.Q3, 'q4': i.Q4, 'q5': i.Q5,
                         'q6': i.Q6, 'q7': i.Q7, 'q8': i.Q8, 'q9': i.Q9, 'q10': i.Q10,
                         'remark': i.remarks
@@ -2460,8 +2439,6 @@ def DownloadDetailedReport(request):
     if request.user.is_authenticated and request.user.getRole == "Principal":
         if request.POST.get('type') is not None:
             type = request.POST.get('type')
-            print(type)
-            fb_type = ''
             if (type == "0"):
                 fb_type = "mid"
             else:
@@ -2478,8 +2455,6 @@ def DownloadAverageReport(request):
     if request.user.is_authenticated and request.user.getRole == "Principal":
         if request.POST.get('type') is not None:
             type = request.POST.get('type')
-            print(type)
-            fb_type = ''
             if (type == "0"):
                 fb_type = "mid"
             else:
@@ -2560,7 +2535,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                 'student_enrl': i.student_id.enrollment_no,
                 'student_dept': i.student_id.dept_id.dept_name,
                 'description': i.complaint_details,
-                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p"))
             }
             pending_dict.append(tmp)
 
@@ -2587,7 +2562,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                 'student_dept': i.student_id.dept_id.dept_name,
                 'description': i.complaint_details,
                 'reopened_count': i.reopened_count,
-                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p"))
             }
             actions_count = i.reopened_count
             tmp["actions"] = []
@@ -2600,7 +2575,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                         'name': response_obj.reacting_faculty.name,
                         'comment': response_obj.action,
                         'dept': response_obj.reacting_faculty.dept_id.dept_name,
-                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': response_obj.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Closed'
                     }
                     tmp["actions"].append(tmp1)
@@ -2609,7 +2584,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                     tmp1 = {
                         'name': student_name,
                         'comment': student_response.comments,
-                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': student_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Re-Opened'
                     }
                     tmp["actions"].append(tmp1)
@@ -2619,7 +2594,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                             'name': faculty_response.reacting_faculty.name,
                             'comment': faculty_response.action,
                             'dept': faculty_response.reacting_faculty.dept_id.dept_name,
-                            'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'date': faculty_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                             'action': 'Closed'
                         }
                         tmp["actions"].append(tmp1)
@@ -2654,7 +2629,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                 'student_dept': i.student_id.dept_id.dept_name,
                 'description': i.complaint_details,
                 'reopened_count': i.reopened_count,
-                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p"))
             }
             actions_count = i.reopened_count
             tmp["actions"] = []
@@ -2667,7 +2642,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                         'name': response_obj.reacting_faculty.name,
                         'comment': response_obj.action,
                         'dept': response_obj.reacting_faculty.dept_id.dept_name,
-                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': response_obj.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Closed'
                     }
                     tmp["actions"].append(tmp1)
@@ -2676,7 +2651,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                     tmp1 = {
                         'name': student_name,
                         'comment': student_response.comments,
-                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': student_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Re-Opened'
                     }
                     tmp["actions"].append(tmp1)
@@ -2686,7 +2661,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                         'name': faculty_response.reacting_faculty.name,
                         'comment': faculty_response.action,
                         'dept': faculty_response.reacting_faculty.dept_id.dept_name,
-                        'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': faculty_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Closed'
                     }
                     tmp["actions"].append(tmp1)
@@ -2718,8 +2693,8 @@ def CommitteeChairpersonDashboard(request, com_id):
                 'description': i.complaint_details,
                 'reopened_count': i.reopened_count,
                 'revoked_reason': i.revoked_reason,
-                'revoked_date': str(i.revoked_date.strftime("%d %B, %Y, %I:%M %p")),
-                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                'revoked_date': str(i.revoked_date.strftime("%d %B, %Y %I:%M %p")),
+                'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p"))
             }
             actions_count = i.reopened_count
             tmp["actions"] = []
@@ -2732,7 +2707,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                             'name': response_obj.reacting_faculty.name,
                             'comment': response_obj.action,
                             'dept': response_obj.reacting_faculty.dept_id.dept_name,
-                            'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'date': response_obj.timestamp.strftime("%d %B, %Y %I:%M %p"),
                             'action': 'Closed'
                         }
                         tmp["actions"].append(tmp1)
@@ -2741,7 +2716,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                         tmp1 = {
                             'name': student_name,
                             'comment': student_response.comments,
-                            'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'date': student_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                             'action': 'Re-Opened'
                         }
                         tmp["actions"].append(tmp1)
@@ -2751,7 +2726,7 @@ def CommitteeChairpersonDashboard(request, com_id):
                                 'name': faculty_response.reacting_faculty.name,
                                 'comment': faculty_response.action,
                                 'dept': faculty_response.reacting_faculty.dept_id.dept_name,
-                                'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                                'date': faculty_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                                 'action': 'Closed'
                             }
                             tmp["actions"].append(tmp1)
@@ -2854,7 +2829,7 @@ def CommitteeMemberDashboard(request, com_id):
                 'student_enrl': i.student_id.enrollment_no,
                 'student_dept': i.student_id.dept_id.dept_name,
                 'description': i.complaint_details,
-                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p"))
             }
             pending_dict.append(tmp)
 
@@ -2881,7 +2856,7 @@ def CommitteeMemberDashboard(request, com_id):
                 'student_dept': i.student_id.dept_id.dept_name,
                 'description': i.complaint_details,
                 'reopened_count': i.reopened_count,
-                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p"))
             }
             actions_count = i.reopened_count
             tmp["actions"] = []
@@ -2894,7 +2869,7 @@ def CommitteeMemberDashboard(request, com_id):
                         'name': response_obj.reacting_faculty.name,
                         'comment': response_obj.action,
                         'dept': response_obj.reacting_faculty.dept_id.dept_name,
-                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': response_obj.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Closed'
                     }
                     tmp["actions"].append(tmp1)
@@ -2903,7 +2878,7 @@ def CommitteeMemberDashboard(request, com_id):
                     tmp1 = {
                         'name': student_name,
                         'comment': student_response.comments,
-                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': student_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Re-Opened'
                     }
                     tmp["actions"].append(tmp1)
@@ -2913,7 +2888,7 @@ def CommitteeMemberDashboard(request, com_id):
                             'name': faculty_response.reacting_faculty.name,
                             'comment': faculty_response.action,
                             'dept': faculty_response.reacting_faculty.dept_id.dept_name,
-                            'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'date': faculty_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                             'action': 'Closed'
                         }
                         tmp["actions"].append(tmp1)
@@ -2948,7 +2923,7 @@ def CommitteeMemberDashboard(request, com_id):
                 'student_dept': i.student_id.dept_id.dept_name,
                 'description': i.complaint_details,
                 'reopened_count': i.reopened_count,
-                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p"))
             }
             actions_count = i.reopened_count
             tmp["actions"] = []
@@ -2961,7 +2936,7 @@ def CommitteeMemberDashboard(request, com_id):
                         'name': response_obj.reacting_faculty.name,
                         'comment': response_obj.action,
                         'dept': response_obj.reacting_faculty.dept_id.dept_name,
-                        'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': response_obj.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Closed'
                     }
                     tmp["actions"].append(tmp1)
@@ -2970,7 +2945,7 @@ def CommitteeMemberDashboard(request, com_id):
                     tmp1 = {
                         'name': student_name,
                         'comment': student_response.comments,
-                        'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': student_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Re-Opened'
                     }
                     tmp["actions"].append(tmp1)
@@ -2980,7 +2955,7 @@ def CommitteeMemberDashboard(request, com_id):
                         'name': faculty_response.reacting_faculty.name,
                         'comment': faculty_response.action,
                         'dept': faculty_response.reacting_faculty.dept_id.dept_name,
-                        'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                        'date': faculty_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                         'action': 'Closed'
                     }
                     tmp["actions"].append(tmp1)
@@ -3012,8 +2987,8 @@ def CommitteeMemberDashboard(request, com_id):
                 'description': i.complaint_details,
                 'reopened_count': i.reopened_count,
                 'revoked_reason': i.revoked_reason,
-                'revoked_date': str(i.revoked_date.strftime("%d %B, %Y, %I:%M %p")),
-                'date': str(i.timestamp.strftime("%d %B, %Y, %I:%M %p"))
+                'revoked_date': str(i.revoked_date.strftime("%d %B, %Y %I:%M %p")),
+                'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p"))
             }
             actions_count = i.reopened_count
             tmp["actions"] = []
@@ -3025,7 +3000,7 @@ def CommitteeMemberDashboard(request, com_id):
                         tmp1 = {
                             'name': response_obj.reacting_faculty.name,
                             'comment': response_obj.action,
-                            'date': response_obj.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'date': response_obj.timestamp.strftime("%d %B, %Y %I:%M %p"),
                             'dept': response_obj.reacting_faculty.dept_id.dept_name,
                             'action': 'Closed'
                         }
@@ -3035,7 +3010,7 @@ def CommitteeMemberDashboard(request, com_id):
                         tmp1 = {
                             'name': student_name,
                             'comment': student_response.comments,
-                            'date': student_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                            'date': student_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                             'action': 'Re-Opened'
                         }
                         tmp["actions"].append(tmp1)
@@ -3044,8 +3019,8 @@ def CommitteeMemberDashboard(request, com_id):
                             tmp1 = {
                                 'name': faculty_response.reacting_faculty.name,
                                 'comment': faculty_response.action,
-                                'dept':faculty_response.reacting_faculty.dept_id.dept_name,
-                                'date': faculty_response.timestamp.strftime("%d %B, %Y, %I:%M %p"),
+                                'dept': faculty_response.reacting_faculty.dept_id.dept_name,
+                                'date': faculty_response.timestamp.strftime("%d %B, %Y %I:%M %p"),
                                 'action': 'Closed'
                             }
                             tmp["actions"].append(tmp1)
@@ -3121,7 +3096,8 @@ def CommitteeManageMembers(request, com_id):
                 print(fac_id)
                 fac_member_obj = Faculty.objects.get(id=int(fac_id))
                 print(fac_member_obj)
-                mapping_obj = Committee_to_Members_Mapping.objects.get(committee_id=committee_obj, faculty_id=fac_member_obj)
+                mapping_obj = Committee_to_Members_Mapping.objects.get(committee_id=committee_obj,
+                                                                       faculty_id=fac_member_obj)
                 print(mapping_obj)
                 mapping_obj.delete()
 
@@ -3144,8 +3120,6 @@ def CommitteeManageMembers(request, com_id):
                     print(e)
                     context["error"] = "Server Error has been occured."
 
-
-
         context["committee_name"] = committee_obj.committee_name
         context["committee_id"] = committee_obj.id
         context["chairperson_name"] = committee_obj.chairperson.name
@@ -3156,13 +3130,12 @@ def CommitteeManageMembers(request, com_id):
         dept_faculties = []
         for i in all_dept:
             tmp = {
-                'name':i.dept_name,
+                'name': i.dept_name,
                 'faculties': Faculty.objects.filter(dept_id=i)
             }
             dept_faculties.append(tmp)
         print(dept_faculties)
         context['dept_faculties'] = dept_faculties
-
 
         members_qs = Committee_to_Members_Mapping.objects.filter(committee_id=committee_obj)
         context["members"] = members_qs
@@ -3178,70 +3151,408 @@ def CommitteeManageMembers(request, com_id):
 
 # Download Report Views > Start
 def DownloadDetailedFeedback(request, type):
-    if type == "mid":
-        if request.user.is_authenticated:
-            if request.method == "POST":
-                if request.POST.get('faculty') is not None:
-                    faculty_id = request.POST.get('faculty')
-                    term = request.POST.get('term')
-                    year = request.POST.get('year')
-                    print(faculty_id, term, year)
-                    print(request.META['HTTP_REFERER'])
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if request.POST.get('faculty') is not None:
+                fac_obj = Faculty.objects.get(id=int(request.POST.get('faculty')))
+                term = int(request.POST.get('term'))
+                if term == 0:
+                    term_type = "ODD"
+                    semester_list = [1, 3, 5, 7]
+                else:
+                    term_type = "Even"
+                    semester_list = [2, 4, 6, 8]
 
-                    return HttpResponse("Detailed Feedback")
+                year = int(request.POST.get('year'))
 
-    elif type == "end":
-        if request.user.is_authenticated:
-            if request.method == "POST":
-                if request.POST.get('faculty') is not None:
-                    faculty_id = request.POST.get('faculty')
-                    term = request.POST.get('term')
-                    year = request.POST.get('year')
-                    print(faculty_id, term, year)
-                    print(request.META['HTTP_REFERER'])
+                subject_obj = Subjects.objects.get(id=int(request.POST.get('subject')))
+                if type == "mid":
+                    fb_type = "Mid"
+                    question_qs = Mid_Sem_Feedback_Questions.objects.all()
+                    question_count = question_qs.count()
+                    feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
+                        faculty_id=fac_obj,
+                        subject_id=subject_obj,
+                        semester__in=semester_list,
+                        timestamp__year=year
+                    )
 
-                    return HttpResponse("Detailed Feedback")
+                elif type == "end":
+                    fb_type = "End"
+                    question_qs = End_Sem_Feedback_Questions.objects.all()
+                    question_count = question_qs.count()
+                    feedback_qs = End_Sem_Feedback_Answers.objects.filter(
+                        faculty_id=fac_obj,
+                        subject_id=subject_obj,
+                        semester__in=semester_list,
+                        timestamp__year=year
+                    )
+
+                serialized_feedback = serialize_detailed_feedback(feedback_qs=feedback_qs)
+
+                # ====================== PDF Generation ===================================
+                pdfname = str(subject_obj.subject_name)
+                pdfname = pdfname.replace(" ", "_")
+                response = HttpResponse(content_type='application/pdf')
+                response[
+                    'Content-Disposition'] = 'attachment; filename=' + pdfname + '_' + fb_type + '_Semester_Detailed_Feedback.pdf'
+
+                elements = []
+
+                doc = SimpleDocTemplate(response, rightMargin=inch / 4,
+                                        leftMargin=inch / 4,
+                                        topMargin=inch / 2,
+                                        bottomMargin=inch / 4,
+                                        pagesize=A4)
+
+                path_to_file = os.getcwd() + "/logo.jpg"
+
+                for k in serialized_feedback:
+
+                    text1 = "Government Engineering College, Bhavnagar"
+                    text2 = fb_type + " Semester Feedback Report"
+                    text3 = "Term: " + term_type + " " + str(year)
+                    text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+                    text5 = str(fac_obj.dept_id.dept_name) + " Department"
+                    text6 = fac_obj.name
+                    text7 = "Subject Name: " + subject_obj.subject_name + " (" + subject_obj.subject_code + ")"
+                    text8 = "Semester: " + str(subject_obj.semester)
+                    text9 = "Date of Feedback: " + str(k['date'])
+
+                    d = Drawing(400, 200)
+                    d.add(Image(0, 120, 100, 100, path_to_file))
+                    d.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
+                    d.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
+                    d.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
+                    d.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
+                    d.add(Line(0, 90, 550, 90))
+                    d.add(String(150, 65, text5, fontSize=18, fillColor=colors.black))
+                    d.add(String(30, 35, text6, fontSize=12, fillColor=colors.black))
+                    d.add(String(30, 20, text7, fontSize=12, fillColor=colors.black))
+                    d.add(String(380, 20, text8, fontSize=12, fillColor=colors.black))
+                    d.add(String(22, -45, text9, fontSize=12, fillColor=colors.black))
+
+                    elements.append(d)
+                    elements.append(Spacer(500, 50))
+
+                    fl = [["Sr No", "Questions", "Feedback"]]
+                    for i in range(1, question_count + 1):
+                        index = "q" + str(i)
+                        ft = []
+                        ft.append(i)
+                        ft.append(question_qs[i - 1].question_text)
+                        ft.append(k[index])
+                        fl.append(ft)
+
+                    # fl.append([11, 'Remarks', l[k][10]])
+
+                    # data = fl
+                    # table = Table(data, 12 * [0.5 * inch])
+                    table = Table(fl)
+
+                    table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.white),
+                                               ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                                               ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                                               ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                                               ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                                               ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                                               ('BACKGROUND', (0, -1), (-1, -1), colors.white),
+                                               ]))
+                    table._argW[0] = 1.0 * inch
+                    table._argW[1] = 4.0 * inch
+                    table._argW[2] = 2.0 * inch
+
+                    table._argH[0] = 0.5 * inch
+                    for i in range(1, question_count + 1):
+                        table._argH[i] = 0.4 * inch
+
+                    # table._argH[1] = 0.4 * inch
+                    # table._argH[2] = 0.4 * inch
+                    # table._argH[3] = 0.4 * inch
+                    # table._argH[4] = 0.4 * inch
+                    # table._argH[5] = 0.4 * inch
+                    # table._argH[6] = 0.4 * inch
+                    # table._argH[7] = 0.4 * inch
+                    # table._argH[8] = 0.4 * inch
+                    # table._argH[9] = 0.4 * inch
+                    # table._argH[10] = 0.4 * inch
+                    # table._argH[11] = 0.4 * inch
+
+                    elements.append(table)
+
+                    drawing_for_remarks = Drawing(400, 200)
+                    drawing_for_remarks.add(
+                        String(22, 170, "Remarks: " + str(k['remark']), fontSize=12, fillColor=colors.black))
+
+                    drawing_for_remarks.add(
+                        String(22, 100, "Note: All the feedback given are out of 5.", fontSize=12,
+                               fillColor=colors.black))
+
+                    elements.append(drawing_for_remarks)
+
+                    elements.append(PageBreak())
+
+                doc.build(elements)
+                return response
+
 
     else:
-        pass
+        context["error"] = "Log in First"
+        return render(request, 'home_auth/index.html', context)
 
 
 def DownloadAverageFeedback(request, type):
-    if type == "mid":
-        if request.user.is_authenticated:
-            if request.method == "POST":
-                if request.POST.get('faculty') is not None:
-                    faculty_id = request.POST.get('faculty')
-                    term = request.POST.get('term')
-                    year = request.POST.get('year')
-                    is_all_subject = request.POST.get('all_subject')
-                    if not is_all_subject:
-                        subject_id = request.POST.get('subject')
-                        print(faculty_id, term, year, is_all_subject, subject_id)
-                    else:
-                        print(faculty_id, term, year, is_all_subject)
-                    print(request.META['HTTP_REFERER'])
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        if request.method == "POST":
+            if request.POST.get('faculty') is not None:
+                fac_obj = Faculty.objects.get(id=int(request.POST.get('faculty')))
+                term = int(request.POST.get('term'))
+                if term == 0:
+                    term_type = "ODD"
+                    semester_list = [1, 3, 5, 7]
+                else:
+                    term_type = "Even"
+                    semester_list = [2, 4, 6, 8]
 
-                    return HttpResponse("Average Feedback")
+                year = int(request.POST.get('year'))
 
-    elif type == "end":
-        if request.user.is_authenticated:
-            if request.method == "POST":
-                if request.POST.get('faculty') is not None:
-                    faculty_id = request.POST.get('faculty')
-                    term = request.POST.get('term')
-                    year = request.POST.get('year')
-                    is_all_subject = request.POST.get('all_subject')
-                    if not is_all_subject:
-                        subject_id = request.POST.get('subject')
-                        print(faculty_id, term, year, is_all_subject, subject_id)
-                    else:
-                        print(faculty_id, term, year, is_all_subject)
-                    print(request.META['HTTP_REFERER'])
+                subject_obj = Subjects.objects.get(id=int(request.POST.get('subject')))
+                if type == "mid":
+                    fb_type = "Mid"
+                    question_qs = Mid_Sem_Feedback_Questions.objects.all()
+                    question_count = question_qs.count()
+                    feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
+                        faculty_id=fac_obj,
+                        subject_id=subject_obj,
+                        semester__in=semester_list,
+                        timestamp__year=year
+                    )
+                    rating_insights = ratings_detailed(feedback_qs=feedback_qs)
 
-                    return HttpResponse("Average Feedback")
+                elif type == "end":
+                    fb_type = "End"
+                    question_qs = End_Sem_Feedback_Questions.objects.all()
+                    question_count = question_qs.count()
+                    feedback_qs = End_Sem_Feedback_Answers.objects.filter(
+                        faculty_id=fac_obj,
+                        subject_id=subject_obj,
+                        semester__in=semester_list,
+                        timestamp__year=year
+                    )
+                    rating_insights = ratings_detailed(feedback_qs=feedback_qs)
+
+                # Got dictionary of question wise average rating as well as count.
+                questionwise_ratings = serialize_feedback_subject(feedback_qs=feedback_qs)
+
+                # =========== PDF Generation ===============================================
+                ##################################################################################################################
+
+                pdfname1 = "Temp1"
+
+                response1 = HttpResponse(content_type='application/pdf')
+                response1['Content-Disposition'] = 'attachment; filename=' + pdfname1
+
+                elements1 = []
+                doc1 = SimpleDocTemplate(response1, rightMargin=inch / 4,
+                                         leftMargin=inch / 4,
+                                         topMargin=inch / 2,
+                                         bottomMargin=inch / 4,
+                                         pagesize=A4)
+
+                path_to_file = os.getcwd() + "/logo.jpg"
+
+                text1 = "Government Engineering College, Bhavnagar"
+                text2 = fb_type + " Semester Feedback Report"
+                text3 = "Term: " + term_type + " " + str(year)
+                text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+                text5 = str(fac_obj.dept_id.dept_name) + " Department"
+                text6 = fac_obj.name
+                text7 = "Subject Name: " + subject_obj.subject_name + " (" + subject_obj.subject_code + ")"
+                text8 = "Semester: " + str(subject_obj.semester)
+                text9 = "Total Feedback: " + str(questionwise_ratings["count"])
+
+                d = Drawing(400, 200)
+                d.add(Image(0, 120, 100, 100, path_to_file))
+                d.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
+                d.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
+                d.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
+                d.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
+                d.add(Line(0, 90, 550, 90))
+                d.add(String(150, 65, text5, fontSize=18, fillColor=colors.black))
+                d.add(String(30, 35, text6, fontSize=12, fillColor=colors.black))
+                d.add(String(30, 20, text7, fontSize=12, fillColor=colors.black))
+                d.add(String(380, 20, text8, fontSize=12, fillColor=colors.black))
+                d.add(String(22, -45, text9, fontSize=12, fillColor=colors.black))
+
+                elements1.append(d)
+
+                drawing = Drawing(400, 200)
+                drawing.vAlign = 'CENTER'
+
+                data_list = []
+                label_list = []
+                for i in range(1, question_count + 1):
+                    index = "Q" + str(i)
+                    data_list.append(questionwise_ratings[index])
+                    label_list.append(("Question : " + str(i)))
+
+                data = []
+                data.append(tuple(data_list))
+                print(data)
+                bc = VerticalBarChart()
+                bc.x = 28
+                bc.y = -120
+                bc.height = 250
+                bc.width = 500
+                bc.data = data
+                bc.bars[0].fillColor = colors.aqua
+                bc.strokeColor = colors.black
+                bc.valueAxis.valueMin = 0
+                bc.valueAxis.valueMax = 5.0
+                bc.valueAxis.valueStep = 0.5
+                bc.categoryAxis.labels.boxAnchor = 'ne'
+                bc.categoryAxis.labels.dx = 8
+                bc.categoryAxis.labels.dy = -2
+                bc.categoryAxis.labels.angle = 30
+                bc.categoryAxis.categoryNames = label_list
+                bc.barLabels.angle = 0
+                bc.barLabels.boxAnchor = 's'
+                bc.barLabelFormat = DecimalFormatter(2)
+                drawing.add(bc)
+
+                elements1.append(drawing)
+
+                elements1.append(PageBreak())
+
+                ##################################################################################################################
+
+                pdfname2 = "Temp1"
+                response2 = HttpResponse(content_type='application/pdf')
+                response2['Content-Disposition'] = 'attachment; filename=' + pdfname2
+
+                elements2 = []
+                doc2 = SimpleDocTemplate(response2, rightMargin=inch / 4,
+                                         leftMargin=inch / 4,
+                                         topMargin=inch / 2,
+                                         bottomMargin=inch / 4,
+                                         pagesize=A4)
+
+                path_to_file = os.getcwd() + "/logo.jpg"
+
+                text1 = "Government Engineering College, Bhavnagar"
+                text2 = fb_type + " Semester Feedback Report"
+                text3 = "Term: " + term_type + " " + str(year)
+                text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+                text5 = "Total Feedback: " + str(questionwise_ratings["count"])
+
+                d2 = Drawing(400, 200)
+                d2.add(Image(0, 120, 100, 100, path_to_file))
+                d2.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
+                d2.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
+                d2.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
+                d2.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
+                d2.add(Line(0, 90, 550, 90))
+                d2.add(String(30, 70, text5, fontSize=12, fillColor=colors.black))
+
+                elements2.append(d2)
+
+                elements2.append(Spacer(550, -50))
+
+                fl = [["Sr No", "Questions", "Feedback"]]
+                for i in range(question_count):
+                    index = "Q" + str(i + 1)
+                    dpie = Drawing(200, 100)
+                    pc = Pie()
+                    pc.x = 65
+                    pc.y = 15
+                    pc.width = 70
+                    pc.height = 70
+                    pc.sideLabels = 1
+                    pc.data = [rating_insights[index][1], rating_insights[index][2], rating_insights[index][3],
+                               rating_insights[index][4], rating_insights[index][5]]
+                    pc.labels = ['1', '2', '3', '4', '5']
+                    pc.slices.strokeWidth = 0.5
+                    pc.slices[0].fillColor = colors.red
+                    pc.slices[1].fillColor = colors.blue
+                    pc.slices[2].fillColor = colors.gray
+                    pc.slices[3].fillColor = colors.yellow
+                    pc.slices[4].fillColor = colors.green
+                    dpie.add(pc)
+                    legend = Legend()
+                    legend.alignment = 'right'
+                    legend.x = 160
+                    legend.y = 90
+                    legend.columnMaximum = 5
+                    legend.dxTextSpace = 4
+                    n = len(pc.data)
+                    legend.colorNamePairs = [(pc.slices[i].fillColor, (pc.labels[i], ': ' + '%0.2f' % pc.data[i] + '%'))
+                                             for i in
+                                             range(n)]
+                    dpie.add(legend)
+
+                    ft = []
+                    ft.append(i + 1)
+                    ft.append(question_qs[i].question_text)
+                    ft.append([dpie])
+                    fl.append(ft)
+
+                tbdata = fl
+
+                table = Table(tbdata)
+
+                table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.white),
+                                           ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                                           ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                                           ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                                           ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                                           ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                                           ('BACKGROUND', (0, -1), (-1, -1), colors.white),
+                                           ]))
+                table._argW[0] = 0.6 * inch
+                table._argW[1] = 3.5 * inch
+                table._argW[2] = 3.3 * inch
+
+                table._argH[0] = 0.35 * inch
+                for i in range(1, question_count + 1):
+                    table._argH[i] = 1.6 * inch
+
+                table.spaceBefore = 0
+
+                elements2.append(table)
+
+                ##################################################################################################################
+
+                pdfname3 = str(subject_obj.subject_name)
+                pdfname3 = pdfname3.replace(" ", "_")
+                response3 = HttpResponse(content_type='application/pdf')
+                response3[
+                    'Content-Disposition'] = 'attachment; filename=' + pdfname3 + '_' + fb_type + '_Semester_Average_Feedback.pdf'
+                elements3 = []
+
+                doc3 = SimpleDocTemplate(response3, rightMargin=inch / 4,
+                                         leftMargin=inch / 4,
+                                         topMargin=inch / 2,
+                                         bottomMargin=inch / 4,
+                                         pagesize=A4)
+
+                for i in elements1:
+                    elements3.append(i)
+
+                for i in elements2:
+                    elements3.append(i)
+
+                doc3.build(elements3)
+
+                return response3
 
     else:
-        pass
+        context["error"] = "Log in First"
+        return render(request, 'home_auth/index.html', context)
 
 # Download Report Views > End

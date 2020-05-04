@@ -102,31 +102,18 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label class="col-sm-4 col-form-label" for="all_subject" style="font-weight: 900;">Download for all subjects : </label>
-                            <div class="col-sm-2">
-                                <input type="checkbox" name="all_subject" id="all_subject" class="js-single" checked>
-                            </div>
-                            <div class="col-sm-4">
-                                <button type="submit" id="button1" class="btn btn-outline-primary">
-                                    <i class="feather icon-check"></i>  Download
-                                </button>
-                            </div>
-                        </div>
-                        <div id="subject_list" style="display: none;">
                             <div class="form-group row">
                                 <label class="col-sm-2 col-form-label" for="subject" style="font-weight: 900;">Subject : </label>
                                 <div class="col-sm-4">
-                                    <select name="subject" id="subject" class="custom-select" style="width: 100%">
+                                    <select name="subject" id="subject" class="custom-select" style="width: 100%" data-toggle="tooltip" title="Subject List will be dynamically update according to the faculty and term you've chosen." required>
                                     </select>
                                 </div>
                                 <div class="col-sm-4">
-                                    <button type="button" id="button2" class="btn btn-outline-primary">
+                                    <button type="submit" class="btn btn-outline-primary">
                                         <i class="feather icon-check"></i>  Download
                                     </button>
                                 </div>
                             </div>
-                        </div>
                     </form>
                 </div>
             </div>
@@ -314,42 +301,10 @@
         var subjects_dict = JSON.parse('{{ subject_list|safe }}');
         console.log(subjects_dict);
 
-        // for switch
-        $(document).ready(function () {
-
-            $('[data-toggle="popover"]').popover();
-            // Single swithces
-            var subject_switch = document.querySelector('.js-single');
-            var switchery = new Switchery(subject_switch, { color: '#4680ff', jackColor: '#fff' });
-
-            subject_switch.onchange = function () {
-                var btn1 = $(document).find('button#button1');
-                var btn2 = $(document).find('button#button2');
-                var div = $(document).find('div#subject_list');
-                if(subject_switch.checked){
-                    div.hide();
-                    btn2.attr('type', 'button');
-                    btn1.show();
-                    $(document).find('select#subject').removeAttr('required');
-                    btn1.attr('type', 'submit');
-
-                    //clearing out subjects list
-                    $(document).find('select#subject').html();
-                }
-                else {
-                    div.show();
-                    btn2.attr('type', 'submit');
-                    $(document).find('select#subject').attr('required', 'true');
-                    btn1.hide();
-                    btn1.attr('type', 'button');
-                }
-            }
-
-            var term_select = document.querySelector('#term');
-            term_select.onchange = function () {
-                update_subject();
-            }
-        });
+        var term_select = document.querySelector('#term');
+        term_select.onchange = function () {
+            update_subject();
+        }
 
         function update_subject() {
             var term = $(document).find('select#term option:selected').val();
@@ -460,6 +415,7 @@
             //Updating barchart.
             myBar.options.title.text = "Average Feedback for " + fac_name;
             window.myBar.update();
+            $('[data-toggle="popover"]').popover();
         }
 
         function load_graph() {
@@ -494,9 +450,9 @@
                     var list_group = div2.find('ul#subject_list_group');
                     var subject_lis = '';
                     for(var i=0;i<subject_len;++i) {
-                        subject_lis += '<li class="list-group-item d-flex justify-content-between align-items-center">';
+                        subject_lis += '<li class="list-group-item d-flex justify-content-between align-items-center" data-toggle="popover" data-placement="left" title="Feedback Count" data-content="Total number of feedback received in this subject in selected year.">';
                             subject_lis += response['ratings'][i]['subject_name'];
-                            subject_lis += '<span class="badge badge-primary badge-pill" data-toggle="popover" data-placement="left" title="Feedback Count" data-content="Total number of feedback received in this subject in selected year.">';
+                            subject_lis += '<span class="badge badge-primary badge-pill">';
                                 subject_lis += response['ratings'][i]['count'];
                             subject_lis += '</span>';
                         subject_lis += '</li>';

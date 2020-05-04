@@ -39,6 +39,7 @@ urlpatterns = [
     # path('faculty/complaint/', views.FacultyComplaintSectionView, name='faculty_complaint_section'),
     # path('faculty/dashboard/', views.FacultyDashboard, name='faculty_dashboard'),
     # path('faculty/profile/', views.FacultyProfile, name='faculty_profile'),
+    path('faculty/manage-news/', views.FacultyManageNews, name='faculty_manage_news'),
     path('faculty/view-detailed-feedback/<str:type>/', views.FacultyViewDetailedFeedback, name='faculty_view_detailed_feedback'),
     path('faculty/view-average-feedback/<str:type>/', views.FacultyViewAverageFeedback, name='faculty_view_average_feedback'),
     # Faculty Related urls > End
