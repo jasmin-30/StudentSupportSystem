@@ -1,256 +1,197 @@
+{% extends 'Base/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
+<!-- Title block > Start -->
+{% block title %}
+    Principal Profile
+{% endblock title %}
+<!-- Title block > End -->
 
-<head>
-    <title>Principal Profile</title>
-    <!-- Meta -->
-    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
-    <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
-    <!-- Google font-->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
-    <!-- Required Fremwork -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- themify-icons line icon -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
+<!-- Extra CSS Block > Start -->
+{% block extra_css %}
     <!-- ico font -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
-    <!-- Switch component css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
-    <!-- Tags css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
-    <!-- feather Awesome -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
-    <!-- Style.css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
-    <!-- Material Icon -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/material-design/css/material-design-iconic-font.min.css' %}">
-</head>
+{% endblock extra_css %}
+<!-- Extra CSS Block > End -->
 
-<body>
-    <!-- Pre-loader start -->
-    <div class="theme-loader">
-        <div class="ball-scale">
-            <div class='contain'>
-                <div class="ring">
-                    <div class="frame"></div>
+<!-- Custom CSS Block > Start -->
+{% block custom_css %}
+{% endblock custom_css %}
+<!-- Custom CSS Block > End -->
+
+<!-- Modals Block > Start -->
+{% block modals %}
+{% endblock modals %}
+<!-- Modals Block > End -->
+
+<!-- Logo Block > Start -->
+{% block logo %}
+    <a href="{% url 'principal_dashboard' %}">
+        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+    </a>
+{% endblock logo %}
+<!-- Logo Block > End -->
+
+<!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
+{% block nav_right %}
+    <ul class="nav-right">
+        <li class="user-profile header-notification">
+            <div class="dropdown-primary dropdown">
+                <div class="dropdown-toggle" data-toggle="dropdown">
+                    <span>{{ name }}</span>
+                    <i class="feather icon-chevron-down"></i>
                 </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
+                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                    <li>
+                        <a href="{% url 'principal_profile' %}">
+                            <i class="feather icon-user"></i> Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="feather icon-log-out"></i> Logout
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </div>
-    </div>
-    <!-- Pre-loader end -->
-    <div id="pcoded" class="pcoded">
-        <div class="pcoded-overlay-box"></div>
-        <div class="pcoded-container navbar-wrapper">
-            <nav class="navbar header-navbar pcoded-header">
-                <div class="navbar-wrapper">
-                    <div class="navbar-logo">
-                    <a class="mobile-menu" id="mobile-collapse" href="#!">
-                        <i class="feather icon-menu"></i>
-                    </a>
-                    <a href="{% url 'principal_dashboard' %}">
-                        <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Theme-Logo" style="max-width:85%;">
-                    </a>
-                    <a class="mobile-options">
-                        <i class="feather icon-more-horizontal"></i>
-                    </a>
-                </div>
-                    <div class="navbar-container container-fluid">
+        </li>
+    </ul>
+{% endblock nav_right %}
+<!-- Navbar Right menus block > End -->
 
-                    <ul class="nav-right">
+<!-- Side Navigation bar Block > Start -->
+{% block side_bar %}
+{% endblock side_bar %}
+<!-- Side Navigation bar Block > End -->
 
-                        <li class="user-profile header-notification">
-                            <div class="dropdown-primary dropdown">
-                                <div class="dropdown-toggle" data-toggle="dropdown">
-                                    <span>{{ name }}</span>
-                                    <i class="feather icon-chevron-down"></i>
+
+<!-- Main body block > Start -->
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
+{% block main_body %}
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="page-header">
+                                <div class="row align-items-end">
+                                    <div class="col-lg-8">
+                                        <div class="page-header-title">
+                                            <div class="d-inline">
+                                                <h3>Profile</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 d-flex justify-content-end">
+                                        <a class="btn btn-round btn-outline-primary" href="{% url 'principal_dashboard' %}">
+                                            <i class="feather icon-arrow-left"></i>
+                                            Back to Dashboard
+                                        </a>
+                                    </div>
                                 </div>
-                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                    <li>
-                                        <a href="{% url 'principal_profile' %}">
-                                            <i class="feather icon-user"></i> Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'logout' %}">
-                                            <i class="feather icon-log-out"></i> Logout
-                                        </a>
-                                    </li>
-                                </ul>
                             </div>
-                        </li>
-                    </ul>
-                </div>
-                </div>
-            </nav>
-            <div class="pcoded-main-container">
-                <div class="pcoded-wrapper">
-                    <div class="pcoded-inner-content">
-                        <div class="main-body">
-                            <div class="page-wrapper">
-                                <div class="page-body">
+                            <!-- List view card start -->
+                            <div class="card">
+                                <div class="card-block">
                                     <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="page-header">
-                                            <div class="row align-items-end">
-                                                <div class="col-lg-8">
-                                                    <div class="page-header-title">
-                                                        <div class="d-inline">
-                                                            <h3>Profile</h3>
+                                        <div class="col-xl-12 col-lg-12 col-md-12">
+                                            <div class="sub-title">{{ name }}</div>
+                                            <!-- Nav tabs -->
+                                            <ul class="nav nav-tabs md-tabs tabs-left b-none" role="tablist">
+                                                <li class="nav-item">
+                                                    <a class="nav-link active" data-toggle="tab" href="#personaldetail" role="tab" style="font-size: 12pt; width: 180px;">Personal Details</a>
+                                                    <div class="slide"></div>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" data-toggle="tab" href="#changepassword" role="tab" style="font-size: 12pt; width: 180px;">Change Password</a>
+                                                    <div class="slide"></div>
+                                                </li>
+                                            </ul>
+                                            <!-- Tab panes -->
+                                            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
+                                                <div class="tab-pane active" id="personaldetail" role="tabpanel">
+                                                    <form action="{% url 'principal_profile' %}" method="post">
+                                                        {% csrf_token %}
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Name :</label>
+                                                            <div class="col-sm-8 col-md-10 col-lg-10" id="name-div">
+                                                                <label class="col-form-label">{{ name }}</label>
+                                                            </div>
                                                         </div>
-                                                    </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Email ID :</label>
+                                                            <div class="col-sm-8 col-md-10 col-lg-10" id="email-div">
+                                                                <label class="col-form-label">{{ email }}</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;"></label>
+                                                            <div class="col-sm-8 col-md-10 col-lg-10">
+                                                                <button type="button" class="btn btn-round btn-outline-primary" id="button-submit">Edit Profile</button>
+                                                                <button type="button" class="btn btn-round btn-outline-primary" id="button-cancel">Cancel</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
                                                 </div>
-                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                    <span class="f-right">
-                                                        <a href="{% url 'principal_dashboard' %}" class="btn" style="font-size: 15px">
-                                                            <i class="feather icon-arrow-left"></i>
-                                                            Back to Dashboard
-                                                        </a>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <!-- List view card start -->
-                                <div class="card">
-                                    <div class="card-block">
-                                        <div class="row">
-                                            <div class="col-xl-12 col-lg-12 col-md-12">
-                                                <div class="sub-title">{{ name }}</div>
-                                                <!-- Nav tabs -->
-                                                <ul class="nav nav-tabs md-tabs tabs-left b-none" role="tablist">
-                                                    <li class="nav-item">
-                                                        <a class="nav-link active" data-toggle="tab" href="#personaldetail" role="tab" style="font-size: 12pt; width: 180px;">Personal Details</a>
-                                                        <div class="slide"></div>
-                                                    </li>
-                                                    <li class="nav-item">
-                                                        <a class="nav-link" data-toggle="tab" href="#changepassword" role="tab" style="font-size: 12pt; width: 180px;">Change Password</a>
-                                                        <div class="slide"></div>
-                                                    </li>
-                                                </ul>
-                                                <!-- Tab panes -->
-                                                <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
-                                                    <div class="tab-pane active" id="personaldetail" role="tabpanel">
-                                                        <form action="{% url 'principal_profile' %}" method="post">
-                                                            {% csrf_token %}
-                                                            <div class="form-group row">
-                                                                <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Name :</label>
-                                                                <div class="col-sm-8 col-md-10 col-lg-10" id="name-div">
-                                                                    <label class="col-form-label">{{ name }}</label>
-                                                                </div>
+                                                <div class="tab-pane" id="changepassword" role="tabpanel">
+                                                    <form action="{% url 'principal_profile' %}" method="post">
+                                                        {% csrf_token %}
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="oldpwd">Old Password :</label>
+                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                                                <input type="password" class="form-control" id="oldpwd" name="oldpwd" required/>
                                                             </div>
-                                                            <div class="form-group row">
-                                                                <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Email ID :</label>
-                                                                <div class="col-sm-8 col-md-10 col-lg-10" id="email-div">
-                                                                    <label class="col-form-label">{{ email }}</label>
-                                                                </div>
+                                                        </div>
+                                                        <div class="form-group row" id="newpwd-div">
+                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="newpwd">New Password :</label>
+                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                                                <input type="password" class="form-control" minlength="6" maxlength="16" id="newpwd" name="newpwd" onblur="validate_password()" required/>
+                                                                <div id="Error_newpwd" style="display: none; color: red;"></div>
                                                             </div>
-                                                            <div class="form-group row">
-                                                                <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;"></label>
-                                                                <div class="col-sm-8 col-md-10 col-lg-10">
-                                                                    <button type="button" class="btn btn-round btn-outline-primary" id="button-submit">Edit Profile</button>
-                                                                    <button type="button" class="btn btn-round btn-outline-primary" id="button-cancel">Cancel</button>
-                                                                </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="cnfrmpwd">Confirm Password :</label>
+                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9" id="cnfrmpwd-div">
+                                                                <input type="password" class="form-control" minlength="6" maxlength="16" id="cnfrmpwd" name="cnfrmpwd" oninput="verify_pwd()" required/>
+                                                                <div id="Error_cnfrmpwd" style="display: none; color: red;"></div>
                                                             </div>
-                                                        </form>
-                                                    </div>
-                                                    <div class="tab-pane" id="changepassword" role="tabpanel">
-                                                        <form action="{% url 'principal_profile' %}" method="post">
-                                                            {% csrf_token %}
-                                                            <div class="form-group row">
-                                                                <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="oldpwd">Old Password :</label>
-                                                                <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
-                                                                    <input type="password" class="form-control" id="oldpwd" name="oldpwd" required/>
-                                                                </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px;"></label>
+                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                                                <button type="submit" class="btn btn-round btn-disabled" id="button-update" name="button-update" disabled>Update</button>
                                                             </div>
-                                                            <div class="form-group row" id="newpwd-div">
-                                                                <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="newpwd">New Password :</label>
-                                                                <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
-                                                                    <input type="password" class="form-control" minlength="6" maxlength="16" id="newpwd" name="newpwd" onblur="validate_password()" required/>
-                                                                    <div id="Error_newpwd" style="display: none; color: red;"></div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group row">
-                                                                <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="cnfrmpwd">Confirm Password :</label>
-                                                                <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9" id="cnfrmpwd-div">
-                                                                    <input type="password" class="form-control" minlength="6" maxlength="16" id="cnfrmpwd" name="cnfrmpwd" oninput="verify_pwd()" required/>
-                                                                    <div id="Error_cnfrmpwd" style="display: none; color: red;"></div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group row">
-                                                                <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px;"></label>
-                                                                <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
-                                                                    <button type="submit" class="btn btn-round btn-disabled" id="button-update" name="button-update" disabled>Update</button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
+                                                        </div>
+                                                    </form>
                                                 </div>
                                             </div>
                                         </div>
-                                        </div>
-
-                                </div>
-                                        <!-- List view card end -->
-                                        </div>
-                                </div>
+                                    </div>
                                 </div>
                             </div>
+                            <!-- List view card end -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <!-- Required Jquery -->
-    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
-    <!-- jquery slimscroll js -->
-    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
-    <!-- modernizr js -->
-    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+{% endblock main_body %}
+<!-- Main body block > End -->
+
+<!-- Extra JS Block > Start -->
+{% block extra_js %}
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+{% endblock extra_js %}
+<!-- Extra JS Block > End -->
 
-    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
-    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
-    <!-- custom js -->
-    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+<!-- Custom JS Block > Start -->
+{% block custom_js %}
     <script type="text/javascript">
         {% if success %}
             swal({
@@ -355,7 +296,5 @@
         }
     </script>
     <!-- Validation js > End -->
-
-</body>
-
-</html>
+{% endblock custom_js %}
+<!-- Custom JS Block > End -->

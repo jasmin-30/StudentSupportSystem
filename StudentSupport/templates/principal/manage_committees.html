@@ -1,3 +1,431 @@
+{% extends 'Base/base.html' %}
+{% load static %}
+<!-- Title block > Start -->
+{% block title %}
+    Manage Committees
+{% endblock title %}
+<!-- Title block > End -->
+
+<!-- Extra CSS Block > Start -->
+{% block extra_css %}
+    <!-- ico font -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+{% endblock extra_css %}
+<!-- Extra CSS Block > End -->
+
+<!-- Custom CSS Block > Start -->
+{% block custom_css %}
+{% endblock custom_css %}
+<!-- Custom CSS Block > End -->
+
+<!-- Modals Block > Start -->
+{% block modals %}
+    <!-- Add Committee Modal -->
+    <div class="modal fade" id="add-committee" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Committee</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" action="{% url 'manage_committees' %}">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="name">Committee Name : </label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" name="name" id="name" required>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="details">Committee Details: </label>
+                            <div class="col-sm-8">
+                                <textarea class="form-control" name="details" id="details" required></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="chairperson">Chair Person : </label>
+                            <div class="col-sm-8">
+                                <select name="chairperson" id="chairperson" class="custom-select" style="width: 100%" required>
+                                    <option value="-1" selected disabled>Select Chairperson</option>
+                                    {% for d in dept_faculties %}
+                                        <optgroup label="{{ d.name }}">
+                                        {% for f in d.faculties %}
+                                            <option value="{{ f.id }}">{{ f.name }}</option>
+                                        {% endfor %}
+                                        </optgroup>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row f-right" style="padding-right: 15px;">
+                            <button type="submit" class="btn btn-outline-primary">
+                                <i class="icofont icofont-check-circled"></i>
+                                Confirm
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Add Committee Modal End -->
+{% endblock modals %}
+<!-- Modals Block > End -->
+
+<!-- Logo Block > Start -->
+{% block logo %}
+    <a href="{% url 'principal_dashboard' %}">
+        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+    </a>
+{% endblock logo %}
+<!-- Logo Block > End -->
+
+<!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
+{% block nav_right %}
+    <ul class="nav-right">
+        <li class="user-profile header-notification">
+            <div class="dropdown-primary dropdown">
+                <div class="dropdown-toggle" data-toggle="dropdown">
+                    <span>{{ name }}</span>
+                    <i class="feather icon-chevron-down"></i>
+                </div>
+                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                    <li>
+                        <a href="{% url 'principal_profile' %}">
+                            <i class="feather icon-user"></i> Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="feather icon-log-out"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+{% endblock nav_right %}
+<!-- Navbar Right menus block > End -->
+
+<!-- Side Navigation bar Block > Start -->
+{% block side_bar %}
+{% endblock side_bar %}
+<!-- Side Navigation bar Block > End -->
+
+
+<!-- Main body block > Start -->
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
+{% block main_body %}
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="page-header">
+                                <div class="row align-items-end">
+                                    <div class="col-lg-8">
+                                        <div class="page-header-title">
+                                            <div class="d-inline">
+                                                <h3>Manage Committees</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4 d-flex justify-content-end">
+                                        <a class="btn btn-round btn-outline-primary" href="{% url 'principal_dashboard' %}">
+                                            <i class="feather icon-arrow-left"></i>
+                                            Back to Dashboard
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>
+                                        Add, Modify and Delete Committees from here.
+                                    </h5>
+                                    <button type="button" class="btn btn-primary f-right" data-toggle="modal" data-target="#add-committee">Add Committee</button>
+                                </div>
+                                <div class="card-block">
+                                    <div id="response" class="alert" role="alert" style="display: none;"></div>
+                                    <div class="tbl_data"></div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">#</th>
+                                                    <th scope="col">Committee Name</th>
+                                                    <th scope="col">Committee Details</th>
+                                                    <th scope="col">Chairperson</th>
+                                                    <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for c in committees %}
+                                                <tr row_id="{{ c.id }}">
+                                                    <th ><div scope="row" col_name="id">{{ forloop.counter }}</div></th>
+                                                    <td ><div class="row_data" col_name="name">{{ c.committee_name }}</div></td>
+                                                    <td ><div class="row_data" col_name="details">{{ c.committee_details }}</div></td>
+                                                    <td ><div class="row_data" fac_id="{{ c.chairperson.id }}" original_entry="{{ c.chairperson.name }}" id="chairperson" col_name="chairperson">{{ c.chairperson.name }}</div></td>
+                                                    <td>
+                                                        <div class="btn-group btn-group-sm" style="float: none;">
+                                                            <button type="button" class="btn_edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                <span class="icofont icofont-ui-edit"></span>
+                                                            </button>
+                                                            <button type="button" class="btn_delete btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                <span class="icofont icofont-ui-delete"></span>
+                                                            </button>
+                                                            <button type="button" class="btn_save btn btn-primary waves-effect waves-light active" style="float: none;margin: 5px;">
+                                                                <span class="icofont icofont-ui-check"></span>
+                                                            </button>
+                                                            <button type="button" class="btn_cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                <span class="icofont icofont-ui-close"></span>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock main_body %}
+<!-- Main body block > End -->
+
+<!-- Extra JS Block > Start -->
+{% block extra_js %}
+    <!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+{% endblock extra_js %}
+<!-- Extra JS Block > End -->
+
+<!-- Custom JS Block > Start -->
+{% block custom_js %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Hiding Buttons
+            $(document).find('.btn_save').hide();
+            $(document).find('.btn_cancel').hide();
+
+            // event for delete button
+            $(document).on('click', '.btn_delete', function(event) {
+                event.preventDefault();
+                var tbl_row = $(this).closest('tr');
+                var committee_id = tbl_row.attr('row_id');
+                swal({
+                    title: "Are you sure?",
+                    text: "Committee will be deleted.",
+                    type: "warning",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                }, function () {
+                    $.ajax({
+                        type:"GET",
+                        url:"{{ base_url }}" + "edit-delete-committees/",
+                        data: {
+                            committee_id: committee_id,
+                            action: 'delete'
+                        },
+
+                        success: function (msg) {
+                            var response = JSON.parse(msg);
+                            swal({
+                                title: response['committee'] + " deleted successfully.",
+                                type: "success",
+                            });
+                            tbl_row.remove();
+                        },
+                        error: function (msg) {
+                            var response = JSON.parse(msg.responseText);
+                            swal({
+                                title: "Error!",
+                                text: response['error'],
+                                type: "error",
+                            });
+                        },
+                    });
+                });
+            });
+
+            //Event for edit button
+            $(document).on('click', '.btn_edit', function(event) {
+                event.preventDefault();
+                var tbl_row = $(this).closest('tr');
+
+                tbl_row.find('.btn_save').show();
+                tbl_row.find('.btn_cancel').show();
+
+                //hide edit button
+                tbl_row.find('.btn_edit').hide();
+                tbl_row.find('.btn_delete').hide();
+
+                tbl_row.find('.row_data').each(function(index, val) {
+                    var col_name = $(this).attr('col_name');
+                    if(col_name == "chairperson") {
+                        var fac_id = $(this).attr('fac_id');
+                        var faculty_select = '<select class="custom-select" id="faculty_select" name="faculty_select" style="width: 100%">';
+                        {% for d in dept_faculties %}
+                            faculty_select += '<optgroup label="{{ d.name }}">';
+                            {% for f in d.faculties %}
+                                if(fac_id == "{{ f.id }}") {
+                                    faculty_select += '<option value="{{ f.id }}" selected>{{ f.name }}</option>';
+                                }
+                                else {
+                                    faculty_select += '<option value="{{ f.id }}">{{ f.name }}</option>';
+                                }
+                            {% endfor %}
+                            faculty_select += '</optgroup>';
+                        {% endfor %}
+                        faculty_select += '</select>';
+                        $(this).html(faculty_select);
+                    }
+                    else if(col_name == "details") {
+                        var old_value = $(this).html();
+                        $(this).attr('original_entry', old_value);
+                        var html = '<textarea class="form-control" id="committee_details" name="committee_details" rows="3">'+ old_value +'</textarea>';
+                        $(this).html(html);
+                    }
+                    else {
+                        var old_value = $(this).html();
+                        $(this).attr('original_entry', old_value);
+                        var html = '<input type="text" class="form-control" id="committee_name" name="committee_name" value="'+ old_value +'"></input>';
+                        $(this).html(html);
+                    }
+                });
+            });
+
+            //click event for cancel button
+            $(document).on('click', '.btn_cancel', function(event) {
+                event.preventDefault();
+
+                var tbl_row = $(this).closest('tr');
+
+                //hide save and cacel buttons
+                tbl_row.find('.btn_save').hide();
+                tbl_row.find('.btn_cancel').hide();
+
+                //show edit button
+                tbl_row.find('.btn_edit').show();
+                tbl_row.find('.btn_delete').show();
+
+                tbl_row.find('.row_data').each(function(index, val)
+                {
+                    $(this).html( $(this).attr('original_entry') );
+                });
+            });
+
+            //click event for save button
+            $(document).on('click', '.btn_save', function(event) {
+                event.preventDefault();
+                var tbl_row = $(this).closest('tr');
+                var committee_id = tbl_row.attr('row_id');
+
+
+                //hide save and cacel buttons
+                tbl_row.find('.btn_save').hide();
+                tbl_row.find('.btn_cancel').hide();
+
+                //show edit button
+                tbl_row.find('.btn_edit').show();
+                tbl_row.find('.btn_delete').show();
+                var new_committee_name = tbl_row.find('input#committee_name').val();
+                var new_committee_details = tbl_row.find('textarea#committee_details').val();
+                var new_chairperson_id = tbl_row.find('select#faculty_select option:selected').val();
+                var new_chairperson_name = tbl_row.find('select#faculty_select option:selected').text();
+                var name_div = tbl_row.find('[col_name="name"]');
+                var details_div = tbl_row.find('[col_name="details"]');
+                var chairperson_div = tbl_row.find('div#chairperson');
+
+                swal({
+                    title: "Are you sure?",
+                    text: "Committee will be Updated.",
+                    type: "warning",
+                    showCancelButton: true,
+                    closeOnConfirm: false,
+                    showLoaderOnConfirm: true
+                }, function () {
+                    $.ajax({
+                        type:"GET",
+                        url:"{{ base_url }}" + "edit-delete-committees/",
+                        data: {
+                            committee_id: committee_id,
+                            committee_name: new_committee_name,
+                            committee_details: new_committee_details,
+                            chairperson_id: new_chairperson_id,
+                            action: 'update'
+                        },
+
+                        success: function (msg) {
+                            var response = JSON.parse(msg);
+                            swal({
+                                title: "Changes saved successfully",
+                                text: response['committee'] + " committee has been updated successfully",
+                                type: "success",
+                            });
+                            chairperson_div.attr('fac_id', new_chairperson_id);
+                            chairperson_div.attr('original_entry', new_chairperson_name);
+                            chairperson_div.html(new_chairperson_name);
+                            name_div.html(new_committee_name);
+                            details_div.html(new_committee_details);
+                        },
+                        error: function (msg) {
+                            var response = JSON.parse(msg.responseText);
+                            swal({
+                                title: "Error!",
+                                text: response['error'],
+                                type: "error",
+                            });
+                            name_div.html(name_div.attr('original_entry'));
+                            details_div.html(details_div.attr('original_entry'));
+                            chairperson_div.attr('fac_id', chairperson_div.attr('fac_id'));
+                            chairperson_div.attr('original_entry', chairperson_div.attr('original_entry'));
+                            chairperson_div.html(chairperson_div.attr('original_entry'));
+                        },
+                    });
+                });
+
+            });
+        });
+    </script>
+
+    <script type="text/javascript">
+        {% if success %}
+            swal({
+                title: "{{ success }}",
+                type: "success",
+            });
+        {% endif %}
+
+        {% if error %}
+            swal({
+                title: "Error",
+                text: "{{ error }}",
+                dangerMode: true,
+                type: "error",
+            });
+        {% endif %}
+    </script>
+{% endblock custom_js %}
+<!-- Custom JS Block > End -->
+
+
+
+
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">

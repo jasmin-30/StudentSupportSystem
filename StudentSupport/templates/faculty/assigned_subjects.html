@@ -1,0 +1,149 @@
+{% extends 'Base/base.html' %}
+{% load static %}
+<!-- Title block > Start -->
+{% block title %}
+    Assigned Subjects
+{% endblock title %}
+<!-- Title block > End -->
+
+<!-- Extra CSS Block > Start -->
+{% block extra_css %}
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+    <!-- Data Table Css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/data-table/css/buttons.dataTables.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css' %}">
+{% endblock extra_css %}
+<!-- Extra CSS Block > End -->
+
+<!-- Logo Block > Start -->
+{% block logo %}
+    <a href="{% url 'faculty_dashboard' %}">
+        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+    </a>
+{% endblock logo %}
+<!-- Logo Block > End -->
+
+<!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
+{% block nav_right %}
+    <ul class="nav-right">
+        <li class="user-profile header-notification">
+            <div class="dropdown-primary dropdown">
+                <div class="dropdown-toggle" data-toggle="dropdown">
+                    <span>{{ name }}</span>
+                    <i class="feather icon-chevron-down"></i>
+                </div>
+                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                    <li>
+                        <a href="{% url 'faculty_profile' %}">
+                            <i class="feather icon-user"></i> My Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="feather icon-log-out"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+{% endblock nav_right %}
+<!-- Navbar Right menus block > End -->
+
+<!-- Modals Block > Start -->
+{% block modals %}
+{% endblock modals %}
+<!-- Modals Block > End -->
+
+<!-- Side Navigation bar Block > Start -->
+{% block side_bar %}
+{% endblock side_bar %}
+<!-- Side Navigation bar Block > End -->
+
+
+<!-- Main body block > Start -->
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
+{% block main_body %}
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                 <div class="page-header">
+                    <div class="row align-items-end">
+                        <div class="col-lg-8">
+                            <div class="page-header-title">
+                                <div class="d-inline">
+                                    <h3>Subjects Assigned to you</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4 d-flex justify-content-end">
+                            <a class="btn btn-round btn-outline-primary" href="{% url 'faculty_dashboard' %}">
+                                <i class="feather icon-arrow-left"></i>
+                                Back to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-block">
+                                    <div class="dt-responsive table-responsive">
+                                        <table id="simpletable" class="table table-hover nowrap">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Subject Name</th>
+                                                <th scope="col">Subject Code</th>
+                                                <th scope="col">Department</th>
+                                                <th scope="col">Semester</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for s in subjects %}
+                                                <tr>
+                                                    <th scope="row">{{ forloop.counter }}</th>
+                                                    <td>{{ s.subject_id.subject_name }}</td>
+                                                    <td>{{ s.subject_id.subject_code }}</td>
+                                                    <td>{{ s.subject_id.dept_id.dept_name }}</td>
+                                                    <td>{{ s.subject_id.semester }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock main_body %}
+<!-- Main body block > End -->
+
+<!-- Extra JS Block > Start -->
+{% block extra_js %}
+    <!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+
+    <!-- data-table js -->
+    <script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'assets/pages/data-table/js/data-table-custom.js' %}"></script>
+{% endblock extra_js %}
+<!-- Extra JS Block > End -->
+
+<!-- Custom JS Block > Start -->
+{% block custom_js %}
+{% endblock custom_js %}
+<!-- Custom JS Block > End -->

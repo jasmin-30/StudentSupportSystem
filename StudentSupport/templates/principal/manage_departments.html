@@ -1,194 +1,143 @@
+{% extends 'Base/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
+<!-- Title block > Start -->
+{% block title %}
+    Manage Departments
+{% endblock title %}
+<!-- Title block > End -->
 
-<head>
-    <title>Manage Departments</title>
-    <!-- Meta -->
-    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
-    <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
-    <!-- Google font-->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
-    <!-- Required Fremwork -->
-{#    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">#}
-    <script src="{% static 'assets/extra-js/jquery_2.1.4.js' %}"></script>
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- themify-icons line icon -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
+<!-- Extra CSS Block > Start -->
+{% block extra_css %}
     <!-- ico font -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+{% endblock extra_css %}
+<!-- Extra CSS Block > End -->
 
-    <!-- feather Awesome -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
-    <!-- Radial.css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/chart/radial/css/radial.css' %}">
-    <!-- Style.css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
-</head>
+<!-- Custom CSS Block > Start -->
+{% block custom_css %}
+{% endblock custom_css %}
+<!-- Custom CSS Block > End -->
 
-<body>
-    <!-- Pre-loader start -->
-    <div class="theme-loader">
-        <div class="ball-scale">
-            <div class='contain'>
-                <div class="ring">
-                    <div class="frame"></div>
+<!-- Modals Block > Start -->
+{% block modals %}
+{% endblock modals %}
+<!-- Modals Block > End -->
+
+<!-- Logo Block > Start -->
+{% block logo %}
+    <a href="{% url 'principal_dashboard' %}">
+        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+    </a>
+{% endblock logo %}
+<!-- Logo Block > End -->
+
+<!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
+{% block nav_right %}
+    <ul class="nav-right">
+        <li class="user-profile header-notification">
+            <div class="dropdown-primary dropdown">
+                <div class="dropdown-toggle" data-toggle="dropdown">
+                    <span>{{ name }}</span>
+                    <i class="feather icon-chevron-down"></i>
                 </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
+                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                    <li>
+                        <a href="{% url 'principal_profile' %}">
+                            <i class="feather icon-user"></i> Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="feather icon-log-out"></i> Logout
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </div>
-    </div>
-    <!-- Pre-loader end -->
-    <div id="pcoded" class="pcoded">
-        <div class="pcoded-overlay-box"></div>
-        <div class="pcoded-container navbar-wrapper">
-            <nav class="navbar header-navbar pcoded-header">
-                <div class="navbar-wrapper">
-                    <div class="navbar-logo">
-                    <a class="mobile-menu" id="mobile-collapse" href="#!">
-                        <i class="feather icon-menu"></i>
-                    </a>
-                    <a href="{% url 'principal_dashboard' %}">
-                        <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Theme-Logo" style="max-width:85%;">
-                    </a>
-                    <a class="mobile-options">
-                        <i class="feather icon-more-horizontal"></i>
-                    </a>
-                </div>
-                    <div class="navbar-container container-fluid">
+        </li>
+    </ul>
+{% endblock nav_right %}
+<!-- Navbar Right menus block > End -->
 
-                    <ul class="nav-right">
+<!-- Side Navigation bar Block > Start -->
+{% block side_bar %}
+{% endblock side_bar %}
+<!-- Side Navigation bar Block > End -->
 
-                        <li class="user-profile header-notification">
-                            <div class="dropdown-primary dropdown">
-                                <div class="dropdown-toggle" data-toggle="dropdown">
-                                    <span>{{ name }}</span>
-                                    <i class="feather icon-chevron-down"></i>
-                                </div>
-                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                    <li>
-                                        <a href="{% url 'principal_profile' %}">
-                                            <i class="feather icon-user"></i> Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'logout' %}">
-                                            <i class="feather icon-log-out"></i> Logout
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-                </div>
-            </nav>
-            <div class="pcoded-main-container">
-                <div class="pcoded-wrapper">
-                    <div class="pcoded-inner-content">
-                        <div class="main-body">
-                            <div class="page-wrapper">
-                                <div class="page-body">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="page-header">
-                                                <div class="row align-items-end">
-                                                    <div class="col-lg-8">
-                                                        <div class="page-header-title">
-                                                            <div class="d-inline">
-                                                                <h3>Manage Departments</h3>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-4 col-md-4 col-lg-4">
-                                                        <span class="f-right">
-                                                            <a href="{% url 'principal_dashboard' %}" class="btn" style="font-size: 15px">
-                                                                <i class="feather icon-arrow-left"></i>
-                                                                Back to Dashboard
-                                                            </a>
-                                                        </span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <h5>
-                                                        Assign or change head of the department from here.
-                                                    </h5>
-                                                </div>
-                                                <div class="card-block">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover">
-                                                            <thead>
-                                                                <tr>
-                                                                <th scope="col">#</th>
-                                                                <th scope="col">Department</th>
-                                                                <th scope="col">HOD</th>
-                                                                <th scope="col">Action</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {% for d in dept %}
-                                                                <tr row_id="{{ d.id }}">
-                                                                    <th scope="row"><div col_name="id">{{ forloop.counter }}</div></th>
-                                                                    <td><div col_name="dept_name">{{ d.dept_name }}</div></td>
-                                                                    {% ifequal d.hod.id None %}
-                                                                        <td><div class="row_data" id="hod" col_name="hod" original_entry='<span style="color: red">Not Assigned</span>' fac_id="-1"><span style="color: red">Not Assigned</span></div></td>
-                                                                    {% else %}
-                                                                        <td><div class="row_data" id="hod" col_name="hod" original_entry="{{ d.hod.name }}" fac_id="{{ d.hod.id }}">{{ d.hod.name }}</div></td>
-                                                                    {% endifequal %}
-                                                                    <td>
-                                                                        <div class="btn-group btn-group-sm" style="float: none;">
-                                                                            <button type="button" class="btn_edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                <span class="icofont icofont-ui-edit"></span>
-                                                                            </button>
-                                                                            <button type="button" class="btn_save btn btn-primary waves-effect waves-light active" style="float: none;margin: 5px;">
-                                                                                <span class="icofont icofont-ui-check"></span>
-                                                                            </button>
-                                                                            <button type="button" class="btn_cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                <span class="icofont icofont-ui-close"></span>
-                                                                            </button>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+
+<!-- Main body block > Start -->
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
+{% block main_body %}
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="page-header">
+                                <div class="row align-items-end">
+                                    <div class="col-lg-8">
+                                        <div class="page-header-title">
+                                            <div class="d-inline">
+                                                <h3>Manage Departments</h3>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div class="col-sm-4 d-flex justify-content-end">
+                                        <a class="btn btn-round btn-outline-primary" href="{% url 'principal_dashboard' %}">
+                                            <i class="feather icon-arrow-left"></i>
+                                            Back to Dashboard
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>
+                                        Assign or change head of the department from here.
+                                    </h5>
+                                </div>
+                                <div class="card-block">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                                <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col">Department</th>
+                                                <th scope="col">HOD</th>
+                                                <th scope="col">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for d in dept %}
+                                                <tr row_id="{{ d.id }}">
+                                                    <th scope="row"><div col_name="id">{{ forloop.counter }}</div></th>
+                                                    <td><div col_name="dept_name">{{ d.dept_name }}</div></td>
+                                                    {% ifequal d.hod.id None %}
+                                                        <td><div class="row_data" id="hod" col_name="hod" original_entry='<span style="color: red">Not Assigned</span>' fac_id="-1"><span style="color: red">Not Assigned</span></div></td>
+                                                    {% else %}
+                                                        <td><div class="row_data" id="hod" col_name="hod" original_entry="{{ d.hod.name }}" fac_id="{{ d.hod.id }}">{{ d.hod.name }}</div></td>
+                                                    {% endifequal %}
+                                                    <td>
+                                                        <div class="btn-group btn-group-sm" style="float: none;">
+                                                            <button type="button" class="btn_edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                <span class="icofont icofont-ui-edit"></span>
+                                                            </button>
+                                                            <button type="button" class="btn_save btn btn-primary waves-effect waves-light active" style="float: none;margin: 5px;">
+                                                                <span class="icofont icofont-ui-check"></span>
+                                                            </button>
+                                                            <button type="button" class="btn_cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                <span class="icofont icofont-ui-close"></span>
+                                                            </button>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -198,37 +147,18 @@
             </div>
         </div>
     </div>
-    <!-- Required Jquery -->
-    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
-    <!-- jquery slimscroll js -->
-    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
-    <!-- modernizr js -->
-    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+{% endblock main_body %}
+<!-- Main body block > End -->
 
+<!-- Extra JS Block > Start -->
+{% block extra_js %}
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+{% endblock extra_js %}
+<!-- Extra JS Block > End -->
 
-    <!-- i18next.min.js -->
-    <script type="text/javascript" src="{% static 'bower_components/i18next/js/i18next.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/i18next-xhr-backend/js/i18nextXHRBackend.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/i18next-browser-languagedetector/js/i18nextBrowserLanguageDetector.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/jquery-i18next/js/jquery-i18next.min.js' %}"></script>
-
-    <!-- Editable table javascript -->
-{#    <script src="{% static 'assets/pages/edit-table/jquery.tabledit.js' %}" type="text/javascript"></script>#}
-{#    <script src="{% static 'assets/pages/edit-table/editable.js' %}" type="text/javascript"></script>#}
-
-
-    <!-- custom js -->
-    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
-    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
-    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
-
+<!-- Custom JS Block > Start -->
+{% block custom_js %}
     <!-- Javascript for table -->
     <script type="text/javascript">
         $(document).ready(function () {
@@ -372,7 +302,5 @@
             });
         {% endif %}
     </script>
-
-</body>
-
-</html>
+{% endblock custom_js %}
+<!-- Custom JS Block > End -->

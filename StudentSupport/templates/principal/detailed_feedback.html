@@ -1,79 +1,35 @@
+{% extends 'Base/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
+<!-- Title block > Start -->
+{% block title %}
+    Detailed Feedback
+{% endblock title %}
+<!-- Title block > End -->
 
-<head>
-    <title>Detailed Feedback</title>
-    <!-- Meta -->
-    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
-    <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
-    <!-- Google font-->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
-    <!-- Required Fremwork -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- themify-icons line icon -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
+<!-- Extra CSS Block > Start -->
+{% block extra_css %}
     <!-- ico font -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
     <!-- Font Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/font-awesome/css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/star_ratings/display_rating.css' %}">
-    <!-- feather Awesome -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+{% endblock extra_css %}
+<!-- Extra CSS Block > End -->
 
-    <!-- Style.css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/custom_style.css' %}">
+<!-- Custom CSS Block > Start -->
+{% block custom_css %}
     <style type="text/css">
         li.disabled {
             pointer-events: none;
         }
     </style>
-</head>
+{% endblock custom_css %}
+<!-- Custom CSS Block > End -->
 
-<body>
-    <!-- Pre-loader start -->
-    <div class="theme-loader">
-        <div class="ball-scale">
-            <div class='contain'>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Pre-loader end -->
-
+<!-- Modals Block > Start -->
+{% block modals %}
     <!-- Download Report > Start -->
     <div class="modal fade" id="download-report-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -135,7 +91,7 @@
                             </div>
                             <label class="col-sm-2 col-form-label" for="subject" style="font-weight: 900;">Subject : </label>
                                 <div class="col-sm-4">
-                                    <select name="subject" id="subject" class="custom-select" style="width: 100%">
+                                    <select name="subject" id="subject" class="custom-select" style="width: 100%" required>
                                         <option value="-1" disabled selected>Select Subject</option>
                                     </select>
                                 </div>
@@ -153,189 +109,193 @@
         </div>
     </div>
     <!-- Download Report > End -->
+{% endblock modals %}
+<!-- Modals Block > End -->
 
-    <div id="pcoded" class="pcoded">
-        <div class="pcoded-overlay-box"></div>
-        <div class="pcoded-container navbar-wrapper">
-            <nav class="navbar header-navbar pcoded-header">
-                <div class="navbar-wrapper">
-                    <div class="navbar-container container-fluid p-l-0 d-inline">
-                    <div class="navbar-logo">
-                    <a href="{% url 'hod_dashboard' %}">
-                        <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Theme-Logo">
-                    </a>
+<!-- Logo Block > Start -->
+{% block logo %}
+    <a href="{% url 'principal_dashboard' %}">
+        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+    </a>
+{% endblock logo %}
+<!-- Logo Block > End -->
+
+<!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
+{% block nav_right %}
+    <ul class="nav-right">
+        <li class="user-profile header-notification">
+            <div class="dropdown-primary dropdown">
+                <div class="dropdown-toggle" data-toggle="dropdown">
+                    <span>{{ name }}</span>
+                    <i class="feather icon-chevron-down"></i>
                 </div>
-                        <ul class="nav-right">
-                        <li class="user-profile header-notification">
-                            <div class="dropdown-primary dropdown">
-                                <div class="dropdown-toggle" data-toggle="dropdown">
-                                    <span>{{ name }}</span>
-                                    <i class="feather icon-chevron-down"></i>
+                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                    <li>
+                        <a href="{% url 'principal_profile' %}">
+                            <i class="feather icon-user"></i> Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="feather icon-log-out"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+{% endblock nav_right %}
+<!-- Navbar Right menus block > End -->
+
+<!-- Side Navigation bar Block > Start -->
+{% block side_bar %}
+{% endblock side_bar %}
+<!-- Side Navigation bar Block > End -->
+
+
+<!-- Main body block > Start -->
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
+{% block main_body %}
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-header">
+                    <div class="row align-items-end">
+                        <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
+                            <div class="page-header-title">
+                                <div class="d-inline">
+                                    <h3>{{ dept_name }} Department</h3>
                                 </div>
-                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                    <li>
-                                        <a href="{% url 'hod_profile' %}">
-                                            <i class="feather icon-user"></i> Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'logout' %}">
-                                            <i class="feather icon-log-out"></i> Logout
-                                        </a>
-                                    </li>
-                                </ul>
                             </div>
-                        </li>
-                    </ul>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
+                            <div class="page-header-title">
+                                <div class="d-inline">
+                                    <h3>Detailed Feedback</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 col-md-8 col-lg-8 m-t-20">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#download-report-modal">Download Report</button>
+                        </div>
+                        <div class="col-sm-4 d-flex justify-content-end">
+                            <a class="btn btn-round btn-outline-primary" href="{% url 'principal_dashboard' %}">
+                                <i class="feather icon-arrow-left"></i>
+                                Back to Dashboard
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </nav>
-            <div class="pcoded-main-container">
-                <div class="pcoded-wrapper">
-                    <div class="pcoded-inner-content">
-                        <div class="main-body">
-                            <div class="page-wrapper">
-                                <div class="page-header">
-                                    <div class="row align-items-end">
-                                        <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
-                                            <div class="page-header-title">
-                                                <div class="d-inline">
-                                                    <h3>{{ dept_name }} Department</h3>
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <!-- Basic Form Inputs card start -->
+                            <div class="card">
+                                <div class="card-block">
+                                    <div id="feedback_parameters" style="display: block">
+                                        <form id="feedback_parameters_form">
+                                            <div class="form-group row">
+                                                <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_type" style="font-weight: 900;">Type of feedback : </label>
+                                                <div class="col-md-2 col-lg-2">
+                                                    <select class="custom-select" id="view_feedback_type" style="width: 100%" name="view_feedback_type">
+                                                        <option value="-1" selected disabled>Type</option>
+                                                        <option value="0">Mid Semester Feedback</option>
+                                                        <option value="1">End Semester Feedback</option>
+                                                    </select>
+                                                    <div id="Error_view_feedback_type" style="color: red"></div>
+                                                </div>
+                                                <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_term" style="font-weight: 900;">Select Term : </label>
+                                                <div class="col-md-2 col-lg-2">
+                                                    <select class="custom-select" id="view_feedback_term" style="width: 100%" name="view_feedback_term">
+                                                        <option value="-1" selected disabled>Select Term</option>
+                                                        <option value="0">Odd</option>
+                                                        <option value="1">Even</option>
+                                                    </select>
+                                                    <div id="Error_view_feedback_term" style="color: red"></div>
+                                                </div>
+                                                <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_year" style="font-weight: 900;">Select Year : </label>
+                                                <div class="col-md-2 col-lg-2">
+                                                    <select class="custom-select" id="view_feedback_year" style="width: 100%" name="view_feedback_year">
+                                                        <option value="-1" selected disabled>Select Year</option>
+                                                        <script type="text/javascript">
+                                                            var start_year = 2020;
+                                                            var current_year = new Date().getFullYear();
+                                                            for(var i=start_year;i<=current_year;++i) {
+                                                                document.write('<option value="'+ i +'">'+ i +'</option>');
+                                                            }
+                                                        </script>
+                                                    </select>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
-                                            <div class="page-header-title">
-                                                <div class="d-inline">
-                                                    <h3>Detailed Feedback</h3>
+                                            <div class="form-group row">
+                                                <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_faculty" style="font-weight: 900;">Select Faculty : </label>
+                                                <div class="col-md-4 col-lg-4">
+                                                    <select class="custom-select" id="view_feedback_faculty" name="view_feedback_faculty" style="width: 100%">
+                                                        <option value="-1" selected disabled>Select Faculty</option>
+                                                        {% for f in dept_faculties %}
+                                                            <option value="{{ f.id }}">{{ f.name }}</option>
+                                                        {% endfor %}
+                                                    </select>
+                                                    <div id="Error_view_feedback_faculty" style="color: red"></div>
+                                                </div>
+                                                <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_subject" style="font-weight: 900;">Select Subject : </label>
+                                                <div class="col-md-4 col-lg-4">
+                                                    <select class="custom-select" id="view_feedback_subject" name="view_feedback_subject" style="width: 100%" data-toggle="tooltip" data-placement="left" title="Subject list will be displayed dynamically according to the faculty and term you have chosen.">
+                                                        <option value="-1">Select Subject</option>
+                                                    </select>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-8 col-md-8 col-lg-8 m-t-20">
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#download-report-modal">Download Report</button>
-                                        </div>
-                                        <div class="col-sm-4 col-md-4 col-lg-4">
-                                            <span class="f-right">
-                                                <a href="{% url 'principal_dashboard' %}" class="btn" style="font-size: 15px">
-                                                    <i class="feather icon-arrow-left"></i>
-                                                    Back to Dashboard
-                                                </a>
-                                            </span>
-                                        </div>
+                                            <div class="form-group row">
+                                                <div class="col-sm-2">
+                                                    <button type="button" class="btn btn-outline-primary" onclick="load_feedback()">View Feedback</button>
+                                                </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                </div>
-                                <div class="page-body">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <!-- Basic Form Inputs card start -->
-                                            <div class="card">
-                                                <div class="card-block">
-                                                    <div id="feedback_parameters" style="display: block">
-                                                        <form id="feedback_parameters_form">
-                                                        <div class="form-group row">
-                                                            <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_type" style="font-weight: 900;">Type of feedback : </label>
-                                                            <div class="col-md-2 col-lg-2">
-                                                                <select class="custom-select" id="view_feedback_type" style="width: 100%" name="view_feedback_type">
-                                                                    <option value="-1" selected disabled>Type</option>
-                                                                    <option value="0">Mid Semester Feedback</option>
-                                                                    <option value="1">End Semester Feedback</option>
-                                                                </select>
-                                                                <div id="Error_view_feedback_type" style="color: red"></div>
-                                                            </div>
-                                                            <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_term" style="font-weight: 900;">Select Term : </label>
-                                                            <div class="col-md-2 col-lg-2">
-                                                                <select class="custom-select" id="view_feedback_term" style="width: 100%" name="view_feedback_term">
-                                                                    <option value="-1" selected disabled>Select Term</option>
-                                                                    <option value="0">Odd</option>
-                                                                    <option value="1">Even</option>
-                                                                </select>
-                                                                <div id="Error_view_feedback_term" style="color: red"></div>
-                                                            </div>
-                                                            <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_year" style="font-weight: 900;">Select Year : </label>
-                                                            <div class="col-md-2 col-lg-2">
-                                                                <select class="custom-select" id="view_feedback_year" style="width: 100%" name="view_feedback_year">
-                                                                    <option value="-1" selected disabled>Select Year</option>
-                                                                    <script type="text/javascript">
-                                                                        var start_year = 2020;
-                                                                        var current_year = new Date().getFullYear();
-                                                                        for(var i=start_year;i<=current_year;++i) {
-                                                                            document.write('<option value="'+ i +'">'+ i +'</option>');
-                                                                        }
-                                                                    </script>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_faculty" style="font-weight: 900;">Select Faculty : </label>
-                                                            <div class="col-md-4 col-lg-4">
-                                                                <select class="custom-select" id="view_feedback_faculty" name="view_feedback_faculty" style="width: 100%">
-                                                                    <option value="-1" selected disabled>Select Faculty</option>
-                                                                    {% for f in dept_faculties %}
-                                                                        <option value="{{ f.id }}">{{ f.name }}</option>
-                                                                    {% endfor %}
-                                                                </select>
-                                                                <div id="Error_view_feedback_faculty" style="color: red"></div>
-                                                            </div>
-                                                            <label class="col-md-2 col-lg-2 col-form-label" for="view_feedback_subject" style="font-weight: 900;">Select Subject : </label>
-                                                            <div class="col-md-4 col-lg-4">
-                                                                <select class="custom-select" id="view_feedback_subject" name="view_feedback_subject" style="width: 100%" data-toggle="tooltip" data-placement="left" title="Subject list will be displayed dynamically according to the faculty and term you have chosen.">
-                                                                    <option value="-1">Select Subject</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <div class="col-sm-2">
-                                                                <button type="button" class="btn btn-outline-primary" onclick="load_feedback()">View Feedback</button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                    </div>
-                                                <div class="row" id="parameters_selected" style="display:none;">
-                                                    <div class="col-sm-10 d-flex justify-content-center"><h5 id="parameter_type"></h5></div>
-                                                    <div class="col-sm-2 d-flex justify-content-end"><a href="#" style="color: dodgerblue; font-size: inherit" id="modify_parameters">Modify Parameters</a></div>
-                                                    <label class="col-sm-2 col-form-label" style="font-weight: 900;">Term : </label>
-                                                    <label class="col-sm-4 col-form-label" id="parameter_term"></label>
-                                                    <label class="col-md-2 col-form-label" style="font-weight: 900;">Faculty : </label>
-                                                    <label class="col-md-4 col-form-label" id="parameter_faculty"></label>
-                                                    <label class="col-md-2 col-form-label" style="font-weight: 900;">Subject : </label>
-                                                    <label class="col-md-4 col-form-label" id="parameter_subject"></label>
-                                                    <label class="col-md-2 col-form-label" style="font-weight: 900;">Semester : </label>
-                                                    <label class="col-md-4 col-form-label" id="parameter_semester"></label>
-                                                </div>
-                                                <div class="loader-block" style="display: none">
-                                                   <svg id="loader2" viewBox="0 0 100 100">
-                                                       <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
-                                                    </svg>
-                                               </div>
-                                                <div id="feedback_content" style="display: none">
-                                                    <nav class="p-20" aria-label="Page navigation example">
-                                                        <ul class="pagination d-flex justify-content-center">
-                                                        </ul>
-                                                    </nav>
-                                                    <div class="row p-b-10">
-                                                        <div class="col-sm-6">Feedback Given Date: <b id="view_feedback_date"></b> </div>
-                                                    </div>
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover table-bordered">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th>#</th>
-                                                                    <th>Questions</th>
-                                                                    <th>Feedback</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody id="table_body">
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                    <div class="form-group row">
-                                                        <label class="col-md-2 col-lg-2 col-form-label p-l-50" for="view_feedback_remarks"><b>Remarks : </b></label>
-                                                        <div class="col-sm-10">
-                                                            <textarea class="form-control" id="view_feedback_remarks" name="view_feedback_remarks" rows="3" readonly></textarea>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                </div>
+                                    <div class="row" id="parameters_selected" style="display:none;">
+                                        <div class="col-sm-10 d-flex justify-content-center"><h5 id="parameter_type"></h5></div>
+                                        <div class="col-sm-2 d-flex justify-content-end"><a href="#" style="color: dodgerblue; font-size: inherit" id="modify_parameters">Modify Parameters</a></div>
+                                        <label class="col-sm-2 col-form-label" style="font-weight: 900;">Term : </label>
+                                        <label class="col-sm-4 col-form-label" id="parameter_term"></label>
+                                        <label class="col-md-2 col-form-label" style="font-weight: 900;">Faculty : </label>
+                                        <label class="col-md-4 col-form-label" id="parameter_faculty"></label>
+                                        <label class="col-md-2 col-form-label" style="font-weight: 900;">Subject : </label>
+                                        <label class="col-md-4 col-form-label" id="parameter_subject"></label>
+                                        <label class="col-md-2 col-form-label" style="font-weight: 900;">Semester : </label>
+                                        <label class="col-md-4 col-form-label" id="parameter_semester"></label>
+                                    </div>
+                                    <div class="loader-block" style="display: none">
+                                        <svg id="loader2" viewBox="0 0 100 100">
+                                            <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
+                                        </svg>
+                                    </div>
+                                    <div id="feedback_content" style="display: none">
+                                        <nav class="p-20" aria-label="Page navigation example">
+                                            <ul class="pagination d-flex justify-content-center">
+                                            </ul>
+                                        </nav>
+                                        <div class="row p-b-10">
+                                            <div class="col-sm-6">Feedback Given Date: <b id="view_feedback_date"></b> </div>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table table-hover table-bordered">
+                                                <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Questions</th>
+                                                    <th>Feedback</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody id="table_body">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label class="col-md-2 col-lg-2 col-form-label p-l-50" for="view_feedback_remarks"><b>Remarks : </b></label>
+                                            <div class="col-sm-10">
+                                                <textarea class="form-control" id="view_feedback_remarks" name="view_feedback_remarks" rows="3" readonly></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -347,24 +307,18 @@
             </div>
         </div>
     </div>
-    <!-- Required Jquery -->
-    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
-    <!-- jquery slimscroll js -->
-    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
-    <!-- modernizr js -->
-    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+{% endblock main_body %}
+<!-- Main body block > End -->
+
+<!-- Extra JS Block > Start -->
+{% block extra_js %}
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
-    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
-    <!-- custom js -->
-    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+{% endblock extra_js %}
+<!-- Extra JS Block > End -->
 
+<!-- Custom JS Block > Start -->
+{% block custom_js %}
     <script>
         var fb_type;
         var subjects_dict = JSON.parse('{{ fac_subjects|safe }}');
@@ -743,20 +697,5 @@
         $(document).on('change', 'select#faculty', load_faculty_modal);
         $(document).on('change', 'select#term', load_faculty_modal);
     </script>
-
-    <script type="text/javascript">
-        {% if error %}
-            setTimeout(function () {
-                swal({
-                    title: "Error",
-                    text: "{{ error }}",
-                    dangerMode: true,
-                    type: "error",
-            }, function () {
-                    window.location = "{{ base_url }}";
-                });
-            }, 10);
-        {% endif %}
-    </script>
-</body>
-</html>
+{% endblock custom_js %}
+<!-- Custom JS Block > End -->

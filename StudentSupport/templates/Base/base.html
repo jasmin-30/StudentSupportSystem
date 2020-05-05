@@ -1,0 +1,131 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>
+        {% block title %}
+            Student Support System
+        {% endblock title %}
+    </title>
+    <!-- Meta -->
+    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
+    <!-- Favicon icon -->
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
+    <!-- Google font-->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
+    <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
+    <!-- ico font -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
+    <!-- feather Awesome -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+    {% block extra_css %}
+    {% endblock extra_css %}
+    <!-- Style.css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/custom_style.css' %}">
+    {% block custom_css %}
+    {% endblock custom_css %}
+</head>
+
+<body>
+    <!-- Pre-loader start -->
+    <div class="theme-loader">
+        <div class="ball-scale">
+            <div class='contain'>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+                <div class="ring">
+                    <div class="frame"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pre-loader end -->
+    {% block modals %}
+    {% endblock modals %}
+
+    <div id="pcoded" class="pcoded">
+        <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-container navbar-wrapper">
+            <nav class="navbar header-navbar pcoded-header">
+                <div class="navbar-wrapper">
+                    <div class="navbar-container container-fluid p-l-0 d-inline">
+                        <div class="navbar-logo">
+                            {% block logo %}
+                                <a class="mobile-menu" id="mobile-collapse" href="javascript:void(0)">
+                                    <i class="feather icon-menu"></i>
+                                </a>
+                                <a href="{% url 'home' %}">
+                                    <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System" style="max-width:92%;">
+                                </a>
+                            {% endblock logo %}
+                        </div>
+                        {% block nav_right %}
+                        {% endblock nav_right %}
+                    </div>
+                </div>
+            </nav>
+            <div class="pcoded-main-container">
+                <div class="pcoded-wrapper">
+                    {% block side_bar %}
+                    {% endblock side_bar %}
+
+                    {% block main_body %}
+                    {% endblock main_body %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% block required_js %}
+        <!-- Required Jquery -->
+        <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
+        <!-- modernizr js -->
+        <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+    {% endblock required_js %}
+
+    {% block extra_js %}
+    {% endblock extra_js %}
+
+    <!-- custom js -->
+    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
+    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
+    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+
+    {% block custom_js %}
+    {% endblock custom_js %}
+
+</body>
+
+</html>

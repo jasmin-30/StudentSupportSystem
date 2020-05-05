@@ -1,207 +1,167 @@
-﻿{% load static %}
-<!DOCTYPE html>
-<html lang="en">
+﻿{% extends 'Base/base.html' %}
+{% load static %}
+<!-- Title block > Start -->
+{% block title %}
+    Student Dashboard
+{% endblock title %}
+<!-- Title block > End -->
 
-<head>
-    <title>Student Dashboard</title>
-    <!-- Meta -->
-    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
-    <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
-    <!-- Google font-->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
-    <!-- Required Fremwork -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- feather Awesome -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
-    <!-- Style.css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
-</head>
+<!-- Extra CSS Block > Start -->
+{% block extra_css %}
+{% endblock extra_css %}
+<!-- Extra CSS Block > End -->
 
-<body>
-    <!-- Pre-loader start -->
-    <div class="theme-loader">
-        <div class="ball-scale">
-            <div class='contain'>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Pre-loader end -->
-       <div id="pcoded" class="pcoded">
-        <div class="pcoded-overlay-box"></div>
-        <div class="pcoded-container navbar-wrapper">
+<!-- Custom CSS Block > Start -->
+{% block custom_css %}
+{% endblock custom_css %}
+<!-- Custom CSS Block > End -->
 
-            <nav class="navbar header-navbar pcoded-header">
-                <div class="navbar-wrapper">
+<!-- Modals Block > Start -->
+{% block modals %}
+{% endblock modals %}
+<!-- Modals Block > End -->
 
-                    <div class="navbar-logo">
-                        <a href="{% url 'student_dashboard' %}">
-                            <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Student Support System">
+<!-- Logo Block > Start -->
+{% block logo %}
+    <a class="mobile-menu" id="mobile-collapse" href="javascript:void(0)">
+        <i class="feather icon-menu"></i>
+    </a>
+    <a href="{% url 'student_dashboard' %}">
+        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System" style="max-width: 92%">
+    </a>
+{% endblock logo %}
+<!-- Logo Block > End -->
+
+<!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
+{% block nav_right %}
+    <ul class="nav-right">
+        <li class="user-profile header-notification">
+            <div class="dropdown-primary dropdown">
+                <div class="dropdown-toggle" data-toggle="dropdown">
+                    <span>{{ name }}</span>
+                    <i class="feather icon-chevron-down"></i>
+                </div>
+                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                    <li>
+                        <a href="{% url 'student_profile' %}">
+                            <i class="feather icon-user"></i> Profile
                         </a>
-                    </div>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="feather icon-log-out"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+{% endblock nav_right %}
+<!-- Navbar Right menus block > End -->
 
-                    <div class="navbar-container container-fluid">
+<!-- Side Navigation bar Block > Start -->
+{% block side_bar %}
+    <nav class="pcoded-navbar">
+        <div class="pcoded-inner-navbar main-menu">
+            <div class="pcoded-navigatio-lavel" menu-title-theme="theme5">
+                Quick Links
+            </div>
+            <ul class="pcoded-item pcoded-left-item">
+                <li class="">
+                    <a href="{% url 'student_profile' %}">
+                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
+                        <span class="pcoded-mtext">My Profile</span>
+                    </a>
+                </li>
+                <li class="">
+                    <a href="{% url 'student_complaint_section'  %}">
+                        <span class="pcoded-micon"><i class="feather icon-server"></i></span>
+                        <span class="pcoded-mtext">Complaints Section</span>
+                    </a>
+                </li>
+                <li class="pcoded-hasmenu">
+                    <a href="javascript:void(0)">
+                        <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
+                        <span class="pcoded-mtext">Feedback Section</span>
+                    </a>
+                    <ul class="pcoded-submenu">
+                        <li class="">
+                            <a href="{% url 'student_feedback_section' type='mid-sem'  %}">
+                                <span class="pcoded-mtext">Mid Semester Feedback</span>
+                            </a>
+                        </li>
+                        <li class="">
+                            <a href="{% url 'student_feedback_section' type='end-sem'  %}">
+                                <span class="pcoded-mtext">End Semester Feedback</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <li class="">
+                    <a href="{% url 'logout' %}">
+                        <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
+                        <span class="pcoded-mtext">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+{% endblock side_bar %}
+<!-- Side Navigation bar Block > End -->
 
-                        <ul class="nav-right">
-                            <li class="user-profile header-notification">
-                                <div class="dropdown-primary dropdown">
-                                    <div class="dropdown-toggle" data-toggle="dropdown">
-{#                                        <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">#}
-                                        <span>{{ name }}</span>
-                                        <i class="feather icon-chevron-down"></i>
-                                    </div>
-                                    <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                        <li>
-                                            <a href="{% url 'student_profile' %}">
-                                                <i class="feather icon-settings"></i> My Profile
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="{% url 'logout' %}">
-                                                <i class="feather icon-log-out"></i> Logout
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </nav>
 
-            <div class="pcoded-main-container">
-                <div class="pcoded-wrapper">
-                    <nav class="pcoded-navbar">
-                        <div class="pcoded-inner-navbar main-menu">
-                            <div class="pcoded-navigatio-lavel" menu-title-theme="theme5">
-                                Quick Links
-                            </div>
-                            <ul class="pcoded-item pcoded-left-item">
-                                <li class="">
-                                    <a href="{% url 'student_profile' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
-                                        <span class="pcoded-mtext">My Profile</span>
-                                    </a>
-                                </li>
-                                <li class="">
-                                    <a href="{% url 'student_complaint_section'  %}">
-                                        <span class="pcoded-micon"><i class="feather icon-server"></i></span>
-                                        <span class="pcoded-mtext">Complaints Section</span>
-                                    </a>
-                                </li>
-                                <li class="pcoded-hasmenu">
-                                    <a href="#">
-                                        <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                                        <span class="pcoded-mtext">Feedback Section</span>
-                                    </a>
-                                    <ul class="pcoded-submenu">
-                                        <li class="">
-                                            <a href="{% url 'student_feedback_section' type='mid-sem'  %}">
-                                                <span class="pcoded-mtext">Mid Semester Feedback</span>
-                                            </a>
-                                        </li>
-                                        <li class="">
-                                            <a href="{% url 'student_feedback_section' type='end-sem'  %}">
-                                                <span class="pcoded-mtext">End Semester Feedback</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="">
-                                    <a href="{% url 'logout' %}">
-                                        <span class="pcoded-micon"><i class="feather icon-log-out"></i></span>
-                                        <span class="pcoded-mtext">Logout</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-
-                    <div class="pcoded-content">
-                        <div class="pcoded-inner-content">
-                            <div class="main-body">
-                                <div class="page-wrapper">
-                                    <div class="page-body">
-                                         <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="page-header">
-                                                    <div class="row align-items-end">
-                                                        <div class="col-lg-8">
-                                                            <div class="page-header-title">
-                                                                <div class="d-inline">
-                                                                    <h4>Recent News</h4>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                 </div>
-                                            <!-- List view card start -->
-                                            <div class="card">
-                                                <div class="row card-block">
-                                                    <div class="col-md-12">
-                                                        <ul class="list-view">
-                                                            {% if news %}
-                                                                <!-- Repeat from here -->
-                                                                {% for n in news %}
-                                                                    <li class="m-b-20" style="border-bottom: solid #353c4e; border-bottom-width: thin;">
-                                                                        <div class="col-xs-12">
-                                                                            <h5 class="d-inline-block m-b-10">
-                                                                                <b><u>{{ n.news_subject }}</u></b>
-                                                                            </h5>
-                                                                        </div>
-                                                                        <p class="m-b-0">
-                                                                            {{ n.news_details }}
-                                                                        </p>
-                                                                        <div class="f-13 text-muted">
-                                                                            {{ n.timestamp }}
-                                                                            <br />
-                                                                            By, {{ n.issuing_faculty.name }}
-                                                                        </div>
-                                                                    </li>
-                                                                {% endfor %}
-                                                                <!-- Repeat News Section ends here -->
-                                                            {% else %}
-                                                                News Published by professors will be displayed here.<br />
-                                                                No News Published yet.
-                                                            {% endif %}
-                                                        </ul>
-                                                    </div>
+<!-- Main body block > Start -->
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
+{% block main_body %}
+    <div class="pcoded-content">
+        <div class="pcoded-inner-content">
+            <div class="main-body">
+                <div class="page-wrapper">
+                    <div class="page-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="page-header">
+                                    <div class="row align-items-end">
+                                        <div class="col-lg-8">
+                                            <div class="page-header-title">
+                                                <div class="d-inline">
+                                                    <h3>Recent News</h3>
                                                 </div>
                                             </div>
-                                            <!-- List view card end -->
                                         </div>
                                     </div>
+                                </div>
+                                <!-- List view card start -->
+                                <div class="card">
+                                    <div class="row card-block">
+                                        <div class="col-md-12">
+                                            <ul class="list-view">
+                                                {% if news %}
+                                                    <!-- Repeat from here -->
+                                                    {% for n in news %}
+                                                        <li class="m-b-20" style="border-bottom: solid #353c4e; border-bottom-width: thin;">
+                                                            <div class="col-xs-12">
+                                                                <h5 class="d-inline-block m-b-10">
+                                                                    <strong>{{ n.news_subject }}</strong>
+                                                                </h5>
+                                                            </div>
+                                                            <textarea class="m-b-0 form-control" rows="3" style="background-color: white;" readonly>{{ n.news_details }}</textarea>
+                                                            <div class="f-13 text-muted">
+                                                                {{ n.timestamp }}
+                                                                <br />
+                                                                By, {{ n.issuing_faculty.name }}
+                                                            </div>
+                                                        </li>
+                                                    {% endfor %}
+                                                    <!-- Repeat News Section ends here -->
+                                                {% else %}
+                                                    News Published by professors will be displayed here.<br />
+                                                    No News Published yet.
+                                                {% endif %}
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -211,30 +171,15 @@
             </div>
         </div>
     </div>
+{% endblock main_body %}
+<!-- Main body block > End -->
 
-    <!-- Required Jquery -->
-    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
-    <!-- jquery slimscroll js -->
-    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
-    <!-- modernizr js -->
-    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
-    <!-- Chart js -->
-    <script type="text/javascript" src="{% static 'bower_components/chart.js/js/Chart.js' %}"></script>
-    <!-- amchart js -->
-    <script src="{% static 'assets/pages/widget/amchart/amcharts.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/serial.js' %}"></script>
-    <script src="{% static 'assets/pages/widget/amchart/light.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
-    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
-    <!-- custom js -->
-    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/pages/dashboard/custom-dashboard.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+<!-- Extra JS Block > Start -->
+{% block extra_js %}
+{% endblock extra_js %}
+<!-- Extra JS Block > End -->
 
-</body>
-
-</html>
+<!-- Custom JS Block > Start -->
+{% block custom_js %}
+{% endblock custom_js %}
+<!-- Custom JS Block > End -->

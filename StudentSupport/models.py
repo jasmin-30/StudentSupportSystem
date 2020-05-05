@@ -181,8 +181,13 @@ class Principal(models.Model):
 
 
 class Departments(models.Model):
+    DIVISION = (
+        (1, 1),
+        (2, 2)
+    )
     dept_name = models.CharField(max_length=100)
     accronym = models.CharField(max_length=10, default=None)
+    div = models.IntegerField(choices=DIVISION, default=1)
 
     def __str__(self):
         return self.dept_name
@@ -215,16 +220,11 @@ class Students(models.Model):
         (7, 7),
         (8, 8)
     )
-    DIVISION = (
-        (1, 1),
-        (2, 2)
-    )
     enrollment_no = models.CharField(max_length=12, primary_key=True)
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     auth_id = models.ForeignKey(settings.AUTH_USER_MODEL, to_field='id', on_delete=models.CASCADE, default=None)
     dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.SET_NULL, null=True)
-    div = models.IntegerField(choices=DIVISION, default=1)
     semester = models.IntegerField(choices=SEMESTER, default=1)
     timestamp = models.DateTimeField(auto_now_add=True)
 

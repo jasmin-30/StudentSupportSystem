@@ -2,12 +2,14 @@
 {% load static %}
 <!-- Title block > Start -->
 {% block title %}
-    HOD Dashboard
+    Faculty Dashboard
 {% endblock title %}
 <!-- Title block > End -->
 
 <!-- Extra CSS Block > Start -->
 {% block extra_css %}
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
 {% endblock extra_css %}
 <!-- Extra CSS Block > End -->
 
@@ -16,13 +18,14 @@
     <a class="mobile-menu" id="mobile-collapse" href="javascript:void(0)">
         <i class="feather icon-menu"></i>
     </a>
-    <a href="{% url 'hod_dashboard' %}">
-        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System" style="max-width:92%;">
+    <a href="{% url 'faculty_dashboard' %}">
+        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System" style="max-width: 92%">
     </a>
 {% endblock logo %}
 <!-- Logo Block > End -->
 
 <!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
 {% block nav_right %}
     <ul class="nav-right">
         <li class="user-profile header-notification">
@@ -33,8 +36,8 @@
                 </div>
                 <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
                     <li>
-                        <a href="{% url 'hod_profile' %}">
-                            <i class="feather icon-user"></i> Profile
+                        <a href="{% url 'faculty_profile' %}">
+                            <i class="feather icon-user"></i> My Profile
                         </a>
                     </li>
                     <li>
@@ -49,6 +52,11 @@
 {% endblock nav_right %}
 <!-- Navbar Right menus block > End -->
 
+<!-- Modals Block > Start -->
+{% block modals %}
+{% endblock modals %}
+<!-- Modals Block > End -->
+
 <!-- Side Navigation bar Block > Start -->
 {% block side_bar %}
     <nav class="pcoded-navbar">
@@ -56,15 +64,15 @@
             <div class="pcoded-navigatio-lavel">Quick Links</div>
             <ul class="pcoded-item pcoded-left-item">
                 <li class="">
-                    <a href="{% url 'hod_profile' %}">
+                    <a href="{% url 'faculty_profile' %}">
                         <span class="pcoded-micon"><i class="feather icon-user"></i></span>
                         <span class="pcoded-mtext">My Profile</span>
                     </a>
                 </li>
                 <li class="">
-                    <a href="{% url 'hod_manage_department' %}">
-                        <span class="pcoded-micon"><i class="feather icon-users"></i></span>
-                        <span class="pcoded-mtext">Manage Department</span>
+                    <a href="{% url 'faculty_assigned_subjects' %}">
+                        <span class="pcoded-micon"><i class="feather icon-book"></i></span>
+                        <span class="pcoded-mtext">Assigned Subjects</span>
                     </a>
                 </li>
                 <ul class="pcoded-item pcoded-left-item">
@@ -75,12 +83,12 @@
                         </a>
                         <ul class="pcoded-submenu">
                             <li class=" ">
-                                <a href="{% url 'hod_view_detailed_feedback' type='mid-sem' %}">
+                                <a href="{% url 'faculty_view_detailed_feedback' type="mid-sem" %}">
                                     <span class="pcoded-mtext">Mid Semester</span>
                                 </a>
                             </li>
                             <li class=" ">
-                                <a href="{% url 'hod_view_detailed_feedback' type='end-sem' %}">
+                                <a href="{% url 'faculty_view_detailed_feedback' type="end-sem" %}">
                                     <span class="pcoded-mtext">End Semester</span>
                                 </a>
                             </li>
@@ -95,12 +103,12 @@
                         </a>
                         <ul class="pcoded-submenu">
                             <li class=" ">
-                                <a href="{% url 'hod_view_average_feedback' type='mid-sem' %}">
+                                <a href="{% url 'faculty_view_average_feedback' type="mid-sem" %}">
                                     <span class="pcoded-mtext">Mid Semester</span>
                                 </a>
                             </li>
                             <li class=" ">
-                                <a href="{% url 'hod_view_average_feedback' type='end-sem' %}">
+                                <a href="{% url 'faculty_view_average_feedback' type="end-sem" %}">
                                     <span class="pcoded-mtext">End Semester</span>
                                 </a>
                             </li>
@@ -108,10 +116,9 @@
                     </li>
                 </ul>
                 <li class="">
-                    <a href="{% url 'hod_manage_news' %}">
+                    <a href="{% url 'faculty_manage_news' %}">
                         <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
-                        <span class="pcoded-mtext">
-                            Manage News
+                        <span class="pcoded-mtext"> Manage News
                         </span>
                     </a>
                 </li>
@@ -127,8 +134,10 @@
 {% endblock side_bar %}
 <!-- Side Navigation bar Block > End -->
 
+
 <!-- Main body block > Start -->
-{# everything in this tag - <div class="main-body"> #}
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
 {% block main_body %}
     <div class="pcoded-content">
         <div class="pcoded-inner-content">
@@ -170,18 +179,18 @@
                                                         var index = parseInt('{{ forloop.counter }}') % 3;
                                                         var html = '';
                                                         html += '<div class="card social-card '+ bg_color[index] +'">';
-                                                        html += '<div class="card-block">';
-                                                        html += '<div class="row align-items-center">';
-                                                        html += '<div class="col-auto">';
-                                                        html += '<i class="feather icon-users f-34 '+ text_color[index] +' social-icon"></i>';
-                                                        html += '</div>';
-                                                        html += '<div class="col p-l-0">';
-                                                        html += '<h4>{{ i.name }}</h4>';
-                                                        html += '<p style="font-size: 12pt;"><i class="icofont icofont-king-crown"></i> {{ i.chairperson }}</p>';
-                                                        html += '<p style="font-size: 12pt;"><i class="icofont icofont-users-alt-5"></i> Total Members : {{ i.members }}</p>';
-                                                        html += '</div>';
-                                                        html += '</div>';
-                                                        html += '</div>';
+                                                            html += '<div class="card-block">';
+                                                                html += '<div class="row align-items-center">';
+                                                                    html += '<div class="col-auto">';
+                                                                        html += '<i class="feather icon-users f-34 '+ text_color[index] +' social-icon"></i>';
+                                                                    html += '</div>';
+                                                                    html += '<div class="col p-l-0">';
+                                                                        html += '<h4>{{ i.name }}</h4>';
+                                                                        html += '<p style="font-size: 12pt;"><i class="icofont icofont-king-crown"></i> {{ i.chairperson }}</p>';
+                                                                        html += '<p style="font-size: 12pt;"><i class="icofont icofont-users-alt-5"></i> Total Members : {{ i.members }}</p>';
+                                                                    html += '</div>';
+                                                                html += '</div>';
+                                                            html += '</div>';
                                                         html += '</div>';
                                                         document.write(html);
                                                     </script>
@@ -190,6 +199,7 @@
                                         {% endfor %}
                                     </div>
                                 {% endif %}
+
                                 {% if not_part_of_any_committee == False %}
                                     <div class="page-header" style="margin-bottom: 10px;">
                                         <div class="row align-items-end">
@@ -212,18 +222,18 @@
                                                         var index = parseInt('{{ forloop.counter }}') % 3;
                                                         var html = '';
                                                         html += '<div class="card social-card '+ bg_color[index] +'">';
-                                                        html += '<div class="card-block">';
-                                                        html += '<div class="row align-items-center">';
-                                                        html += '<div class="col-auto">';
-                                                        html += '<i class="feather icon-users f-34 '+ text_color[index] +' social-icon"></i>';
-                                                        html += '</div>';
-                                                        html += '<div class="col p-l-0">';
-                                                        html += '<h4>{{ i.name }}</h4>';
-                                                        html += '<p style="font-size: 12pt;"><i class="icofont icofont-king-crown"></i> {{ i.chairperson }}</p>';
-                                                        html += '<p style="font-size: 12pt;"><i class="icofont icofont-users-alt-5"></i> Total Members : {{ i.members }}</p>';
-                                                        html += '</div>';
-                                                        html += '</div>';
-                                                        html += '</div>';
+                                                            html += '<div class="card-block">';
+                                                                html += '<div class="row align-items-center">';
+                                                                    html += '<div class="col-auto">';
+                                                                        html += '<i class="feather icon-users f-34 '+ text_color[index] +' social-icon"></i>';
+                                                                    html += '</div>';
+                                                                    html += '<div class="col p-l-0">';
+                                                                        html += '<h4>{{ i.name }}</h4>';
+                                                                        html += '<p style="font-size: 12pt;"><i class="icofont icofont-king-crown"></i> {{ i.chairperson }}</p>';
+                                                                        html += '<p style="font-size: 12pt;"><i class="icofont icofont-users-alt-5"></i> Total Members : {{ i.members }}</p>';
+                                                                    html += '</div>';
+                                                                html += '</div>';
+                                                            html += '</div>';
                                                         html += '</div>';
                                                         document.write(html);
                                                     </script>
@@ -233,6 +243,7 @@
                                     </div>
                                 {% endif %}
                             </div>
+
                             <!-- Recent News -->
                             <div class="col-sm-12">
                                 <div class="page-header" style="margin-bottom: 10px;">
@@ -264,7 +275,7 @@
                                                             <div class="f-13 text-muted">
                                                                 {{ n.timestamp }}
                                                                 <br />
-                                                                By, {{ n.issuing_faculty.name }}
+                                                                By, {{ n.issuing_faculty.name }} ({{ n.issuing_faculty.dept_id.dept_name }} Department)
                                                             </div>
                                                         </li>
                                                     {% endfor %}
@@ -277,7 +288,6 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- List view card end -->
                             </div>
                         </div>
                     </div>
@@ -290,10 +300,29 @@
 
 <!-- Extra JS Block > Start -->
 {% block extra_js %}
+    <!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
 {% endblock extra_js %}
 <!-- Extra JS Block > End -->
 
 <!-- Custom JS Block > Start -->
 {% block custom_js %}
+    <script type="text/javascript">
+        {% if success %}
+            swal({
+                title: "{{ success }}",
+                type: "success"
+            });
+        {% endif %}
+
+        {% if error %}
+            swal({
+                title: "Error",
+                text: "{{ error }}",
+                dangerMode: true,
+                type: "error"
+            });
+        {% endif %}
+    </script>
 {% endblock custom_js %}
 <!-- Custom JS Block > End -->

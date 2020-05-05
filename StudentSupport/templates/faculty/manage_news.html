@@ -1,70 +1,77 @@
+{% extends 'Base/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
+<!-- Title block > Start -->
+{% block title %}
+    Manage News
+{% endblock title %}
+<!-- Title block > End -->
 
-<head>
-    <title>Manage News</title>
-    <!-- Meta -->
-    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
-    <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
-    <!-- Google font-->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
-    <!-- Required Fremwork -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- feather Awesome -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
-    <!-- ico font -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
+<!-- Extra CSS Block > Start -->
+{% block extra_css %}
+    <!-- Bootstrap selectpicker -->
+    <link rel="stylesheet" href="{% static 'bower_components/bootstrap-selectpicker/css_bootstrap-select.css' %}" />
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
     <!-- list css -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/list-scroll/list.css' %}">
-    <!-- Style.css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
-</head>
+{% endblock extra_css %}
+<!-- Extra CSS Block > End -->
 
-<body>
-    <!-- Pre-loader start -->
-    <div class="theme-loader">
-        <div class="ball-scale">
-            <div class='contain'>
-                <div class="ring">
-                    <div class="frame"></div>
+<!-- Logo Block > Start -->
+{% block logo %}
+    {% ifequal User_Role "Faculty" %}
+        <a href="{% url 'faculty_dashboard' %}">
+            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+        </a>
+    {% endifequal %}
+
+    {% ifequal User_Role "HOD" %}
+        <a href="{% url 'hod_dashboard' %}">
+            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+        </a>
+    {% endifequal %}
+{% endblock logo %}
+<!-- Logo Block > End -->
+
+<!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
+{% block nav_right %}
+    <ul class="nav-right">
+        <li class="user-profile header-notification">
+            <div class="dropdown-primary dropdown">
+                <div class="dropdown-toggle" data-toggle="dropdown">
+                    <span>{{ name }}</span>
+                    <i class="feather icon-chevron-down"></i>
                 </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
+                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                    <li>
+                        {% ifequal User_Role "Faculty" %}
+                            <a href="{% url 'faculty_profile' %}">
+                                <i class="feather icon-user"></i> Profile
+                            </a>
+                        {% endifequal %}
+
+                        {% ifequal User_Role "HOD" %}
+                            <a href="{% url 'hod_profile' %}">
+                                <i class="feather icon-user"></i> Profile
+                            </a>
+                        {% endifequal %}
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="feather icon-log-out"></i> Logout
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </div>
-    </div>
-    <!-- Pre-loader end -->
+        </li>
+    </ul>
+{% endblock nav_right %}
+<!-- Navbar Right menus block > End -->
+
+<!-- Modals Block > Start -->
+{% block modals %}
+    <!-- Add News modal > Start -->
     <div class="modal fade" id="add-news" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
@@ -75,45 +82,28 @@
                     </button>
                 </div>
                <div class="modal-body">
-                    <form method="post" action="{% url 'faculty_dashboard' %}">
+                    <form method="post" action="{% url 'faculty_manage_news' %}">
                         {% csrf_token %}
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">News Title</label>
+                            <label class="col-sm-2 col-form-label" for="newstitle">News Title</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="newstitle" name="newstitle" required>
+                                <input type="text" class="form-control" placeholder="News Subject" id="newstitle" name="newstitle" required>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">News Description</label>
+                            <label class="col-sm-2 col-form-label" for="newsdesc">News Description</label>
                             <div class="col-sm-10">
-                                <textarea rows="3" class="form-control" placeholder="Default textarea" id="newsdesc" name="newsdesc" required></textarea>
+                                <textarea rows="3" class="form-control" placeholder="News Description" id="newsdesc" name="newsdesc" required></textarea>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Target Audience</label>
+                            <label class="col-sm-2 col-form-label" for="dept">Target Audience</label>
                             <div class="col-sm-10">
-                                <div class="checkbox-fade fade-in-primary">
-                                    <label>
-                                        <input type="checkbox" value="0" id="dept_all" name="dept_all">
-                                        <span class="cr">
-                                            <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                        </span>
-                                        <span>All</span>
-                                    </label>
-                                </div>
-                                <br>
-                                {% for i in departments %}
-                                    <div class="checkbox-fade fade-in-primary">
-                                        <label>
-                                            <input type="checkbox" value="{{ i.id }}" id="dept{{ forloop.counter }}" name="dept{{ forloop.counter }}" class="chkclass">
-                                            <span class="cr">
-                                                <i class="cr-icon icofont icofont-ui-check txt-primary"></i>
-                                            </span>
-                                            <span>{{ i.dept_name }}</span>
-                                        </label>
-                                    </div>
-                                    <br>
-                                {% endfor %}
+                                <select name="dept" id="dept" class="selectpicker form-control" multiple data-actions-box="true" data-live-search="true" data-selected-text-format="count > 2" title="Select Target Audience" required>
+                                    {% for d in departments %}
+                                        <option value="{{ d.id }}">{{ d.dept_name }}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                         </div>
                         <button type="submit" class="btn btn-large btn-primary" style="float:right;">Publish</button>
@@ -122,126 +112,105 @@
             </div>
         </div>
     </div>
-    <div id="pcoded" class="pcoded">
-        <div class="pcoded-overlay-box"></div>
-        <div class="pcoded-container navbar-wrapper">
+    <!-- Add News modal > End -->
+{% endblock modals %}
+<!-- Modals Block > End -->
 
-            <nav class="navbar header-navbar pcoded-header">
-                <div class="navbar-wrapper">
-                    <div class="navbar-logo">
-                    <a href="{% url 'faculty_dashboard' %}">
-                        <img class="img-fluid" src="{% static 'assets/images/logo_sss3.png' %}" alt="Theme-Logo">
-                    </a>
-                </div>
-                    <div class="navbar-container container-fluid">
+<!-- Side Navigation bar Block > Start -->
+{% block side_bar %}
+{% endblock side_bar %}
+<!-- Side Navigation bar Block > End -->
 
-                    <ul class="nav-right">
 
-                        <li class="user-profile header-notification">
-                            <div class="dropdown-primary dropdown">
-                                <div class="dropdown-toggle" data-toggle="dropdown">
-{#                                    <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">#}
-                                    <span>{{ name }}</span>
-                                    <i class="feather icon-chevron-down"></i>
+<!-- Main body block > Start -->
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
+{% block main_body %}
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-header">
+                    <div class="row align-items-end">
+                        <div class="col-lg-8">
+                            <div class="page-header-title">
+                                <div class="d-inline">
+                                    <h3>Manage News Published by You</h3>
                                 </div>
-                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                    <li>
-                                        <a href="{% url 'faculty_profile' %}">
-                                            <i class="feather icon-user"></i> My Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'logout' %}">
-                                            <i class="feather icon-log-out"></i> Logout
-                                        </a>
-                                    </li>
-                                </ul>
                             </div>
-                        </li>
-                    </ul>
-                </div>
-                </div>
-            </nav>
-            <div class="pcoded-main-container">
-                <div class="pcoded-wrapper">
-                    <div class="pcoded-inner-content">
-                        <div class="main-body">
-                            <div class="page-wrapper">
-                                 <div class="page-header">
-                                    <div class="row align-items-end">
-                                        <div class="col-lg-8">
-                                            <div class="page-header-title">
-                                                <div class="d-inline">
-                                                    <h3>Manage News Published by You</h3>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-sm-4 d-flex justify-content-end">
-                                            <a class="btn btn-round btn-outline-primary" href="{% url 'faculty_dashboard' %}">
-                                                <i class="feather icon-arrow-left"></i>
-                                                Back to Dashboard
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="page-body">
-                                    <div class="row">
-                                        <div class="col-sm-12">
-                                            <div class="card">
-                                                <div class="card-header">
-                                                    <button class="btn btn-primary f-right" type="button">Publish New News</button>
-                                                </div>
-                                                <div class="card-block">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th scope="col" class="text-center" style="width: 10%;">#</th>
-                                                                    <th scope="col" class="text-center" style="width: 80%">News</th>
-                                                                    <th scope="col" class="text-center" style="width: 10%">Action</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {% for n in news_qs %}
-                                                                <tr>
-                                                                    <th class="text-center" style="vertical-align: middle;">{{ forloop.counter }}</th>
-                                                                    <td style="white-space: unset">
-                                                                        <div class="card">
-                                                                            <div class="card-block">
-                                                                                <div class="media-body">
-                                                                                    <div class="col-xs-12">
-                                                                                        <h6 class="d-inline-block">{{ n.news_subject }}</h6>
-                                                                                    </div>
-                                                                                    <div class="f-13 text-muted m-b-15">
+                        </div>
+                        <div class="col-sm-4 d-flex justify-content-end">
+                            {% ifequal User_Role "Faculty" %}
+                                <a class="btn btn-round btn-outline-primary" href="{% url 'faculty_dashboard' %}">
+                                    <i class="feather icon-arrow-left"></i>
+                                    Back to Dashboard
+                                </a>
+                            {% endifequal %}
 
-                                                                                    </div>
-                                                                                    <p style="word-break: break-all">
-                                                                                        Hi, This is my short intro text.
-                                                                                        Lorem ipsum is a dummy content sit
-                                                                                        dollar. You can copy and paste this
-                                                                                        dummy content from anywhere and to
-                                                                                        anywhere. Its all free and must be a
-                                                                                        good to folllow in prectice
-                                                                                    </p>
-                                                                                </div>
+                            {% ifequal User_Role "HOD" %}
+                                <a class="btn btn-round btn-outline-primary" href="{% url 'hod_dashboard' %}">
+                                    <i class="feather icon-arrow-left"></i>
+                                    Back to Dashboard
+                                </a>
+                            {% endifequal %}
+                        </div>
+                    </div>
+                </div>
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <button class="btn btn-primary f-right" type="button" data-toggle="modal" data-target="#add-news">Publish New News</button>
+                                </div>
+                                <div class="card-block">
+                                    <div class="table-responsive">
+                                        <table class="table table-hover">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col" class="text-center" style="width: 10%;">#</th>
+                                                <th scope="col" class="text-center" style="width: 80%">News</th>
+                                                <th scope="col" class="text-center" style="width: 10%">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for n in news_qs %}
+                                                <tr>
+                                                    <th class="text-center" style="vertical-align: middle;">{{ forloop.counter }}</th>
+                                                    <td style="white-space: unset">
+                                                        <div class="card">
+                                                            <div class="card-block">
+                                                                <div class="media-body">
+                                                                    <div class="col-xs-12">
+                                                                        <h6 class="d-inline-block"><strong>{{ n.news_subject }}</strong></h6>
+                                                                    </div>
+                                                                    <p style="word-break: break-all">
+                                                                        {{ n.news_details }}
+                                                                    </p>
+                                                                    <div class="f-13 text-muted m-b-15">
+                                                                        {% for d in n.target_audience.all %}
+                                                                            <div class="label-main">
+                                                                                <label class="label label-inverse-info-border">{{ d }} Department</label>
                                                                             </div>
-                                                                        </div>
-                                                                    </td>
-                                                                    <td class="text-center" style="vertical-align: middle;">
-                                                                        <div class="btn-group btn-group-sm" style="float: none;">
-                                                                            <button type="button" class="btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                <span class="icofont icofont-ui-delete"></span>
-                                                                            </button>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                                                        {% endfor %}
+                                                                    </div>
+                                                                    <p class="text-muted">{{ n.timestamp|date:"d M Y h:i A"}}</p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="text-center" style="vertical-align: middle;">
+                                                        <form action="{% url 'faculty_manage_news' %}" method="post" id="remove_form-{{ n.id }}">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="news_id" id="news_id" value="{{ n.id }}">
+                                                            <button type="button" class="btn_remove btn btn-danger waves-effect waves-light" news_id="{{ n.id }}" style="padding: .5rem .75rem">
+                                                                <span class="icofont icofont-ui-delete"></span>
+                                                            </button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
                                     </div>
                                 </div>
                             </div>
@@ -251,30 +220,49 @@
             </div>
         </div>
     </div>
-    <!-- Required Jquery -->
-    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
-    <!-- jquery slimscroll js -->
-    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
-    <!-- modernizr js -->
-    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
+{% endblock main_body %}
+<!-- Main body block > End -->
+
+<!-- Extra JS Block > Start -->
+{% block extra_js %}
+    <!-- Bootstrap selectpicker -->
+    <script type="text/javascript" src="{% static 'bower_components/bootstrap-selectpicker/js_bootstrap-select.js' %}"></script>
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+{% endblock extra_js %}
+<!-- Extra JS Block > End -->
 
-    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
-    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
-    <!-- custom js -->
-    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
-
+<!-- Custom JS Block > Start -->
+{% block custom_js %}
+    <script type="text/javascript">
+        $('button.btn_remove').on('click', function (event) {
+            event.preventDefault();
+            var news_id = $(this).attr('news_id');
+            var ind = 'form#remove_form-'+news_id;
+            console.log(ind);
+            swal({
+                    title: "Are you sure?",
+					text: "Students will no longer see this news.",
+					type: "warning",
+					showCancelButton: true,
+				},
+                function(isConfirm) {
+					if (isConfirm) {
+						$(ind).submit();
+					}
+				}
+            );
+        });
+    </script>
 
      <script type="text/javascript">
+        $(document).ready(function () {
+            $('select.selectpicker').selectpicker();
+        });
         {% if success %}
             swal({
                 title: "{{ success }}",
+                text: "{{ msg }}",
                 type: "success"
             });
         {% endif %}
@@ -288,8 +276,5 @@
             });
         {% endif %}
     </script>
-
-
-</body>
-
-</html>
+{% endblock custom_js %}
+<!-- Custom JS Block > End -->

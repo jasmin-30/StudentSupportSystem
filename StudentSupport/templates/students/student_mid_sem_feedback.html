@@ -1,19 +1,13 @@
+{% extends 'Base/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
+<!-- Title block > Start -->
+{% block title %}
+    Mid Semester Feedback
+{% endblock title %}
+<!-- Title block > End -->
 
-<head>
-    <title>Mid Semester Feedback Section - Student</title>
-    <!-- Meta -->
-    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
-    <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
-    <!-- Google font-->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
-    <!-- Required Fremwork -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- feather Awesome -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+<!-- Extra CSS Block > Start -->
+{% block extra_css %}
     <!-- Font Awesome -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/font-awesome/css/font-awesome.min.css' %}">
     <!-- sweet alert framework -->
@@ -22,13 +16,12 @@
     <!-- Star Ratings -->
     <link rel="stylesheet" type="text/css" href="{% static 'assets/star_ratings/stars.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/star_ratings/display_rating.css' %}">
+{% endblock extra_css %}
+<!-- Extra CSS Block > End -->
 
-    <!-- Style.css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
-
+<!-- Custom CSS Block > Start -->
+{% block custom_css %}
     <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
-{#    <script src="{% static 'assets/extra-js/jquery_2.1.4.js' %}"></script>#}
     <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'assets/modal wizard/jquery.modal-wizard.js' %}"></script>
@@ -41,49 +34,11 @@
             cursor: pointer;
         }
     </style>
+{% endblock custom_css %}
+<!-- Custom CSS Block > End -->
 
-</head>
-
-<body>
-    <!-- Pre-loader start -->
-    <div class="theme-loader">
-        <div class="ball-scale">
-            <div class='contain'>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- Pre-loader end -->
-
+<!-- Modals Block > Start -->
+{% block modals %}
     <!-- Feedback Form modal -->
     <div class="modal fade" id="feedback-modal" role="dialog" aria-labelledby="ModalLabel" data-current-step="1" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -198,7 +153,7 @@
                         </table>
                     </div>
                     <div class="form-group row">
-                        <label class="col-sm-2 col-form-label p-l-50" for="view_feedback_remarks"><b>Remarks : </b></label>
+                        <label class="col-sm-2 col-form-label p-l-40" for="view_feedback_remarks"><b>Remarks : </b></label>
                         <div class="col-sm-10">
                             <textarea class="form-control" id="view_feedback_remarks" name="view_feedback_remarks" rows="3" readonly></textarea>
                         </div>
@@ -207,153 +162,151 @@
             </div>
         </div>
     </div>
+{% endblock modals %}
+<!-- Modals Block > End -->
 
-    <div id="pcoded" class="pcoded">
-    <div class="pcoded-overlay-box"></div>
-    <div class="pcoded-container navbar-wrapper">
+<!-- Logo Block > Start -->
+{% block logo %}
+    <a href="{% url 'student_dashboard' %}">
+        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+    </a>
+{% endblock logo %}
+<!-- Logo Block > End -->
 
-        <nav class="navbar header-navbar pcoded-header">
-            <div class="navbar-wrapper">
-
-                <div class="navbar-logo">
-                    <a href="{% url 'student_dashboard' %}">
-                        <img class="img-fluid" src="{% static 'assets/images/logo_sss.png' %}" alt="Theme-Logo">
-                    </a>
+<!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
+{% block nav_right %}
+    <ul class="nav-right">
+        <li class="user-profile header-notification">
+            <div class="dropdown-primary dropdown">
+                <div class="dropdown-toggle" data-toggle="dropdown">
+                    <span>{{ name }}</span>
+                    <i class="feather icon-chevron-down"></i>
                 </div>
-
-                <div class="navbar-container container-fluid">
-
-                    <ul class="nav-right">
-                        <li class="user-profile header-notification">
-                            <div class="dropdown-primary dropdown">
-                                <div class="dropdown-toggle" data-toggle="dropdown">
-{#                                        <img src="{% static 'assets/images/avatar-4.jpg' %}" class="img-radius" alt="User-Profile-Image">#}
-                                    <span>{{ name }}</span>
-                                    <i class="feather icon-chevron-down"></i>
-                                </div>
-                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                    <li>
-                                        <a href="{% url 'student_profile' %}">
-                                            <i class="feather icon-settings"></i> My Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="{% url 'logout' %}">
-                                            <i class="feather icon-log-out"></i> Logout
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
+                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                    <li>
+                        <a href="{% url 'student_profile' %}">
+                            <i class="feather icon-user"></i> Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="feather icon-log-out"></i> Logout
+                        </a>
+                    </li>
+                </ul>
             </div>
-        </nav>
+        </li>
+    </ul>
+{% endblock nav_right %}
+<!-- Navbar Right menus block > End -->
 
-        <div class="pcoded-main-container">
-            <div class="pcoded-wrapper">
-                <div class="pcoded-inner-content">
-                    <div class="main-body">
-                        <div class="page-wrapper">
-                            <div class="page-body">
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="page-header">
-                                            <div class="row align-items-end">
-                                                <div class="col-lg-8">
-                                                    <div class="page-header-title">
-                                                        <div class="d-inline">
-                                                            <h3>Mid Semester Feedback Section</h3>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-sm-4 col-md-4 col-lg-4">
-                                                    <span class="f-right">
-                                                        <a href="{% url 'student_dashboard' %}" class="btn" style="font-size: 15px">
-                                                            <i class="feather icon-arrow-left"></i>
-                                                            Back to Dashboard
-                                                        </a>
-                                                    </span>
-                                                </div>
+<!-- Side Navigation bar Block > Start -->
+{% block side_bar %}
+{% endblock side_bar %}
+<!-- Side Navigation bar Block > End -->
+
+
+<!-- Main body block > Start -->
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
+{% block main_body %}
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="page-header">
+                                <div class="row align-items-end">
+                                    <div class="col-lg-8">
+                                        <div class="page-header-title">
+                                            <div class="d-inline">
+                                                <h3>Mid Semester Feedback Section</h3>
                                             </div>
                                         </div>
-                                        {% for i in semesters %}
-                                            <div class="card" id="card-rounded">
-                                                <div class="card-header expandable" style="color: black">
-                                                    <h5 style="font-size: 1.1rem; font-weight: inherit;">Semester {{ forloop.counter }}</h5>
-                                                    <div class="card-header-right">
-                                                        <ul class="list-unstyled card-option">
-                                                            <li><i class="feather icon-plus" style="color: black"></i></li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                                <div class="card-block" style="display: none;">
-                                                    <div class="table-responsive">
-                                                        <table class="table table-hover">
-                                                            <thead>
-                                                                <th>Subject Name</th>
-                                                                <th>Subject code</th>
-                                                                <th>Faculty</th>
-                                                                <th>Action</th>
-                                                            </thead>
-                                                            <tbody>
-                                                            {% for s in i %}
-                                                                {% ifnotequal s.status 0 %}
-                                                                    <script type="text/javascript">
-                                                                        {% for j in s.teaching_faculties %}
-                                                                            var row = '';
-                                                                            row += '<tr sub_id="{{ s.id }}">';
-                                                                                row += '<td><div class="subject_name">{{ s.name }}</div></td>';
-                                                                                row += '<td><div class="subject_code">{{ s.code }}</div></td>';
-                                                                                row += '<td><div class="teaching_faculty" fac_id="{{ j.fac_id }}">{{ j.fac_name }}</div></td>';
-                                                                                {% ifequal j.mid_sem_obj None %}
-                                                                                    row += '<td><span class="btn_give_feedback"><button href="javascript:void(0)" class="btn btn-round btn-outline-primary">Give Feedback</button></span></td>';
-                                                                                {% else %}
-                                                                                    row += '<td><span class="btn_view_feedback" obj_id="{{ j.mid_sem_obj }}"><button href="javascript:void(0)" class="btn btn-round btn-outline-primary">View Feedback</button></span></td>';
-                                                                                {% endifequal %}
-                                                                            row += '</tr>';
-                                                                            document.write(row);
-                                                                        {% endfor %}
-                                                                    </script>
-                                                                {% else %}
-                                                                    Contact Head of the department. Ask him/her to add subject of your semester.
-                                                                {% endifnotequal %}
-                                                            {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        {% endfor %}
+                                    </div>
+                                    <div class="col-sm-4 d-flex justify-content-end">
+                                        <a class="btn btn-round btn-outline-primary" href="{% url 'student_dashboard' %}">
+                                            <i class="feather icon-arrow-left"></i>
+                                            Back to Dashboard
+                                        </a>
                                     </div>
                                 </div>
                             </div>
+                            {% for i in semesters %}
+                                <div class="card" id="card-rounded">
+                                    <div class="card-header expandable" style="color: black">
+                                        <h5 style="font-size: 1.1rem; font-weight: inherit;">Semester {{ forloop.counter }}</h5>
+                                        <div class="card-header-right">
+                                            <ul class="list-unstyled card-option">
+                                                <li><i class="feather icon-plus" style="color: black"></i></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="card-block" style="display: none;">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Subject Name</th>
+                                                        <th>Subject code</th>
+                                                        <th>Faculty</th>
+                                                        <th>Action</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for s in i %}
+                                                    {% ifnotequal s.status 0 %}
+                                                        <script type="text/javascript">
+                                                            {% for j in s.teaching_faculties %}
+                                                                var row = '';
+                                                                row += '<tr sub_id="{{ s.id }}">';
+                                                                    row += '<td><div class="subject_name">{{ s.name }}</div></td>';
+                                                                    row += '<td><div class="subject_code">{{ s.code }}</div></td>';
+                                                                    row += '<td><div class="teaching_faculty" fac_id="{{ j.fac_id }}">{{ j.fac_name }}</div></td>';
+                                                                    {% ifequal j.mid_sem_obj None %}
+                                                                        row += '<td><span class="btn_give_feedback"><button href="javascript:void(0)" class="btn btn-round btn-outline-primary">Give Feedback</button></span></td>';
+                                                                    {% else %}
+                                                                        row += '<td><span class="btn_view_feedback" obj_id="{{ j.mid_sem_obj }}"><button href="javascript:void(0)" class="btn btn-round btn-outline-primary">View Feedback</button></span></td>';
+                                                                    {% endifequal %}
+                                                                row += '</tr>';
+                                                                document.write(row);
+                                                            {% endfor %}
+                                                        </script>
+                                                    {% else %}
+                                                        Contact Head of the department. Ask him/her to add subject of your semester.
+                                                    {% endifnotequal %}
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+{% endblock main_body %}
+<!-- Main body block > End -->
 
-    <!-- Required Jquery -->
+<!-- Required Js Block > Start -->
+{% block required_js %}
+{% endblock required_js %}
+<!-- Required Js Block > End -->
 
-    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
-    <!-- jquery slimscroll js -->
-    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
-    <!-- modernizr js -->
-    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
-    <!-- sweet alert js -->
+<!-- Extra JS Block > Start -->
+{% block extra_js %}
+     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+{% endblock extra_js %}
+<!-- Extra JS Block > End -->
 
-
-    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/SmoothScroll.js' %}"></script>
-    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
-    <!-- custom js -->
-    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
+<!-- Custom JS Block > Start -->
+{% block custom_js %}
     <script type="text/javascript">
         $(".expandable").on('click', function() {
             var $this = $(this);
@@ -434,31 +387,21 @@
 
     <script type="text/javascript">
         {% if success %}
-            setTimeout(function () {
-                swal({
-                    title: "{{ success }}",
-                    text: "{{ msg }}",
-                    type: "success",
-                }, function () {
-                    location.href=location.href;
-                });
-            }, 10);
+            swal({
+                title: "{{ success }}",
+                text: "{{ msg }}",
+                type: "success",
+            });
         {% endif %}
 
         {% if error %}
-            setTimeout(function () {
-                swal({
-                    title: "Error",
-                    text: "{{ error }}",
-                    dangerMode: true,
-                    type: "error",
-            }, function () {
-                    location.href=location.href;
-                });
-            }, 10);
+            swal({
+                title: "Error",
+                text: "{{ error }}",
+                dangerMode: true,
+                type: "error",
+            });
         {% endif %}
     </script>
-
-</body>
-
-</html>
+{% endblock custom_js %}
+<!-- Custom JS Block > End -->

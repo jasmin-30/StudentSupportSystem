@@ -1,76 +1,26 @@
+{% extends 'Base/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
+<!-- Title block > Start -->
+{% block title %}
+    Mid Semester Average Feedback
+{% endblock title %}
+<!-- Title block > End -->
 
-<head>
-    <title>View Average Feedback</title>
-    <!-- Meta -->
-    <meta name="author" content="Jasmin Makwana(160210107030), Kinjal Doshi(160210107011), Jinesh Kamdar(160210107024), Vishwa Rajput(160210107047)">
-    <!-- Favicon icon -->
-    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
-    <!-- Google font-->
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600" rel="stylesheet">
-    <!-- Required Fremwork -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
-    <!-- themify-icons line icon -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/themify-icons/themify-icons.css' %}">
-    <!-- ico font -->
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
-    <!-- Switch component css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
-    <!-- Tags css -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap-tagsinput/css/bootstrap-tagsinput.css' %}">
+<!-- Extra CSS Block > Start -->
+{% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/font-awesome/css/font-awesome.min.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+{% endblock extra_css %}
+<!-- Extra CSS Block > End -->
 
-    <!-- Style.css -->
-{#    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}">#}
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/jquery.mCustomScrollbar.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/bg.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/custom_style.css' %}">
-</head>
+<!-- Custom CSS Block > Start -->
+{% block custom_css %}
+{% endblock custom_css %}
+<!-- Custom CSS Block > End -->
 
-<body>
-    <!-- Pre-loader start -->
-    <div class="theme-loader">
-        <div class="ball-scale">
-            <div class='contain'>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-                <div class="ring">
-                    <div class="frame"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
+<!-- Modals Block > Start -->
+{% block modals %}
     <!-- Download Report modal > Start -->
     <div class="modal fade" id="download-report-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -137,166 +87,168 @@
         </div>
     </div>
     <!-- Download Report modal > End -->
+{% endblock modals %}
+<!-- Modals Block > End -->
 
-    <!-- Pre-loader end -->
-    <div id="pcoded" class="pcoded">
-        <div class="pcoded-overlay-box"></div>
-        <div class="pcoded-container navbar-wrapper">
-            <nav class="navbar header-navbar pcoded-header">
-                <div class="navbar-wrapper">
-                    <div class="navbar-logo">
-                        <a href="index-1.htm">
-                            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Theme-Logo">
+<!-- Logo Block > Start -->
+{% block logo %}
+    <a href="{% url 'hod_dashboard' %}">
+        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+    </a>
+{% endblock logo %}
+<!-- Logo Block > End -->
+
+<!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
+{% block nav_right %}
+    <ul class="nav-right">
+        <li class="user-profile header-notification">
+            <div class="dropdown-primary dropdown">
+                <div class="dropdown-toggle" data-toggle="dropdown">
+                    <span>{{ name }}</span>
+                    <i class="feather icon-chevron-down"></i>
+                </div>
+                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                    <li>
+                        <a href="{% url 'hod_profile' %}">
+                            <i class="feather icon-user"></i> Profile
                         </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="feather icon-log-out"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+{% endblock nav_right %}
+<!-- Navbar Right menus block > End -->
+
+<!-- Side Navigation bar Block > Start -->
+{% block side_bar %}
+{% endblock side_bar %}
+<!-- Side Navigation bar Block > End -->
+
+
+<!-- Main body block > Start -->
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
+{% block main_body %}
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                 <div class="page-header">
+                    <div class="row align-items-end">
+                        <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
+                            <div class="page-header-title">
+                                <div class="d-inline">
+                                    <h3>{{ dept_name }} Department</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
+                            <div class="page-header-title">
+                                <div class="d-inline">
+                                    <h3>Mid Semester Average Feedback</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 col-md-8 col-lg-8 m-t-20">
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#download-report-modal">Download Report</button>
+                        </div>
+                        <div class="col-sm-4 d-flex justify-content-end">
+                            <a class="btn btn-round btn-outline-primary" href="{% url 'hod_dashboard' %}">
+                                <i class="feather icon-arrow-left"></i>
+                                Back to Dashboard
+                            </a>
+                        </div>
                     </div>
-                    <div class="navbar-container container-fluid">
-
-                    <ul class="nav-right">
-
-                        <li class="user-profile header-notification">
-                            <div class="dropdown-primary dropdown">
-                                <div class="dropdown-toggle" data-toggle="dropdown">
-                                    <span>{{ name }}</span>
-                                    <i class="feather icon-chevron-down"></i>
-                                </div>
-                                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                                    <li>
-                                        <a href="#">
-                                            <i class="feather icon-user"></i> Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#">
-                                            <i class="feather icon-log-out"></i> Logout
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
                 </div>
-                </div>
-            </nav>
-            <div class="pcoded-main-container">
-                <div class="pcoded-wrapper">
-                <div class="pcoded-inner-content">
-                    <div class="main-body">
-                        <div class="page-wrapper">
-                             <div class="page-header">
-                                <div class="row align-items-end">
-                                    <div class="col-sm-12 col-md-12 col-lg-6">
-                                        <div class="page-header-title">
-                                            <div class="d-inline">
-                                                <h3>{{ dept_name }} Department</h3>
+                <div class="page-body">
+                    <div class="row">
+                       <div class="col-sm-12" id="div1">
+                           <div class="card">
+                               <div class="card-block">
+                                   <div class="form-group row">
+                                            <label for="view_feedback_term" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Term :</label>
+                                            <div class="col-md-4 col-lg-4">
+                                                <select class="custom-select" name="view_feedback_term" id="view_feedback_term" style="width: 100%">
+                                                    <option value="0">Odd</option>
+                                                    <option value="1">Even</option>
+                                                </select>
+                                            </div>
+                                            <label for="view_feedback_year" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Year:</label>
+                                            <div class="col-md-4 col-lg-4">
+                                                <select class="custom-select" name="view_feedback_year" id="view_feedback_year" style="width: 100%;">
+                                                    <script type="text/javascript">
+                                                        var start_year = 2020;
+                                                        var current_year = new Date().getFullYear();
+                                                        for(var i=start_year;i<=current_year;++i) {
+                                                            document.write('<option value="'+ i +'">'+ i +'</option>');
+                                                        }
+                                                    </script>
+                                                </select>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-sm-12 col-md-12 col-lg-6">
-                                        <div class="page-header-title">
-                                            <div class="d-inline">
-                                                <h3>Mid Semester Average Feedback</h3>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-8 col-md-8 col-lg-8 m-t-20">
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#download-report-modal">Download Report</button>
-                                    </div>
-                                    <div class="col-sm-4 col-md-4 col-lg-4">
-                                        <span class="f-right">
-                                            <a href="{% url 'hod_dashboard' %}" class="btn" style="font-size: 15px">
-                                                <i class="feather icon-arrow-left"></i>
-                                                Back to Dashboard
-                                            </a>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="page-body">
-                                <div class="row">
-                                   <div class="col-sm-12" id="div1">
-                                       <div class="card">
-                                           <div class="card-block">
-                                               <div class="form-group row">
-                                                        <label for="view_feedback_term" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Term :</label>
-                                                        <div class="col-md-4 col-lg-4">
-                                                            <select class="custom-select" name="view_feedback_term" id="view_feedback_term" style="width: 100%">
-                                                                <option value="0">Odd</option>
-                                                                <option value="1">Even</option>
-                                                            </select>
-                                                        </div>
-                                                        <label for="view_feedback_year" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Year:</label>
-                                                        <div class="col-md-4 col-lg-4">
-                                                            <select class="custom-select" name="view_feedback_year" id="view_feedback_year" style="width: 100%;">
-                                                                <script type="text/javascript">
-                                                                    var start_year = 2020;
-                                                                    var current_year = new Date().getFullYear();
-                                                                    for(var i=start_year;i<=current_year;++i) {
-                                                                        document.write('<option value="'+ i +'">'+ i +'</option>');
-                                                                    }
-                                                                </script>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                   <div class="form-group row">
-                                                       <label for="view_feedback_faculty" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Faculty :</label>
-                                                       <div class="col-md-6 col-lg-6">
-                                                           <select class="custom-select" name="view_feedback_faculty" id="view_feedback_faculty" style="width: 100%">
-                                                               <option value="-1" selected disabled>Select Faculty to view feedback</option>
-                                                           {% for f in dept_faculties %}
-                                                               <option value="{{ f.id }}">{{ f.name }}</option>
-                                                           {% endfor %}
-                                                           </select>
-                                                       </div>
-                                                       <div class="col-md-4 col-lg-4">
-                                                           <button type="button" class="btn btn-outline-primary" onclick="load_graph()">View Feedback</button>
-                                                       </div>
-                                                   </div>
-                                               <div class="loader-block" style="display: none">
-                                                   <svg id="loader2" viewBox="0 0 100 100">
-                                                       <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
-                                                    </svg>
-                                               </div>
-                                               <div id="content" style="display: none;">
-                                                   <div class="row m-t-20 m-b-20">
-                                                       <div class="col-sm-6">
-                                                           Updated On: <b><span id="feedback-date"></span></b>
-                                                       </div>
-                                                       <div class="col-sm-6 d-flex justify-content-end">
-                                                           You can see all the question &nbsp; <a href="#questions_list" style="color: dodgerblue; font-size: inherit">here.</a>
-                                                       </div>
-                                                   </div>
-                                                   <canvas id="myChart"></canvas>
-                                               </div>
+                                       <div class="form-group row">
+                                           <label for="view_feedback_faculty" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Faculty :</label>
+                                           <div class="col-md-6 col-lg-6">
+                                               <select class="custom-select" name="view_feedback_faculty" id="view_feedback_faculty" style="width: 100%">
+                                                   <option value="-1" selected disabled>Select Faculty to view feedback</option>
+                                               {% for f in dept_faculties %}
+                                                   <option value="{{ f.id }}">{{ f.name }}</option>
+                                               {% endfor %}
+                                               </select>
+                                           </div>
+                                           <div class="col-md-4 col-lg-4">
+                                               <button type="button" class="btn btn-outline-primary" onclick="load_graph()">View Feedback</button>
                                            </div>
                                        </div>
+                                   <div class="loader-block" style="display: none">
+                                       <svg id="loader2" viewBox="0 0 100 100">
+                                           <circle id="circle-loader2" cx="50" cy="50" r="45"></circle>
+                                        </svg>
                                    </div>
-                                    <div class="col-sm-3" id="div2" style="display: none">
-                                        <div class="card">
-                                            <div class="card-header p-b-0 d-flex justify-content-center">
-                                                <h5>Feedback count per subject</h5>
-                                            </div>
-                                            <div class="card-body">
-                                                <ul class="list-group" id="subject_list_group">
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
+                                   <div id="content" style="display: none;">
+                                       <div class="row m-t-20 m-b-20">
+                                           <div class="col-sm-6">
+                                               Updated On: <b><span id="feedback-date"></span></b>
+                                           </div>
+                                           <div class="col-sm-6 d-flex justify-content-end">
+                                               You can see all the question &nbsp; <a href="#questions_list" style="color: dodgerblue; font-size: inherit">here.</a>
+                                           </div>
+                                       </div>
+                                       <canvas id="myChart"></canvas>
+                                   </div>
                                </div>
-                                <div class="row">
-                                    <div class="col-sm-12">
-                                        <div class="card" id="questions_list">
-                                            <div class="card-header">
-                                                <h4 style="font-size: 20px">Questions List</h4>
-                                            </div>
-                                            <div class="card-block">
-                                                <ul>
-                                                    {% for q in questions %}
-                                                        <li><b>Question : {{ forloop.counter }}</b> - {{ q.question_text }}</li>
-                                                    {% endfor %}
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    </div>
+                           </div>
+                       </div>
+                        <div class="col-sm-3" id="div2" style="display: none">
+                            <div class="card">
+                                <div class="card-header p-b-0 d-flex justify-content-center">
+                                    <h5>Feedback count per subject</h5>
+                                </div>
+                                <div class="card-body">
+                                    <ul class="list-group" id="subject_list_group">
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                   </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="card" id="questions_list">
+                                <div class="card-header">
+                                    <h4 style="font-size: 20px">Questions List</h4>
+                                </div>
+                                <div class="card-block">
+                                    <ul>
+                                        {% for q in questions %}
+                                            <li><b>Question : {{ forloop.counter }}</b> - {{ q.question_text }}</li>
+                                        {% endfor %}
+                                    </ul>
                                 </div>
                             </div>
                         </div>
@@ -305,33 +257,21 @@
             </div>
         </div>
     </div>
-    </div>
-    <!-- Required Jquery -->
-    <script type="text/javascript" src="{% static 'bower_components/jquery/js/jquery.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/jquery-ui/js/jquery-ui.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/popper.js/js/popper.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/bootstrap/js/bootstrap.min.js' %}"></script>
-    <!-- jquery slimscroll js -->
-    <script type="text/javascript" src="{%static 'bower_components/jquery-slimscroll/js/jquery.slimscroll.js' %}"></script>
-    <!-- modernizr js -->
-    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/modernizr.js' %}"></script>
-    <script type="text/javascript" src="{% static 'bower_components/modernizr/js/css-scrollbars.js' %}"></script>
-    <!-- Switch component js -->
-    <script type="text/javascript" src="{% static 'bower_components/switchery/js/switchery.min.js' %}"></script>
+{% endblock main_body %}
+<!-- Main body block > End -->
 
+<!-- Extra JS Block > Start -->
+{% block extra_js %}
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
 
     <!-- Chart js -->
     <script type="text/javascript" src="{% static 'assets/extra-js/Chart/Chart.js_2.9.3.js' %}"></script>
+{% endblock extra_js %}
+<!-- Extra JS Block > End -->
 
-    <!-- custom js -->
-    <script src="{% static 'assets/js/vartical-layout.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/script.min.js' %}"></script>
-    <script type="text/javascript" src="{% static 'assets/js/script.js' %}"></script>
-    <script src="{% static 'assets/js/pcoded.min.js' %}"></script>
-    <script src="{% static 'assets/js/jquery.mCustomScrollbar.concat.min.js' %}"></script>
-
+<!-- Custom JS Block > Start -->
+{% block custom_js %}
     <script type="text/javascript">
         var subjects_dict = JSON.parse('{{ fac_subjects|safe }}');
         console.log(subjects_dict);
@@ -548,6 +488,5 @@
             }
         }
     </script>
-</body>
-
-</html>
+{% endblock custom_js %}
+<!-- Custom JS Block > End -->
