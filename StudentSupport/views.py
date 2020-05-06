@@ -40,6 +40,8 @@ def HomePageView(request):
         "dept": dept_qs,
         "base_url": st.BASE_URL,
     }
+    mech_dept = Departments.objects.get(accronym="MECH")
+    context["mech_dept_id"] = mech_dept.id
     if request.POST:
         # For Forgot Password.. > Start
         if request.POST.get('email_forgot') is not None:
@@ -189,12 +191,28 @@ def RegisterView(request):
             print(status)
             if status == 1:
                 try:
-                    student_obj = Students.objects.create(enrollment_no=enrollment_no,
-                                                          first_name=fname,
-                                                          last_name=lname,
-                                                          auth_id=User.objects.get(id=user.id),
-                                                          dept_id=Departments.objects.get(id=int(dept)),
-                                                          semester=int(sem))
+                    dept_obj = Departments.objects.get(id=int(dept))
+                    if (dept_obj.accronym == "MECH"):
+                        div = request.POST.get('division')
+                        student_obj = Students.objects.create(
+                            enrollment_no=enrollment_no,
+                            first_name=fname,
+                            last_name=lname,
+                            auth_id=User.objects.get(id=user.id),
+                            dept_id=dept_obj,
+                            div=int(div),
+                            semester=int(sem)
+                        )
+                    else:
+                        student_obj = Students.objects.create(
+                            enrollment_no=enrollment_no,
+                            first_name=fname,
+                            last_name=lname,
+                            auth_id=User.objects.get(id=user.id),
+                            dept_id=dept_obj,
+                            semester=int(sem)
+                        )
+
                     student_obj.save()
                     print(student_obj)
                 except IntegrityError as e:
@@ -1412,6 +1430,158 @@ def FacultyManageNews(request):
         return render(request, 'home_auth/index.html', context)
 
 
+def SubjectDetailedFeedback(request, type, sub_id):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        if request.GET.get('year') is None:
+            return HttpResponse("<h1>403 Year not passed</h1><br /><a href=" + str(
+                request.META['HTTP_REFERER']) + ">click here to go back</a>")
+        else:
+            year = int(request.GET.get('year'))
+            context["year"] = year
+            fac_obj = Faculty.objects.get(auth_id=request.user)
+            context["name"] = fac_obj.name
+            sub_obj = Subjects.objects.get(id=int(sub_id))
+            context["subject_obj"] = sub_obj
+            if (int(sub_obj.semester) % 2):
+                term_type = "ODD"
+            else:
+                term_type = "Even"
+
+            if type == "mid":
+                context["fb_type"] = "mid"
+                fb_type = "Mid"
+                question_qs = Mid_Sem_Feedback_Questions.objects.all()
+                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
+                    subject_id=sub_obj,
+                    faculty_id=fac_obj,
+                    timestamp__year=year
+                )
+                context["questions"] = question_qs
+                if feedback_qs.count() == 0:
+                    return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                context["latest_date"] = feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p")
+
+            elif type == "end":
+                context["fb_type"] = "end"
+                fb_type = "End"
+                question_qs = End_Sem_Feedback_Questions.objects.all()
+                feedback_qs = End_Sem_Feedback_Answers.objects.filter(
+                    subject_id=sub_obj,
+                    faculty_id=fac_obj,
+                    timestamp__year=year
+                )
+                context["questions"] = question_qs
+                if feedback_qs.count() == 0:
+                    return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                context["latest_date"] = feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p")
+
+            else:
+                return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
+                    request.META['HTTP_REFERER']) + ">click here to go back</a>")
+
+            feedback_dict = serialize_detailed_feedback(feedback_qs=feedback_qs)
+
+            if request.GET.get('download') is not None:
+                return make_detailed_feedback_pdf(
+                    serialized_feedback=feedback_dict,
+                    subject_obj=sub_obj,
+                    fac_obj=fac_obj,
+                    fb_type=fb_type,
+                    term_type=term_type,
+                    year=year,
+                    question_qs=question_qs
+                )
+
+            context["feedback"] = json.dumps(feedback_dict)
+            return render(request, 'faculty/Detailed_Feedback/subject_wise_detailed_feedback.html', context)
+
+    else:
+        context["error"] = "Login First"
+        return render(request, 'home_auth/index.html', context)
+
+
+def SubjectAverageFeedback(request, type, sub_id):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        if request.GET.get('year') is None:
+            return HttpResponse("<h1>403 Year is not passed</h1><br /><a href=" + str(
+                request.META['HTTP_REFERER']) + ">click here to go back</a>")
+
+        else:
+            year = int(request.GET.get('year'))
+            context["year"] = year
+            print(year)
+            fac_obj = Faculty.objects.get(auth_id=request.user)
+            context["name"] = fac_obj.name
+            sub_obj = Subjects.objects.get(id=int(sub_id))
+            context["subject_obj"] = sub_obj
+            if(int(sub_obj.semester) % 2):
+                term_type = "ODD"
+            else:
+                term_type = "Even"
+
+            if type == "mid":
+                context["fb_type"] = "mid"
+                fb_type = "Mid"
+                question_qs = Mid_Sem_Feedback_Questions.objects.all()
+                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
+                    subject_id=sub_obj,
+                    faculty_id=fac_obj
+                )
+                context["questions"] = question_qs
+                if feedback_qs.count() == 0:
+                    return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                context["latest_date"] = feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p")
+
+            elif type == "end":
+                context["fb_type"] = "end"
+                fb_type = "End"
+                question_qs = End_Sem_Feedback_Questions.objects.all()
+                feedback_qs = End_Sem_Feedback_Answers.objects.filter(
+                    subject_id=sub_obj,
+                    faculty_id=fac_obj
+                )
+                context["questions"] = question_qs
+                if feedback_qs.count() == 0:
+                    return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                context["latest_date"] = feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p")
+
+            else:
+                return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(request.META['HTTP_REFERER']) + ">click here to go back</a>")
+
+            feedback_dict = serialize_feedback_subject(feedback_qs=feedback_qs)
+            rating_insights = ratings_detailed(feedback_qs=feedback_qs)
+
+
+            if request.GET.get('download') is not None:
+                return make_avg_feedback_pdf(
+                    questionwise_ratings=feedback_dict,
+                    rating_insights=rating_insights,
+                    subject_obj=sub_obj,
+                    fac_obj=fac_obj,
+                    question_qs=question_qs,
+                    fb_type=fb_type,
+                    term_type=term_type,
+                    year=year
+                )
+
+            context["feedback"] = json.dumps(feedback_dict)
+            return render(request, 'faculty/Average_Feedback/subject_wise_average_feedback.html', context)
+
+    else:
+        context["error"] = "Login First"
+        return render(request, 'home_auth/index.html', context)
+
+
 # Faculty Related Views > End
 
 # HOD Related Views > Start
@@ -2302,7 +2472,7 @@ def DetailedFeedback(request, id):
         try:
             dept_obj = Departments.objects.get(id=id)
         except Departments.DoesNotExist:
-            return HttpResponse("404 Page not found.")
+            return HttpResponse("<h1>404 Page not found.</h1>")
 
         context['dept_name'] = dept_obj.dept_name
         dept_faculties = Faculty.objects.filter(dept_id=dept_obj)
@@ -3170,132 +3340,40 @@ def DownloadDetailedFeedback(request, type):
                 if type == "mid":
                     fb_type = "Mid"
                     question_qs = Mid_Sem_Feedback_Questions.objects.all()
-                    question_count = question_qs.count()
                     feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
                         faculty_id=fac_obj,
                         subject_id=subject_obj,
                         semester__in=semester_list,
                         timestamp__year=year
                     )
+                    if feedback_qs.count() == 0:
+                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
 
                 elif type == "end":
                     fb_type = "End"
                     question_qs = End_Sem_Feedback_Questions.objects.all()
-                    question_count = question_qs.count()
                     feedback_qs = End_Sem_Feedback_Answers.objects.filter(
                         faculty_id=fac_obj,
                         subject_id=subject_obj,
                         semester__in=semester_list,
                         timestamp__year=year
                     )
+                    if feedback_qs.count() == 0:
+                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
 
                 serialized_feedback = serialize_detailed_feedback(feedback_qs=feedback_qs)
 
-                # ====================== PDF Generation ===================================
-                pdfname = str(subject_obj.subject_name)
-                pdfname = pdfname.replace(" ", "_")
-                response = HttpResponse(content_type='application/pdf')
-                response[
-                    'Content-Disposition'] = 'attachment; filename=' + pdfname + '_' + fb_type + '_Semester_Detailed_Feedback.pdf'
-
-                elements = []
-
-                doc = SimpleDocTemplate(response, rightMargin=inch / 4,
-                                        leftMargin=inch / 4,
-                                        topMargin=inch / 2,
-                                        bottomMargin=inch / 4,
-                                        pagesize=A4)
-
-                path_to_file = os.getcwd() + "/logo.jpg"
-
-                for k in serialized_feedback:
-
-                    text1 = "Government Engineering College, Bhavnagar"
-                    text2 = fb_type + " Semester Feedback Report"
-                    text3 = "Term: " + term_type + " " + str(year)
-                    text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
-                    text5 = str(fac_obj.dept_id.dept_name) + " Department"
-                    text6 = fac_obj.name
-                    text7 = "Subject Name: " + subject_obj.subject_name + " (" + subject_obj.subject_code + ")"
-                    text8 = "Semester: " + str(subject_obj.semester)
-                    text9 = "Date of Feedback: " + str(k['date'])
-
-                    d = Drawing(400, 200)
-                    d.add(Image(0, 120, 100, 100, path_to_file))
-                    d.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
-                    d.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
-                    d.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
-                    d.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
-                    d.add(Line(0, 90, 550, 90))
-                    d.add(String(150, 65, text5, fontSize=18, fillColor=colors.black))
-                    d.add(String(30, 35, text6, fontSize=12, fillColor=colors.black))
-                    d.add(String(30, 20, text7, fontSize=12, fillColor=colors.black))
-                    d.add(String(380, 20, text8, fontSize=12, fillColor=colors.black))
-                    d.add(String(22, -45, text9, fontSize=12, fillColor=colors.black))
-
-                    elements.append(d)
-                    elements.append(Spacer(500, 50))
-
-                    fl = [["Sr No", "Questions", "Feedback"]]
-                    for i in range(1, question_count + 1):
-                        index = "q" + str(i)
-                        ft = []
-                        ft.append(i)
-                        ft.append(question_qs[i - 1].question_text)
-                        ft.append(k[index])
-                        fl.append(ft)
-
-                    # fl.append([11, 'Remarks', l[k][10]])
-
-                    # data = fl
-                    # table = Table(data, 12 * [0.5 * inch])
-                    table = Table(fl)
-
-                    table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.white),
-                                               ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                                               ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                                               ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-                                               ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-                                               ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-                                               ('BACKGROUND', (0, -1), (-1, -1), colors.white),
-                                               ]))
-                    table._argW[0] = 1.0 * inch
-                    table._argW[1] = 4.0 * inch
-                    table._argW[2] = 2.0 * inch
-
-                    table._argH[0] = 0.5 * inch
-                    for i in range(1, question_count + 1):
-                        table._argH[i] = 0.4 * inch
-
-                    # table._argH[1] = 0.4 * inch
-                    # table._argH[2] = 0.4 * inch
-                    # table._argH[3] = 0.4 * inch
-                    # table._argH[4] = 0.4 * inch
-                    # table._argH[5] = 0.4 * inch
-                    # table._argH[6] = 0.4 * inch
-                    # table._argH[7] = 0.4 * inch
-                    # table._argH[8] = 0.4 * inch
-                    # table._argH[9] = 0.4 * inch
-                    # table._argH[10] = 0.4 * inch
-                    # table._argH[11] = 0.4 * inch
-
-                    elements.append(table)
-
-                    drawing_for_remarks = Drawing(400, 200)
-                    drawing_for_remarks.add(
-                        String(22, 170, "Remarks: " + str(k['remark']), fontSize=12, fillColor=colors.black))
-
-                    drawing_for_remarks.add(
-                        String(22, 100, "Note: All the feedback given are out of 5.", fontSize=12,
-                               fillColor=colors.black))
-
-                    elements.append(drawing_for_remarks)
-
-                    elements.append(PageBreak())
-
-                doc.build(elements)
-                return response
-
+                return make_detailed_feedback_pdf(
+                    serialized_feedback=serialized_feedback,
+                    subject_obj=subject_obj,
+                    fac_obj=fac_obj,
+                    fb_type=fb_type,
+                    term_type=term_type,
+                    year=year,
+                    question_qs=question_qs
+                )
 
     else:
         context["error"] = "Log in First"
@@ -3324,230 +3402,44 @@ def DownloadAverageFeedback(request, type):
                 if type == "mid":
                     fb_type = "Mid"
                     question_qs = Mid_Sem_Feedback_Questions.objects.all()
-                    question_count = question_qs.count()
                     feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
                         faculty_id=fac_obj,
                         subject_id=subject_obj,
                         semester__in=semester_list,
                         timestamp__year=year
                     )
+                    if feedback_qs.count() == 0:
+                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
                     rating_insights = ratings_detailed(feedback_qs=feedback_qs)
 
                 elif type == "end":
                     fb_type = "End"
                     question_qs = End_Sem_Feedback_Questions.objects.all()
-                    question_count = question_qs.count()
                     feedback_qs = End_Sem_Feedback_Answers.objects.filter(
                         faculty_id=fac_obj,
                         subject_id=subject_obj,
                         semester__in=semester_list,
                         timestamp__year=year
                     )
+                    if feedback_qs.count() == 0:
+                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
                     rating_insights = ratings_detailed(feedback_qs=feedback_qs)
 
                 # Got dictionary of question wise average rating as well as count.
                 questionwise_ratings = serialize_feedback_subject(feedback_qs=feedback_qs)
 
-                # =========== PDF Generation ===============================================
-                ##################################################################################################################
-
-                pdfname1 = "Temp1"
-
-                response1 = HttpResponse(content_type='application/pdf')
-                response1['Content-Disposition'] = 'attachment; filename=' + pdfname1
-
-                elements1 = []
-                doc1 = SimpleDocTemplate(response1, rightMargin=inch / 4,
-                                         leftMargin=inch / 4,
-                                         topMargin=inch / 2,
-                                         bottomMargin=inch / 4,
-                                         pagesize=A4)
-
-                path_to_file = os.getcwd() + "/logo.jpg"
-
-                text1 = "Government Engineering College, Bhavnagar"
-                text2 = fb_type + " Semester Feedback Report"
-                text3 = "Term: " + term_type + " " + str(year)
-                text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
-                text5 = str(fac_obj.dept_id.dept_name) + " Department"
-                text6 = fac_obj.name
-                text7 = "Subject Name: " + subject_obj.subject_name + " (" + subject_obj.subject_code + ")"
-                text8 = "Semester: " + str(subject_obj.semester)
-                text9 = "Total Feedback: " + str(questionwise_ratings["count"])
-
-                d = Drawing(400, 200)
-                d.add(Image(0, 120, 100, 100, path_to_file))
-                d.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
-                d.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
-                d.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
-                d.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
-                d.add(Line(0, 90, 550, 90))
-                d.add(String(150, 65, text5, fontSize=18, fillColor=colors.black))
-                d.add(String(30, 35, text6, fontSize=12, fillColor=colors.black))
-                d.add(String(30, 20, text7, fontSize=12, fillColor=colors.black))
-                d.add(String(380, 20, text8, fontSize=12, fillColor=colors.black))
-                d.add(String(22, -45, text9, fontSize=12, fillColor=colors.black))
-
-                elements1.append(d)
-
-                drawing = Drawing(400, 200)
-                drawing.vAlign = 'CENTER'
-
-                data_list = []
-                label_list = []
-                for i in range(1, question_count + 1):
-                    index = "Q" + str(i)
-                    data_list.append(questionwise_ratings[index])
-                    label_list.append(("Question : " + str(i)))
-
-                data = []
-                data.append(tuple(data_list))
-                print(data)
-                bc = VerticalBarChart()
-                bc.x = 28
-                bc.y = -120
-                bc.height = 250
-                bc.width = 500
-                bc.data = data
-                bc.bars[0].fillColor = colors.aqua
-                bc.strokeColor = colors.black
-                bc.valueAxis.valueMin = 0
-                bc.valueAxis.valueMax = 5.0
-                bc.valueAxis.valueStep = 0.5
-                bc.categoryAxis.labels.boxAnchor = 'ne'
-                bc.categoryAxis.labels.dx = 8
-                bc.categoryAxis.labels.dy = -2
-                bc.categoryAxis.labels.angle = 30
-                bc.categoryAxis.categoryNames = label_list
-                bc.barLabels.angle = 0
-                bc.barLabels.boxAnchor = 's'
-                bc.barLabelFormat = DecimalFormatter(2)
-                drawing.add(bc)
-
-                elements1.append(drawing)
-
-                elements1.append(PageBreak())
-
-                ##################################################################################################################
-
-                pdfname2 = "Temp1"
-                response2 = HttpResponse(content_type='application/pdf')
-                response2['Content-Disposition'] = 'attachment; filename=' + pdfname2
-
-                elements2 = []
-                doc2 = SimpleDocTemplate(response2, rightMargin=inch / 4,
-                                         leftMargin=inch / 4,
-                                         topMargin=inch / 2,
-                                         bottomMargin=inch / 4,
-                                         pagesize=A4)
-
-                path_to_file = os.getcwd() + "/logo.jpg"
-
-                text1 = "Government Engineering College, Bhavnagar"
-                text2 = fb_type + " Semester Feedback Report"
-                text3 = "Term: " + term_type + " " + str(year)
-                text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
-                text5 = "Total Feedback: " + str(questionwise_ratings["count"])
-
-                d2 = Drawing(400, 200)
-                d2.add(Image(0, 120, 100, 100, path_to_file))
-                d2.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
-                d2.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
-                d2.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
-                d2.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
-                d2.add(Line(0, 90, 550, 90))
-                d2.add(String(30, 70, text5, fontSize=12, fillColor=colors.black))
-
-                elements2.append(d2)
-
-                elements2.append(Spacer(550, -50))
-
-                fl = [["Sr No", "Questions", "Feedback"]]
-                for i in range(question_count):
-                    index = "Q" + str(i + 1)
-                    dpie = Drawing(200, 100)
-                    pc = Pie()
-                    pc.x = 65
-                    pc.y = 15
-                    pc.width = 70
-                    pc.height = 70
-                    pc.sideLabels = 1
-                    pc.data = [rating_insights[index][1], rating_insights[index][2], rating_insights[index][3],
-                               rating_insights[index][4], rating_insights[index][5]]
-                    pc.labels = ['1', '2', '3', '4', '5']
-                    pc.slices.strokeWidth = 0.5
-                    pc.slices[0].fillColor = colors.red
-                    pc.slices[1].fillColor = colors.blue
-                    pc.slices[2].fillColor = colors.gray
-                    pc.slices[3].fillColor = colors.yellow
-                    pc.slices[4].fillColor = colors.green
-                    dpie.add(pc)
-                    legend = Legend()
-                    legend.alignment = 'right'
-                    legend.x = 160
-                    legend.y = 90
-                    legend.columnMaximum = 5
-                    legend.dxTextSpace = 4
-                    n = len(pc.data)
-                    legend.colorNamePairs = [(pc.slices[i].fillColor, (pc.labels[i], ': ' + '%0.2f' % pc.data[i] + '%'))
-                                             for i in
-                                             range(n)]
-                    dpie.add(legend)
-
-                    ft = []
-                    ft.append(i + 1)
-                    ft.append(question_qs[i].question_text)
-                    ft.append([dpie])
-                    fl.append(ft)
-
-                tbdata = fl
-
-                table = Table(tbdata)
-
-                table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.white),
-                                           ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-                                           ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-                                           ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
-                                           ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
-                                           ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
-                                           ('BACKGROUND', (0, -1), (-1, -1), colors.white),
-                                           ]))
-                table._argW[0] = 0.6 * inch
-                table._argW[1] = 3.5 * inch
-                table._argW[2] = 3.3 * inch
-
-                table._argH[0] = 0.35 * inch
-                for i in range(1, question_count + 1):
-                    table._argH[i] = 1.6 * inch
-
-                table.spaceBefore = 0
-
-                elements2.append(table)
-
-                ##################################################################################################################
-
-                pdfname3 = str(subject_obj.subject_name)
-                pdfname3 = pdfname3.replace(" ", "_")
-                response3 = HttpResponse(content_type='application/pdf')
-                response3[
-                    'Content-Disposition'] = 'attachment; filename=' + pdfname3 + '_' + fb_type + '_Semester_Average_Feedback.pdf'
-                elements3 = []
-
-                doc3 = SimpleDocTemplate(response3, rightMargin=inch / 4,
-                                         leftMargin=inch / 4,
-                                         topMargin=inch / 2,
-                                         bottomMargin=inch / 4,
-                                         pagesize=A4)
-
-                for i in elements1:
-                    elements3.append(i)
-
-                for i in elements2:
-                    elements3.append(i)
-
-                doc3.build(elements3)
-
-                return response3
+                return make_avg_feedback_pdf(
+                    questionwise_ratings=questionwise_ratings,
+                    rating_insights=rating_insights,
+                    subject_obj=subject_obj,
+                    fac_obj=fac_obj,
+                    question_qs=question_qs,
+                    fb_type=fb_type,
+                    term_type=term_type,
+                    year=year
+                )
 
     else:
         context["error"] = "Log in First"

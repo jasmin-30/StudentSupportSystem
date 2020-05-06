@@ -41,6 +41,8 @@ urlpatterns = [
     path('faculty/manage-news/', views.FacultyManageNews, name='faculty_manage_news'),
     path('faculty/view-detailed-feedback/<str:type>/', views.FacultyViewDetailedFeedback, name='faculty_view_detailed_feedback'),
     path('faculty/view-average-feedback/<str:type>/', views.FacultyViewAverageFeedback, name='faculty_view_average_feedback'),
+    path('faculty/subjects/view-detailed-feedback/<str:type>/<str:sub_id>/', views.SubjectDetailedFeedback, name='faculty_subject_detailed_feedback'),
+    path('faculty/subjects/view-average-feedback/<str:type>/<str:sub_id>/', views.SubjectAverageFeedback, name='faculty_subject_average_feedback'),
     # Faculty Related urls > End
 
     # Student Related urls > Start

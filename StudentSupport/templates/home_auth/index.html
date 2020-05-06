@@ -5,7 +5,8 @@
     <title>Student Support System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
+    <!-- Favicon icon -->
+    <link rel="icon" href="{% static 'assets/images/favicon.ico' %}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Fredericka+the+Great" rel="stylesheet">
       <!-- Required Fremwork -->
@@ -149,7 +150,7 @@
     </div>
     <!-- Sign in Modal End -->
 
-    <!-- Tabs modal > Start-->
+    <!-- Registrations modal > Start-->
     <div class="modal fade modal-flex" id="sign-up-modal" tabindex="-1" role="dialog" style="z-index: 1050; display: none;" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -216,7 +217,7 @@
                                         <select onblur="validate_dept()" name="dept" id="dept" class="custom-select" required>
                                             <option value="-1" disabled selected>Select Department</option>
                                             {% for i in dept %}
-                                                {% if i.accronym == "AM" or i.accronym == "GNRL" or i.accronym == "MECH1" or i.accronym == "MECH2" %}
+                                                {% if i.accronym == "AM" or i.accronym == "GNRL" %}
                                                 {% else %}
                                                     <option value="{{ i.id }}">{{ i.dept_name }}</option>
                                                 {% endif %}
@@ -225,6 +226,17 @@
                                         <div id="Error_dept" style="display: none; color: red;"></div>
                                     </div>
                                 </div>
+                                <div class="form-group row" id="division-div" style="display: none;">
+                                    <label class="col-sm-4 col-form-label" for="division">Division : </label>
+                                    <div class="col-sm-8">
+                                        <select name="division" id="division" class="custom-select" required>
+                                            <option value="-1" disabled selected>Select Division</option>
+                                            <option value="1">Division 1</option>
+                                            <option value="2">Division 2</option>
+                                        </select>
+                                    </div>
+                                </div>
+
                                 <div class="form-group row" id="sem-div">
                                     <label class="col-sm-4 col-form-label" for="sem">Semester : </label>
                                     <div class="col-sm-8">
@@ -299,6 +311,7 @@
                                         <div id="Error_faculty-dept" style="display: none; color: red;"></div>
                                     </div>
                                 </div>
+
                                 <div class="form-group row">
                                     <div class="col-sm-8">
                                         <a href="#" data-toggle="modal" data-target="#sign-in-modal" data-dismiss="modal">
@@ -637,7 +650,7 @@
 	<footer class="pt-4 pt-md-5 border-top" style="background:#404E67; padding-bottom:2rem !important; padding-left:2rem">
 		<div class="row">
             <div class="col-12 col-md">
-                <img class="mb-2" src="{% static 'assets/images/logo_sss3.png' %}" alt="" width="300px" height="50px">
+                <img class="mb-2" src="{% static 'assets/images/logo.png' %}" alt="" width="300px" height="50px">
             </div>
             <div class="col-6 col-md">
                 <h5 style="color:white;">Features</h5>
@@ -1001,5 +1014,19 @@
         {% endif %}
     </script>
     <!-- Messages Javascripts > Start -->
+
+    <!-- Javascript > Start -->
+    <script type="text/javascript">
+        $('select#dept').on('change', function (event) {
+            var val = $(this).val();
+            if(val == "{{ mech_dept_id }}") {
+                $('div#division-div').show();
+            }
+            else {
+                $('div#division-div').hide();
+            }
+        });
+    </script>
+    <!-- Javascript > End -->
 </body>
 </html>

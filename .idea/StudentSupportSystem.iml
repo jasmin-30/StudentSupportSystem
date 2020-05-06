@@ -20,6 +20,7 @@
     <orderEntry type="library" name="Chart" level="application" />
     <orderEntry type="library" name="sweetalert" level="application" />
     <orderEntry type="library" name="bootstrap-select" level="application" />
+    <orderEntry type="library" name="sweetalert2" level="application" />
   </component>
   <component name="TemplatesService">
     <option name="TEMPLATE_CONFIGURATION" value="Django" />

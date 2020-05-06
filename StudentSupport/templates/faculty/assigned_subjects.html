@@ -9,7 +9,7 @@
 <!-- Extra CSS Block > Start -->
 {% block extra_css %}
     <!-- sweet alert framework -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+{#    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">#}
     <!-- Data Table Css -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/data-table/css/buttons.dataTables.min.css' %}">
@@ -97,21 +97,34 @@
                                         <table id="simpletable" class="table table-hover nowrap">
                                             <thead>
                                             <tr>
-                                                <th scope="col">#</th>
-                                                <th scope="col">Subject Name</th>
-                                                <th scope="col">Subject Code</th>
-                                                <th scope="col">Department</th>
-                                                <th scope="col">Semester</th>
+                                                <th class="text-center" scope="col">Subject Name</th>
+                                                <th class="text-center" scope="col">Subject Code</th>
+                                                <th class="text-center" scope="col">Department</th>
+                                                <th class="text-center" scope="col">Semester</th>
+                                                <th class="text-center" scope="col">Assigned By</th>
+                                                <th class="text-center" scope="col">View Feedback</th>
                                             </tr>
                                             </thead>
                                             <tbody>
                                             {% for s in subjects %}
                                                 <tr>
-                                                    <th scope="row">{{ forloop.counter }}</th>
-                                                    <td>{{ s.subject_id.subject_name }}</td>
-                                                    <td>{{ s.subject_id.subject_code }}</td>
-                                                    <td>{{ s.subject_id.dept_id.dept_name }}</td>
-                                                    <td>{{ s.subject_id.semester }}</td>
+                                                    <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.subject_name }}</td>
+                                                    <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.subject_code }}</td>
+                                                    <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.dept_id.dept_name }}</td>
+                                                    <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.semester }}</td>
+                                                    <td class="text-center" style="vertical-align: middle;">
+                                                        <span data-toggle="tooltip" title="{{ s.subject_id.dept_id.dept_name }}">{{ s.subject_id.dept_id.accronym }} HOD</span>
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <div class="btn-group btn-group-sm">
+                                                            <button type="button" class="btn_detailed btn btn-outline-info waves-effect waves-light" subject_id="{{ s.subject_id.id }}" style="float: none;margin: 5px;">
+                                                                Detailed Feedback
+                                                            </button> <br />
+                                                            <button type="button" class="btn_average btn btn-outline-success waves-effect waves-light" subject_id="{{ s.subject_id.id }}" style="float: none;margin: 5px;">
+                                                                Average Feedback
+                                                            </button>
+                                                        </div>
+                                                    </td>
                                                 </tr>
                                             {% endfor %}
                                             </tbody>
@@ -131,8 +144,8 @@
 <!-- Extra JS Block > Start -->
 {% block extra_js %}
     <!-- sweet alert js -->
-    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
-
+{#    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>#}
+    <script src="{% static 'assets/sweetalert/sweetalert2@9.js' %}"></script>
     <!-- data-table js -->
     <script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
     <script src="{% static 'bower_components/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
@@ -145,5 +158,138 @@
 
 <!-- Custom JS Block > Start -->
 {% block custom_js %}
+    <script type="text/javascript">
+
+        var year_option = {};
+        var start_year = 2020;
+        var current_year = new Date().getFullYear();
+        for(var i=start_year;i<=current_year;++i) {
+            year_option[i] = i;
+        }
+        console.log(year_option);
+        const inputOptions = new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(year_option);
+            }, 1000)
+        })
+
+        $('button.btn_detailed').on('click', function(event) {
+            event.preventDefault();
+            var subject_id = $(this).attr('subject_id');
+            Swal.fire({
+                title: "Select Feedback Type",
+                showCancelButton: true,
+                confirmButtonText: 'Mid Semester Feedback',
+                cancelButtonText: 'End Semester Feedback',
+            })
+            .then(async (result) => {
+                if (result.value) {
+                    // For mid semester feedback
+                    const { value: year } = await Swal.fire({
+                        title: 'Select Year',
+                        input: 'select',
+                        inputOptions: year_option,
+                        inputPlaceholder: 'Select Year',
+                        showCancelButton: true,
+                        inputValidator: (value) => {
+                            return new Promise((resolve) => {
+                                if (value === '') {
+                                    resolve('You need to select year :)')
+                                }
+                                else {
+                                    resolve()
+                                }
+                            })
+                        }
+                    })
+                    if (year) {
+                        window.location = "{{ base_url }}" + "faculty/subjects/view-detailed-feedback/mid/" + subject_id + "/?year=" + year;
+                    }
+                }
+                else if(result.dismiss === Swal.DismissReason.cancel) {
+                    //For end semester feedback
+                    const { value: year } = await Swal.fire({
+                        title: 'Select Year',
+                        input: 'select',
+                        inputOptions: year_option,
+                        inputPlaceholder: 'Select Year',
+                        showCancelButton: true,
+                        inputValidator: (value) => {
+                            return new Promise((resolve) => {
+                                if (value === '') {
+                                    resolve('You need to select year :)')
+                                }
+                                else {
+                                    resolve()
+                                }
+                            })
+                        }
+                    })
+                    if (year) {
+                        window.location = "{{ base_url }}" + "faculty/subjects/view-detailed-feedback/end/" + subject_id + "/?year=" + year;
+                    }
+                }
+            });
+        });
+
+        $('button.btn_average').on('click', function (event) {
+            event.preventDefault();
+            var subject_id = $(this).attr('subject_id');
+            Swal.fire({
+                title: "Select Feedback Type",
+                showCancelButton: true,
+                confirmButtonText: 'Mid Semester Feedback',
+                cancelButtonText: 'End Semester Feedback',
+            })
+            .then(async (result) => {
+                if (result.value) {
+                    // For mid semester feedback
+                    const { value: year } = await Swal.fire({
+                        title: 'Select Year',
+                        input: 'select',
+                        inputOptions: year_option,
+                        inputPlaceholder: 'Select Year',
+                        showCancelButton: true,
+                        inputValidator: (value) => {
+                            return new Promise((resolve) => {
+                                if (value === '') {
+                                    resolve('You need to select year :)')
+                                }
+                                else {
+                                    resolve()
+                                }
+                            })
+                        }
+                    })
+                    if (year) {
+                        window.location = "{{ base_url }}" + "faculty/subjects/view-average-feedback/mid/" + subject_id + "/?year=" + year;
+                    }
+                }
+                else if(result.dismiss === Swal.DismissReason.cancel) {
+                    //For end semester feedback
+                    const { value: year } = await Swal.fire({
+                        title: 'Select Year',
+                        input: 'select',
+                        inputOptions: year_option,
+                        inputPlaceholder: 'Select Year',
+                        showCancelButton: true,
+                        inputValidator: (value) => {
+                            return new Promise((resolve) => {
+                                if (value === '') {
+                                    resolve('You need to select year :)')
+                                }
+                                else {
+                                    resolve()
+                                }
+                            })
+                        }
+                    })
+                    if (year) {
+                        window.location = "{{ base_url }}" + "faculty/subjects/view-average-feedback/end/" + subject_id + "/?year=" + year;
+                    }
+                }
+            });
+        });
+    </script>
 {% endblock custom_js %}
 <!-- Custom JS Block > End -->

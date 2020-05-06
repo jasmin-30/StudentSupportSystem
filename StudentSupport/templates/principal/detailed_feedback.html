@@ -24,6 +24,9 @@
         li.disabled {
             pointer-events: none;
         }
+        td {
+            white-space: normal;
+        }
     </style>
 {% endblock custom_css %}
 <!-- Custom CSS Block > End -->
@@ -283,9 +286,9 @@
                                             <table class="table table-hover table-bordered">
                                                 <thead>
                                                 <tr>
-                                                    <th>#</th>
-                                                    <th>Questions</th>
-                                                    <th>Feedback</th>
+                                                    <th style="width: 10%;">#</th>
+                                                    <th style="width: 70%">Questions</th>
+                                                    <th style="width: 20%">Feedback</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody id="table_body">
@@ -509,54 +512,61 @@
             pages += '<li class="page-item" btn_type="prev" current_step="'+ page_no +'" data-toggle="tooltip" title="Previous">';
                 pages += '<a class="page-link" href="#">Previous</a>';
             pages += '</li>';
-            if(page_no > total_page-3) {
-                //1,2,gap,total-4,total-3,total-2,total-1,total
-                pages += '<li class="page-item step-'+ 1 +'" step="'+ 1 +'"><a class="page-link" href="#">'+ 1 +'</a></li>';
-                pages += '<li class="page-item step-'+ 2 +'" step="'+ 2 +'"><a class="page-link" href="#">'+ 2 +'</a></li>';
-                pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
-                for(var i=4;i>=0;--i) {
-                    pages += '<li class="page-item step-'+ (total_page-i) +'" step="'+ (total_page-i) +'"><a class="page-link" href="#">'+ (total_page-i) +'</a></li>';
-                }
-            }
-
-            else if(page_no > total_page-5 && page_no <= total_page-3) {
-                //1,2,gap,pn-2,pn-1,pn upto total
-                pages += '<li class="page-item step-'+ 1 +'" step="'+ 1 +'"><a class="page-link" href="#">'+ 1 +'</a></li>';
-                pages += '<li class="page-item step-'+ 2 +'" step="'+ 2 +'"><a class="page-link" href="#">'+ 2 +'</a></li>';
-                pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
-                for(var i=(page_no-2);i<=total_page;++i) {
+            if(total_page <= 11) {
+                for(var i=1;i<=total_page;++i) {
                     pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
                 }
-            }
-
-            else if(page_no >= 6 && page_no <= total_page-5) {
-                //1,2,gap,pn-2,pn-1,pn,pn+1,pn+2,gap,total-1,total
-                pages += '<li class="page-item step-'+ 1 +'" step="'+ 1 +'"><a class="page-link" href="#">'+ 1 +'</a></li>';
-                pages += '<li class="page-item step-'+ 2 +'" step="'+ 2 +'"><a class="page-link" href="#">'+ 2 +'</a></li>';
-                pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
-                for(var i=(page_no-2);i<=(page_no+2);++i) {
-                    pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
-                }
-                pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
-                pages += '<li class="page-item step-'+ (total_page-1) +'" step="'+ (total_page-1) +'"><a class="page-link" href="#">'+ (total_page-1) +'</a></li>';
-                pages += '<li class="page-item step-'+ (total_page) +'" step="'+ (total_page) +'"><a class="page-link" href="#">'+ (total_page) +'</a></li>';
-            }
-
-            else if(page_no > 3 && page_no < 6) {
-                for(var i=1;i<=(page_no+2);++i) {
-                    pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
-                }
-                pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
-                pages += '<li class="page-item step-'+ (total_page-1) +'" step="'+ (total_page-1) +'"><a class="page-link" href="#">'+ (total_page-1) +'</a></li>';
-                pages += '<li class="page-item step-'+ (total_page) +'" step="'+ (total_page) +'"><a class="page-link" href="#">'+ (total_page) +'</a></li>';
             }
             else {
-                for(var i=1;i<=5;++i) {
-                    pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                if(page_no > total_page-3) {
+                    //1,2,gap,total-4,total-3,total-2,total-1,total
+                    pages += '<li class="page-item step-'+ 1 +'" step="'+ 1 +'"><a class="page-link" href="#">'+ 1 +'</a></li>';
+                    pages += '<li class="page-item step-'+ 2 +'" step="'+ 2 +'"><a class="page-link" href="#">'+ 2 +'</a></li>';
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    for(var i=4;i>=0;--i) {
+                        pages += '<li class="page-item step-'+ (total_page-i) +'" step="'+ (total_page-i) +'"><a class="page-link" href="#">'+ (total_page-i) +'</a></li>';
+                    }
                 }
-                pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
-                pages += '<li class="page-item step-'+ (total_page-1) +'" step="'+ (total_page-1) +'"><a class="page-link" href="#">'+ (total_page-1) +'</a></li>';
-                pages += '<li class="page-item step-'+ (total_page) +'" step="'+ (total_page) +'"><a class="page-link" href="#">'+ (total_page) +'</a></li>';
+
+                else if(page_no > total_page-5 && page_no <= total_page-3) {
+                    //1,2,gap,pn-2,pn-1,pn upto total
+                    pages += '<li class="page-item step-'+ 1 +'" step="'+ 1 +'"><a class="page-link" href="#">'+ 1 +'</a></li>';
+                    pages += '<li class="page-item step-'+ 2 +'" step="'+ 2 +'"><a class="page-link" href="#">'+ 2 +'</a></li>';
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    for(var i=(page_no-2);i<=total_page;++i) {
+                        pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                    }
+                }
+
+                else if(page_no >= 6 && page_no <= total_page-5) {
+                    //1,2,gap,pn-2,pn-1,pn,pn+1,pn+2,gap,total-1,total
+                    pages += '<li class="page-item step-'+ 1 +'" step="'+ 1 +'"><a class="page-link" href="#">'+ 1 +'</a></li>';
+                    pages += '<li class="page-item step-'+ 2 +'" step="'+ 2 +'"><a class="page-link" href="#">'+ 2 +'</a></li>';
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    for(var i=(page_no-2);i<=(page_no+2);++i) {
+                        pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                    }
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page-1) +'" step="'+ (total_page-1) +'"><a class="page-link" href="#">'+ (total_page-1) +'</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page) +'" step="'+ (total_page) +'"><a class="page-link" href="#">'+ (total_page) +'</a></li>';
+                }
+
+                else if(page_no > 3 && page_no < 6) {
+                    for(var i=1;i<=(page_no+2);++i) {
+                        pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                    }
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page-1) +'" step="'+ (total_page-1) +'"><a class="page-link" href="#">'+ (total_page-1) +'</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page) +'" step="'+ (total_page) +'"><a class="page-link" href="#">'+ (total_page) +'</a></li>';
+                }
+                else {
+                    for(var i=1;i<=5;++i) {
+                        pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                    }
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page-1) +'" step="'+ (total_page-1) +'"><a class="page-link" href="#">'+ (total_page-1) +'</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page) +'" step="'+ (total_page) +'"><a class="page-link" href="#">'+ (total_page) +'</a></li>';
+                }
             }
             pages += '<li class="page-item" btn_type="next" current_step="'+ page_no +'" data-toggle="tooltip" title="Next">';
                 pages += '<a class="page-link" href="#">Next</a>';

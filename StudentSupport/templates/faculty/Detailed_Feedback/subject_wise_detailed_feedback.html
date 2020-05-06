@@ -1,0 +1,343 @@
+{% extends 'Base/base.html' %}
+{% load static %}
+<!-- Title block > Start -->
+{% block title %}
+    {{ subject_obj.subject_name }} ({{ subject_obj.subject_code }}) - {{ fb_type|capfirst }} Semester Detailed Feedback
+{% endblock title %}
+<!-- Title block > End -->
+
+<!-- Extra CSS Block > Start -->
+{% block extra_css %}
+    <!-- Font Awesome -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/font-awesome/css/font-awesome.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/star_ratings/display_rating.css' %}">
+
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+{% endblock extra_css %}
+<!-- Extra CSS Block > End -->
+
+<!-- Custom CSS Block > Start -->
+{% block custom_css %}
+    <style type="text/css">
+        li.disabled {
+            pointer-events: none;
+        }
+        td {
+            white-space: normal;
+        }
+    </style>
+{% endblock custom_css %}
+<!-- Custom CSS Block > End -->
+
+<!-- Logo Block > Start -->
+{% block logo %}
+    <a href="{% url 'faculty_dashboard' %}">
+        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+    </a>
+{% endblock logo %}
+<!-- Logo Block > End -->
+
+<!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
+{% block nav_right %}
+    <ul class="nav-right">
+        <li class="user-profile header-notification">
+            <div class="dropdown-primary dropdown">
+                <div class="dropdown-toggle" data-toggle="dropdown">
+                    <span>{{ name }}</span>
+                    <i class="feather icon-chevron-down"></i>
+                </div>
+                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                    <li>
+                        <a href="{% url 'faculty_profile' %}">
+                            <i class="feather icon-user"></i> My Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="feather icon-log-out"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+{% endblock nav_right %}
+<!-- Navbar Right menus block > End -->
+
+<!-- Modals Block > Start -->
+{% block modals %}
+{% endblock modals %}
+<!-- Modals Block > End -->
+
+<!-- Side Navigation bar Block > Start -->
+{% block side_bar %}
+{% endblock side_bar %}
+<!-- Side Navigation bar Block > End -->
+
+
+<!-- Main body block > Start -->
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
+{% block main_body %}
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                <div class="page-header">
+                    <div class="row">
+                        <div class="col-sm-12 d-flex justify-content-center">
+                            <div class="page-header-title">
+                                <div class="d-inline">
+                                    <h3>{{ fb_type|capfirst }} Semester Detailed Feedback for {{ year }}</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 col-md-8 col-lg-8">
+                            <form action="{% url 'faculty_subject_detailed_feedback' type=fb_type sub_id=subject_obj.id %}" method="get">
+                                {% csrf_token %}
+                                <input type="hidden" id="year" name="year" value="{{ year }}">
+                                <input type="hidden" id="download" name="download" value="True">
+                                <button type="submit" class="btn btn-primary">Download Report</button>
+                            </form>
+                        </div>
+                        <div class="col-sm-4 col-md-4 col-lg-4 d-flex justify-content-end">
+                            <a href="{% url 'faculty_assigned_subjects' %}" class="btn btn-round btn-outline-primary">
+                                <i class="feather icon-arrow-left"></i>
+                                Back to Assigned Subject
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="page-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <!-- Basic Form Inputs card start -->
+                            <div class="card">
+                                <div class="card-block">
+                                    <div class="row">
+                                        <div class="col-sm-3 d-flex justify-content-end">
+                                            <b>Subject Name :</b>
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-start">
+                                            {{ subject_obj.subject_name }}
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-end">
+                                            <b>Subject Code :</b>
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-start">
+                                            {{ subject_obj.subject_code }}
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-end">
+                                            <b>Department :</b>
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-start">
+                                            {{ subject_obj.dept_id.dept_name }}
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-end">
+                                            <b>Semester :</b>
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-start">
+                                            {{ subject_obj.semester }}
+                                        </div>
+                                    </div>
+                                    <nav class="p-20" aria-label="Page navigation example">
+                                        <ul class="pagination d-flex justify-content-center">
+                                        </ul>
+                                    </nav>
+                                    <div class="row p-b-10">
+                                        <div class="col-sm-6">Feedback Given Date: <b id="view_feedback_date"></b> </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover table-bordered">
+                                            <thead>
+                                            <tr>
+                                                <th style="width: 10%;">#</th>
+                                                <th style="width: 70%">Questions</th>
+                                                <th style="width: 20%">Feedback</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for q in questions %}
+                                                <tr>
+                                                    <th>{{ forloop.counter }}</th>
+                                                    <td>{{ q.question_text }}</td>
+                                                    <td><div class="ans"></div></td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-md-2 col-lg-2 col-form-label p-l-50" for="view_feedback_remarks"><b>Remarks : </b></label>
+                                        <div class="col-sm-10">
+                                            <textarea class="form-control" id="view_feedback_remarks" name="view_feedback_remarks" rows="3" readonly></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock main_body %}
+<!-- Main body block > End -->
+
+<!-- Extra JS Block > Start -->
+{% block extra_js %}
+    <!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+{% endblock extra_js %}
+<!-- Extra JS Block > End -->
+
+<!-- Custom JS Block > Start -->
+{% block custom_js %}
+    <script type="text/javascript">
+        var feedback_list = JSON.parse('{{ feedback|safe }}')
+        var total_page = feedback_list.length;
+        design_pagination(total_page);
+
+        // This function is for designing pagination for the first time.
+        function design_pagination(total) {
+            var pages = '';
+            pages += '<li class="page-item" btn_type="prev" current_step="1">';
+                pages += '<a class="page-link" href="#">Previous</a>';
+            pages += '</li>';
+            if(total <= 11) {
+                for(var i=1;i<=total;++i) {
+                    pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                }
+            }
+            else {
+                for(var i=1;i<=5;++i) {
+                    pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                }
+                pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                pages += '<li class="page-item step-'+ (total-1) +'" step="'+ (total-1) +'"><a class="page-link" href="#">'+ (total-1) +'</a></li>';
+                pages += '<li class="page-item step-'+ (total) +'" step="'+ (total) +'"><a class="page-link" href="#">'+ (total) +'</a></li>';
+
+            }
+            pages += '<li class="page-item" btn_type="next" current_step="1">';
+                pages += '<a class="page-link" href="#">Next</a>';
+            pages += '</li>';
+
+            $(document).find('ul.pagination').html(pages);
+            $(document).find('ul.pagination li:first-child').addClass('disabled');
+            Show_feedback(1);
+        }
+
+        // This function is to display feedbacks.
+        function Show_feedback(page_no) {
+            var previous_li = $(document).find('ul.pagination li:first-child');
+            var last_li = $(document).find('ul.pagination li:last-child');
+            if(page_no > 1) {
+                previous_li.removeClass('disabled');
+            }
+            else {
+                previous_li.addClass('disabled');
+            }
+
+            if(page_no == feedback_list.length) {
+                last_li.addClass('disabled');
+            }
+            else {
+                last_li.removeClass('disabled');
+            }
+
+            $(document).find('div.ans').each(function (index, value) {
+                var ans = feedback_list[page_no-1]['q' + (index+1)];
+                var content = '<div class="rating-'+ans+'">';
+                var i;
+                for(i=1;i<=parseInt(ans);++i) {
+                    content += '<label class="rating"></label>';
+                }
+                content += '</div>';
+                $(this).html(content);
+            });
+            $(document).find('textarea#view_feedback_remarks').val(feedback_list[page_no-1]['remark']);
+            $(document).find('b#view_feedback_date').html(feedback_list[page_no-1]['date']);
+            $(document).find('ul.pagination li.step-'+ page_no +'').addClass('active');
+        }
+
+        // This is click event for pages in paginations
+        $(document).on('click', 'li.page-item', function (event) {
+            event.preventDefault();
+            var page_no = parseInt($(this).attr('step')) || parseInt($(this).attr('current_step'));
+            var btn = $(this).attr('btn_type') || null;
+            if(btn == "prev") {
+                page_no--;
+            }
+            else if(btn == "next") {
+                page_no++;
+            }
+            var pages = '';
+            pages += '<li class="page-item" btn_type="prev" current_step="'+ page_no +'">';
+                pages += '<a class="page-link" href="#">Previous</a>';
+            pages += '</li>';
+            if(total_page <= 11) {
+                for(var i=1;i<=total_page;++i) {
+                    pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                }
+            }
+            else {
+                if(page_no > total_page-3) {
+                    //1,2,gap,total-4,total-3,total-2,total-1,total
+                    pages += '<li class="page-item step-'+ 1 +'" step="'+ 1 +'"><a class="page-link" href="#">'+ 1 +'</a></li>';
+                    pages += '<li class="page-item step-'+ 2 +'" step="'+ 2 +'"><a class="page-link" href="#">'+ 2 +'</a></li>';
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    for(var i=4;i>=0;--i) {
+                        pages += '<li class="page-item step-'+ (total_page-i) +'" step="'+ (total_page-i) +'"><a class="page-link" href="#">'+ (total_page-i) +'</a></li>';
+                    }
+                }
+
+                else if(page_no > total_page-5 && page_no <= total_page-3) {
+                    //1,2,gap,pn-2,pn-1,pn upto total
+                    pages += '<li class="page-item step-'+ 1 +'" step="'+ 1 +'"><a class="page-link" href="#">'+ 1 +'</a></li>';
+                    pages += '<li class="page-item step-'+ 2 +'" step="'+ 2 +'"><a class="page-link" href="#">'+ 2 +'</a></li>';
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    for(var i=(page_no-2);i<=total_page;++i) {
+                        pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                    }
+                }
+
+                else if(page_no >= 6 && page_no <= total_page-5) {
+                    //1,2,gap,pn-2,pn-1,pn,pn+1,pn+2,gap,total-1,total
+                    pages += '<li class="page-item step-'+ 1 +'" step="'+ 1 +'"><a class="page-link" href="#">'+ 1 +'</a></li>';
+                    pages += '<li class="page-item step-'+ 2 +'" step="'+ 2 +'"><a class="page-link" href="#">'+ 2 +'</a></li>';
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    for(var i=(page_no-2);i<=(page_no+2);++i) {
+                        pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                    }
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page-1) +'" step="'+ (total_page-1) +'"><a class="page-link" href="#">'+ (total_page-1) +'</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page) +'" step="'+ (total_page) +'"><a class="page-link" href="#">'+ (total_page) +'</a></li>';
+                }
+
+                else if(page_no > 3 && page_no < 6) {
+                    for(var i=1;i<=(page_no+2);++i) {
+                        pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                    }
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page-1) +'" step="'+ (total_page-1) +'"><a class="page-link" href="#">'+ (total_page-1) +'</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page) +'" step="'+ (total_page) +'"><a class="page-link" href="#">'+ (total_page) +'</a></li>';
+                }
+                else {
+                    for(var i=1;i<=5;++i) {
+                        pages += '<li class="page-item step-'+ i +'" step="'+ i +'"><a class="page-link" href="#">'+ i +'</a></li>';
+                    }
+                    pages += '<li class="page-item disabled"><a class="page-link" href="#">...</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page-1) +'" step="'+ (total_page-1) +'"><a class="page-link" href="#">'+ (total_page-1) +'</a></li>';
+                    pages += '<li class="page-item step-'+ (total_page) +'" step="'+ (total_page) +'"><a class="page-link" href="#">'+ (total_page) +'</a></li>';
+                }
+            }
+            pages += '<li class="page-item" btn_type="next" current_step="'+ page_no +'">';
+                pages += '<a class="page-link" href="#">Next</a>';
+            pages += '</li>';
+            $(document).find('ul.pagination').html(pages);
+            Show_feedback(page_no);
+        });
+    </script>
+{% endblock custom_js %}
+<!-- Custom JS Block > End -->

@@ -1,4 +1,19 @@
+import datetime
+import os
+
+from django.http import HttpResponse
+
 from StudentSupport.models import *
+from reportlab.graphics.charts.legends import Legend
+from reportlab.graphics.charts.piecharts import Pie
+from reportlab.graphics.charts.barcharts import VerticalBarChart
+from reportlab.graphics.charts.textlabels import LabelOffset
+from reportlab.graphics.shapes import Drawing, Image, String, Line
+from reportlab.lib import colors
+from reportlab.lib.formatters import DecimalFormatter
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import inch
+from reportlab.platypus import SimpleDocTemplate, TableStyle, Spacer, Table, PageBreak
 
 
 # Function for getting question wise average feedback for all subject of perticular faculty.
@@ -117,7 +132,7 @@ def ratings_detailed(feedback_qs):
 
     # ================= for rating["Q1"] =========================================
     Q1_one_rating_qs = feedback_qs.filter(Q1=1)
-    rating["Q1"][1] = round(((Q1_one_rating_qs.count()/total_feedback_count) * 100), 2)
+    rating["Q1"][1] = round(((Q1_one_rating_qs.count() / total_feedback_count) * 100), 2)
     Q1_two_rating_qs = feedback_qs.filter(Q1=2)
     rating["Q1"][2] = round(((Q1_two_rating_qs.count() / total_feedback_count) * 100), 2)
     Q1_three_rating_qs = feedback_qs.filter(Q1=3)
@@ -243,3 +258,311 @@ def serialize_detailed_feedback(feedback_qs):
 
     print(feedback_dict)
     return feedback_dict
+
+
+def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fac_obj, question_qs, fb_type, term_type, year):
+    question_count = question_qs.count()
+    pdfname1 = "Temp1"
+
+    response1 = HttpResponse(content_type='application/pdf')
+    response1['Content-Disposition'] = 'attachment; filename=' + pdfname1
+
+    elements1 = []
+    doc1 = SimpleDocTemplate(response1, rightMargin=inch / 4,
+                             leftMargin=inch / 4,
+                             topMargin=inch / 2,
+                             bottomMargin=inch / 4,
+                             pagesize=A4)
+
+    path_to_file = os.getcwd() + "/logo.jpg"
+
+    text1 = "Government Engineering College, Bhavnagar"
+    text2 = fb_type + " Semester Feedback Report"
+    text3 = "Term: " + term_type + " " + str(year)
+    text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+    text5 = str(subject_obj.dept_id.dept_name) + " Department"
+    text6 = str(fac_obj.name) + "( " +str(fac_obj.dept_id.accronym) + " Department )"
+    text7 = "Subject Name: " + subject_obj.subject_name + " (" + subject_obj.subject_code + ")"
+    text8 = "Semester: " + str(subject_obj.semester)
+    text9 = "Total Feedback: " + str(questionwise_ratings["count"])
+
+    d = Drawing(400, 200)
+    d.add(Image(0, 120, 100, 100, path_to_file))
+    d.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
+    d.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
+    d.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
+    d.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
+    d.add(Line(0, 90, 550, 90))
+    d.add(String(150, 65, text5, fontSize=18, fillColor=colors.black))
+    d.add(String(30, 35, text6, fontSize=12, fillColor=colors.black))
+    d.add(String(30, 20, text7, fontSize=12, fillColor=colors.black))
+    d.add(String(380, 20, text8, fontSize=12, fillColor=colors.black))
+    d.add(String(22, -45, text9, fontSize=12, fillColor=colors.black))
+
+    elements1.append(d)
+
+    drawing = Drawing(400, 200)
+    drawing.vAlign = 'CENTER'
+
+    data_list = []
+    label_list = []
+    for i in range(1, question_count + 1):
+        index = "Q" + str(i)
+        data_list.append(questionwise_ratings[index])
+        label_list.append(("Question : " + str(i)))
+
+    data = []
+    data.append(tuple(data_list))
+    print(data)
+    bc = VerticalBarChart()
+    bc.x = 28
+    bc.y = -120
+    bc.height = 250
+    bc.width = 500
+    bc.data = data
+    bc.bars[0].fillColor = colors.aqua
+    bc.strokeColor = colors.black
+    bc.valueAxis.valueMin = 0
+    bc.valueAxis.valueMax = 5.0
+    bc.valueAxis.valueStep = 0.5
+    bc.categoryAxis.labels.boxAnchor = 'ne'
+    bc.categoryAxis.labels.dx = 8
+    bc.categoryAxis.labels.dy = -2
+    bc.categoryAxis.labels.angle = 30
+    bc.categoryAxis.categoryNames = label_list
+    bc.barLabels.angle = 0
+    bc.barLabels.boxAnchor = 's'
+    bc.barLabelFormat = DecimalFormatter(2)
+    drawing.add(bc)
+
+    elements1.append(drawing)
+
+    elements1.append(PageBreak())
+
+    ##################################################################################################################
+
+    pdfname2 = "Temp1"
+    response2 = HttpResponse(content_type='application/pdf')
+    response2['Content-Disposition'] = 'attachment; filename=' + pdfname2
+
+    elements2 = []
+    doc2 = SimpleDocTemplate(response2, rightMargin=inch / 4,
+                             leftMargin=inch / 4,
+                             topMargin=inch / 2,
+                             bottomMargin=inch / 4,
+                             pagesize=A4)
+
+    path_to_file = os.getcwd() + "/logo.jpg"
+
+    text1 = "Government Engineering College, Bhavnagar"
+    text2 = fb_type + " Semester Feedback Report"
+    text3 = "Term: " + term_type + " " + str(year)
+    text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+    text5 = "Total Feedback: " + str(questionwise_ratings["count"])
+
+    d2 = Drawing(400, 200)
+    d2.add(Image(0, 120, 100, 100, path_to_file))
+    d2.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
+    d2.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
+    d2.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
+    d2.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
+    d2.add(Line(0, 90, 550, 90))
+    d2.add(String(30, 70, text5, fontSize=12, fillColor=colors.black))
+
+    elements2.append(d2)
+
+    elements2.append(Spacer(550, -50))
+
+    fl = [["Sr No", "Questions", "Feedback"]]
+    for i in range(question_count):
+        index = "Q" + str(i + 1)
+        dpie = Drawing(200, 100)
+        pc = Pie()
+        pc.x = 65
+        pc.y = 15
+        pc.width = 70
+        pc.height = 70
+        pc.sideLabels = 1
+        pc.data = [rating_insights[index][1], rating_insights[index][2], rating_insights[index][3],
+                   rating_insights[index][4], rating_insights[index][5]]
+        pc.labels = ['1', '2', '3', '4', '5']
+        pc.slices.strokeWidth = 0.5
+        pc.slices[0].fillColor = colors.red
+        pc.slices[1].fillColor = colors.blue
+        pc.slices[2].fillColor = colors.gray
+        pc.slices[3].fillColor = colors.yellow
+        pc.slices[4].fillColor = colors.green
+        dpie.add(pc)
+        legend = Legend()
+        legend.alignment = 'right'
+        legend.x = 160
+        legend.y = 90
+        legend.columnMaximum = 5
+        legend.dxTextSpace = 4
+        n = len(pc.data)
+        legend.colorNamePairs = [(pc.slices[i].fillColor, (pc.labels[i], ': ' + '%0.2f' % pc.data[i] + '%'))
+                                 for i in
+                                 range(n)]
+        dpie.add(legend)
+
+        ft = []
+        ft.append(i + 1)
+        ft.append(question_qs[i].question_text)
+        ft.append([dpie])
+        fl.append(ft)
+
+    tbdata = fl
+
+    table = Table(tbdata)
+
+    table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.white),
+                               ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                               ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+                               ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                               ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                               ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                               ('BACKGROUND', (0, -1), (-1, -1), colors.white),
+                               ]))
+    table._argW[0] = 0.6 * inch
+    table._argW[1] = 3.5 * inch
+    table._argW[2] = 3.3 * inch
+
+    table._argH[0] = 0.35 * inch
+    for i in range(1, question_count + 1):
+        table._argH[i] = 1.6 * inch
+
+    table.spaceBefore = 0
+
+    elements2.append(table)
+
+    ##################################################################################################################
+
+    pdfname3 = str(subject_obj.subject_name)
+    pdfname3 = pdfname3.replace(" ", "_")
+    response3 = HttpResponse(content_type='application/pdf')
+    response3[
+        'Content-Disposition'] = 'attachment; filename=' + pdfname3 + '_' + fb_type + '_Semester_Average_Feedback.pdf'
+    elements3 = []
+
+    doc3 = SimpleDocTemplate(response3, rightMargin=inch / 4,
+                             leftMargin=inch / 4,
+                             topMargin=inch / 2,
+                             bottomMargin=inch / 4,
+                             pagesize=A4)
+
+    for i in elements1:
+        elements3.append(i)
+
+    for i in elements2:
+        elements3.append(i)
+
+    doc3.build(elements3)
+
+    return response3
+
+
+def make_detailed_feedback_pdf(serialized_feedback, subject_obj, fac_obj, fb_type, term_type, year, question_qs):
+    question_count = question_qs.count()
+    pdfname = str(subject_obj.subject_name)
+    pdfname = pdfname.replace(" ", "_")
+    response = HttpResponse(content_type='application/pdf')
+    response[
+        'Content-Disposition'] = 'attachment; filename=' + pdfname + '_' + fb_type + '_Semester_Detailed_Feedback.pdf'
+
+    elements = []
+
+    doc = SimpleDocTemplate(response, rightMargin=inch / 4,
+                            leftMargin=inch / 4,
+                            topMargin=inch / 2,
+                            bottomMargin=inch / 4,
+                            pagesize=A4)
+
+    path_to_file = os.getcwd() + "/logo.jpg"
+
+    for k in serialized_feedback:
+
+        text1 = "Government Engineering College, Bhavnagar"
+        text2 = fb_type + " Semester Feedback Report"
+        text3 = "Term: " + term_type + " " + str(year)
+        text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+        text5 = str(subject_obj.dept_id.dept_name) + " Department"
+        text6 = str(fac_obj.name) + "( " + str(fac_obj.dept_id.accronym) + " Department )"
+        text7 = "Subject Name: " + subject_obj.subject_name + " (" + subject_obj.subject_code + ")"
+        text8 = "Semester: " + str(subject_obj.semester)
+        text9 = "Date of Feedback: " + str(k['date'])
+
+        d = Drawing(400, 200)
+        d.add(Image(0, 120, 100, 100, path_to_file))
+        d.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
+        d.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
+        d.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
+        d.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
+        d.add(Line(0, 90, 550, 90))
+        d.add(String(150, 65, text5, fontSize=18, fillColor=colors.black))
+        d.add(String(30, 35, text6, fontSize=12, fillColor=colors.black))
+        d.add(String(30, 20, text7, fontSize=12, fillColor=colors.black))
+        d.add(String(380, 20, text8, fontSize=12, fillColor=colors.black))
+        d.add(String(22, -45, text9, fontSize=12, fillColor=colors.black))
+
+        elements.append(d)
+        elements.append(Spacer(500, 50))
+
+        fl = [["Sr No", "Questions", "Feedback"]]
+        for i in range(1, question_count + 1):
+            index = "q" + str(i)
+            ft = []
+            ft.append(i)
+            ft.append(question_qs[i - 1].question_text)
+            ft.append(k[index])
+            fl.append(ft)
+
+        # fl.append([11, 'Remarks', l[k][10]])
+
+        # data = fl
+        # table = Table(data, 12 * [0.5 * inch])
+        table = Table(fl)
+
+        table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.white),
+                                   ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                                   ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                                   ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+                                   ('INNERGRID', (0, 0), (-1, -1), 0.25, colors.black),
+                                   ('BOX', (0, 0), (-1, -1), 0.25, colors.black),
+                                   ('BACKGROUND', (0, -1), (-1, -1), colors.white),
+                                   ]))
+        table._argW[0] = 1.0 * inch
+        table._argW[1] = 4.0 * inch
+        table._argW[2] = 2.0 * inch
+
+        table._argH[0] = 0.5 * inch
+        for i in range(1, question_count + 1):
+            table._argH[i] = 0.4 * inch
+
+        # table._argH[1] = 0.4 * inch
+        # table._argH[2] = 0.4 * inch
+        # table._argH[3] = 0.4 * inch
+        # table._argH[4] = 0.4 * inch
+        # table._argH[5] = 0.4 * inch
+        # table._argH[6] = 0.4 * inch
+        # table._argH[7] = 0.4 * inch
+        # table._argH[8] = 0.4 * inch
+        # table._argH[9] = 0.4 * inch
+        # table._argH[10] = 0.4 * inch
+        # table._argH[11] = 0.4 * inch
+
+        elements.append(table)
+
+        drawing_for_remarks = Drawing(400, 200)
+        drawing_for_remarks.add(
+            String(22, 170, "Remarks: " + str(k['remark']), fontSize=12, fillColor=colors.black))
+
+        drawing_for_remarks.add(
+            String(22, 100, "Note: All the feedback given are out of 5.", fontSize=12,
+                   fillColor=colors.black))
+
+        elements.append(drawing_for_remarks)
+
+        elements.append(PageBreak())
+
+    doc.build(elements)
+    return response
