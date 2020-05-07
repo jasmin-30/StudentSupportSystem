@@ -475,7 +475,7 @@ def StudentFeedbackSection(request, type):
         std_obj = Students.objects.get(auth_id=request.user)
         dept_id = std_obj.dept_id
         context["name"] = str(std_obj.first_name) + " " + str(std_obj.last_name)
-        if type == 'mid-sem':
+        if type == 'mid':
             questions = Mid_Sem_Feedback_Questions.objects.all()
             context["questions"] = questions
             context["remark"] = (questions.count() + 1)
@@ -600,7 +600,7 @@ def StudentFeedbackSection(request, type):
 
             return render(request, "students/student_mid_sem_feedback.html", context)
 
-        elif type == 'end-sem':
+        elif type == 'end':
             questions = End_Sem_Feedback_Questions.objects.all()
             context["questions"] = questions
             context["remark"] = (questions.count() + 1)
@@ -1096,32 +1096,6 @@ def StudentComplaintSectionView(request):
 
 
 # Faculty Related Views > Start
-# def FacultyDashboard(request):
-#     context = {
-#         "base_url": st.BASE_URL,
-#     }
-#     if request.user.is_authenticated:
-#         fac_obj = Faculty.objects.get(auth_id=request.user)
-#         if (fac_obj.hod):
-#             return HttpResponseRedirect('/hod/dashboard')
-#         context["name"] = fac_obj.name
-#         try:
-#             news_qs = News.objects.order_by('-timestamp')[10]
-#         except IndexError as e:
-#             print(e)
-#             news_qs = News.objects.order_by('-timestamp')
-#             print(news_qs)
-#
-#         print(news_qs)
-#         context["news"] = news_qs
-#         if not fac_obj.active:
-#             context[
-#                 "pnotify"] = "You have been removed from " + fac_obj.dept_id.dept_name + " Department. But you can still access feedback."
-#
-#         return render(request, 'faculty/dashboard_faculty.html', context)
-#     else:
-#         context["error"] = "Login to access dashboard."
-#         return render(request, 'faculty/dashboard_faculty.html', context)
 
 def FacultyDashboard(request):
     context = {
@@ -1239,12 +1213,12 @@ def FacultyViewDetailedFeedback(request, type):
         print(subject_list)
         context["subject_list"] = json.dumps(subject_list)
 
-        if type == "mid-sem":
+        if type == "mid":
             questions = Mid_Sem_Feedback_Questions.objects.all()
             context["questions"] = questions
             return render(request, 'faculty/Detailed_Feedback/detailed_feedback_mid_sem.html', context)
 
-        elif type == "end-sem":
+        elif type == "end":
             questions = End_Sem_Feedback_Questions.objects.all()
             context["questions"] = questions
             return render(request, 'faculty/Detailed_Feedback/detailed_feedback_end_sem.html', context)
@@ -1292,12 +1266,12 @@ def FacultyViewAverageFeedback(request, type):
         print(subject_list)
         context["subject_list"] = json.dumps(subject_list)
 
-        if type == "mid-sem":
+        if type == "mid":
             questions = Mid_Sem_Feedback_Questions.objects.all()
             context["questions"] = questions
             return render(request, 'faculty/Average_Feedback/average_feedback_mid_sem.html', context)
 
-        elif type == "end-sem":
+        elif type == "end":
             questions = End_Sem_Feedback_Questions.objects.all()
             context["questions"] = questions
             return render(request, 'faculty/Average_Feedback/average_feedback_end_sem.html', context)
@@ -1436,8 +1410,13 @@ def SubjectDetailedFeedback(request, type, sub_id):
     }
     if request.user.is_authenticated:
         if request.GET.get('year') is None:
-            return HttpResponse("<h1>403 Year not passed</h1><br /><a href=" + str(
-                request.META['HTTP_REFERER']) + ">click here to go back</a>")
+            try:
+                return HttpResponse("<h1>403 Year not passed</h1><br /><a href=" + str(
+                    request.META['HTTP_REFERER']) + ">click here to go back</a>")
+            except Exception as e:
+                print(e)
+                context["error"] = "You can not directly access this page."
+                return render(request, 'home_auth/index.html', context)
         else:
             year = int(request.GET.get('year'))
             context["year"] = year
@@ -1461,8 +1440,14 @@ def SubjectDetailedFeedback(request, type, sub_id):
                 )
                 context["questions"] = question_qs
                 if feedback_qs.count() == 0:
-                    return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                    try:
+                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                    except Exception as e:
+                        print(e)
+                        context["error"] = "You can not directly access this page."
+                        return render(request, 'home_auth/index.html', context)
+
                 context["latest_date"] = feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p")
 
             elif type == "end":
@@ -1476,13 +1461,24 @@ def SubjectDetailedFeedback(request, type, sub_id):
                 )
                 context["questions"] = question_qs
                 if feedback_qs.count() == 0:
-                    return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                    try:
+                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                    except Exception as e:
+                        print(e)
+                        context["error"] = "You can not directly access this page."
+                        return render(request, 'home_auth/index.html', context)
+
                 context["latest_date"] = feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p")
 
             else:
-                return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
-                    request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                try:
+                    return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
+                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                except Exception as e:
+                    print(e)
+                    context["error"] = "You can not directly access this page."
+                    return render(request, 'home_auth/index.html', context)
 
             feedback_dict = serialize_detailed_feedback(feedback_qs=feedback_qs)
 
@@ -1511,8 +1507,13 @@ def SubjectAverageFeedback(request, type, sub_id):
     }
     if request.user.is_authenticated:
         if request.GET.get('year') is None:
-            return HttpResponse("<h1>403 Year is not passed</h1><br /><a href=" + str(
-                request.META['HTTP_REFERER']) + ">click here to go back</a>")
+            try:
+                return HttpResponse("<h1>403 Year is not passed</h1><br /><a href=" + str(
+                    request.META['HTTP_REFERER']) + ">click here to go back</a>")
+            except Exception as e:
+                print(e)
+                context["error"] = "You can not directly access this page."
+                return render(request, 'home_auth/index.html', context)
 
         else:
             year = int(request.GET.get('year'))
@@ -1522,7 +1523,7 @@ def SubjectAverageFeedback(request, type, sub_id):
             context["name"] = fac_obj.name
             sub_obj = Subjects.objects.get(id=int(sub_id))
             context["subject_obj"] = sub_obj
-            if(int(sub_obj.semester) % 2):
+            if (int(sub_obj.semester) % 2):
                 term_type = "ODD"
             else:
                 term_type = "Even"
@@ -1537,8 +1538,13 @@ def SubjectAverageFeedback(request, type, sub_id):
                 )
                 context["questions"] = question_qs
                 if feedback_qs.count() == 0:
-                    return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                    try:
+                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                    except Exception as e:
+                        print(e)
+                        context["error"] = "You can not directly access this page."
+                        return render(request, 'home_auth/index.html', context)
                 context["latest_date"] = feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p")
 
             elif type == "end":
@@ -1551,16 +1557,26 @@ def SubjectAverageFeedback(request, type, sub_id):
                 )
                 context["questions"] = question_qs
                 if feedback_qs.count() == 0:
-                    return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                    try:
+                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                    except Exception as e:
+                        print(e)
+                        context["error"] = "You can not directly access this page."
+                        return render(request, 'home_auth/index.html', context)
                 context["latest_date"] = feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p")
 
             else:
-                return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                try:
+                    return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
+                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                except Exception as e:
+                    print(e)
+                    context["error"] = "You can not directly access this page."
+                    return render(request, 'home_auth/index.html', context)
 
             feedback_dict = serialize_feedback_subject(feedback_qs=feedback_qs)
             rating_insights = ratings_detailed(feedback_qs=feedback_qs)
-
 
             if request.GET.get('download') is not None:
                 return make_avg_feedback_pdf(
@@ -1873,7 +1889,6 @@ def Modify_Subject_AJAX(request):
                             res = json.dumps(context)
                             return HttpResponse(res, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
                 else:
                     context["error"] = "Subject id not passed."
                     res = json.dumps(context)
@@ -1923,12 +1938,12 @@ def HodViewDetailedFeedback(request, type):
             # print(subjects_dict)
             context['fac_subjects'] = json.dumps(subjects_dict)
 
-            if type == "mid-sem":
+            if type == "mid":
                 questions = Mid_Sem_Feedback_Questions.objects.all()
                 context["questions"] = questions
                 return render(request, 'hod/Detailed_Feedback/detailed_feedback_mid_sem.html', context)
 
-            elif type == "end-sem":
+            elif type == "end":
                 questions = End_Sem_Feedback_Questions.objects.all()
                 context["questions"] = questions
                 return render(request, 'hod/Detailed_Feedback/detailed_feedback_end_sem.html', context)
@@ -1946,6 +1961,95 @@ def HodViewDetailedFeedback(request, type):
         return render(request, 'home_auth/index.html', context)
 
 
+def SubjectwiseAverageFeedback(request, type, dept_id):
+    context = {
+        "base_url": st.BASE_URL,
+    }
+    if request.user.is_authenticated:
+        try:
+            dept_obj = Departments.objects.get(id=dept_id)
+        except Departments.DoesNotExist:
+            try:
+                return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
+                    request.META['HTTP_REFERER']) + ">click here to go back</a>")
+            except Exception as e:
+                print(e)
+                context["error"] = "You can not directly access this page."
+                return render(request, 'home_auth/index.html', context)
+
+        if request.user.getRole == "Faculty":
+            try:
+                fac_object = Faculty.objects.get(auth_id=request.user, dept_id=dept_obj, hod=True)
+                context['name'] = fac_object.name
+                context["User_Role"] = "Faculty"
+            except Faculty.DoesNotExist:
+                try:
+                    return HttpResponse("<h1>403 Unauthorized</h1><br /><a href=" + str(
+                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                except Exception as e:
+                    print(e)
+                    context["error"] = "You can not directly access this page."
+                    return render(request, 'home_auth/index.html', context)
+
+        elif request.user.getRole == "Principal":
+            principal_obj = Principal.objects.get(auth_id=request.user)
+            context["name"] = principal_obj.name
+            context["User_Role"] = "Principal"
+
+        else:
+            context["error"] = "You are not authorized to view this page."
+            return render(request, 'home_auth/index.html', context)
+
+        context['dept_name'] = dept_obj.dept_name
+        context['dept_id'] = int(dept_obj.id)
+        subject_qs = Subjects.objects.filter(dept_id=dept_obj)
+        subject_list = {
+            'odd': [],
+            'even': []
+        }
+        for i in subject_qs:
+            if int(i.semester) % 2:
+                tmp = {
+                    'subject_id': i.id,
+                    'subject_name': i.subject_name,
+                    'subject_code': i.subject_code,
+                    'subject_semester': i.semester
+                }
+                subject_list["odd"].append(tmp)
+
+            else:
+                tmp = {
+                    'subject_id': i.id,
+                    'subject_name': i.subject_name,
+                    'subject_code': i.subject_code,
+                    'subject_semester': i.semester
+                }
+                subject_list["even"].append(tmp)
+
+        print(subject_list)
+        context["subject_list"] = json.dumps(subject_list)
+
+        if type == "mid":
+            context["fb_type"] = "mid"
+            questions = Mid_Sem_Feedback_Questions.objects.all()
+            context["questions"] = questions
+
+        elif type == "end":
+            context["fb_type"] = "end"
+            questions = End_Sem_Feedback_Questions.objects.all()
+            context["questions"] = questions
+
+        else:
+            context["error"] = "Page not found."
+            return render(request, 'hod/hod_dashboard.html', context)
+
+        return render(request, 'hod/Average_Feedback/subjectwise_average_feedback.html', context)
+
+    else:
+        context["error"] = "Log in First."
+        return render(request, 'home_auth/index.html', context)
+
+
 def HodViewAverageFeedback(request, type):
     context = {
         "base_url": st.BASE_URL,
@@ -1954,6 +2058,7 @@ def HodViewAverageFeedback(request, type):
         fac_object = Faculty.objects.get(auth_id=request.user)
         context['name'] = fac_object.name
         context['dept_name'] = fac_object.dept_id.dept_name
+        context['dept_id'] = int(fac_object.dept_id.id)
         if fac_object.hod:
             dept_faculties = Faculty.objects.filter(dept_id=fac_object.dept_id)
             context["dept_faculties"] = dept_faculties
@@ -1973,12 +2078,12 @@ def HodViewAverageFeedback(request, type):
             # print(subjects_dict)
             context['fac_subjects'] = json.dumps(subjects_dict)
 
-            if type == "mid-sem":
+            if type == "mid":
                 questions = Mid_Sem_Feedback_Questions.objects.all()
                 context["questions"] = questions
                 return render(request, 'hod/Average_Feedback/average_feedback_mid_sem.html', context)
 
-            elif type == "end-sem":
+            elif type == "end":
                 questions = End_Sem_Feedback_Questions.objects.all()
                 context["questions"] = questions
                 return render(request, 'hod/Average_Feedback/average_feedback_end_sem.html', context)
@@ -1999,6 +2104,70 @@ def HodViewAverageFeedback(request, type):
 # HOD Related Views > End
 
 # Views for ajax related to feedbacks > Start
+def GetSubjectwiseAverageFeedback(request):
+    if request.user.is_authenticated and (request.user.getRole == "Faculty" or request.user.getRole == "Principal"):
+        if request.GET.get('sub_id') is not None:
+            type = request.GET.get('type')
+            year = int(request.GET.get('year'))
+            subject_obj = Subjects.objects.get(id=int(request.GET.get('sub_id')))
+            if type == "mid":
+                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(subject_id=subject_obj, timestamp__year=year)
+                rating_list = serialize_subjectwise_feedback(feedback_qs=feedback_qs, subject_obj=subject_obj)
+                print(rating_list)
+                try:
+                    data = {
+                        "ratings": rating_list,
+                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p"))
+                    }
+
+                except Mid_Sem_Feedback_Answers.DoesNotExist:
+                    data = {
+                        "ratings": rating_list,
+                        "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+                    }
+
+                res = json.dumps(data)
+                return HttpResponse(res, status=status.HTTP_200_OK)
+
+            elif type == "end":
+                feedback_qs = End_Sem_Feedback_Answers.objects.filter(subject_id=subject_obj, timestamp__year=year)
+                rating_list = serialize_subjectwise_feedback(feedback_qs=feedback_qs, subject_obj=subject_obj)
+                print(rating_list)
+                try:
+                    data = {
+                        "ratings": rating_list,
+                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p"))
+                    }
+
+                except End_Sem_Feedback_Answers.DoesNotExist:
+                    data = {
+                        "ratings": rating_list,
+                        "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+                    }
+                res = json.dumps(data)
+                return HttpResponse(res, status=status.HTTP_200_OK)
+
+            else:
+                data = {
+                    "error": "Can not find what you are looking for."
+                }
+                res = json.dumps(data)
+                return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+            data = {
+                "error": "Subject id not passed."
+            }
+            res = json.dumps(data)
+            return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+
+    else:
+        data = {
+            "error": "You are not authorized to access this."
+        }
+        res = json.dumps(data)
+        return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
+
 
 def GetAverageFeedback(request):
     if request.user.is_authenticated and (request.user.getRole == "Faculty" or request.user.getRole == "Principal"):
@@ -2472,7 +2641,13 @@ def DetailedFeedback(request, id):
         try:
             dept_obj = Departments.objects.get(id=id)
         except Departments.DoesNotExist:
-            return HttpResponse("<h1>404 Page not found.</h1>")
+            try:
+                return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
+                    request.META['HTTP_REFERER']) + ">click here to go back</a>")
+            except Exception as e:
+                print(e)
+                context["error"] = "You can not directly access this page."
+                return render(request, 'home_auth/index.html', context)
 
         context['dept_name'] = dept_obj.dept_name
         dept_faculties = Faculty.objects.filter(dept_id=dept_obj)
@@ -2530,9 +2705,16 @@ def AverageFeedback(request, id):
         try:
             dept_obj = Departments.objects.get(id=id)
         except Departments.DoesNotExist:
-            return HttpResponse("404 Page not found.")
+            try:
+                return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
+                    request.META['HTTP_REFERER']) + ">click here to go back</a>")
+            except Exception as e:
+                print(e)
+                context["error"] = "You can not directly access this page."
+                return render(request, 'home_auth/index.html', context)
 
         context['dept_name'] = dept_obj.dept_name
+        context['dept_id'] = int(dept_obj.id)
 
         dept_faculties = Faculty.objects.filter(dept_id=dept_obj)
         context["dept_faculties"] = dept_faculties
@@ -2577,6 +2759,11 @@ def AverageFeedback(request, id):
     else:
         context["error"] = "Log in First."
         return render(request, 'home_auth/index.html', context)
+
+
+# This view is reusing subjectwise hod view.
+def PrincipalSubjectwiseAverageFeedback(request, type, dept_id):
+    return SubjectwiseAverageFeedback(request, type=type, dept_id=dept_id)
 
 
 def DownloadDetailedReport(request):
@@ -3347,8 +3534,13 @@ def DownloadDetailedFeedback(request, type):
                         timestamp__year=year
                     )
                     if feedback_qs.count() == 0:
-                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                        try:
+                            return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                                request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                        except Exception as e:
+                            print(e)
+                            context["error"] = "You can not directly access that page."
+                            return render(request, 'home_auth/index.html', context)
 
                 elif type == "end":
                     fb_type = "End"
@@ -3360,8 +3552,13 @@ def DownloadDetailedFeedback(request, type):
                         timestamp__year=year
                     )
                     if feedback_qs.count() == 0:
-                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                        try:
+                            return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                                request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                        except Exception as e:
+                            print(e)
+                            context["error"] = "You can not directly access that page."
+                            return render(request, 'home_auth/index.html', context)
 
                 serialized_feedback = serialize_detailed_feedback(feedback_qs=feedback_qs)
 
@@ -3409,8 +3606,13 @@ def DownloadAverageFeedback(request, type):
                         timestamp__year=year
                     )
                     if feedback_qs.count() == 0:
-                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                        try:
+                            return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                                request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                        except Exception as e:
+                            print(e)
+                            context["error"] = "You can not directly access this page."
+                            return render(request, 'home_auth/index.html', context)
                     rating_insights = ratings_detailed(feedback_qs=feedback_qs)
 
                 elif type == "end":
@@ -3423,8 +3625,13 @@ def DownloadAverageFeedback(request, type):
                         timestamp__year=year
                     )
                     if feedback_qs.count() == 0:
-                        return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                            request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                        try:
+                            return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+                                request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                        except Exception as e:
+                            print(e)
+                            context["error"] = "You can not directly access this page."
+                            return render(request, 'home_auth/index.html', context)
                     rating_insights = ratings_detailed(feedback_qs=feedback_qs)
 
                 # Got dictionary of question wise average rating as well as count.

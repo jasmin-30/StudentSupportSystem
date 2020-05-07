@@ -167,11 +167,6 @@
             year_option[i] = i;
         }
         console.log(year_option);
-        const inputOptions = new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(year_option);
-            }, 1000)
-        })
 
         $('button.btn_detailed').on('click', function(event) {
             event.preventDefault();

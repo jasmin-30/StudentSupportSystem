@@ -71,6 +71,60 @@ def serialize_feedback(feedback_qs, faculty_obj, semester_list):
     return ratings
 
 
+# Function for getting question wise average feedback for all faculty of perticular subject.
+def serialize_subjectwise_feedback(feedback_qs, subject_obj):
+    faculty_qs = Subject_to_Faculty_Mapping.objects.filter(subject_id=subject_obj)
+    ratings = []
+    for i in faculty_qs:
+        tmp = {
+            'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0, 'Q5': 0,
+            'Q6': 0, 'Q7': 0, 'Q8': 0, 'Q9': 0, 'Q10': 0,
+        }
+        print(i.subject_id.id, i.subject_id.subject_name)
+        tmp['faculty_id'] = i.faculty_id.id
+        tmp['faculty_name'] = i.faculty_id.name
+        tmp['faculty_dept'] = i.faculty_id.dept_id.accronym
+        feedback_distinct = feedback_qs.filter(faculty_id_id=i.faculty_id.id)
+        div = feedback_distinct.count()
+        if div > 0:
+            for j in feedback_distinct:
+                # getting sum of all the feedback.
+                tmp['Q1'] += j.Q1
+                tmp['Q2'] += j.Q2
+                tmp['Q3'] += j.Q3
+                tmp['Q4'] += j.Q4
+                tmp['Q5'] += j.Q5
+                tmp['Q6'] += j.Q6
+                tmp['Q7'] += j.Q7
+                tmp['Q8'] += j.Q8
+                tmp['Q9'] += j.Q9
+                tmp['Q10'] += j.Q10
+
+            # calculating average of all the feedback
+            tmp['Q1'] = round((tmp['Q1'] / div), 2)
+            tmp['Q2'] = round((tmp['Q2'] / div), 2)
+            tmp['Q3'] = round((tmp['Q3'] / div), 2)
+            tmp['Q4'] = round((tmp['Q4'] / div), 2)
+            tmp['Q5'] = round((tmp['Q5'] / div), 2)
+            tmp['Q6'] = round((tmp['Q6'] / div), 2)
+            tmp['Q7'] = round((tmp['Q7'] / div), 2)
+            tmp['Q8'] = round((tmp['Q8'] / div), 2)
+            tmp['Q9'] = round((tmp['Q9'] / div), 2)
+            tmp['Q10'] = round((tmp['Q10'] / div), 2)
+            tmp['count'] = div
+
+        else:
+            # It is for that subjects whose feedback has not been submitted yet.
+            tmp['count'] = div
+            pass
+
+        # appending tmp dictionary into rating list
+        ratings.append(tmp)
+
+    # Returning ratings object
+    return ratings
+
+
 # This function is for perticular subject of faculty
 # Feedback Queryset has been given already.
 def serialize_feedback_subject(feedback_qs):
@@ -260,7 +314,8 @@ def serialize_detailed_feedback(feedback_qs):
     return feedback_dict
 
 
-def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fac_obj, question_qs, fb_type, term_type, year):
+def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fac_obj, question_qs, fb_type, term_type,
+                          year):
     question_count = question_qs.count()
     pdfname1 = "Temp1"
 
@@ -281,7 +336,7 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
     text3 = "Term: " + term_type + " " + str(year)
     text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
     text5 = str(subject_obj.dept_id.dept_name) + " Department"
-    text6 = str(fac_obj.name) + "( " +str(fac_obj.dept_id.accronym) + " Department )"
+    text6 = str(fac_obj.name) + "( " + str(fac_obj.dept_id.accronym) + " Department )"
     text7 = "Subject Name: " + subject_obj.subject_name + " (" + subject_obj.subject_code + ")"
     text8 = "Semester: " + str(subject_obj.semester)
     text9 = "Total Feedback: " + str(questionwise_ratings["count"])

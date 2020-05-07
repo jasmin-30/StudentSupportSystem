@@ -17,7 +17,8 @@ urlpatterns = [
     path('edit-delete-committees/', views.EditCommittees, name="edit_committees"), # Only Principal Can Edit Committee
     path('principal/manage-department/', views.ManageDepartmentView, name='manage_department'),
     path('principal/view-detailed-feedback/<int:id>/', views.DetailedFeedback, name='principal_detailed_feedback'),
-    path('principal/view-average-feedback/<int:id>/', views.AverageFeedback, name='principal_detailed_feedback'),
+    path('principal/view-average-feedback/<int:id>/', views.AverageFeedback, name='principal_average_feedback'),
+    path('principal/subjectwise-average-feedback/<str:type>/<int:dept_id>/', views.PrincipalSubjectwiseAverageFeedback, name='principal_subjectwise_average_feedback'),
     path('change-hod/', views.EditHOD, name='change_hod'),
     path('principal/download-detailed-report/', views.DownloadDetailedReport, name='principal_download_detailed_report'),
     path('principal/download-average-report/', views.DownloadAverageReport, name='principal_download_average_report'),
@@ -30,6 +31,8 @@ urlpatterns = [
     path('hod/manage-news/', views.HODManageNews, name='hod_manage_news'),
     path('remove-faculty/', views.RemoveFaculty_AJAX, name='remove_faculty'),
     path('modify-subjects/', views.Modify_Subject_AJAX, name='ajax_modify_subject'),
+    # this subject wise view will also be used in principal side.
+    path('hod/subjectwise-average-feedback/<str:type>/<int:dept_id>/', views.SubjectwiseAverageFeedback, name='hod_subjectwise_average_feedback'),
     path('hod/view-detailed-feedback/<str:type>/', views.HodViewDetailedFeedback, name='hod_view_detailed_feedback'),
     path('hod/view-average-feedback/<str:type>/', views.HodViewAverageFeedback, name='hod_view_average_feedback'),
     # HOD Related urls > End
@@ -63,6 +66,7 @@ urlpatterns = [
 
     # Feedback Ajax Endpoints url > Start
     path('get-average-feedback/', views.GetAverageFeedback, name='get_average_feedback'),
+    path('get-subjectwise-average-feedback/', views.GetSubjectwiseAverageFeedback, name='get_subjectwise_average_feedback'),
     path('get-all-feedback/', views.GetAllFeedback, name='get_all_feedback'),
     # Feedback Ajax Endpoints url > End
 

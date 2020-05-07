@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/icofont/css/icofont.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/font-awesome/css/font-awesome.min.css' %}">
     <!-- sweet alert framework -->
-    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+{#    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">#}
 {% endblock extra_css %}
 <!-- Extra CSS Block > End -->
 
@@ -169,6 +169,7 @@
                         </div>
                         <div class="col-sm-8 col-md-8 col-lg-8 m-t-20">
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#download-report-modal">Download Report</button>
+                            <button type="button" class="btn_subjectwise btn btn-outline-primary">View Subjectwise Feedback</button>
                         </div>
                         <div class="col-sm-4 d-flex justify-content-end">
                             <a class="btn btn-round btn-outline-primary" href="{% url 'principal_dashboard' %}">
@@ -281,7 +282,8 @@
 <!-- Extra JS Block > Start -->
 {% block extra_js %}
     <!-- sweet alert js -->
-    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+{#    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>#}
+    <script type="text/javascript" src="{% static 'assets/sweetalert/sweetalert2@9.js' %}"></script>
 
     <!-- Chart js -->
     <script type="text/javascript" src="{% static 'assets/extra-js/Chart/Chart.js_2.9.3.js' %}"></script>
@@ -515,9 +517,10 @@
                             div1.removeClass('col-sm-9');
                             div2.hide();
                             window.myBar.clear();
-                            swal({
+                            Swal.fire({
                                 title: "Feedback Not available.",
-                                text: "May be the faculty you have chosen has not been assigned any subject to taught. Therefore no feedback can be shown.",
+                                text: "May be the faculty you have chosen has not been assigned any subject to taught. Therefore no feedback can be shown. or faculty have not beend assigned any subject in the selected term.",
+                                icon: 'error',
                                 type: "error",
                             });
                         }
@@ -529,9 +532,10 @@
                     },
                     error: function (msg) {
                         var response = JSON.parse(msg.responseText);
-                        swal({
+                        Swal.fire({
                             title: "Error!",
                             text: response['error'],
+                            icon: 'error',
                             type: "error",
                         });
                         $(document).find('div.loader-block').hide();
@@ -541,6 +545,77 @@
                 });
             }
         }
+    </script>
+
+    <script type="text/javascript">
+        var year_option = {};
+        var start_year = 2020;
+        var current_year = new Date().getFullYear();
+        for(var i=start_year;i<=current_year;++i) {
+            year_option[i] = i;
+        }
+        console.log(year_option);
+
+        $('button.btn_subjectwise').on('click', function (event) {
+            event.preventDefault();
+            var subject_id = $(this).attr('subject_id');
+            Swal.fire({
+                title: "Select Feedback Type",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonText: 'Mid Semester Feedback',
+                cancelButtonText: 'End Semester Feedback',
+            })
+            .then(async (result) => {
+                if (result.value) {
+                    // For mid semester feedback
+                    const { value: year } = await Swal.fire({
+                        title: 'Select Year',
+                        icon: 'question',
+                        input: 'select',
+                        inputOptions: year_option,
+                        inputPlaceholder: 'Select Year',
+                        showCancelButton: true,
+                        inputValidator: (value) => {
+                            return new Promise((resolve) => {
+                                if (value === '') {
+                                    resolve('You need to select year :)')
+                                }
+                                else {
+                                    resolve()
+                                }
+                            })
+                        }
+                    })
+                    if (year) {
+                        window.location = "{{ base_url }}" + "principal/subjectwise-average-feedback/mid/" + '{{ dept_id }}' + "/";
+                    }
+                }
+                else if(result.dismiss === Swal.DismissReason.cancel) {
+                    //For end semester feedback
+                    const { value: year } = await Swal.fire({
+                        title: 'Select Year',
+                        input: 'select',
+                        inputOptions: year_option,
+                        inputPlaceholder: 'Select Year',
+                        showCancelButton: true,
+                        inputValidator: (value) => {
+                            return new Promise((resolve) => {
+                                if (value === '') {
+                                    resolve('You need to select year :)')
+                                }
+                                else {
+                                    resolve()
+                                }
+                            })
+                        }
+                    })
+                    if (year) {
+                        window.location = "{{ base_url }}" + "principal/subjectwise-average-feedback/end/" + '{{ dept_id }}' + "/";
+                    }
+                }
+            });
+        });
     </script>
 {% endblock custom_js %}
 <!-- Custom JS Block > End -->
