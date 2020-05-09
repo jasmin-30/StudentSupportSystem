@@ -111,7 +111,7 @@
                                             </ul>
                                             <!-- Tab panes -->
                                             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
-                                                <div class="tab-pane active" id="personaldetail" role="tabpanel">
+                                                <div class="tab-pane fade show active" id="personaldetail" role="tabpanel">
                                                     <form action="{% url 'hod_profile' %}" method="post">
                                                         {% csrf_token %}
                                                         <div class="form-group row">
@@ -141,7 +141,7 @@
                                                         </div>
                                                     </form>
                                                 </div>
-                                                <div class="tab-pane" id="changepassword" role="tabpanel">
+                                                <div class="tab-pane fade" id="changepassword" role="tabpanel">
                                                     <form action="{% url 'hod_profile' %}" method="post">
                                                         {% csrf_token %}
                                                         <div class="form-group row">

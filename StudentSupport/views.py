@@ -1,19 +1,5 @@
-import datetime
 import json
-import os
 from base64 import b64encode, b64decode
-from itertools import chain
-
-from reportlab.graphics.charts.legends import Legend
-from reportlab.graphics.charts.piecharts import Pie
-from reportlab.graphics.charts.barcharts import VerticalBarChart
-from reportlab.graphics.charts.textlabels import LabelOffset
-from reportlab.graphics.shapes import Drawing, Image, String, Line
-from reportlab.lib import colors
-from reportlab.lib.formatters import DecimalFormatter
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, TableStyle, Spacer, Table, PageBreak
 
 from .utils import *
 import traceback
@@ -40,8 +26,6 @@ def HomePageView(request):
         "dept": dept_qs,
         "base_url": st.BASE_URL,
     }
-    mech_dept = Departments.objects.get(accronym="MECH")
-    context["mech_dept_id"] = mech_dept.id
     if request.POST:
         # For Forgot Password.. > Start
         if request.POST.get('email_forgot') is not None:
@@ -158,6 +142,7 @@ def RegisterView(request):
             password = request.POST.get('password')
             enrollment_no = request.POST.get('enrollment')
             dept = request.POST.get('dept')
+            div = request.POST.get('division')
             sem = request.POST.get('sem')
 
             try:
@@ -168,67 +153,61 @@ def RegisterView(request):
                 context["error"] = "Email ID is already Registered. Log in with valid credentials."
                 return render(request, "home_auth/index.html", context)
 
-            email_to = str(email)
-            email_from = str(st.EMAIL_HOST_USER)
-            email_encrypted = b64encode(email_to.encode())
-            url = st.BASE_URL + "activate/?email=" + email_encrypted.decode('utf-8')
-            print(url)
-            # print(email_to, email_from)
-            subject = "Confirm Your Account - Student Support System - GEC, Bhavnagar"
-            html_message = render_to_string('email_templates/confirm_email_template.html',
-                                            {'first_name': fname, 'url': url})
-            plain_message = strip_tags(html_message)
-            recipient_list = [str(email_to)]
-            # print(plain_message)
-            status = send_mail(
-                subject=subject,
-                message=plain_message,
-                from_email=email_from,
-                recipient_list=recipient_list,
-                html_message=html_message,
-                fail_silently=True
-            )
-            print(status)
-            if status == 1:
-                try:
-                    dept_obj = Departments.objects.get(id=int(dept))
-                    if (dept_obj.accronym == "MECH"):
-                        div = request.POST.get('division')
-                        student_obj = Students.objects.create(
-                            enrollment_no=enrollment_no,
-                            first_name=fname,
-                            last_name=lname,
-                            auth_id=User.objects.get(id=user.id),
-                            dept_id=dept_obj,
-                            div=int(div),
-                            semester=int(sem)
-                        )
-                    else:
-                        student_obj = Students.objects.create(
-                            enrollment_no=enrollment_no,
-                            first_name=fname,
-                            last_name=lname,
-                            auth_id=User.objects.get(id=user.id),
-                            dept_id=dept_obj,
-                            semester=int(sem)
-                        )
+            try:
+                dept_obj = Departments.objects.get(id=int(dept))
+                student_obj = Students.objects.create(
+                    enrollment_no=enrollment_no,
+                    first_name=fname,
+                    last_name=lname,
+                    auth_id=user,
+                    dept_id=dept_obj,
+                    div=int(div),
+                    semester=int(sem)
+                )
 
+                print(student_obj)
+
+                # ======= Sending mail ===============
+                email_to = str(email)
+                email_from = str(st.EMAIL_HOST_USER)
+                email_encrypted = b64encode(email_to.encode())
+                url = st.BASE_URL + "activate/?email=" + email_encrypted.decode('utf-8')
+                print(url)
+                # print(email_to, email_from)
+                subject = "Confirm Your Account - Student Support System - GEC, Bhavnagar"
+                html_message = render_to_string('email_templates/confirm_email_template.html',
+                                                {'first_name': fname, 'url': url})
+                plain_message = strip_tags(html_message)
+                recipient_list = [str(email_to)]
+                status = send_mail(
+                    subject=subject,
+                    message=plain_message,
+                    from_email=email_from,
+                    recipient_list=recipient_list,
+                    html_message=html_message,
+                    fail_silently=True
+                )
+                print(status)
+                if status == 1:
                     student_obj.save()
-                    print(student_obj)
-                except IntegrityError as e:
-                    print(e)
-                    context["error"] = "Enrollment Number Already Exists..."
+                    context["success"] = "Registered Successfully"
+                    context["msg"] = "Please check your inbox for a confirmation email. Click the link in the email to " \
+                                     "confirm your email address. "
                     return render(request, "home_auth/index.html", context)
 
-                context["success"] = "Registered Successfully"
-                context["msg"] = "Please check your inbox for a confirmation email. Click the link in the email to " \
-                                 "confirm your email address. "
+                else:
+                    student_obj.delete()
+                    user.delete()
+                    context[
+                        "error"] = "Error in sending email please try again later. Check whether computer is connected to internet or not."
+                    return render(request, "home_auth/index.html", context)
+
+
+            except IntegrityError as e:
+                print(e)
+                context["error"] = "Enrollment Number Already Exists with different email ID.."
                 return render(request, "home_auth/index.html", context)
-            else:
-                user.delete()
-                context[
-                    "error"] = "Error in sending email please try again later. Check whether computer is connected to internet or not."
-                return render(request, "home_auth/index.html", context)
+
         # Student Registration > End
 
         # Faculty Registration > Start
@@ -249,48 +228,54 @@ def RegisterView(request):
                 context["error"] = "Email ID is already Registered. Log in with valid credentials."
                 return render(request, "home_auth/index.html", context)
 
-            email_to = faculty_email
-            email_from = str(st.EMAIL_HOST_USER)
-            email_encrypted = b64encode(email_to.encode())
-            url = st.BASE_URL + "activate/?email=" + email_encrypted.decode('utf-8')
-            print(url)
-            # print(email_to, email_from)
-            subject = "Confirm Your Account - Student Support System - GEC, Bhavnagar"
-            html_message = render_to_string('email_templates/confirm_email_template.html',
-                                            {'first_name': faculty_name, 'url': url})
-            plain_message = strip_tags(html_message)
-            recipient_list = [str(email_to)]
-            # print(plain_message)
-            status = send_mail(
-                subject=subject,
-                message=plain_message,
-                from_email=email_from,
-                recipient_list=recipient_list,
-                html_message=html_message,
-                fail_silently=True
-            )
-            print(status)
-            if status == 1:
-                try:
-                    faculty_obj = Faculty.objects.create(name=faculty_name,
-                                                         auth_id=User.objects.get(id=faculty_user.id),
-                                                         dept_id=Departments.objects.get(id=int(faculty_dept)),
-                                                         )
-                    faculty_obj.save()
-                    print(faculty_obj)
-                except Exception as e:
-                    print(e)
-                    context["error"] = "Error Occured Please Try again later."
+            try:
+                faculty_obj = Faculty.objects.create(
+                    name=faculty_name,
+                    auth_id=User.objects.get(id=faculty_user.id),
+                    dept_id=Departments.objects.get(id=int(faculty_dept)),
+                )
+                faculty_obj.save()
+                print(faculty_obj)
+
+                # ========= Sending Email =================
+                email_to = faculty_email
+                email_from = str(st.EMAIL_HOST_USER)
+                email_encrypted = b64encode(email_to.encode())
+                url = st.BASE_URL + "activate/?email=" + email_encrypted.decode('utf-8')
+                print(url)
+                # print(email_to, email_from)
+                subject = "Confirm Your Account - Student Support System - GEC, Bhavnagar"
+                html_message = render_to_string('email_templates/confirm_email_template.html',
+                                                {'first_name': faculty_name, 'url': url})
+                plain_message = strip_tags(html_message)
+                recipient_list = [str(email_to)]
+                # print(plain_message)
+                status = send_mail(
+                    subject=subject,
+                    message=plain_message,
+                    from_email=email_from,
+                    recipient_list=recipient_list,
+                    html_message=html_message,
+                    fail_silently=True
+                )
+                print(status)
+                if status == 1:
+                    context["success"] = "Registered Successfully"
+                    context["msg"] = "Please check your inbox for a confirmation email. Click the link in the email to " \
+                                     "confirm your email address. "
                     return render(request, "home_auth/index.html", context)
 
-                context["success"] = "Registered Successfully"
-                context["msg"] = "Please check your inbox for a confirmation email. Click the link in the email to " \
-                                 "confirm your email address. "
-                return render(request, "home_auth/index.html", context)
-            else:
-                faculty_user.delete()
-                context[
-                    "error"] = "Error in sending email please try again later. Check whether computer is connected to internet or not."
+                else:
+                    faculty_user.delete()
+                    faculty_obj.delete()
+                    context[
+                        "error"] = "Error in sending email please try again later. Check whether computer is connected to internet or not."
+                    return render(request, "home_auth/index.html", context)
+
+
+            except Exception as e:
+                print(e)
+                context["error"] = "Error Occured Please Try again later."
                 return render(request, "home_auth/index.html", context)
 
 
@@ -425,10 +410,23 @@ def StudentProfile(request):
             elif request.POST.get('sem') is not None:
                 try:
                     sem = request.POST.get('sem')
-                    student_obj.semester = sem
+                    student_obj.semester = int(sem)
                     student_obj.save()
 
                     context["success"] = "Semester has been updated successfully."
+
+                except Exception as e:
+                    traceback.print_exc()
+                    print(e)
+                    context["error"] = "Some technical problem occured. Please try again later."
+
+            elif request.POST.get('division') is not None:
+                try:
+                    div = request.POST.get('division')
+                    student_obj.div = int(div)
+                    student_obj.save()
+
+                    context["success"] = "Division has been updated successfully."
 
                 except Exception as e:
                     traceback.print_exc()
@@ -476,6 +474,7 @@ def StudentFeedbackSection(request, type):
         dept_id = std_obj.dept_id
         context["name"] = str(std_obj.first_name) + " " + str(std_obj.last_name)
         if type == 'mid':
+            context["live"] = std_obj.dept_id.is_mid_sem_live
             questions = Mid_Sem_Feedback_Questions.objects.all()
             context["questions"] = questions
             context["remark"] = (questions.count() + 1)
@@ -504,6 +503,7 @@ def StudentFeedbackSection(request, type):
                         ans9 = request.POST.get('rating_9') if request.POST.get('rating_9') else 0
                         ans10 = request.POST.get('rating_10') if request.POST.get('rating_10') else 0
                         remarks = request.POST.get('remark') if request.POST.get('remark') else None
+                        consent = True if int(request.POST.get('consent')) == 0 else False
                         # print(ans1,ans2, ans3, ans4, ans5, ans6, ans7, ans8, ans9, ans10, remarks)
 
                         mid_sem_feedback_ans_obj, is_created = Mid_Sem_Feedback_Answers.objects.get_or_create(
@@ -515,7 +515,7 @@ def StudentFeedbackSection(request, type):
                             defaults={
                                 'Q1': int(ans1), 'Q2': int(ans2), 'Q3': int(ans3), 'Q4': int(ans4), 'Q5': int(ans5),
                                 'Q6': int(ans6), 'Q7': int(ans7), 'Q8': int(ans8), 'Q9': int(ans9), 'Q10': int(ans10),
-                                'remarks': remarks
+                                'remarks': remarks, 'is_anonymous': consent
                             }
                         )
                         mid_sem_feedback_ans_obj.save()
@@ -552,7 +552,7 @@ def StudentFeedbackSection(request, type):
             subject = []
             for i in range(1, current_sem + 1):
                 tmp_list = []
-                subject_qs = Subjects.objects.filter(dept_id=dept_id, semester=i)
+                subject_qs = Subjects.objects.filter(dept_id=dept_id, div=std_obj.div, semester=i)
                 if subject_qs.count() == 0:
                     tmp = {
                         'status': 0
@@ -573,7 +573,9 @@ def StudentFeedbackSection(request, type):
                         for k in teaching_faculty_qs:
                             tmp1 = {
                                 'fac_id': k.faculty_id.id,
-                                'fac_name': k.faculty_id.name
+                                'fac_name': k.faculty_id.name,
+                                'fac_dept': k.faculty_id.dept_id.accronym,
+                                'fac_dept_name': k.faculty_id.dept_id.dept_name
                             }
                             try:
                                 feedback_status_obj = Student_Feedback_Status.objects.get(student_id=std_obj,
@@ -601,6 +603,7 @@ def StudentFeedbackSection(request, type):
             return render(request, "students/student_mid_sem_feedback.html", context)
 
         elif type == 'end':
+            context["live"] = std_obj.dept_id.is_end_sem_live
             questions = End_Sem_Feedback_Questions.objects.all()
             context["questions"] = questions
             context["remark"] = (questions.count() + 1)
@@ -629,6 +632,7 @@ def StudentFeedbackSection(request, type):
                         ans9 = request.POST.get('rating_9') if request.POST.get('rating_9') else 0
                         ans10 = request.POST.get('rating_10') if request.POST.get('rating_10') else 0
                         remarks = request.POST.get('remark') if request.POST.get('remark') else None
+                        consent = True if int(request.POST.get('consent')) == 0 else False
 
                         end_sem_feedback_ans_obj, is_created = End_Sem_Feedback_Answers.objects.get_or_create(
                             student_id=std_obj,
@@ -639,7 +643,7 @@ def StudentFeedbackSection(request, type):
                             defaults={
                                 'Q1': int(ans1), 'Q2': int(ans2), 'Q3': int(ans3), 'Q4': int(ans4), 'Q5': int(ans5),
                                 'Q6': int(ans6), 'Q7': int(ans7), 'Q8': int(ans8), 'Q9': int(ans9), 'Q10': int(ans10),
-                                'remarks': remarks
+                                'remarks': remarks, 'is_anonymous': consent
                             }
                         )
                         end_sem_feedback_ans_obj.save()
@@ -679,7 +683,7 @@ def StudentFeedbackSection(request, type):
             subject = []
             for i in range(1, current_sem + 1):
                 tmp_list = []
-                subject_qs = Subjects.objects.filter(dept_id=dept_id, semester=i)
+                subject_qs = Subjects.objects.filter(dept_id=dept_id, div=std_obj.div, semester=i)
                 if subject_qs.count() == 0:
                     tmp = {
                         'status': 0
@@ -700,7 +704,9 @@ def StudentFeedbackSection(request, type):
                         for k in teaching_faculty_qs:
                             tmp1 = {
                                 'fac_id': k.faculty_id.id,
-                                'fac_name': k.faculty_id.name
+                                'fac_name': k.faculty_id.name,
+                                'fac_dept': k.faculty_id.dept_id.accronym,
+                                'fac_dept_name': k.faculty_id.dept_id.dept_name
                             }
                             try:
                                 feedback_status_obj = Student_Feedback_Status.objects.get(student_id=std_obj,
@@ -757,6 +763,12 @@ def GetFeedback(request):
                         'remarks': feedback_obj.remarks,
                         'date': str(feedback_obj.timestamp.strftime("%d %B, %Y %I:%M %p"))
                     }
+                    if feedback_obj.is_anonymous:
+                        data['anonymous'] = "Yes"
+
+                    else:
+                        data['anonymous'] = "No"
+
                     res = json.dumps(data)
                     return HttpResponse(res, status=status.HTTP_200_OK)
 
@@ -776,6 +788,12 @@ def GetFeedback(request):
                         'remarks': feedback_obj.remarks,
                         'date': str(feedback_obj.timestamp.strftime("%d %B, %Y %I:%M %p"))
                     }
+                    if feedback_obj.is_anonymous:
+                        data['anonymous'] = "Yes"
+
+                    else:
+                        data['anonymous'] = "No"
+
                     res = json.dumps(data)
                     return HttpResponse(res, status=status.HTTP_200_OK)
 
@@ -1167,6 +1185,7 @@ def FacultyAssignedSubjects(request):
     }
     if request.user.is_authenticated:
         fac_obj = Faculty.objects.get(auth_id=request.user)
+        context["fac_id"] = fac_obj.id
         context["name"] = fac_obj.name
         subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=fac_obj)
         context["subjects"] = subject_qs
@@ -1177,112 +1196,112 @@ def FacultyAssignedSubjects(request):
         return render(request, 'home_auth/index.html', context)
 
 
-def FacultyViewDetailedFeedback(request, type):
-    context = {
-        "base_url": st.BASE_URL,
-    }
-    if request.user.is_authenticated and request.user.getRole == "Faculty":
-        fac_object = Faculty.objects.get(auth_id=request.user)
-        context['name'] = fac_object.name
-        context['fac_id'] = fac_object.id
-        context['dept_name'] = fac_object.dept_id.dept_name
-        subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=fac_object)
-        subject_list = {
-            'odd': [],
-            'even': []
-        }
-        for i in subject_qs:
-            if int(i.subject_id.semester) % 2:
-                tmp = {
-                    'subject_id': i.subject_id.id,
-                    'subject_name': i.subject_id.subject_name,
-                    'subject_code': i.subject_id.subject_code,
-                    'subject_semester': i.subject_id.semester
-                }
-                subject_list["odd"].append(tmp)
-
-            else:
-                tmp = {
-                    'subject_id': i.subject_id.id,
-                    'subject_name': i.subject_id.subject_name,
-                    'subject_code': i.subject_id.subject_code,
-                    'subject_semester': i.subject_id.semester
-                }
-                subject_list["even"].append(tmp)
-
-        print(subject_list)
-        context["subject_list"] = json.dumps(subject_list)
-
-        if type == "mid":
-            questions = Mid_Sem_Feedback_Questions.objects.all()
-            context["questions"] = questions
-            return render(request, 'faculty/Detailed_Feedback/detailed_feedback_mid_sem.html', context)
-
-        elif type == "end":
-            questions = End_Sem_Feedback_Questions.objects.all()
-            context["questions"] = questions
-            return render(request, 'faculty/Detailed_Feedback/detailed_feedback_end_sem.html', context)
-
-        else:
-            context["error"] = "Page not found."
-            return render(request, 'faculty/faculty_dashboard.html', context)
-    else:
-        context["error"] = "Log in First."
-        return render(request, 'home_auth/index.html', context)
-
-
-def FacultyViewAverageFeedback(request, type):
-    context = {
-        "base_url": st.BASE_URL,
-    }
-    if request.user.is_authenticated and request.user.getRole == "Faculty":
-        fac_object = Faculty.objects.get(auth_id=request.user)
-        context['name'] = fac_object.name
-        context['fac_id'] = fac_object.id
-        subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=fac_object)
-        subject_list = {
-            'odd': [],
-            'even': []
-        }
-        for i in subject_qs:
-            if int(i.subject_id.semester) % 2:
-                tmp = {
-                    'subject_id': i.subject_id.id,
-                    'subject_name': i.subject_id.subject_name,
-                    'subject_code': i.subject_id.subject_code,
-                    'subject_semester': i.subject_id.semester
-                }
-                subject_list["odd"].append(tmp)
-
-            else:
-                tmp = {
-                    'subject_id': i.subject_id.id,
-                    'subject_name': i.subject_id.subject_name,
-                    'subject_code': i.subject_id.subject_code,
-                    'subject_semester': i.subject_id.semester
-                }
-                subject_list["even"].append(tmp)
-
-        print(subject_list)
-        context["subject_list"] = json.dumps(subject_list)
-
-        if type == "mid":
-            questions = Mid_Sem_Feedback_Questions.objects.all()
-            context["questions"] = questions
-            return render(request, 'faculty/Average_Feedback/average_feedback_mid_sem.html', context)
-
-        elif type == "end":
-            questions = End_Sem_Feedback_Questions.objects.all()
-            context["questions"] = questions
-            return render(request, 'faculty/Average_Feedback/average_feedback_end_sem.html', context)
-
-        else:
-            context["error"] = "Page not found."
-            return render(request, 'faculty/faculty_dashboard.html', context)
-
-    else:
-        context["error"] = "Log in First."
-        return render(request, 'home_auth/index.html', context)
+# def FacultyViewDetailedFeedback(request, type):
+#     context = {
+#         "base_url": st.BASE_URL,
+#     }
+#     if request.user.is_authenticated and request.user.getRole == "Faculty":
+#         fac_object = Faculty.objects.get(auth_id=request.user)
+#         context['name'] = fac_object.name
+#         context['fac_id'] = fac_object.id
+#         context['dept_name'] = fac_object.dept_id.dept_name
+#         subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=fac_object)
+#         subject_list = {
+#             'odd': [],
+#             'even': []
+#         }
+#         for i in subject_qs:
+#             if int(i.subject_id.semester) % 2:
+#                 tmp = {
+#                     'subject_id': i.subject_id.id,
+#                     'subject_name': i.subject_id.subject_name,
+#                     'subject_code': i.subject_id.subject_code,
+#                     'subject_semester': i.subject_id.semester
+#                 }
+#                 subject_list["odd"].append(tmp)
+#
+#             else:
+#                 tmp = {
+#                     'subject_id': i.subject_id.id,
+#                     'subject_name': i.subject_id.subject_name,
+#                     'subject_code': i.subject_id.subject_code,
+#                     'subject_semester': i.subject_id.semester
+#                 }
+#                 subject_list["even"].append(tmp)
+#
+#         print(subject_list)
+#         context["subject_list"] = json.dumps(subject_list)
+#
+#         if type == "mid":
+#             questions = Mid_Sem_Feedback_Questions.objects.all()
+#             context["questions"] = questions
+#             return render(request, 'faculty/Detailed_Feedback/detailed_feedback_mid_sem.html', context)
+#
+#         elif type == "end":
+#             questions = End_Sem_Feedback_Questions.objects.all()
+#             context["questions"] = questions
+#             return render(request, 'faculty/Detailed_Feedback/detailed_feedback_end_sem.html', context)
+#
+#         else:
+#             context["error"] = "Page not found."
+#             return render(request, 'faculty/faculty_dashboard.html', context)
+#     else:
+#         context["error"] = "Log in First."
+#         return render(request, 'home_auth/index.html', context)
+#
+#
+# def FacultyViewAverageFeedback(request, type):
+#     context = {
+#         "base_url": st.BASE_URL,
+#     }
+#     if request.user.is_authenticated and request.user.getRole == "Faculty":
+#         fac_object = Faculty.objects.get(auth_id=request.user)
+#         context['name'] = fac_object.name
+#         context['fac_id'] = fac_object.id
+#         subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=fac_object)
+#         subject_list = {
+#             'odd': [],
+#             'even': []
+#         }
+#         for i in subject_qs:
+#             if int(i.subject_id.semester) % 2:
+#                 tmp = {
+#                     'subject_id': i.subject_id.id,
+#                     'subject_name': i.subject_id.subject_name,
+#                     'subject_code': i.subject_id.subject_code,
+#                     'subject_semester': i.subject_id.semester
+#                 }
+#                 subject_list["odd"].append(tmp)
+#
+#             else:
+#                 tmp = {
+#                     'subject_id': i.subject_id.id,
+#                     'subject_name': i.subject_id.subject_name,
+#                     'subject_code': i.subject_id.subject_code,
+#                     'subject_semester': i.subject_id.semester
+#                 }
+#                 subject_list["even"].append(tmp)
+#
+#         print(subject_list)
+#         context["subject_list"] = json.dumps(subject_list)
+#
+#         if type == "mid":
+#             questions = Mid_Sem_Feedback_Questions.objects.all()
+#             context["questions"] = questions
+#             return render(request, 'faculty/Average_Feedback/average_feedback_mid_sem.html', context)
+#
+#         elif type == "end":
+#             questions = End_Sem_Feedback_Questions.objects.all()
+#             context["questions"] = questions
+#             return render(request, 'faculty/Average_Feedback/average_feedback_end_sem.html', context)
+#
+#         else:
+#             context["error"] = "Page not found."
+#             return render(request, 'faculty/faculty_dashboard.html', context)
+#
+#     else:
+#         context["error"] = "Log in First."
+#         return render(request, 'home_auth/index.html', context)
 
 
 def FacultyProfile(request):
@@ -1395,6 +1414,7 @@ def FacultyManageNews(request):
 
         news_qs = News.objects.filter(issuing_faculty=fac_obj).order_by('-timestamp')
         context["news_qs"] = news_qs
+        context["news_count"] = news_qs.count()
         dept_qs = Departments.objects.all()
         context["departments"] = dept_qs
         return render(request, 'faculty/manage_news.html', context)
@@ -1404,9 +1424,10 @@ def FacultyManageNews(request):
         return render(request, 'home_auth/index.html', context)
 
 
-def SubjectDetailedFeedback(request, type, sub_id):
+def Faculty_SubjectDetailedFeedback(request, type, sub_id, fac_id):
     context = {
         "base_url": st.BASE_URL,
+        "request": request
     }
     if request.user.is_authenticated:
         if request.GET.get('year') is None:
@@ -1420,8 +1441,29 @@ def SubjectDetailedFeedback(request, type, sub_id):
         else:
             year = int(request.GET.get('year'))
             context["year"] = year
-            fac_obj = Faculty.objects.get(auth_id=request.user)
-            context["name"] = fac_obj.name
+            if request.user.getRole == "Faculty":
+                user_obj = Faculty.objects.get(auth_id=request.user)
+                if user_obj.hod:
+                    context["User_Role"] = "HOD"
+                else:
+                    context["User_Role"] = "Faculty"
+
+            elif request.user.getRole == "Principal":
+                user_obj = Principal.objects.get(auth_id=request.user)
+                context["User_Role"] = "Principal"
+
+            else:
+                try:
+                    return HttpResponse("<h1>401 Unauthorized</h1><br /><a href=" + str(
+                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                except Exception as e:
+                    print(e)
+                    context["error"] = "You can not directly access this page."
+                    return render(request, 'home_auth/index.html', context)
+
+            context["name"] = user_obj.name
+            fac_obj = Faculty.objects.get(id=int(fac_id))
+            context["faculty_obj"] = fac_obj
             sub_obj = Subjects.objects.get(id=int(sub_id))
             context["subject_obj"] = sub_obj
             if (int(sub_obj.semester) % 2):
@@ -1433,11 +1475,17 @@ def SubjectDetailedFeedback(request, type, sub_id):
                 context["fb_type"] = "mid"
                 fb_type = "Mid"
                 question_qs = Mid_Sem_Feedback_Questions.objects.all()
-                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
-                    subject_id=sub_obj,
-                    faculty_id=fac_obj,
-                    timestamp__year=year
+                feedback_qs = get_feedback_qs(
+                    faculty_obj=fac_obj,
+                    subject_obj=sub_obj,
+                    fb_type="mid",
+                    year=year
                 )
+                # feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
+                #     subject_id=sub_obj,
+                #     faculty_id=fac_obj,
+                #     timestamp__year=year
+                # )
                 context["questions"] = question_qs
                 if feedback_qs.count() == 0:
                     try:
@@ -1454,10 +1502,11 @@ def SubjectDetailedFeedback(request, type, sub_id):
                 context["fb_type"] = "end"
                 fb_type = "End"
                 question_qs = End_Sem_Feedback_Questions.objects.all()
-                feedback_qs = End_Sem_Feedback_Answers.objects.filter(
-                    subject_id=sub_obj,
-                    faculty_id=fac_obj,
-                    timestamp__year=year
+                feedback_qs = get_feedback_qs(
+                    faculty_obj=fac_obj,
+                    subject_obj=sub_obj,
+                    fb_type="end",
+                    year=year
                 )
                 context["questions"] = question_qs
                 if feedback_qs.count() == 0:
@@ -1494,16 +1543,17 @@ def SubjectDetailedFeedback(request, type, sub_id):
                 )
 
             context["feedback"] = json.dumps(feedback_dict)
-            return render(request, 'faculty/Detailed_Feedback/subject_wise_detailed_feedback.html', context)
+            return render(request, 'faculty/subject_wise_detailed_feedback.html', context)
 
     else:
         context["error"] = "Login First"
         return render(request, 'home_auth/index.html', context)
 
 
-def SubjectAverageFeedback(request, type, sub_id):
+def Faculty_SubjectAverageFeedback(request, type, sub_id, fac_id):
     context = {
         "base_url": st.BASE_URL,
+        "request": request
     }
     if request.user.is_authenticated:
         if request.GET.get('year') is None:
@@ -1518,9 +1568,29 @@ def SubjectAverageFeedback(request, type, sub_id):
         else:
             year = int(request.GET.get('year'))
             context["year"] = year
-            print(year)
-            fac_obj = Faculty.objects.get(auth_id=request.user)
-            context["name"] = fac_obj.name
+            if request.user.getRole == "Faculty":
+                user_obj = Faculty.objects.get(auth_id=request.user)
+                if user_obj.hod:
+                    context["User_Role"] = "HOD"
+                else:
+                    context["User_Role"] = "Faculty"
+
+            elif request.user.getRole == "Principal":
+                user_obj = Principal.objects.get(auth_id=request.user)
+                context["User_Role"] = "Principal"
+
+            else:
+                try:
+                    return HttpResponse("<h1>401 Unauthorized</h1><br /><a href=" + str(
+                        request.META['HTTP_REFERER']) + ">click here to go back</a>")
+                except Exception as e:
+                    print(e)
+                    context["error"] = "You can not directly access this page."
+                    return render(request, 'home_auth/index.html', context)
+
+            context["name"] = user_obj.name
+            fac_obj = Faculty.objects.get(id=int(fac_id))
+            context["faculty_obj"] = fac_obj
             sub_obj = Subjects.objects.get(id=int(sub_id))
             context["subject_obj"] = sub_obj
             if (int(sub_obj.semester) % 2):
@@ -1532,9 +1602,11 @@ def SubjectAverageFeedback(request, type, sub_id):
                 context["fb_type"] = "mid"
                 fb_type = "Mid"
                 question_qs = Mid_Sem_Feedback_Questions.objects.all()
-                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
-                    subject_id=sub_obj,
-                    faculty_id=fac_obj
+                feedback_qs = get_feedback_qs(
+                    faculty_obj=fac_obj,
+                    subject_obj=sub_obj,
+                    fb_type="mid",
+                    year=year
                 )
                 context["questions"] = question_qs
                 if feedback_qs.count() == 0:
@@ -1551,9 +1623,11 @@ def SubjectAverageFeedback(request, type, sub_id):
                 context["fb_type"] = "end"
                 fb_type = "End"
                 question_qs = End_Sem_Feedback_Questions.objects.all()
-                feedback_qs = End_Sem_Feedback_Answers.objects.filter(
-                    subject_id=sub_obj,
-                    faculty_id=fac_obj
+                feedback_qs = get_feedback_qs(
+                    faculty_obj=fac_obj,
+                    subject_obj=sub_obj,
+                    fb_type="end",
+                    year=year
                 )
                 context["questions"] = question_qs
                 if feedback_qs.count() == 0:
@@ -1591,7 +1665,7 @@ def SubjectAverageFeedback(request, type, sub_id):
                 )
 
             context["feedback"] = json.dumps(feedback_dict)
-            return render(request, 'faculty/Average_Feedback/subject_wise_average_feedback.html', context)
+            return render(request, 'faculty/subject_wise_average_feedback.html', context)
 
     else:
         context["error"] = "Login First"
@@ -1654,6 +1728,7 @@ def HodDashboard(request):
 
         context["news"] = news_qs
         context["name"] = fac_obj.name
+        context["dept_id"] = fac_obj.dept_id.id
         return render(request, 'hod/hod_dashboard.html', context)
     else:
         context["error"] = "login First"
@@ -1721,17 +1796,28 @@ def HOD_Manage_department(request):
         # context["faculty"] = fac_obj
         if fac_obj.hod:
             context["name"] = fac_obj.name
-
+            dept_obj = Departments.objects.get(id=fac_obj.dept_id.id)
             if request.method == "POST":
+                if request.POST.get('status') is not None:
+                    mid = 1 if request.POST.get('mid_sem_live') is not None else 0
+                    end = 1 if request.POST.get('end_sem_live') is not None else 0
+                    print(mid, end)
+                    dept_obj.is_mid_sem_live = bool(mid)
+                    dept_obj.is_end_sem_live = bool(end)
+                    dept_obj.save()
+                    context["success"] = "Changes saved Successfully"
+
                 if request.POST.get('add_Subject_Name') is not None:
                     subject_name = request.POST.get('add_Subject_Name')
                     subject_code = request.POST.get('add_Subject_Code')
                     subject_sem = request.POST.get('add_subject_semester')
+                    subject_div = request.POST.get('add_subject_division')
                     teaching_faculties_id = request.POST.getlist('add_teaching_faculty')
                     subject_obj, is_created = Subjects.objects.get_or_create(
                         subject_name=subject_name,
                         subject_code=subject_code,
-                        semester=subject_sem,
+                        semester=int(subject_sem),
+                        div=int(subject_div),
                         dept_id=fac_obj.dept_id,
                     )
                     print(subject_obj, is_created)
@@ -1748,8 +1834,8 @@ def HOD_Manage_department(request):
                     else:
                         context["error"] = "Subject you are trying to add, already exists"
 
-                else:
-                    context["error"] = "Error in creating subject. Please try again later."
+            context['mid_live'] = dept_obj.is_mid_sem_live
+            context['end_live'] = dept_obj.is_end_sem_live
 
             fac_qs = Faculty.objects.filter(dept_id=fac_obj.dept_id, active=True)
             context["faculties"] = fac_qs
@@ -1760,6 +1846,7 @@ def HOD_Manage_department(request):
                 tmp["id"] = s.id
                 tmp["name"] = s.subject_name
                 tmp["code"] = s.subject_code
+                tmp["div"] = s.div
                 tmp["sem"] = s.semester
                 subject_to_faculty_qs = Subject_to_Faculty_Mapping.objects.filter(subject_id=s.id)
                 tmp["teaching_faculty"] = subject_to_faculty_qs
@@ -1853,6 +1940,7 @@ def Modify_Subject_AJAX(request):
                             subject_obj.subject_name = str(request.GET.get('new_subject_name'))
                             subject_obj.subject_code = str(request.GET.get('new_subject_code'))
                             subject_obj.semester = int(request.GET.get('new_subject_sem'))
+                            subject_obj.div = int(request.GET.get('new_subject_division'))
                             subject_obj.save()
                             new_faculty_list = request.GET.getlist('new_teaching_faculties[]')
                             print(new_faculty_list)
@@ -1911,59 +1999,64 @@ def HODManageNews(request):
     return FacultyManageNews(request)
 
 
-def HodViewDetailedFeedback(request, type):
+# def HOD_Assigned_subjects(request):
+#     return FacultyAssignedSubjects(request)
+
+
+# def HodViewDetailedFeedback(request, type):
+#     context = {
+#         "base_url": st.BASE_URL,
+#     }
+#     if request.user.is_authenticated and request.user.getRole == "Faculty":
+#         fac_object = Faculty.objects.get(auth_id=request.user)
+#         context['name'] = fac_object.name
+#         context['dept_name'] = fac_object.dept_id.dept_name
+#         if fac_object.hod:
+#             dept_faculties = Faculty.objects.filter(dept_id=fac_object.dept_id)
+#             context["dept_faculties"] = dept_faculties
+#             subjects_dict = {}
+#             for i in dept_faculties:
+#                 subjects_dict[i.id] = []
+#                 subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=i.id)
+#                 for j in subject_qs:
+#                     tmp1 = {
+#                         "subject_id": j.subject_id.id,
+#                         "subject_name": j.subject_id.subject_name,
+#                         "subject_code": j.subject_id.subject_code,
+#                         "subject_semester": j.subject_id.semester
+#                     }
+#                     subjects_dict[i.id].append(tmp1)
+#
+#             # print(subjects_dict)
+#             context['fac_subjects'] = json.dumps(subjects_dict)
+#
+#             if type == "mid":
+#                 questions = Mid_Sem_Feedback_Questions.objects.all()
+#                 context["questions"] = questions
+#                 return render(request, 'hod/Detailed_Feedback/detailed_feedback_mid_sem.html', context)
+#
+#             elif type == "end":
+#                 questions = End_Sem_Feedback_Questions.objects.all()
+#                 context["questions"] = questions
+#                 return render(request, 'hod/Detailed_Feedback/detailed_feedback_end_sem.html', context)
+#
+#             else:
+#                 context["error"] = "Page not found."
+#                 return render(request, 'hod/hod_dashboard.html', context)
+#
+#         else:
+#             context["error"] = "You are not authorized to view this page."
+#             return render(request, 'home_auth/index.html', context)
+#
+#     else:
+#         context["error"] = "Log in First."
+#         return render(request, 'home_auth/index.html', context)
+
+
+def HODSubjectwiseAverageFeedback(request, type, dept_id):
     context = {
         "base_url": st.BASE_URL,
-    }
-    if request.user.is_authenticated and request.user.getRole == "Faculty":
-        fac_object = Faculty.objects.get(auth_id=request.user)
-        context['name'] = fac_object.name
-        context['dept_name'] = fac_object.dept_id.dept_name
-        if fac_object.hod:
-            dept_faculties = Faculty.objects.filter(dept_id=fac_object.dept_id)
-            context["dept_faculties"] = dept_faculties
-            subjects_dict = {}
-            for i in dept_faculties:
-                subjects_dict[i.id] = []
-                subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=i.id)
-                for j in subject_qs:
-                    tmp1 = {
-                        "subject_id": j.subject_id.id,
-                        "subject_name": j.subject_id.subject_name,
-                        "subject_code": j.subject_id.subject_code,
-                        "subject_semester": j.subject_id.semester
-                    }
-                    subjects_dict[i.id].append(tmp1)
-
-            # print(subjects_dict)
-            context['fac_subjects'] = json.dumps(subjects_dict)
-
-            if type == "mid":
-                questions = Mid_Sem_Feedback_Questions.objects.all()
-                context["questions"] = questions
-                return render(request, 'hod/Detailed_Feedback/detailed_feedback_mid_sem.html', context)
-
-            elif type == "end":
-                questions = End_Sem_Feedback_Questions.objects.all()
-                context["questions"] = questions
-                return render(request, 'hod/Detailed_Feedback/detailed_feedback_end_sem.html', context)
-
-            else:
-                context["error"] = "Page not found."
-                return render(request, 'hod/hod_dashboard.html', context)
-
-        else:
-            context["error"] = "You are not authorized to view this page."
-            return render(request, 'home_auth/index.html', context)
-
-    else:
-        context["error"] = "Log in First."
-        return render(request, 'home_auth/index.html', context)
-
-
-def SubjectwiseAverageFeedback(request, type, dept_id):
-    context = {
-        "base_url": st.BASE_URL,
+        "request": request
     }
     if request.user.is_authenticated:
         try:
@@ -1981,7 +2074,7 @@ def SubjectwiseAverageFeedback(request, type, dept_id):
             try:
                 fac_object = Faculty.objects.get(auth_id=request.user, dept_id=dept_obj, hod=True)
                 context['name'] = fac_object.name
-                context["User_Role"] = "Faculty"
+                context["User_Role"] = "HOD"
             except Faculty.DoesNotExist:
                 try:
                     return HttpResponse("<h1>403 Unauthorized</h1><br /><a href=" + str(
@@ -2003,32 +2096,7 @@ def SubjectwiseAverageFeedback(request, type, dept_id):
         context['dept_name'] = dept_obj.dept_name
         context['dept_id'] = int(dept_obj.id)
         subject_qs = Subjects.objects.filter(dept_id=dept_obj)
-        subject_list = {
-            'odd': [],
-            'even': []
-        }
-        for i in subject_qs:
-            if int(i.semester) % 2:
-                tmp = {
-                    'subject_id': i.id,
-                    'subject_name': i.subject_name,
-                    'subject_code': i.subject_code,
-                    'subject_semester': i.semester
-                }
-                subject_list["odd"].append(tmp)
-
-            else:
-                tmp = {
-                    'subject_id': i.id,
-                    'subject_name': i.subject_name,
-                    'subject_code': i.subject_code,
-                    'subject_semester': i.semester
-                }
-                subject_list["even"].append(tmp)
-
-        print(subject_list)
-        context["subject_list"] = json.dumps(subject_list)
-
+        context["subjects"] = subject_qs
         if type == "mid":
             context["fb_type"] = "mid"
             questions = Mid_Sem_Feedback_Questions.objects.all()
@@ -2040,65 +2108,148 @@ def SubjectwiseAverageFeedback(request, type, dept_id):
             context["questions"] = questions
 
         else:
-            context["error"] = "Page not found."
-            return render(request, 'hod/hod_dashboard.html', context)
+            try:
+                return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
+                    request.META['HTTP_REFERER']) + ">click here to go back</a>")
+            except Exception as e:
+                print(e)
+                context["error"] = "You can not directly access this page."
+                return render(request, 'home_auth/index.html', context)
 
-        return render(request, 'hod/Average_Feedback/subjectwise_average_feedback.html', context)
+        return render(request, 'hod/hod_subjectwise_average_feedback.html', context)
 
     else:
         context["error"] = "Log in First."
         return render(request, 'home_auth/index.html', context)
 
 
-def HodViewAverageFeedback(request, type):
+def HOD_SubjectDetailedFeedback(request, type, sub_id, fac_id):
+    return Faculty_SubjectDetailedFeedback(
+        request,
+        type=type,
+        sub_id=sub_id,
+        fac_id=fac_id
+    )
+
+
+def HOD_SubjectAverageFeedback(request, type, sub_id, fac_id):
+    return Faculty_SubjectAverageFeedback(
+        request,
+        type=type,
+        sub_id=sub_id,
+        fac_id=fac_id
+    )
+
+
+def HOD_FeedbackSection(request, type, dept_id):
     context = {
         "base_url": st.BASE_URL,
     }
-    if request.user.is_authenticated and request.user.getRole == "Faculty":
-        fac_object = Faculty.objects.get(auth_id=request.user)
-        context['name'] = fac_object.name
-        context['dept_name'] = fac_object.dept_id.dept_name
-        context['dept_id'] = int(fac_object.dept_id.id)
-        if fac_object.hod:
-            dept_faculties = Faculty.objects.filter(dept_id=fac_object.dept_id)
-            context["dept_faculties"] = dept_faculties
-            subjects_dict = {}
-            for i in dept_faculties:
-                subjects_dict[i.id] = []
-                subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=i.id)
-                for j in subject_qs:
-                    tmp1 = {
-                        "subject_id": j.subject_id.id,
-                        "subject_name": j.subject_id.subject_name,
-                        "subject_code": j.subject_id.subject_code,
-                        "subject_semester": j.subject_id.semester
-                    }
-                    subjects_dict[i.id].append(tmp1)
-
-            # print(subjects_dict)
-            context['fac_subjects'] = json.dumps(subjects_dict)
-
-            if type == "mid":
-                questions = Mid_Sem_Feedback_Questions.objects.all()
-                context["questions"] = questions
-                return render(request, 'hod/Average_Feedback/average_feedback_mid_sem.html', context)
-
-            elif type == "end":
-                questions = End_Sem_Feedback_Questions.objects.all()
-                context["questions"] = questions
-                return render(request, 'hod/Average_Feedback/average_feedback_end_sem.html', context)
-
-            else:
-                context["error"] = "Page not found."
-                return render(request, 'hod/hod_dashboard.html', context)
-
+    if request.user.is_authenticated:
+        if request.user.getRole == "Faculty":
+            user_obj = Faculty.objects.get(auth_id=request.user)
+            context["User_Role"] = "HOD"
+        elif request.user.getRole == "Principal":
+            user_obj = Principal.objects.get(auth_id=request.user)
+            context["User_Role"] = "Principal"
         else:
             context["error"] = "You are not authorized to view this page."
             return render(request, 'home_auth/index.html', context)
 
+        if type == "mid":
+            fb_type = "mid"
+        elif type == "end":
+            fb_type = "end"
+        else:
+            try:
+                return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
+                    request.META['HTTP_REFERER']) + ">click here to go back</a>")
+            except Exception as e:
+                print(e)
+                context["error"] = "You can not directly access this page."
+                return render(request, 'home_auth/index.html', context)
+
+        if request.method == "POST":
+            if request.POST.get('faculty') is not None:
+                fac_obj = Faculty.objects.get(id=int(request.POST.get('faculty')))
+                term = int(request.POST.get('term'))
+                year = int(request.POST.get('year'))
+                if term == 0:
+                    semester_list = [1, 3, 5, 7]
+                else:
+                    semester_list = [2, 4, 6, 8]
+
+                subjects_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=fac_obj).filter(
+                    subject_id__semester__in=semester_list)
+                context["subjects"] = subjects_qs
+                context["year"] = year
+                context["faculty_obj"] = fac_obj
+            else:
+                context["error"] = "Error occured. Please try again after some time."
+
+        context["name"] = user_obj.name
+        dept_obj = Departments.objects.get(id=dept_id)
+        context["dept_id"] = dept_obj.id
+        context["dept_name"] = dept_obj.dept_name
+        context["fb_type"] = fb_type
+        dept_faculty_qs = Faculty.objects.filter(dept_id=dept_obj)
+        context["dept_faculties"] = dept_faculty_qs
+
+        return render(request, 'hod/feedback_section.html', context)
     else:
-        context["error"] = "Log in First."
+        context["error"] = "Log in First"
         return render(request, 'home_auth/index.html', context)
+
+
+# def HodViewAverageFeedback(request, type):
+#     context = {
+#         "base_url": st.BASE_URL,
+#     }
+#     if request.user.is_authenticated and request.user.getRole == "Faculty":
+#         fac_object = Faculty.objects.get(auth_id=request.user)
+#         context['name'] = fac_object.name
+#         context['dept_name'] = fac_object.dept_id.dept_name
+#         context['dept_id'] = int(fac_object.dept_id.id)
+#         if fac_object.hod:
+#             dept_faculties = Faculty.objects.filter(dept_id=fac_object.dept_id)
+#             context["dept_faculties"] = dept_faculties
+#             subjects_dict = {}
+#             for i in dept_faculties:
+#                 subjects_dict[i.id] = []
+#                 subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=i.id)
+#                 for j in subject_qs:
+#                     tmp1 = {
+#                         "subject_id": j.subject_id.id,
+#                         "subject_name": j.subject_id.subject_name,
+#                         "subject_code": j.subject_id.subject_code,
+#                         "subject_semester": j.subject_id.semester
+#                     }
+#                     subjects_dict[i.id].append(tmp1)
+#
+#             # print(subjects_dict)
+#             context['fac_subjects'] = json.dumps(subjects_dict)
+#
+#             if type == "mid":
+#                 questions = Mid_Sem_Feedback_Questions.objects.all()
+#                 context["questions"] = questions
+#                 return render(request, 'hod/Average_Feedback/average_feedback_mid_sem.html', context)
+#
+#             elif type == "end":
+#                 questions = End_Sem_Feedback_Questions.objects.all()
+#                 context["questions"] = questions
+#                 return render(request, 'hod/Average_Feedback/average_feedback_end_sem.html', context)
+#
+#             else:
+#                 context["error"] = "Page not found."
+#                 return render(request, 'hod/hod_dashboard.html', context)
+#
+#         else:
+#             context["error"] = "You are not authorized to view this page."
+#             return render(request, 'home_auth/index.html', context)
+#
+#     else:
+#         context["error"] = "Log in First."
+#         return render(request, 'home_auth/index.html', context)
 
 
 # HOD Related Views > End
@@ -2117,13 +2268,19 @@ def GetSubjectwiseAverageFeedback(request):
                 try:
                     data = {
                         "ratings": rating_list,
-                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p"))
+                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p")),
+                        "subject_name": subject_obj.subject_name,
+                        "subject_code": subject_obj.subject_code,
+                        "subject_div": subject_obj.div
                     }
 
                 except Mid_Sem_Feedback_Answers.DoesNotExist:
                     data = {
                         "ratings": rating_list,
-                        "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+                        "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p")),
+                        "subject_name": subject_obj.subject_name,
+                        "subject_code": subject_obj.subject_code,
+                        "subject_div": subject_obj.div
                     }
 
                 res = json.dumps(data)
@@ -2136,13 +2293,19 @@ def GetSubjectwiseAverageFeedback(request):
                 try:
                     data = {
                         "ratings": rating_list,
-                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p"))
+                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p")),
+                        "subject_name": subject_obj.subject_name,
+                        "subject_code": subject_obj.subject_code,
+                        "subject_div": subject_obj.div
                     }
 
                 except End_Sem_Feedback_Answers.DoesNotExist:
                     data = {
                         "ratings": rating_list,
-                        "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+                        "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p")),
+                        "subject_name": subject_obj.subject_name,
+                        "subject_code": subject_obj.subject_code,
+                        "subject_div": subject_obj.div
                     }
                 res = json.dumps(data)
                 return HttpResponse(res, status=status.HTTP_200_OK)
@@ -2168,154 +2331,154 @@ def GetSubjectwiseAverageFeedback(request):
         res = json.dumps(data)
         return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
 
+#
+# def GetAverageFeedback(request):
+#     if request.user.is_authenticated and (request.user.getRole == "Faculty" or request.user.getRole == "Principal"):
+#         if request.GET.get('fac_id') is not None:
+#             type = request.GET.get('type')
+#             term = int(request.GET.get('term'))
+#             if (term == 0):
+#                 semester_list = [1, 3, 5, 7]
+#             else:
+#                 semester_list = [2, 4, 6, 8]
+#
+#             year = int(request.GET.get('year'))
+#             faculty_obj = Faculty.objects.get(id=int(request.GET.get('fac_id')))
+#             if type == "mid":
+#                 feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj,
+#                                                                       semester__in=semester_list, timestamp__year=year)
+#                 rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj,
+#                                                  semester_list=semester_list)
+#                 print(rating_list)
+#                 try:
+#                     data = {
+#                         "ratings": rating_list,
+#                         "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p"))
+#                     }
+#
+#                 except Mid_Sem_Feedback_Answers.DoesNotExist:
+#                     data = {
+#                         "ratings": rating_list,
+#                         "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+#                     }
+#
+#                 res = json.dumps(data)
+#                 return HttpResponse(res, status=status.HTTP_200_OK)
+#
+#             elif type == "end":
+#                 feedback_qs = End_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj,
+#                                                                       semester__in=semester_list, timestamp__year=year)
+#                 rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj,
+#                                                  semester_list=semester_list)
+#                 print(rating_list)
+#                 try:
+#                     data = {
+#                         "ratings": rating_list,
+#                         "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p"))
+#                     }
+#
+#                 except End_Sem_Feedback_Answers.DoesNotExist:
+#                     data = {
+#                         "ratings": rating_list,
+#                         "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
+#                     }
+#                 res = json.dumps(data)
+#                 return HttpResponse(res, status=status.HTTP_200_OK)
+#
+#             else:
+#                 data = {
+#                     "error": "Can not find what you are looking for."
+#                 }
+#                 res = json.dumps(data)
+#                 return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+#
+#         else:
+#             data = {
+#                 "error": "Faculty id not passed."
+#             }
+#             res = json.dumps(data)
+#             return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+#
+#     else:
+#         data = {
+#             "error": "You are not authorized to access this."
+#         }
+#         res = json.dumps(data)
+#         return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
 
-def GetAverageFeedback(request):
-    if request.user.is_authenticated and (request.user.getRole == "Faculty" or request.user.getRole == "Principal"):
-        if request.GET.get('fac_id') is not None:
-            type = request.GET.get('type')
-            term = int(request.GET.get('term'))
-            if (term == 0):
-                semester_list = [1, 3, 5, 7]
-            else:
-                semester_list = [2, 4, 6, 8]
 
-            year = int(request.GET.get('year'))
-            faculty_obj = Faculty.objects.get(id=int(request.GET.get('fac_id')))
-            if type == "mid":
-                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj,
-                                                                      semester__in=semester_list, timestamp__year=year)
-                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj,
-                                                 semester_list=semester_list)
-                print(rating_list)
-                try:
-                    data = {
-                        "ratings": rating_list,
-                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p"))
-                    }
-
-                except Mid_Sem_Feedback_Answers.DoesNotExist:
-                    data = {
-                        "ratings": rating_list,
-                        "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
-                    }
-
-                res = json.dumps(data)
-                return HttpResponse(res, status=status.HTTP_200_OK)
-
-            elif type == "end":
-                feedback_qs = End_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj,
-                                                                      semester__in=semester_list, timestamp__year=year)
-                rating_list = serialize_feedback(feedback_qs=feedback_qs, faculty_obj=faculty_obj,
-                                                 semester_list=semester_list)
-                print(rating_list)
-                try:
-                    data = {
-                        "ratings": rating_list,
-                        "date": str(feedback_qs.latest().timestamp.strftime("%d %B, %Y %I:%M %p"))
-                    }
-
-                except End_Sem_Feedback_Answers.DoesNotExist:
-                    data = {
-                        "ratings": rating_list,
-                        "date": str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
-                    }
-                res = json.dumps(data)
-                return HttpResponse(res, status=status.HTTP_200_OK)
-
-            else:
-                data = {
-                    "error": "Can not find what you are looking for."
-                }
-                res = json.dumps(data)
-                return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
-
-        else:
-            data = {
-                "error": "Faculty id not passed."
-            }
-            res = json.dumps(data)
-            return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
-
-    else:
-        data = {
-            "error": "You are not authorized to access this."
-        }
-        res = json.dumps(data)
-        return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
-
-
-def GetAllFeedback(request):
-    if request.user.is_authenticated and (request.user.getRole == "Faculty" or request.user.getRole == "Principal"):
-        if request.GET.get('fac_id') is not None or request.GET.get('sub_id') is not None:
-            type = request.GET.get('type')
-            term = int(request.GET.get('term'))
-            if (term == 0):
-                semester_list = [1, 3, 5, 7]
-            else:
-                semester_list = [2, 4, 6, 8]
-
-            year = int(request.GET.get('year'))
-            faculty_obj = Faculty.objects.get(id=int(request.GET.get('fac_id')))
-            subject_obj = Subjects.objects.get(id=int(request.GET.get('sub_id')))
-            if type == "mid":
-                feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, subject_id=subject_obj,
-                                                                      semester__in=semester_list, timestamp__year=year)
-                feedback_list = []
-                for i in feedback_qs:
-                    tmp = {
-                        'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p")),
-                        'q1': i.Q1, 'q2': i.Q2, 'q3': i.Q3, 'q4': i.Q4, 'q5': i.Q5,
-                        'q6': i.Q6, 'q7': i.Q7, 'q8': i.Q8, 'q9': i.Q9, 'q10': i.Q10,
-                        'remark': i.remarks
-                    }
-                    feedback_list.append(tmp)
-
-                data = {
-                    'feedback_list': feedback_list
-                }
-                res = json.dumps(data)
-                return HttpResponse(res, status=status.HTTP_200_OK)
-
-            elif type == "end":
-                feedback_qs = End_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, subject_id=subject_obj,
-                                                                      semester__in=semester_list, timestamp__year=year)
-                feedback_list = []
-                for i in feedback_qs:
-                    tmp = {
-                        'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p")),
-                        'q1': i.Q1, 'q2': i.Q2, 'q3': i.Q3, 'q4': i.Q4, 'q5': i.Q5,
-                        'q6': i.Q6, 'q7': i.Q7, 'q8': i.Q8, 'q9': i.Q9, 'q10': i.Q10,
-                        'remark': i.remarks
-                    }
-                    feedback_list.append(tmp)
-
-                data = {
-                    'feedback_list': feedback_list
-                }
-                res = json.dumps(data)
-                return HttpResponse(res, status=status.HTTP_200_OK)
-
-            else:
-                data = {
-                    "error": "Can not find what you are looking for."
-                }
-                res = json.dumps(data)
-                return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
-
-        else:
-            data = {
-                "error": "Faculty id not passed."
-            }
-            res = json.dumps(data)
-            return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
-
-    else:
-        data = {
-            "error": "You are not authorized to access this."
-        }
-        res = json.dumps(data)
-        return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
-
+# def GetAllFeedback(request):
+#     if request.user.is_authenticated and (request.user.getRole == "Faculty" or request.user.getRole == "Principal"):
+#         if request.GET.get('fac_id') is not None or request.GET.get('sub_id') is not None:
+#             type = request.GET.get('type')
+#             term = int(request.GET.get('term'))
+#             if (term == 0):
+#                 semester_list = [1, 3, 5, 7]
+#             else:
+#                 semester_list = [2, 4, 6, 8]
+#
+#             year = int(request.GET.get('year'))
+#             faculty_obj = Faculty.objects.get(id=int(request.GET.get('fac_id')))
+#             subject_obj = Subjects.objects.get(id=int(request.GET.get('sub_id')))
+#             if type == "mid":
+#                 feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, subject_id=subject_obj,
+#                                                                       semester__in=semester_list, timestamp__year=year)
+#                 feedback_list = []
+#                 for i in feedback_qs:
+#                     tmp = {
+#                         'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p")),
+#                         'q1': i.Q1, 'q2': i.Q2, 'q3': i.Q3, 'q4': i.Q4, 'q5': i.Q5,
+#                         'q6': i.Q6, 'q7': i.Q7, 'q8': i.Q8, 'q9': i.Q9, 'q10': i.Q10,
+#                         'remark': i.remarks
+#                     }
+#                     feedback_list.append(tmp)
+#
+#                 data = {
+#                     'feedback_list': feedback_list
+#                 }
+#                 res = json.dumps(data)
+#                 return HttpResponse(res, status=status.HTTP_200_OK)
+#
+#             elif type == "end":
+#                 feedback_qs = End_Sem_Feedback_Answers.objects.filter(faculty_id=faculty_obj, subject_id=subject_obj,
+#                                                                       semester__in=semester_list, timestamp__year=year)
+#                 feedback_list = []
+#                 for i in feedback_qs:
+#                     tmp = {
+#                         'date': str(i.timestamp.strftime("%d %B, %Y %I:%M %p")),
+#                         'q1': i.Q1, 'q2': i.Q2, 'q3': i.Q3, 'q4': i.Q4, 'q5': i.Q5,
+#                         'q6': i.Q6, 'q7': i.Q7, 'q8': i.Q8, 'q9': i.Q9, 'q10': i.Q10,
+#                         'remark': i.remarks
+#                     }
+#                     feedback_list.append(tmp)
+#
+#                 data = {
+#                     'feedback_list': feedback_list
+#                 }
+#                 res = json.dumps(data)
+#                 return HttpResponse(res, status=status.HTTP_200_OK)
+#
+#             else:
+#                 data = {
+#                     "error": "Can not find what you are looking for."
+#                 }
+#                 res = json.dumps(data)
+#                 return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+#
+#         else:
+#             data = {
+#                 "error": "Faculty id not passed."
+#             }
+#             res = json.dumps(data)
+#             return HttpResponse(res, status=status.HTTP_400_BAD_REQUEST)
+#
+#     else:
+#         data = {
+#             "error": "You are not authorized to access this."
+#         }
+#         res = json.dumps(data)
+#         return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
+#
 
 # Views for ajax related to feedbacks > End
 
@@ -2630,172 +2793,197 @@ def PrincipalProfile(request):
         return render(request, 'home_auth/index.html', context)
 
 
-def DetailedFeedback(request, id):
-    context = {
-        "base_url": st.BASE_URL,
-    }
-    if request.user.is_authenticated and request.user.getRole == "Principal":
-        principal_object = Principal.objects.get(auth_id=request.user)
-        context['name'] = principal_object.name
+def Principal_FeedbackSection(request, type, dept_id):
+    return HOD_FeedbackSection(
+        request,
+        type=type,
+        dept_id=dept_id
+    )
 
-        try:
-            dept_obj = Departments.objects.get(id=id)
-        except Departments.DoesNotExist:
-            try:
-                return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
-                    request.META['HTTP_REFERER']) + ">click here to go back</a>")
-            except Exception as e:
-                print(e)
-                context["error"] = "You can not directly access this page."
-                return render(request, 'home_auth/index.html', context)
-
-        context['dept_name'] = dept_obj.dept_name
-        dept_faculties = Faculty.objects.filter(dept_id=dept_obj)
-        context["dept_faculties"] = dept_faculties
-        subjects_dict = {}
-        for i in dept_faculties:
-            subjects_dict[i.id] = []
-            subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=i.id)
-            for j in subject_qs:
-                tmp1 = {
-                    "subject_id": j.subject_id.id,
-                    "subject_name": j.subject_id.subject_name,
-                    "subject_code": j.subject_id.subject_code,
-                    "subject_semester": j.subject_id.semester
-                }
-                subjects_dict[i.id].append(tmp1)
-
-        context['fac_subjects'] = json.dumps(subjects_dict)
-
-        Questions_list = {
-            'mid': [],
-            'end': []
-        }
-        mid_questions = Mid_Sem_Feedback_Questions.objects.all()
-        for i in mid_questions:
-            tmp = {
-                'question_text': i.question_text
-            }
-            Questions_list['mid'].append(tmp)
-
-        end_questions = End_Sem_Feedback_Questions.objects.all()
-        for i in end_questions:
-            tmp = {
-                'question_text': i.question_text
-            }
-            Questions_list['end'].append(tmp)
-
-        print(Questions_list)
-        context['question_list'] = json.dumps(Questions_list)
-        return render(request, 'principal/detailed_feedback.html', context)
-
-    else:
-        context["error"] = "Log in First."
-        return render(request, 'home_auth/index.html', context)
+def Principal_SubjectDetailedFeedback(request, type, sub_id, fac_id):
+    return Faculty_SubjectDetailedFeedback(
+        request,
+        type=type,
+        sub_id=sub_id,
+        fac_id=fac_id
+    )
 
 
-def AverageFeedback(request, id):
-    context = {
-        "base_url": st.BASE_URL,
-    }
-    if request.user.is_authenticated and request.user.getRole == "Principal":
-        principal_obj = Principal.objects.get(auth_id=request.user)
-        context['name'] = principal_obj.name
+def Principal_SubjectAverageFeedback(request, type, sub_id, fac_id):
+    return Faculty_SubjectAverageFeedback(
+        request,
+        type=type,
+        sub_id=sub_id,
+        fac_id=fac_id
+    )
 
-        try:
-            dept_obj = Departments.objects.get(id=id)
-        except Departments.DoesNotExist:
-            try:
-                return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
-                    request.META['HTTP_REFERER']) + ">click here to go back</a>")
-            except Exception as e:
-                print(e)
-                context["error"] = "You can not directly access this page."
-                return render(request, 'home_auth/index.html', context)
 
-        context['dept_name'] = dept_obj.dept_name
-        context['dept_id'] = int(dept_obj.id)
-
-        dept_faculties = Faculty.objects.filter(dept_id=dept_obj)
-        context["dept_faculties"] = dept_faculties
-        subjects_dict = {}
-        for i in dept_faculties:
-            subjects_dict[i.id] = []
-            subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=i.id)
-            for j in subject_qs:
-                tmp1 = {
-                    "subject_id": j.subject_id.id,
-                    "subject_name": j.subject_id.subject_name,
-                    "subject_code": j.subject_id.subject_code,
-                    "subject_semester": j.subject_id.semester
-                }
-                subjects_dict[i.id].append(tmp1)
-
-        # print(subjects_dict)
-        context['fac_subjects'] = json.dumps(subjects_dict)
-
-        Questions_list = {
-            'mid': [],
-            'end': []
-        }
-        mid_questions = Mid_Sem_Feedback_Questions.objects.all()
-        for i in mid_questions:
-            tmp = {
-                'question_text': i.question_text
-            }
-            Questions_list['mid'].append(tmp)
-
-        end_questions = End_Sem_Feedback_Questions.objects.all()
-        for i in end_questions:
-            tmp = {
-                'question_text': i.question_text
-            }
-            Questions_list['end'].append(tmp)
-
-        print(Questions_list)
-        context['question_list'] = json.dumps(Questions_list)
-        return render(request, 'principal/average feedback.html', context)
-
-    else:
-        context["error"] = "Log in First."
-        return render(request, 'home_auth/index.html', context)
+# def DetailedFeedback(request, id):
+#     context = {
+#         "base_url": st.BASE_URL,
+#     }
+#     if request.user.is_authenticated and request.user.getRole == "Principal":
+#         principal_object = Principal.objects.get(auth_id=request.user)
+#         context['name'] = principal_object.name
+#
+#         try:
+#             dept_obj = Departments.objects.get(id=id)
+#         except Departments.DoesNotExist:
+#             try:
+#                 return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
+#                     request.META['HTTP_REFERER']) + ">click here to go back</a>")
+#             except Exception as e:
+#                 print(e)
+#                 context["error"] = "You can not directly access this page."
+#                 return render(request, 'home_auth/index.html', context)
+#
+#         context['dept_name'] = dept_obj.dept_name
+#         dept_faculties = Faculty.objects.filter(dept_id=dept_obj)
+#         context["dept_faculties"] = dept_faculties
+#         subjects_dict = {}
+#         for i in dept_faculties:
+#             subjects_dict[i.id] = []
+#             subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=i.id)
+#             for j in subject_qs:
+#                 tmp1 = {
+#                     "subject_id": j.subject_id.id,
+#                     "subject_name": j.subject_id.subject_name,
+#                     "subject_code": j.subject_id.subject_code,
+#                     "subject_semester": j.subject_id.semester
+#                 }
+#                 subjects_dict[i.id].append(tmp1)
+#
+#         context['fac_subjects'] = json.dumps(subjects_dict)
+#
+#         Questions_list = {
+#             'mid': [],
+#             'end': []
+#         }
+#         mid_questions = Mid_Sem_Feedback_Questions.objects.all()
+#         for i in mid_questions:
+#             tmp = {
+#                 'question_text': i.question_text
+#             }
+#             Questions_list['mid'].append(tmp)
+#
+#         end_questions = End_Sem_Feedback_Questions.objects.all()
+#         for i in end_questions:
+#             tmp = {
+#                 'question_text': i.question_text
+#             }
+#             Questions_list['end'].append(tmp)
+#
+#         print(Questions_list)
+#         context['question_list'] = json.dumps(Questions_list)
+#         return render(request, 'principal/detailed_feedback.html', context)
+#
+#     else:
+#         context["error"] = "Log in First."
+#         return render(request, 'home_auth/index.html', context)
+#
+#
+# def AverageFeedback(request, id):
+#     context = {
+#         "base_url": st.BASE_URL,
+#     }
+#     if request.user.is_authenticated and request.user.getRole == "Principal":
+#         principal_obj = Principal.objects.get(auth_id=request.user)
+#         context['name'] = principal_obj.name
+#
+#         try:
+#             dept_obj = Departments.objects.get(id=id)
+#         except Departments.DoesNotExist:
+#             try:
+#                 return HttpResponse("<h1>404 Page Not Found</h1><br /><a href=" + str(
+#                     request.META['HTTP_REFERER']) + ">click here to go back</a>")
+#             except Exception as e:
+#                 print(e)
+#                 context["error"] = "You can not directly access this page."
+#                 return render(request, 'home_auth/index.html', context)
+#
+#         context['dept_name'] = dept_obj.dept_name
+#         context['dept_id'] = int(dept_obj.id)
+#
+#         dept_faculties = Faculty.objects.filter(dept_id=dept_obj)
+#         context["dept_faculties"] = dept_faculties
+#         subjects_dict = {}
+#         for i in dept_faculties:
+#             subjects_dict[i.id] = []
+#             subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=i.id)
+#             for j in subject_qs:
+#                 tmp1 = {
+#                     "subject_id": j.subject_id.id,
+#                     "subject_name": j.subject_id.subject_name,
+#                     "subject_code": j.subject_id.subject_code,
+#                     "subject_semester": j.subject_id.semester
+#                 }
+#                 subjects_dict[i.id].append(tmp1)
+#
+#         # print(subjects_dict)
+#         context['fac_subjects'] = json.dumps(subjects_dict)
+#
+#         Questions_list = {
+#             'mid': [],
+#             'end': []
+#         }
+#         mid_questions = Mid_Sem_Feedback_Questions.objects.all()
+#         for i in mid_questions:
+#             tmp = {
+#                 'question_text': i.question_text
+#             }
+#             Questions_list['mid'].append(tmp)
+#
+#         end_questions = End_Sem_Feedback_Questions.objects.all()
+#         for i in end_questions:
+#             tmp = {
+#                 'question_text': i.question_text
+#             }
+#             Questions_list['end'].append(tmp)
+#
+#         print(Questions_list)
+#         context['question_list'] = json.dumps(Questions_list)
+#         return render(request, 'principal/average feedback.html', context)
+#
+#     else:
+#         context["error"] = "Log in First."
+#         return render(request, 'home_auth/index.html', context)
 
 
 # This view is reusing subjectwise hod view.
 def PrincipalSubjectwiseAverageFeedback(request, type, dept_id):
-    return SubjectwiseAverageFeedback(request, type=type, dept_id=dept_id)
+    return HODSubjectwiseAverageFeedback(request, type=type, dept_id=dept_id)
 
 
-def DownloadDetailedReport(request):
-    context = {
-        "base_url": st.BASE_URL,
-    }
-    if request.user.is_authenticated and request.user.getRole == "Principal":
-        if request.POST.get('type') is not None:
-            type = request.POST.get('type')
-            if (type == "0"):
-                fb_type = "mid"
-            else:
-                fb_type = "end"
-            return DownloadDetailedFeedback(request, type=fb_type)
-    else:
-        return render(request, 'principal/detailed_feedback.html', context)
-
-
-def DownloadAverageReport(request):
-    context = {
-        "base_url": st.BASE_URL,
-    }
-    if request.user.is_authenticated and request.user.getRole == "Principal":
-        if request.POST.get('type') is not None:
-            type = request.POST.get('type')
-            if (type == "0"):
-                fb_type = "mid"
-            else:
-                fb_type = "end"
-            return DownloadAverageFeedback(request, type=fb_type)
-    else:
-        return render(request, 'principal/detailed_feedback.html', context)
+# def DownloadDetailedReport(request):
+#     context = {
+#         "base_url": st.BASE_URL,
+#     }
+#     if request.user.is_authenticated and request.user.getRole == "Principal":
+#         if request.POST.get('type') is not None:
+#             type = request.POST.get('type')
+#             if (type == "0"):
+#                 fb_type = "mid"
+#             else:
+#                 fb_type = "end"
+#             return DownloadDetailedFeedback(request, type=fb_type)
+#     else:
+#         return render(request, 'principal/detailed_feedback.html', context)
+#
+#
+# def DownloadAverageReport(request):
+#     context = {
+#         "base_url": st.BASE_URL,
+#     }
+#     if request.user.is_authenticated and request.user.getRole == "Principal":
+#         if request.POST.get('type') is not None:
+#             type = request.POST.get('type')
+#             if (type == "0"):
+#                 fb_type = "mid"
+#             else:
+#                 fb_type = "end"
+#             return DownloadAverageFeedback(request, type=fb_type)
+#     else:
+#         return render(request, 'principal/detailed_feedback.html', context)
 
 
 # Principal Related Views > End
@@ -3505,151 +3693,151 @@ def CommitteeManageMembers(request, com_id):
 # Committee Related Views > End
 
 # Download Report Views > Start
-def DownloadDetailedFeedback(request, type):
-    context = {
-        "base_url": st.BASE_URL,
-    }
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            if request.POST.get('faculty') is not None:
-                fac_obj = Faculty.objects.get(id=int(request.POST.get('faculty')))
-                term = int(request.POST.get('term'))
-                if term == 0:
-                    term_type = "ODD"
-                    semester_list = [1, 3, 5, 7]
-                else:
-                    term_type = "Even"
-                    semester_list = [2, 4, 6, 8]
-
-                year = int(request.POST.get('year'))
-
-                subject_obj = Subjects.objects.get(id=int(request.POST.get('subject')))
-                if type == "mid":
-                    fb_type = "Mid"
-                    question_qs = Mid_Sem_Feedback_Questions.objects.all()
-                    feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
-                        faculty_id=fac_obj,
-                        subject_id=subject_obj,
-                        semester__in=semester_list,
-                        timestamp__year=year
-                    )
-                    if feedback_qs.count() == 0:
-                        try:
-                            return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                                request.META['HTTP_REFERER']) + ">click here to go back</a>")
-                        except Exception as e:
-                            print(e)
-                            context["error"] = "You can not directly access that page."
-                            return render(request, 'home_auth/index.html', context)
-
-                elif type == "end":
-                    fb_type = "End"
-                    question_qs = End_Sem_Feedback_Questions.objects.all()
-                    feedback_qs = End_Sem_Feedback_Answers.objects.filter(
-                        faculty_id=fac_obj,
-                        subject_id=subject_obj,
-                        semester__in=semester_list,
-                        timestamp__year=year
-                    )
-                    if feedback_qs.count() == 0:
-                        try:
-                            return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                                request.META['HTTP_REFERER']) + ">click here to go back</a>")
-                        except Exception as e:
-                            print(e)
-                            context["error"] = "You can not directly access that page."
-                            return render(request, 'home_auth/index.html', context)
-
-                serialized_feedback = serialize_detailed_feedback(feedback_qs=feedback_qs)
-
-                return make_detailed_feedback_pdf(
-                    serialized_feedback=serialized_feedback,
-                    subject_obj=subject_obj,
-                    fac_obj=fac_obj,
-                    fb_type=fb_type,
-                    term_type=term_type,
-                    year=year,
-                    question_qs=question_qs
-                )
-
-    else:
-        context["error"] = "Log in First"
-        return render(request, 'home_auth/index.html', context)
-
-
-def DownloadAverageFeedback(request, type):
-    context = {
-        "base_url": st.BASE_URL,
-    }
-    if request.user.is_authenticated:
-        if request.method == "POST":
-            if request.POST.get('faculty') is not None:
-                fac_obj = Faculty.objects.get(id=int(request.POST.get('faculty')))
-                term = int(request.POST.get('term'))
-                if term == 0:
-                    term_type = "ODD"
-                    semester_list = [1, 3, 5, 7]
-                else:
-                    term_type = "Even"
-                    semester_list = [2, 4, 6, 8]
-
-                year = int(request.POST.get('year'))
-
-                subject_obj = Subjects.objects.get(id=int(request.POST.get('subject')))
-                if type == "mid":
-                    fb_type = "Mid"
-                    question_qs = Mid_Sem_Feedback_Questions.objects.all()
-                    feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
-                        faculty_id=fac_obj,
-                        subject_id=subject_obj,
-                        semester__in=semester_list,
-                        timestamp__year=year
-                    )
-                    if feedback_qs.count() == 0:
-                        try:
-                            return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                                request.META['HTTP_REFERER']) + ">click here to go back</a>")
-                        except Exception as e:
-                            print(e)
-                            context["error"] = "You can not directly access this page."
-                            return render(request, 'home_auth/index.html', context)
-                    rating_insights = ratings_detailed(feedback_qs=feedback_qs)
-
-                elif type == "end":
-                    fb_type = "End"
-                    question_qs = End_Sem_Feedback_Questions.objects.all()
-                    feedback_qs = End_Sem_Feedback_Answers.objects.filter(
-                        faculty_id=fac_obj,
-                        subject_id=subject_obj,
-                        semester__in=semester_list,
-                        timestamp__year=year
-                    )
-                    if feedback_qs.count() == 0:
-                        try:
-                            return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
-                                request.META['HTTP_REFERER']) + ">click here to go back</a>")
-                        except Exception as e:
-                            print(e)
-                            context["error"] = "You can not directly access this page."
-                            return render(request, 'home_auth/index.html', context)
-                    rating_insights = ratings_detailed(feedback_qs=feedback_qs)
-
-                # Got dictionary of question wise average rating as well as count.
-                questionwise_ratings = serialize_feedback_subject(feedback_qs=feedback_qs)
-
-                return make_avg_feedback_pdf(
-                    questionwise_ratings=questionwise_ratings,
-                    rating_insights=rating_insights,
-                    subject_obj=subject_obj,
-                    fac_obj=fac_obj,
-                    question_qs=question_qs,
-                    fb_type=fb_type,
-                    term_type=term_type,
-                    year=year
-                )
-
-    else:
-        context["error"] = "Log in First"
-        return render(request, 'home_auth/index.html', context)
+# def DownloadDetailedFeedback(request, type):
+#     context = {
+#         "base_url": st.BASE_URL,
+#     }
+#     if request.user.is_authenticated:
+#         if request.method == "POST":
+#             if request.POST.get('faculty') is not None:
+#                 fac_obj = Faculty.objects.get(id=int(request.POST.get('faculty')))
+#                 term = int(request.POST.get('term'))
+#                 if term == 0:
+#                     term_type = "ODD"
+#                     semester_list = [1, 3, 5, 7]
+#                 else:
+#                     term_type = "Even"
+#                     semester_list = [2, 4, 6, 8]
+#
+#                 year = int(request.POST.get('year'))
+#
+#                 subject_obj = Subjects.objects.get(id=int(request.POST.get('subject')))
+#                 if type == "mid":
+#                     fb_type = "Mid"
+#                     question_qs = Mid_Sem_Feedback_Questions.objects.all()
+#                     feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
+#                         faculty_id=fac_obj,
+#                         subject_id=subject_obj,
+#                         semester__in=semester_list,
+#                         timestamp__year=year
+#                     )
+#                     if feedback_qs.count() == 0:
+#                         try:
+#                             return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+#                                 request.META['HTTP_REFERER']) + ">click here to go back</a>")
+#                         except Exception as e:
+#                             print(e)
+#                             context["error"] = "You can not directly access that page."
+#                             return render(request, 'home_auth/index.html', context)
+#
+#                 elif type == "end":
+#                     fb_type = "End"
+#                     question_qs = End_Sem_Feedback_Questions.objects.all()
+#                     feedback_qs = End_Sem_Feedback_Answers.objects.filter(
+#                         faculty_id=fac_obj,
+#                         subject_id=subject_obj,
+#                         semester__in=semester_list,
+#                         timestamp__year=year
+#                     )
+#                     if feedback_qs.count() == 0:
+#                         try:
+#                             return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+#                                 request.META['HTTP_REFERER']) + ">click here to go back</a>")
+#                         except Exception as e:
+#                             print(e)
+#                             context["error"] = "You can not directly access that page."
+#                             return render(request, 'home_auth/index.html', context)
+#
+#                 serialized_feedback = serialize_detailed_feedback(feedback_qs=feedback_qs)
+#
+#                 return make_detailed_feedback_pdf(
+#                     serialized_feedback=serialized_feedback,
+#                     subject_obj=subject_obj,
+#                     fac_obj=fac_obj,
+#                     fb_type=fb_type,
+#                     term_type=term_type,
+#                     year=year,
+#                     question_qs=question_qs
+#                 )
+#
+#     else:
+#         context["error"] = "Log in First"
+#         return render(request, 'home_auth/index.html', context)
+#
+#
+# def DownloadAverageFeedback(request, type):
+#     context = {
+#         "base_url": st.BASE_URL,
+#     }
+#     if request.user.is_authenticated:
+#         if request.method == "POST":
+#             if request.POST.get('faculty') is not None:
+#                 fac_obj = Faculty.objects.get(id=int(request.POST.get('faculty')))
+#                 term = int(request.POST.get('term'))
+#                 if term == 0:
+#                     term_type = "ODD"
+#                     semester_list = [1, 3, 5, 7]
+#                 else:
+#                     term_type = "Even"
+#                     semester_list = [2, 4, 6, 8]
+#
+#                 year = int(request.POST.get('year'))
+#
+#                 subject_obj = Subjects.objects.get(id=int(request.POST.get('subject')))
+#                 if type == "mid":
+#                     fb_type = "Mid"
+#                     question_qs = Mid_Sem_Feedback_Questions.objects.all()
+#                     feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
+#                         faculty_id=fac_obj,
+#                         subject_id=subject_obj,
+#                         semester__in=semester_list,
+#                         timestamp__year=year
+#                     )
+#                     if feedback_qs.count() == 0:
+#                         try:
+#                             return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+#                                 request.META['HTTP_REFERER']) + ">click here to go back</a>")
+#                         except Exception as e:
+#                             print(e)
+#                             context["error"] = "You can not directly access this page."
+#                             return render(request, 'home_auth/index.html', context)
+#                     rating_insights = ratings_detailed(feedback_qs=feedback_qs)
+#
+#                 elif type == "end":
+#                     fb_type = "End"
+#                     question_qs = End_Sem_Feedback_Questions.objects.all()
+#                     feedback_qs = End_Sem_Feedback_Answers.objects.filter(
+#                         faculty_id=fac_obj,
+#                         subject_id=subject_obj,
+#                         semester__in=semester_list,
+#                         timestamp__year=year
+#                     )
+#                     if feedback_qs.count() == 0:
+#                         try:
+#                             return HttpResponse("<h1>No Feedback available for this subject.</h1><br /><a href=" + str(
+#                                 request.META['HTTP_REFERER']) + ">click here to go back</a>")
+#                         except Exception as e:
+#                             print(e)
+#                             context["error"] = "You can not directly access this page."
+#                             return render(request, 'home_auth/index.html', context)
+#                     rating_insights = ratings_detailed(feedback_qs=feedback_qs)
+#
+#                 # Got dictionary of question wise average rating as well as count.
+#                 questionwise_ratings = serialize_feedback_subject(feedback_qs=feedback_qs)
+#
+#                 return make_avg_feedback_pdf(
+#                     questionwise_ratings=questionwise_ratings,
+#                     rating_insights=rating_insights,
+#                     subject_obj=subject_obj,
+#                     fac_obj=fac_obj,
+#                     question_qs=question_qs,
+#                     fb_type=fb_type,
+#                     term_type=term_type,
+#                     year=year
+#                 )
+#
+#     else:
+#         context["error"] = "Log in First"
+#         return render(request, 'home_auth/index.html', context)
 
 # Download Report Views > End

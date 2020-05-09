@@ -100,6 +100,7 @@
                                                 <th class="text-center" scope="col">Subject Name</th>
                                                 <th class="text-center" scope="col">Subject Code</th>
                                                 <th class="text-center" scope="col">Department</th>
+                                                <th class="text-center" scope="col">Division</th>
                                                 <th class="text-center" scope="col">Semester</th>
                                                 <th class="text-center" scope="col">Assigned By</th>
                                                 <th class="text-center" scope="col">View Feedback</th>
@@ -111,6 +112,7 @@
                                                     <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.subject_name }}</td>
                                                     <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.subject_code }}</td>
                                                     <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.dept_id.dept_name }}</td>
+                                                    <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.div }}</td>
                                                     <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.semester }}</td>
                                                     <td class="text-center" style="vertical-align: middle;">
                                                         <span data-toggle="tooltip" title="{{ s.subject_id.dept_id.dept_name }}">{{ s.subject_id.dept_id.accronym }} HOD</span>
@@ -152,13 +154,16 @@
     <script src="{% static 'bower_components/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
     <script src="{% static 'bower_components/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
     <script src="{% static 'bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
-    <script src="{% static 'assets/pages/data-table/js/data-table-custom.js' %}"></script>
+{#    <script src="{% static 'assets/pages/data-table/js/data-table-custom.js' %}"></script>#}
 {% endblock extra_js %}
 <!-- Extra JS Block > End -->
 
 <!-- Custom JS Block > Start -->
 {% block custom_js %}
     <script type="text/javascript">
+
+        //Initializing datatable
+        $('#simpletable').DataTable();
 
         var year_option = {};
         var start_year = 2020;
@@ -198,7 +203,7 @@
                         }
                     })
                     if (year) {
-                        window.location = "{{ base_url }}" + "faculty/subjects/view-detailed-feedback/mid/" + subject_id + "/?year=" + year;
+                        window.location = "{% url 'faculty_subject_detailed_feedback' type='mid' sub_id=12345 fac_id=fac_id %}".replace(/12345/, subject_id.toString())  + "?year=" + year;
                     }
                 }
                 else if(result.dismiss === Swal.DismissReason.cancel) {
@@ -221,7 +226,7 @@
                         }
                     })
                     if (year) {
-                        window.location = "{{ base_url }}" + "faculty/subjects/view-detailed-feedback/end/" + subject_id + "/?year=" + year;
+                        window.location = "{% url 'faculty_subject_detailed_feedback' type='end' sub_id=12345 fac_id=fac_id %}".replace(/12345/, subject_id.toString())  + "?year=" + year;
                     }
                 }
             });
@@ -257,7 +262,7 @@
                         }
                     })
                     if (year) {
-                        window.location = "{{ base_url }}" + "faculty/subjects/view-average-feedback/mid/" + subject_id + "/?year=" + year;
+                        window.location = "{% url 'faculty_subject_average_feedback' type='mid' sub_id=12345 fac_id=fac_id %}".replace(/12345/, subject_id.toString())  + "?year=" + year;
                     }
                 }
                 else if(result.dismiss === Swal.DismissReason.cancel) {
@@ -280,7 +285,7 @@
                         }
                     })
                     if (year) {
-                        window.location = "{{ base_url }}" + "faculty/subjects/view-average-feedback/end/" + subject_id + "/?year=" + year;
+                        window.location = "{% url 'faculty_subject_average_feedback' type='end' sub_id=12345 fac_id=fac_id %}".replace(/12345/, subject_id.toString())  + "?year=" + year;
                     }
                 }
             });

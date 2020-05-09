@@ -17,9 +17,23 @@
 
 <!-- Logo Block > Start -->
 {% block logo %}
-    <a href="{% url 'faculty_dashboard' %}">
-        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
-    </a>
+    {% ifequal User_Role "HOD" %}
+        <a href="{% url 'hod_dashboard' %}">
+            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+        </a>
+    {% endifequal %}
+
+    {% ifequal User_Role "Principal" %}
+        <a href="{% url 'principal_dashboard' %}">
+            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+        </a>
+    {% endifequal %}
+
+    {% ifequal User_Role "Faculty" %}
+        <a href="{% url 'faculty_dashboard' %}">
+            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+        </a>
+    {% endifequal %}
 {% endblock logo %}
 <!-- Logo Block > End -->
 
@@ -34,11 +48,29 @@
                     <i class="feather icon-chevron-down"></i>
                 </div>
                 <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                    <li>
-                        <a href="{% url 'faculty_profile' %}">
-                            <i class="feather icon-user"></i> My Profile
-                        </a>
-                    </li>
+                    {% ifequal User_Role "HOD" %}
+                        <li>
+                            <a href="{% url 'hod_profile' %}">
+                                <i class="feather icon-user"></i> My Profile
+                            </a>
+                        </li>
+                    {% endifequal %}
+
+                    {% ifequal User_Role "Principal" %}
+                        <li>
+                            <a href="{% url 'principal_profile' %}">
+                                <i class="feather icon-user"></i> My Profile
+                            </a>
+                        </li>
+                    {% endifequal %}
+
+                    {% ifequal User_Role "Faculty" %}
+                        <li>
+                            <a href="{% url 'faculty_profile' %}">
+                                <i class="feather icon-user"></i> My Profile
+                            </a>
+                        </li>
+                    {% endifequal %}
                     <li>
                         <a href="{% url 'logout' %}">
                             <i class="feather icon-log-out"></i> Logout
@@ -79,7 +111,7 @@
                             </div>
                         </div>
                         <div class="col-sm-8 col-md-8 col-lg-8">
-                            <form action="{% url 'faculty_subject_average_feedback' type=fb_type sub_id=subject_obj.id %}" method="get">
+                            <form action="{% url 'faculty_subject_average_feedback' type=fb_type sub_id=subject_obj.id fac_id=faculty_obj.id %}" method="get">
                                 {% csrf_token %}
                                 <input type="hidden" id="year" name="year" value="{{ year }}">
                                 <input type="hidden" id="download" name="download" value="True">
@@ -87,9 +119,9 @@
                             </form>
                         </div>
                         <div class="col-sm-4 col-md-4 col-lg-4 d-flex justify-content-end">
-                            <a href="{% url 'faculty_assigned_subjects' %}" class="btn btn-round btn-outline-primary">
+                            <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-round btn-outline-primary">
                                 <i class="feather icon-arrow-left"></i>
-                                Back to Assigned Subject
+                                Back
                             </a>
                         </div>
                     </div>
@@ -106,34 +138,39 @@
                                        <div class="col-sm-6 d-flex justify-content-end">
                                            You can see all the question &nbsp; <a href="#questions_list_href" style="color: dodgerblue; font-size: inherit">here.</a>
                                        </div>
-                                       <div class="col-sm-12">
-                                           Total number of feedback : <b><span id="count"></span></b>
-                                       </div>
                                        <div class="col-sm-12 row m-t-10 m-b-10">
                                            <div class="col-sm-3 d-flex justify-content-end">
-                                               <b>Subject Name :</b>
+                                               Subject Name :
                                            </div>
                                            <div class="col-sm-3 d-flex justify-content-start">
-                                               {{ subject_obj.subject_name }}
+                                               <b>{{ subject_obj.subject_name }} ({{ subject_obj.subject_code }})</b>
                                            </div>
                                            <div class="col-sm-3 d-flex justify-content-end">
-                                               <b>Subject Code :</b>
+                                               Department :
                                            </div>
                                            <div class="col-sm-3 d-flex justify-content-start">
-                                               {{ subject_obj.subject_code }}
+                                                <b>{{ subject_obj.dept_id.dept_name }} (Div - {{ subject_obj.div }})</b>
                                            </div>
                                            <div class="col-sm-3 d-flex justify-content-end">
-                                               <b>Department :</b>
+                                               Semester :
                                            </div>
                                            <div class="col-sm-3 d-flex justify-content-start">
-                                               {{ subject_obj.dept_id.dept_name }}
+                                                <b>{{ subject_obj.semester }}</b>
                                            </div>
                                            <div class="col-sm-3 d-flex justify-content-end">
-                                               <b>Semester :</b>
+                                               Faculty :
                                            </div>
                                            <div class="col-sm-3 d-flex justify-content-start">
-                                               {{ subject_obj.semester }}
+                                               <b>{{ faculty_obj.name }}</b>
                                            </div>
+                                       </div>
+                                   </div>
+                                   <div class="row m-b-20" style="font-size: 12pt;">
+                                       <div class="col-sm-6 d-flex justify-content-center">
+                                           Overall Feedback : &nbsp;<b><span id="overall_feedback"></span></b>
+                                       </div>
+                                       <div class="col-sm-6 d-flex justify-content-center">
+                                           Total number of feedback : &nbsp;<b><span id="count"></span></b>
                                        </div>
                                    </div>
                                    <canvas id="myChart"></canvas>
@@ -192,12 +229,17 @@
         var colorNames = Object.keys(window.chartColors);
         var question_label = [];
         var data = [];
+        var sum = 0;
+        var div;
         {% for q in questions %}
             var counter = '{{ forloop.counter }}';
             var ind = "Q"+counter;
+            div = parseInt(counter);
             data.push(feedback[ind]);
+            sum += parseInt(feedback[ind]);
             question_label.push('Question : ' + '{{ forloop.counter }}');
         {% endfor %}
+        $('span#overall_feedback').html(((sum)/div).toFixed(2));
         var color = Chart.helpers.color;
 		var barChartData = {
 			labels: question_label,

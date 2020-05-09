@@ -1,7 +1,3 @@
-# TODO : News model need to be changed. News should be department specific.
-# TODO : Remove Course Exit Survey Tables.
-# TODO : optimize all models.
-# TODO : Take care of models.CASCADE field in every foriegn keys.
 from django.contrib.auth.models import (
     AbstractBaseUser,
     BaseUserManager,
@@ -183,6 +179,8 @@ class Principal(models.Model):
 class Departments(models.Model):
     dept_name = models.CharField(max_length=100)
     accronym = models.CharField(max_length=10, default=None)
+    is_mid_sem_live = models.BooleanField(default=True)
+    is_end_sem_live = models.BooleanField(default=True)
 
     def __str__(self):
         return self.dept_name
@@ -217,7 +215,8 @@ class Students(models.Model):
     )
     DIVISION = (
         (1, 1),
-        (2, 2)
+        (2, 2),
+        (3, 3)
     )
     enrollment_no = models.CharField(max_length=12, primary_key=True)
     first_name = models.CharField(max_length=255)
@@ -243,9 +242,15 @@ class Subjects(models.Model):
         (7, 7),
         (8, 8)
     )
+    DIVISION = (
+        (1, 1),
+        (2, 2),
+        (3, 3)
+    )
     subject_name = models.CharField(max_length=255)
     subject_code = models.CharField(max_length=10)
     dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE)
+    div = models.IntegerField(choices=DIVISION, default=1)
     semester = models.IntegerField(choices=SEMESTER, default=1)
     is_active = models.BooleanField(default=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -304,6 +309,7 @@ class End_Sem_Feedback_Answers(models.Model):
     Q9 = models.IntegerField(choices=RATINGS, default=0)
     Q10 = models.IntegerField(choices=RATINGS, default=0)
     remarks = models.TextField(null=True, default=None)
+    is_anonymous = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -355,6 +361,7 @@ class Mid_Sem_Feedback_Answers(models.Model):
     Q9 = models.IntegerField(choices=RATINGS, default=0)
     Q10 = models.IntegerField(choices=RATINGS, default=0)
     remarks = models.TextField(null=True, default=None)
+    is_anonymous = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -421,39 +428,39 @@ class Mid_Sem_Feedback_Answers(models.Model):
 #         return str(self.student_id) + str(self.survey_id)
 
 
-class Program_Exit_Survey_Questions(models.Model):
-    question_text = models.TextField()
-
-    def __str__(self):
-        return self.question_text
-
-
-class Program_Exit_Survey_Answers(models.Model):
-    RATINGS = (
-        (0, 0),
-        (1, 1),
-        (2, 2),
-        (3, 3),
-        (4, 4),
-        (5, 5)
-    )
-    student_id = models.ForeignKey(Students, to_field='enrollment_no', on_delete=models.CASCADE)
-    dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE)
-    Q1 = models.IntegerField(choices=RATINGS, default=0)
-    Q2 = models.IntegerField(choices=RATINGS, default=0)
-    Q3 = models.IntegerField(choices=RATINGS, default=0)
-    Q4 = models.IntegerField(choices=RATINGS, default=0)
-    Q5 = models.IntegerField(choices=RATINGS, default=0)
-    Q6 = models.IntegerField(choices=RATINGS, default=0)
-    Q7 = models.IntegerField(choices=RATINGS, default=0)
-    Q8 = models.IntegerField(choices=RATINGS, default=0)
-    Q9 = models.IntegerField(choices=RATINGS, default=0)
-    Q10 = models.IntegerField(choices=RATINGS, default=0)
-    remarks = models.TextField(null=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return str(self.student_id)
+# class Program_Exit_Survey_Questions(models.Model):
+#     question_text = models.TextField()
+#
+#     def __str__(self):
+#         return self.question_text
+#
+#
+# class Program_Exit_Survey_Answers(models.Model):
+#     RATINGS = (
+#         (0, 0),
+#         (1, 1),
+#         (2, 2),
+#         (3, 3),
+#         (4, 4),
+#         (5, 5)
+#     )
+#     student_id = models.ForeignKey(Students, to_field='enrollment_no', on_delete=models.CASCADE)
+#     dept_id = models.ForeignKey(Departments, to_field='id', on_delete=models.CASCADE)
+#     Q1 = models.IntegerField(choices=RATINGS, default=0)
+#     Q2 = models.IntegerField(choices=RATINGS, default=0)
+#     Q3 = models.IntegerField(choices=RATINGS, default=0)
+#     Q4 = models.IntegerField(choices=RATINGS, default=0)
+#     Q5 = models.IntegerField(choices=RATINGS, default=0)
+#     Q6 = models.IntegerField(choices=RATINGS, default=0)
+#     Q7 = models.IntegerField(choices=RATINGS, default=0)
+#     Q8 = models.IntegerField(choices=RATINGS, default=0)
+#     Q9 = models.IntegerField(choices=RATINGS, default=0)
+#     Q10 = models.IntegerField(choices=RATINGS, default=0)
+#     remarks = models.TextField(null=True)
+#     timestamp = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self):
+#         return str(self.student_id)
 
 
 class Committees(models.Model):

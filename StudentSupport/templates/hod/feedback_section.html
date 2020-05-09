@@ -1,0 +1,329 @@
+{% extends 'Base/base.html' %}
+{% load static %}
+<!-- Title block > Start -->
+{% block title %}
+    {{ fb_type|capfirst }} Semester Average Feedback
+{% endblock title %}
+<!-- Title block > End -->
+
+<!-- Extra CSS Block > Start -->
+{% block extra_css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/font-awesome/css/font-awesome.min.css' %}">
+    <!-- Data Table Css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/data-table/css/buttons.dataTables.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css' %}">
+{% endblock extra_css %}
+<!-- Extra CSS Block > End -->
+
+<!-- Custom CSS Block > Start -->
+{% block custom_css %}
+{% endblock custom_css %}
+<!-- Custom CSS Block > End -->
+
+<!-- Modals Block > Start -->
+{% block modals %}
+{% endblock modals %}
+<!-- Modals Block > End -->
+
+<!-- Logo Block > Start -->
+{% block logo %}
+    {% ifequal User_Role "HOD" %}
+        <a href="{% url 'hod_dashboard' %}">
+            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+        </a>
+    {% endifequal %}
+
+    {% ifequal User_Role "Principal" %}
+        <a href="{% url 'principal_dashboard' %}">
+            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+        </a>
+    {% endifequal %}
+{% endblock logo %}
+<!-- Logo Block > End -->
+
+<!-- Navbar Right menus block > Start -->
+{# everything inside <ul class="nav-right"> #}
+{% block nav_right %}
+    <ul class="nav-right">
+        <li class="user-profile header-notification">
+            <div class="dropdown-primary dropdown">
+                <div class="dropdown-toggle" data-toggle="dropdown">
+                    <span>{{ name }}</span>
+                    <i class="feather icon-chevron-down"></i>
+                </div>
+                <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
+                    {% ifequal User_Role "HOD" %}
+                        <li>
+                            <a href="{% url 'hod_profile' %}">
+                                <i class="feather icon-user"></i> Profile
+                            </a>
+                        </li>
+                    {% endifequal %}
+
+                    {% ifequal User_Role "Principal" %}
+                        <li>
+                            <a href="{% url 'principal_profile' %}">
+                                <i class="feather icon-user"></i> Profile
+                            </a>
+                        </li>
+                    {% endifequal %}
+
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="feather icon-log-out"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+{% endblock nav_right %}
+<!-- Navbar Right menus block > End -->
+
+
+<!-- Side Navigation bar Block > Start -->
+{% block side_bar %}
+{% endblock side_bar %}
+<!-- Side Navigation bar Block > End -->
+
+
+<!-- Main body block > Start -->
+{# for dashboard, everything in this tag - <div class="pcoded-content"> #}
+{# for others everything in this tag - <div class="pcoded-inner-content"> #}
+{% block main_body %}
+    <div class="pcoded-inner-content">
+        <div class="main-body">
+            <div class="page-wrapper">
+                 <div class="page-header">
+                    <div class="row align-items-end">
+                        <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
+                            <div class="page-header-title">
+                                <div class="d-inline">
+                                    <h3>{{ dept_name }} Department</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 col-md-12 col-lg-6 d-flex justify-content-center">
+                            <div class="page-header-title">
+                                <div class="d-inline">
+                                    <h3>{{ fb_type|capfirst }} Semester Average Feedback</h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-8 col-md-8 col-lg-8 m-t-20">
+                            {% ifequal User_Role "HOD" %}
+                                <a class="btn btn-outline-primary" href="{% url 'hod_subjectwise_average_feedback' type=fb_type dept_id=dept_id %}">View subjectwise feedback</a>
+                            {% endifequal %}
+
+                            {% ifequal User_Role "Principal" %}
+                                <a class="btn btn-outline-primary" href="{% url 'principal_subjectwise_average_feedback' type=fb_type dept_id=dept_id %}">View subjectwise feedback</a>
+                            {% endifequal %}
+
+                        </div>
+                        <div class="col-sm-4 d-flex justify-content-end">
+                            {% ifequal User_Role "HOD" %}
+                                <a class="btn btn-round btn-outline-primary" href="{% url 'hod_dashboard' %}">
+                                    <i class="feather icon-arrow-left"></i>
+                                    Back to Dashboard
+                                </a>
+                            {% endifequal %}
+
+                            {% ifequal User_Role "Principal" %}
+                                <a class="btn btn-round btn-outline-primary" href="{% url 'principal_dashboard' %}">
+                                    <i class="feather icon-arrow-left"></i>
+                                    Back to Dashboard
+                                </a>
+                            {% endifequal %}
+                        </div>
+                    </div>
+                </div>
+                <div class="page-body">
+                    <div class="row">
+                       <div class="col-sm-12" id="div1">
+                           <div class="card">
+                               <div class="card-block">
+                                   {% ifequal faculty_obj None %}
+                                        <div id="form">
+                                        {% ifequal User_Role "HOD" %}
+                                            <form action="{% url 'hod_feedback_section' type=fb_type dept_id=dept_id %}" method="post">
+                                        {% endifequal %}
+
+                                        {% ifequal User_Role "Principal" %}
+                                            <form action="{% url 'principal_feedback_section' type=fb_type dept_id=dept_id %}" method="post">
+                                        {% endifequal %}
+                                           {% csrf_token %}
+                                           <div class="form-group row">
+                                               <label for="term" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Term :</label>
+                                               <div class="col-md-4 col-lg-4">
+                                                   <select class="custom-select" name="term" id="term" style="width: 100%" required>
+                                                       <option value="0">Odd</option>
+                                                       <option value="1">Even</option>
+                                                   </select>
+                                               </div>
+                                               <label for="year" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Year:</label>
+                                               <div class="col-md-4 col-lg-4">
+                                                   <select class="custom-select" name="year" id="year" style="width: 100%;" required>
+                                                       <script type="text/javascript">
+                                                           var start_year = 2020;
+                                                           var current_year = new Date().getFullYear();
+                                                           for(var i=start_year;i<=current_year;++i) {
+                                                               document.write('<option value="'+ i +'">'+ i +'</option>');
+                                                           }
+                                                       </script>
+                                                   </select>
+                                               </div>
+                                           </div>
+                                           <div class="form-group row">
+                                               <label for="faculty" class="col-md-2 col-lg-2 col-form-label" style="font-weight: 900;">Select Faculty :</label>
+                                               <div class="col-md-4 col-lg-4">
+                                                   <select class="custom-select" name="faculty" id="faculty" style="width: 100%" required>
+                                                       <option value="" selected disabled>Select Faculty to view subjects</option>
+                                                       {% for f in dept_faculties %}
+                                                           <option value="{{ f.id }}">{{ f.name }}</option>
+                                                       {% endfor %}
+                                                   </select>
+                                               </div>
+                                               <div class="col-md-4 col-lg-4">
+                                                   <button type="submit" class="btn btn-outline-primary">View Subject</button>
+                                               </div>
+                                           </div>
+                                       </form>
+                                   </div>
+                                   {% endifequal %}
+
+                                    {% ifnotequal subjects None %}
+                                        <div class="row m-b-20">
+                                            <div class="col-sm-12 d-flex justify-content-center">
+                                                <div style="font-size: 14pt">
+                                                    Subjects List for {{ faculty_obj.name }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="dt-responsive table-responsive">
+                                            <table id="simpletable" class="table table-hover nowrap">
+                                                <thead>
+                                                <tr>
+                                                    <th class="text-center" scope="col">Subject Name</th>
+                                                    <th class="text-center" scope="col">Subject Code</th>
+                                                    <th class="text-center" scope="col">Department</th>
+                                                    <th class="text-center" scope="col">Division</th>
+                                                    <th class="text-center" scope="col">Semester</th>
+                                                    <th class="text-center" scope="col">Assigned By</th>
+                                                    <th class="text-center" scope="col">View Feedback</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {% for s in subjects %}
+                                                    <tr>
+                                                        <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.subject_name }}</td>
+                                                        <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.subject_code }}</td>
+                                                        <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.dept_id.dept_name }}</td>
+                                                        <td class="text-center" style="vertical-align: middle;">Division {{ s.subject_id.div }}</td>
+                                                        <td class="text-center" style="vertical-align: middle;">{{ s.subject_id.semester }}</td>
+                                                        <td class="text-center" style="vertical-align: middle;">
+                                                            <span data-toggle="tooltip" title="{{ s.subject_id.dept_id.dept_name }}">{{ s.subject_id.dept_id.accronym }} HOD</span>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <div class="btn-group btn-group-sm">
+                                                                <button type="button" class="btn_detailed btn btn-outline-info waves-effect waves-light" subject_id="{{ s.subject_id.id }}" style="float: none;margin: 5px;">
+                                                                    Detailed Feedback
+                                                                </button> <br />
+                                                                <button type="button" class="btn_average btn btn-outline-success waves-effect waves-light" subject_id="{{ s.subject_id.id }}" style="float: none;margin: 5px;">
+                                                                    Average Feedback
+                                                                </button>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    {% endifnotequal %}
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock main_body %}
+<!-- Main body block > End -->
+
+<!-- Extra JS Block > Start -->
+{% block extra_js %}
+    <script src="{% static 'assets/sweetalert/sweetalert2@9.js' %}"></script>
+    <!-- data-table js -->
+    <script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
+{% endblock extra_js %}
+<!-- Extra JS Block > End -->
+
+<!-- Custom JS Block > Start -->
+{% block custom_js %}
+    <script type="text/javascript">
+        //Enabling datatable
+        $('#simpletable').DataTable();
+
+        {% if error %}
+            Swal.fire({
+                title: "Error",
+                text: "{{ error }}",
+                dangerMode: true,
+                type: "error",
+            });
+        {% endif %}
+    </script>
+
+    <!-- Javascript for redirecting -->
+    <script type="text/javascript">
+        var faculty_id = '{{ faculty_obj.id }}';
+        $('button.btn_detailed').on('click', function (event) {
+            event.preventDefault();
+            var subject_id = parseInt($(this).attr('subject_id'));
+            var link;
+            {% ifequal User_Role "HOD" %}
+                link = "{% url 'hod_subject_detailed_feedback' type=fb_type sub_id=123 fac_id=456 %}" + "?year={{ year }}";
+            {% endifequal %}
+
+            {% ifequal User_Role "Principal" %}
+                link = "{% url 'principal_subject_detailed_feedback' type=fb_type sub_id=123 fac_id=456 %}" + "?year={{ year }}";
+            {% endifequal %}
+            var replace_obj = {
+                123:subject_id,
+                456:faculty_id
+            };
+            link = link.replace(/123|456/gi, function(matched){
+              return replace_obj[matched];
+            });
+            window.location = link;
+        });
+
+        $('button.btn_average').on('click', function (event) {
+            event.preventDefault();
+            var subject_id = parseInt($(this).attr('subject_id'));
+            var link;
+            {% ifequal User_Role "HOD" %}
+                link = "{% url 'hod_subject_average_feedback' type=fb_type sub_id=123 fac_id=456 %}" + "?year={{ year }}";
+            {% endifequal %}
+
+            {% ifequal User_Role "Principal" %}
+                link = "{% url 'principal_subject_average_feedback' type=fb_type sub_id=123 fac_id=456 %}" + "?year={{ year }}";
+            {% endifequal %}
+            var replace_obj = {
+                123:subject_id,
+                456:faculty_id
+            };
+            link = link.replace(/123|456/gi, function(matched){
+              return replace_obj[matched];
+            });
+            window.location = link;
+        });
+    </script>
+
+{% endblock custom_js %}
+<!-- Custom JS Block > End -->

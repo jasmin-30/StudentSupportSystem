@@ -16,6 +16,29 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, TableStyle, Spacer, Table, PageBreak
 
 
+# Function for getting queryset of feedback
+# input : faculty_obj : Faculty Object
+# input : subject_obj : Subject Object
+# fb_type : "mid" for mid semester feedback, "end" for end semester feedback
+# year : year for which feedback is required.
+def get_feedback_qs(faculty_obj, subject_obj, fb_type, year):
+    fb_type = fb_type.lower()
+    if fb_type == "mid":
+        feedback_qs = Mid_Sem_Feedback_Answers.objects.filter(
+            subject_id=subject_obj,
+            faculty_id=faculty_obj,
+            timestamp__year=year
+        )
+    elif fb_type == "end":
+        feedback_qs = End_Sem_Feedback_Answers.objects.filter(
+            subject_id=subject_obj,
+            faculty_id=faculty_obj,
+            timestamp__year=year
+        )
+
+    return feedback_qs
+
+
 # Function for getting question wise average feedback for all subject of perticular faculty.
 def serialize_feedback(feedback_qs, faculty_obj, semester_list):
     # feedback_distinct = feedback_qs.filter()
@@ -30,6 +53,8 @@ def serialize_feedback(feedback_qs, faculty_obj, semester_list):
         print(i.subject_id.id, i.subject_id.subject_name)
         tmp['subject_id'] = i.subject_id.id
         tmp['subject_name'] = i.subject_id.subject_name
+        tmp['subject_code'] = i.subject_id.subject_code
+        tmp['subject_semester'] = i.subject_id.semester
         feedback_distinct = feedback_qs.filter(subject_id_id=i.subject_id.id)
         div = feedback_distinct.count()
         if div > 0:
@@ -308,6 +333,17 @@ def serialize_detailed_feedback(feedback_qs):
             'q6': i.Q6, 'q7': i.Q7, 'q8': i.Q8, 'q9': i.Q9, 'q10': i.Q10,
             'remark': i.remarks
         }
+        if i.is_anonymous:
+            tmp['anonymous'] = 1
+            tmp['student_name'] = str(i.student_id.first_name) + " " + str(i.student_id.last_name)
+            tmp['student_enrollment'] = str(i.student_id.enrollment_no)
+            tmp['student_dept'] = str(i.student_id.dept_id.dept_name) + " (Div - " + str(i.student_id.div) + ")"
+
+        else:
+            tmp['anonymous'] = 0
+            tmp['student_name'] = "Anonymous"
+            tmp['student_enrollment'] = "Anonymous"
+            tmp['student_dept'] = "Anonymous"
         feedback_dict.append(tmp)
 
     print(feedback_dict)
@@ -331,6 +367,17 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
 
     path_to_file = os.getcwd() + "/logo.jpg"
 
+    data_list = []
+    label_list = []
+    sum = 0
+    for i in range(1, question_count + 1):
+        index = "Q" + str(i)
+        data_list.append(questionwise_ratings[index])
+        sum += questionwise_ratings[index]
+        label_list.append(("Question : " + str(i)))
+
+    overall = round((sum/question_count), 2)
+
     text1 = "Government Engineering College, Bhavnagar"
     text2 = fb_type + " Semester Feedback Report"
     text3 = "Term: " + term_type + " " + str(year)
@@ -339,7 +386,8 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
     text6 = str(fac_obj.name) + "( " + str(fac_obj.dept_id.accronym) + " Department )"
     text7 = "Subject Name: " + subject_obj.subject_name + " (" + subject_obj.subject_code + ")"
     text8 = "Semester: " + str(subject_obj.semester)
-    text9 = "Total Feedback: " + str(questionwise_ratings["count"])
+    text9 = "Total number of Feedback: " + str(questionwise_ratings["count"])
+    text10 = "Overall Feedback: " + str(overall)
 
     d = Drawing(400, 200)
     d.add(Image(0, 120, 100, 100, path_to_file))
@@ -352,19 +400,13 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
     d.add(String(30, 35, text6, fontSize=12, fillColor=colors.black))
     d.add(String(30, 20, text7, fontSize=12, fillColor=colors.black))
     d.add(String(380, 20, text8, fontSize=12, fillColor=colors.black))
-    d.add(String(22, -45, text9, fontSize=12, fillColor=colors.black))
+    d.add(String(22, -45, text10, fontSize=16, fillColor=colors.black))
+    d.add(String(300, -45, text9, fontSize=12, fillColor=colors.black))
 
     elements1.append(d)
 
     drawing = Drawing(400, 200)
     drawing.vAlign = 'CENTER'
-
-    data_list = []
-    label_list = []
-    for i in range(1, question_count + 1):
-        index = "Q" + str(i)
-        data_list.append(questionwise_ratings[index])
-        label_list.append(("Question : " + str(i)))
 
     data = []
     data.append(tuple(data_list))
@@ -450,7 +492,7 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
         dpie.add(pc)
         legend = Legend()
         legend.alignment = 'right'
-        legend.x = 160
+        legend.x = 145
         legend.y = 90
         legend.columnMaximum = 5
         legend.dxTextSpace = 4
@@ -545,6 +587,9 @@ def make_detailed_feedback_pdf(serialized_feedback, subject_obj, fac_obj, fb_typ
         text7 = "Subject Name: " + subject_obj.subject_name + " (" + subject_obj.subject_code + ")"
         text8 = "Semester: " + str(subject_obj.semester)
         text9 = "Date of Feedback: " + str(k['date'])
+        text10 = "Student Name: " + str(k['student_name'])
+        text11 = "Enrollment Number: " + str(k['student_enrollment'])
+        text12 = "Department: " + str(k['student_dept'])
 
         d = Drawing(400, 200)
         d.add(Image(0, 120, 100, 100, path_to_file))
@@ -557,7 +602,13 @@ def make_detailed_feedback_pdf(serialized_feedback, subject_obj, fac_obj, fb_typ
         d.add(String(30, 35, text6, fontSize=12, fillColor=colors.black))
         d.add(String(30, 20, text7, fontSize=12, fillColor=colors.black))
         d.add(String(380, 20, text8, fontSize=12, fillColor=colors.black))
-        d.add(String(22, -45, text9, fontSize=12, fillColor=colors.black))
+        if k['anonymous'] == 1:
+            d.add(String(30, -10, text10, fontSize=12, fillColor=colors.black))
+            d.add(String(300, -10, text11, fontSize=12, fillColor=colors.black))
+            d.add(String(30, -25, text12, fontSize=12, fillColor=colors.black))
+        d.add(String(300, -25, text9, fontSize=12, fillColor=colors.black))
+
+
 
         elements.append(d)
         elements.append(Spacer(500, 50))
@@ -565,10 +616,7 @@ def make_detailed_feedback_pdf(serialized_feedback, subject_obj, fac_obj, fb_typ
         fl = [["Sr No", "Questions", "Feedback"]]
         for i in range(1, question_count + 1):
             index = "q" + str(i)
-            ft = []
-            ft.append(i)
-            ft.append(question_qs[i - 1].question_text)
-            ft.append(k[index])
+            ft = [i, question_qs[i - 1].question_text, k[index]]
             fl.append(ft)
 
         # fl.append([11, 'Remarks', l[k][10]])

@@ -32,9 +32,23 @@
 
 <!-- Logo Block > Start -->
 {% block logo %}
-    <a href="{% url 'faculty_dashboard' %}">
-        <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
-    </a>
+    {% ifequal User_Role "HOD" %}
+        <a href="{% url 'hod_dashboard' %}">
+            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+        </a>
+    {% endifequal %}
+
+    {% ifequal User_Role "Principal" %}
+        <a href="{% url 'principal_dashboard' %}">
+            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+        </a>
+    {% endifequal %}
+
+    {% ifequal User_Role "Faculty" %}
+        <a href="{% url 'faculty_dashboard' %}">
+            <img class="img-fluid" src="{% static 'assets/images/logo.png' %}" alt="Student Support System">
+        </a>
+    {% endifequal %}
 {% endblock logo %}
 <!-- Logo Block > End -->
 
@@ -49,11 +63,29 @@
                     <i class="feather icon-chevron-down"></i>
                 </div>
                 <ul class="show-notification profile-notification dropdown-menu" data-dropdown-in="fadeIn" data-dropdown-out="fadeOut">
-                    <li>
-                        <a href="{% url 'faculty_profile' %}">
-                            <i class="feather icon-user"></i> My Profile
-                        </a>
-                    </li>
+                    {% ifequal User_Role "HOD" %}
+                        <li>
+                            <a href="{% url 'hod_profile' %}">
+                                <i class="feather icon-user"></i> My Profile
+                            </a>
+                        </li>
+                    {% endifequal %}
+
+                    {% ifequal User_Role "Principal" %}
+                        <li>
+                            <a href="{% url 'principal_profile' %}">
+                                <i class="feather icon-user"></i> My Profile
+                            </a>
+                        </li>
+                    {% endifequal %}
+
+                    {% ifequal User_Role "Faculty" %}
+                        <li>
+                            <a href="{% url 'faculty_profile' %}">
+                                <i class="feather icon-user"></i> My Profile
+                            </a>
+                        </li>
+                    {% endifequal %}
                     <li>
                         <a href="{% url 'logout' %}">
                             <i class="feather icon-log-out"></i> Logout
@@ -94,7 +126,7 @@
                             </div>
                         </div>
                         <div class="col-sm-8 col-md-8 col-lg-8">
-                            <form action="{% url 'faculty_subject_detailed_feedback' type=fb_type sub_id=subject_obj.id %}" method="get">
+                            <form action="{% url 'faculty_subject_detailed_feedback' type=fb_type sub_id=subject_obj.id fac_id=faculty_obj.id %}" method="get">
                                 {% csrf_token %}
                                 <input type="hidden" id="year" name="year" value="{{ year }}">
                                 <input type="hidden" id="download" name="download" value="True">
@@ -102,9 +134,9 @@
                             </form>
                         </div>
                         <div class="col-sm-4 col-md-4 col-lg-4 d-flex justify-content-end">
-                            <a href="{% url 'faculty_assigned_subjects' %}" class="btn btn-round btn-outline-primary">
+                            <a href="{{ request.META.HTTP_REFERER }}" class="btn btn-round btn-outline-primary">
                                 <i class="feather icon-arrow-left"></i>
-                                Back to Assigned Subject
+                                Back
                             </a>
                         </div>
                     </div>
@@ -117,36 +149,59 @@
                                 <div class="card-block">
                                     <div class="row">
                                         <div class="col-sm-3 d-flex justify-content-end">
-                                            <b>Subject Name :</b>
-                                        </div>
-                                        <div class="col-sm-3 d-flex justify-content-start">
-                                            {{ subject_obj.subject_name }}
-                                        </div>
-                                        <div class="col-sm-3 d-flex justify-content-end">
-                                            <b>Subject Code :</b>
-                                        </div>
-                                        <div class="col-sm-3 d-flex justify-content-start">
-                                            {{ subject_obj.subject_code }}
-                                        </div>
-                                        <div class="col-sm-3 d-flex justify-content-end">
-                                            <b>Department :</b>
-                                        </div>
-                                        <div class="col-sm-3 d-flex justify-content-start">
-                                            {{ subject_obj.dept_id.dept_name }}
-                                        </div>
-                                        <div class="col-sm-3 d-flex justify-content-end">
-                                            <b>Semester :</b>
-                                        </div>
-                                        <div class="col-sm-3 d-flex justify-content-start">
-                                            {{ subject_obj.semester }}
-                                        </div>
+                                               Subject Name :
+                                           </div>
+                                           <div class="col-sm-3 d-flex justify-content-start">
+                                               <b>{{ subject_obj.subject_name }} ({{ subject_obj.subject_code }})</b>
+                                           </div>
+                                           <div class="col-sm-3 d-flex justify-content-end">
+                                               Department :
+                                           </div>
+                                           <div class="col-sm-3 d-flex justify-content-start">
+                                                <b>{{ subject_obj.dept_id.dept_name }} (Div - {{ subject_obj.div }})</b>
+                                           </div>
+                                           <div class="col-sm-3 d-flex justify-content-end">
+                                               Semester :
+                                           </div>
+                                           <div class="col-sm-3 d-flex justify-content-start">
+                                                <b>{{ subject_obj.semester }}</b>
+                                           </div>
+                                           <div class="col-sm-3 d-flex justify-content-end">
+                                               Faculty :
+                                           </div>
+                                           <div class="col-sm-3 d-flex justify-content-start">
+                                               <b>{{ faculty_obj.name }}</b>
+                                           </div>
                                     </div>
                                     <nav class="p-20" aria-label="Page navigation example">
                                         <ul class="pagination d-flex justify-content-center">
                                         </ul>
                                     </nav>
                                     <div class="row p-b-10">
-                                        <div class="col-sm-6">Feedback Given Date: <b id="view_feedback_date"></b> </div>
+                                        <div class="col-sm-3 d-flex justify-content-end">
+                                            Student Name :
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-start">
+                                            <b id="view_feedback_student_name"></b>
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-end">
+                                            Enrollment No :
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-start">
+                                            <b id="view_feedback_student_enrollment"></b>
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-end">
+                                            Department :
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-start">
+                                            <b id="view_feedback_student_dept"></b>
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-end">
+                                            Feedback Given Date :
+                                        </div>
+                                        <div class="col-sm-3 d-flex justify-content-start">
+                                            <b id="view_feedback_date"></b>
+                                        </div>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover table-bordered">
@@ -258,6 +313,9 @@
             });
             $(document).find('textarea#view_feedback_remarks').val(feedback_list[page_no-1]['remark']);
             $(document).find('b#view_feedback_date').html(feedback_list[page_no-1]['date']);
+            $(document).find('b#view_feedback_student_name').html(feedback_list[page_no-1]['student_name']);
+            $(document).find('b#view_feedback_student_enrollment').html(feedback_list[page_no-1]['student_enrollment']);
+            $(document).find('b#view_feedback_student_dept').html(feedback_list[page_no-1]['student_dept']);
             $(document).find('ul.pagination li.step-'+ page_no +'').addClass('active');
         }
 

@@ -16,25 +16,35 @@ urlpatterns = [
     path('principal/profile/', views.PrincipalProfile, name='principal_profile'),
     path('edit-delete-committees/', views.EditCommittees, name="edit_committees"), # Only Principal Can Edit Committee
     path('principal/manage-department/', views.ManageDepartmentView, name='manage_department'),
-    path('principal/view-detailed-feedback/<int:id>/', views.DetailedFeedback, name='principal_detailed_feedback'),
-    path('principal/view-average-feedback/<int:id>/', views.AverageFeedback, name='principal_average_feedback'),
+    path('principal/feedback-section/<int:dept_id>/<str:type>/', views.Principal_FeedbackSection, name='principal_feedback_section'),
+# Below 2 views are for viewing feedback of assigned subject to hod
+    path('principal/view-detailed-feedback/<str:type>/<str:sub_id>/<int:fac_id>/', views.Principal_SubjectDetailedFeedback, name='principal_subject_detailed_feedback'),
+    path('principal/view-average-feedback/<str:type>/<str:sub_id>/<int:fac_id>/', views.Principal_SubjectAverageFeedback, name='principal_subject_average_feedback'),
+    # path('principal/view-detailed-feedback/<int:id>/', views.DetailedFeedback, name='principal_detailed_feedback'),
+    # path('principal/view-average-feedback/<int:id>/', views.AverageFeedback, name='principal_average_feedback'),
     path('principal/subjectwise-average-feedback/<str:type>/<int:dept_id>/', views.PrincipalSubjectwiseAverageFeedback, name='principal_subjectwise_average_feedback'),
     path('change-hod/', views.EditHOD, name='change_hod'),
-    path('principal/download-detailed-report/', views.DownloadDetailedReport, name='principal_download_detailed_report'),
-    path('principal/download-average-report/', views.DownloadAverageReport, name='principal_download_average_report'),
+    # path('principal/download-detailed-report/', views.DownloadDetailedReport, name='principal_download_detailed_report'),
+    # path('principal/download-average-report/', views.DownloadAverageReport, name='principal_download_average_report'),
     # Principal Related urls > End
 
     # HOD Related urls > Start
     path('hod/dashboard/', views.HodDashboard, name='hod_dashboard'),
     path('hod/profile/', views.HOD_Profile_View, name='hod_profile'),
+    # path('hod/assigned-subjects/', views.HOD_Assigned_subjects, name='hod_assigned_subjects'),
     path('hod/manage-department/', views.HOD_Manage_department, name='hod_manage_department'),
     path('hod/manage-news/', views.HODManageNews, name='hod_manage_news'),
     path('remove-faculty/', views.RemoveFaculty_AJAX, name='remove_faculty'),
     path('modify-subjects/', views.Modify_Subject_AJAX, name='ajax_modify_subject'),
     # this subject wise view will also be used in principal side.
-    path('hod/subjectwise-average-feedback/<str:type>/<int:dept_id>/', views.SubjectwiseAverageFeedback, name='hod_subjectwise_average_feedback'),
-    path('hod/view-detailed-feedback/<str:type>/', views.HodViewDetailedFeedback, name='hod_view_detailed_feedback'),
-    path('hod/view-average-feedback/<str:type>/', views.HodViewAverageFeedback, name='hod_view_average_feedback'),
+    path('hod/subjectwise-average-feedback/<str:type>/<int:dept_id>/', views.HODSubjectwiseAverageFeedback, name='hod_subjectwise_average_feedback'),
+    # Below 2 views are for viewing feedback of assigned subject to hod
+    path('hod/view-detailed-feedback/<str:type>/<str:sub_id>/<int:fac_id>/', views.HOD_SubjectDetailedFeedback, name='hod_subject_detailed_feedback'),
+    path('hod/view-average-feedback/<str:type>/<str:sub_id>/<int:fac_id>/', views.HOD_SubjectAverageFeedback, name='hod_subject_average_feedback'),
+    # Below view is for viewing feedback for all faculties
+    path('hod/feedback-section/<int:dept_id>/<str:type>/', views.HOD_FeedbackSection, name='hod_feedback_section'),
+    # path('hod/view-detailed-feedback/<str:type>/', views.HodViewDetailedFeedback, name='hod_view_detailed_feedback'),
+    # path('hod/view-average-feedback/<str:type>/', views.HodViewAverageFeedback, name='hod_view_average_feedback'),
     # HOD Related urls > End
 
     # Faculty Related urls > Start
@@ -42,10 +52,10 @@ urlpatterns = [
     path('faculty/profile/', views.FacultyProfile, name='faculty_profile'),
     path('faculty/assigned-subjects/', views.FacultyAssignedSubjects, name='faculty_assigned_subjects'),
     path('faculty/manage-news/', views.FacultyManageNews, name='faculty_manage_news'),
-    path('faculty/view-detailed-feedback/<str:type>/', views.FacultyViewDetailedFeedback, name='faculty_view_detailed_feedback'),
-    path('faculty/view-average-feedback/<str:type>/', views.FacultyViewAverageFeedback, name='faculty_view_average_feedback'),
-    path('faculty/subjects/view-detailed-feedback/<str:type>/<str:sub_id>/', views.SubjectDetailedFeedback, name='faculty_subject_detailed_feedback'),
-    path('faculty/subjects/view-average-feedback/<str:type>/<str:sub_id>/', views.SubjectAverageFeedback, name='faculty_subject_average_feedback'),
+    # path('faculty/view-detailed-feedback/<str:type>/', views.FacultyViewDetailedFeedback, name='faculty_view_detailed_feedback'),
+    # path('faculty/view-average-feedback/<str:type>/', views.FacultyViewAverageFeedback, name='faculty_view_average_feedback'),
+    path('faculty/view-detailed-feedback/<str:type>/<str:sub_id>/<int:fac_id>/', views.Faculty_SubjectDetailedFeedback, name='faculty_subject_detailed_feedback'),
+    path('faculty/view-average-feedback/<str:type>/<str:sub_id>/<int:fac_id>/', views.Faculty_SubjectAverageFeedback, name='faculty_subject_average_feedback'),
     # Faculty Related urls > End
 
     # Student Related urls > Start
@@ -57,7 +67,6 @@ urlpatterns = [
     # Student Related urls > End
 
     # Committee Related urls > Start
-    # path('committee/<str:committee>/', views.CommitteeDashboard, name='committee_dashboard'),
     path('committee/chairperson/dashboard/<int:com_id>/', views.CommitteeChairpersonDashboard, name='chaiperson_dashboard'),
     path('committee/chairperson/members/<int:com_id>/', views.CommitteeManageMembers, name='manage_members'),
     path('committee/dashboard/<int:com_id>/', views.CommitteeMemberDashboard, name='member_dashboard'),
@@ -65,14 +74,15 @@ urlpatterns = [
     # Committee Related urls > End
 
     # Feedback Ajax Endpoints url > Start
-    path('get-average-feedback/', views.GetAverageFeedback, name='get_average_feedback'),
+    # path('get-average-feedback/', views.GetAverageFeedback, name='get_average_feedback'),
     path('get-subjectwise-average-feedback/', views.GetSubjectwiseAverageFeedback, name='get_subjectwise_average_feedback'),
-    path('get-all-feedback/', views.GetAllFeedback, name='get_all_feedback'),
+    # path('get-all-feedback/', views.GetAllFeedback, name='get_all_feedback'),
     # Feedback Ajax Endpoints url > End
 
     # Download Report > Start
-    path('download/detailed-feedback/<str:type>/', views.DownloadDetailedFeedback, name='download_detailed_feedback'),
-    path('download/average-feedback/<str:type>/', views.DownloadAverageFeedback, name='download_average_feedback'),
+    # path('download/detailed-feedback/<str:type>/', views.DownloadDetailedFeedback, name='download_detailed_feedback'),
+    # path('download/average-feedback/<str:type>/', views.DownloadAverageFeedback, name='download_average_feedback'),
     # Download Report > End
+
 
 ]

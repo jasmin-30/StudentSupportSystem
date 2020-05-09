@@ -185,7 +185,7 @@
                                                         var btn_class = ['btn-outline-info', 'btn-outline-primary', 'btn-outline-danger'];
                                                         var index = parseInt('{{ forloop.counter }}') % 3;
                                                         var html = '<i class="feather icon-monitor st-icon '+ icon_color[index] +' txt-lite-color"></i>';
-                                                        html += '<div class="text-left"><button type="button" dept_id="{{ i.id }}" class="btn btn-round '+ btn_class[index] +'">View Feedback</button></div>';
+                                                        html += '<div class="text-left"><button type="button" dept_id="{{ i.id }}" class="btn_view btn btn-round '+ btn_class[index] +'">View Feedback</button></div>';
                                                         document.write(html);
                                                     </script>
                                                 </div>
@@ -213,34 +213,32 @@
 {% block custom_js %}
     <script type="text/javascript">
         $(document).ready(function () {
-            $(document).on('click', '.btn', function (event) {
+            $(document).on('click', '.btn_view', function (event) {
                 event.preventDefault();
                 var dept_id = $(this).attr('dept_id');
                 swal({
                     title: "Select Feedback Type",
                     buttons: {
-                        detailed: {
-                            text: "Detailed Feedback",
-                            value: "detailed",
+                        mid: {
+                            text: "Mid Semester Feedback",
+                            value: "mid",
                         },
-                        average: {
-                            text: "Average Feedback",
-                            value: "average",
+                        end: {
+                            text: "End Semester Feedback",
+                            value: "end",
                         },
                     },
                 })
                 .then((value) => {
                     switch (value) {
-                        case "detailed":
-                            window.location = "{{ base_url }}" + "principal/view-detailed-feedback/" + dept_id + "/";
+                        case "mid":
+                            window.location = "{% url 'principal_feedback_section' type="mid" dept_id=123 %}".replace(/123/, dept_id.toString());
                             break;
 
-                        case "average":
-                            window.location = "{{ base_url }}" + "principal/view-average-feedback/" + dept_id + "/";
+                        case "end":
+                            window.location = "{% url 'principal_feedback_section' type="end" dept_id=123 %}".replace(/123/, dept_id.toString());
                             break;
 
-                        default:
-                        swal("Error", "Please Select Feedback type", "error");
                   }
                 });
             });

@@ -70,51 +70,51 @@
                     </a>
                 </li>
                 <li class="">
-                    <a href="{% url 'faculty_assigned_subjects' %}">
+                    <a href="{% url 'faculty_assigned_subjects' %}" data-toggle="tooltip" title="You can see all the assigned subjects. Also you can see feedback for all the subject from here.">
                         <span class="pcoded-micon"><i class="feather icon-book"></i></span>
                         <span class="pcoded-mtext">Assigned Subjects</span>
                     </a>
                 </li>
-                <ul class="pcoded-item pcoded-left-item">
-                    <li class="pcoded-hasmenu">
-                        <a href="javascript:void(0)">
-                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                            <span class="pcoded-mtext">View Detailed Feedback</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            <li class=" ">
-                                <a href="{% url 'faculty_view_detailed_feedback' type="mid" %}">
-                                    <span class="pcoded-mtext">Mid Semester</span>
-                                </a>
-                            </li>
-                            <li class=" ">
-                                <a href="{% url 'faculty_view_detailed_feedback' type="end" %}">
-                                    <span class="pcoded-mtext">End Semester</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-                <ul class="pcoded-item pcoded-left-item">
-                    <li class="pcoded-hasmenu">
-                        <a href="javascript:void(0)">
-                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>
-                            <span class="pcoded-mtext">View Average Feedback</span>
-                        </a>
-                        <ul class="pcoded-submenu">
-                            <li class=" ">
-                                <a href="{% url 'faculty_view_average_feedback' type="mid" %}">
-                                    <span class="pcoded-mtext">Mid Semester</span>
-                                </a>
-                            </li>
-                            <li class=" ">
-                                <a href="{% url 'faculty_view_average_feedback' type="end" %}">
-                                    <span class="pcoded-mtext">End Semester</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+{#                <ul class="pcoded-item pcoded-left-item">#}
+{#                    <li class="pcoded-hasmenu">#}
+{#                        <a href="javascript:void(0)">#}
+{#                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>#}
+{#                            <span class="pcoded-mtext">View Detailed Feedback</span>#}
+{#                        </a>#}
+{#                        <ul class="pcoded-submenu">#}
+{#                            <li class=" ">#}
+{#                                <a href="{% url 'faculty_view_detailed_feedback' type="mid" %}">#}
+{#                                    <span class="pcoded-mtext">Mid Semester</span>#}
+{#                                </a>#}
+{#                            </li>#}
+{#                            <li class=" ">#}
+{#                                <a href="{% url 'faculty_view_detailed_feedback' type="end" %}">#}
+{#                                    <span class="pcoded-mtext">End Semester</span>#}
+{#                                </a>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                    </li>#}
+{#                </ul>#}
+{#                <ul class="pcoded-item pcoded-left-item">#}
+{#                    <li class="pcoded-hasmenu">#}
+{#                        <a href="javascript:void(0)">#}
+{#                            <span class="pcoded-micon"><i class="feather icon-pie-chart"></i></span>#}
+{#                            <span class="pcoded-mtext">View Average Feedback</span>#}
+{#                        </a>#}
+{#                        <ul class="pcoded-submenu">#}
+{#                            <li class=" ">#}
+{#                                <a href="{% url 'faculty_view_average_feedback' type="mid" %}">#}
+{#                                    <span class="pcoded-mtext">Mid Semester</span>#}
+{#                                </a>#}
+{#                            </li>#}
+{#                            <li class=" ">#}
+{#                                <a href="{% url 'faculty_view_average_feedback' type="end" %}">#}
+{#                                    <span class="pcoded-mtext">End Semester</span>#}
+{#                                </a>#}
+{#                            </li>#}
+{#                        </ul>#}
+{#                    </li>#}
+{#                </ul>#}
                 <li class="">
                     <a href="{% url 'faculty_manage_news' %}">
                         <span class="pcoded-micon"><i class="feather icon-layers"></i></span>
@@ -198,6 +198,12 @@
                                             </div>
                                         {% endfor %}
                                     </div>
+                                {% else %}
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            You are not assigned as chairperson of any committee.
+                                        </div>
+                                    </div>
                                 {% endif %}
 
                                 {% if not_part_of_any_committee == False %}
@@ -241,7 +247,14 @@
                                             </div>
                                         {% endfor %}
                                     </div>
+                                {% else %}
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            You are not Member of any committee.
+                                        </div>
+                                    </div>
                                 {% endif %}
+
                             </div>
 
                             <!-- Recent News -->
@@ -281,8 +294,7 @@
                                                     {% endfor %}
                                                     <!-- Repeat News Section ends here -->
                                                 {% else %}
-                                                    News Published by professors will be displayed here.<br />
-                                                    No News Published yet.
+                                                    No News Published in your department yet.
                                                 {% endif %}
                                             </ul>
                                         </div>

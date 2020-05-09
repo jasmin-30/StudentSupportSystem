@@ -164,6 +164,7 @@
                                 </div>
                                 <div class="card-block">
                                     <div class="table-responsive">
+                                    {% if news_count > 0 %}
                                         <table class="table table-hover">
                                             <thead>
                                             <tr>
@@ -211,6 +212,11 @@
                                             {% endfor %}
                                             </tbody>
                                         </table>
+                                    {% else %}
+                                        <div class="d-flex justify-content-center" style="font-size: 14pt; color: red;">
+                                            No news published by you.
+                                        </div>
+                                    {% endif %}
                                     </div>
                                 </div>
                             </div>

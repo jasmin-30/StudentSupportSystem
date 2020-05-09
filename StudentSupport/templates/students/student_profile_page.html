@@ -101,21 +101,52 @@
                                             <!-- Nav tabs -->
                                             <ul class="nav nav-tabs md-tabs tabs-left b-none" role="tablist">
                                                 <li class="nav-item">
-                                                    <a class="nav-link active" data-toggle="tab" href="#personaldetail" role="tab" style="font-size: 12pt; width: 180px;">Personal Details</a>
+                                                    <a class="nav-link active" id="personaldetail-tab" data-toggle="tab" href="#personaldetail" role="tab" aria-controls="personaldetail" aria-selected="true" style="font-size: 12pt; width: 180px;">Personal Details</a>
                                                     <div class="slide"></div>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a class="nav-link" data-toggle="tab" href="#academicdetail" role="tab" style="font-size: 12pt; width: 180px;">Academic Details</a>
+                                                    <a class="nav-link" id="academicdetail-tab" data-toggle="tab" href="#academicdetail" role="tab" aria-controls="academicdetail" aria-selected="false" style="font-size: 12pt; width: 180px;">Academic Details</a>
                                                     <div class="slide"></div>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a class="nav-link" data-toggle="tab" href="#changepassword" role="tab" style="font-size: 12pt; width: 180px;">Change Password</a>
+                                                    <a class="nav-link" id="changepassword-tab" data-toggle="tab" href="#changepassword" role="tab" aria-controls="changepassword" aria-selected="false" style="font-size: 12pt; width: 180px;">Change Password</a>
                                                     <div class="slide"></div>
                                                 </li>
                                             </ul>
                                             <!-- Tab panes -->
                                             <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
-                                                <div class="tab-pane active" id="personaldetail" role="tabpanel">
+                                                <div class="tab-pane fade" id="changepassword" role="tabpanel" aria-labelledby="changepassword-tab">
+                                                    <form method="post" action="{% url 'student_profile' %}">
+                                                        {% csrf_token %}
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="oldpwd">Old Password :</label>
+                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                                                <input type="password" class="form-control" id="oldpwd" name="oldpwd" required/>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="newpwd">New Password :</label>
+                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9" id="newpwd-div">
+                                                                <input type="password" class="form-control" id="newpwd" name="newpwd" minlength="6" maxlength="16" onblur="validate_password()" required/>
+                                                                <div id="Error_newpwd" style="display: none; color: red;"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="cnfrmpwd">Confirm Password :</label>
+                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9" id="cnfrmpwd-div">
+                                                                <input type="password" class="form-control" id="cnfrmpwd" name="cnfrmpwd" minlength="6" maxlength="16" onchange="verify_pwd()" onkeyup="verify_pwd()" onclick="verify_pwd()" required/>
+                                                                <div id="Error_cnfrmpwd" style="display: none; color: red;"></div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label"></label>
+                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                                                <button type="submit" class="btn btn-disabled" id="button-update" name="button-update" disabled>Update</button>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="tab-pane fade show active" id="personaldetail" role="tabpanel" aria-labelledby="personaldetail-tab">
                                                     <form action="{% url 'student_profile' %}" method="post">
                                                         {% csrf_token %}
                                                         <div class="form-group row">
@@ -145,7 +176,7 @@
                                                         </div>
                                                     </form>
                                                 </div>
-                                                <div class="tab-pane" id="academicdetail" role="tabpanel">
+                                                <div class="tab-pane fade" id="academicdetail" role="tabpanel" aria-labelledby="academicdetail-tab">
                                                     <div class="form-group row">
                                                         <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Enrollment No. :</label>
                                                         <div class="col-sm-8 col-md-10 col-lg-10" id="enrl-div">
@@ -158,6 +189,36 @@
                                                             <label class="col-form-label">{{ std_obj.dept_id.dept_name }}</label>
                                                         </div>
                                                     </div>
+
+                                                    <form action="{% url 'student_profile' %}" method="post">
+                                                        {% csrf_token %}
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-4 col-md-2 col-lg-2 col-form-label" style="padding: 6px 15px; font-weight:900;">Division :</label>
+                                                            <div class="col-sm-8 col-md-10 col-lg-10">
+                                                                <div class="row">
+                                                                    <div class=" col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3" id="division-div">
+                                                                        <label class="col-form-label">{{ std_obj.div }}</label>
+                                                                    </div>
+                                                                    <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                                                                        <div class="btn-toolbar" style="text-align: left;">
+                                                                            <div class="btn-group btn-group-sm" style="float: none;">
+                                                                                <button type="button" class="div-link-edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                    <span class="icofont icofont-ui-edit"></span>
+                                                                                </button>
+                                                                                <button type="submit" class="div-link-save btn btn-info waves-effect waves-light active" style="float: none;margin: 5px;">
+                                                                                    <span class="icofont icofont-ui-check"></span>
+                                                                                </button>
+                                                                                <button type="button" class="div-link-cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                    <span class="icofont icofont-ui-close"></span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </form>
+
                                                     <form action="{% url 'student_profile' %}" method="post">
                                                         {% csrf_token %}
                                                         <div class="form-group row">
@@ -170,10 +231,10 @@
                                                                     <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
                                                                         <div class="btn-toolbar" style="text-align: left;">
                                                                             <div class="btn-group btn-group-sm" style="float: none;">
-                                                                                <button type="button" class=" link-edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                <button type="button" class="link-edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
                                                                                     <span class="icofont icofont-ui-edit"></span>
                                                                                 </button>
-                                                                                <button type="submit" class=" link-save btn btn-info waves-effect waves-light active" style="float: none;margin: 5px;">
+                                                                                <button type="submit" class="link-save btn btn-info waves-effect waves-light active" style="float: none;margin: 5px;">
                                                                                     <span class="icofont icofont-ui-check"></span>
                                                                                 </button>
                                                                                 <button type="button" class="link-cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
@@ -183,37 +244,6 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </div>
-                                                <div class="tab-pane" id="changepassword" role="tabpanel">
-                                                    <form method="post" action="{% url 'student_profile' %}">
-                                                        {% csrf_token %}
-                                                        <div class="form-group row">
-                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="oldpwd">Old Password :</label>
-                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
-                                                                <input type="password" class="form-control" id="oldpwd" name="oldpwd" required/>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="newpwd">New Password :</label>
-                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9" id="newpwd-div">
-                                                                <input type="password" class="form-control" id="newpwd" name="newpwd" minlength="6" maxlength="16" onblur="validate_password()" required/>
-                                                                <div id="Error_newpwd" style="display: none; color: red;"></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label" style="padding: 6px 20px; font-weight:900;" for="cnfrmpwd">Confirm Password :</label>
-                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9" id="cnfrmpwd-div">
-                                                                <input type="password" class="form-control" id="cnfrmpwd" name="cnfrmpwd" minlength="6" maxlength="16" onchange="verify_pwd()" onkeyup="verify_pwd()" onclick="verify_pwd()" required/>
-                                                                <div id="Error_cnfrmpwd" style="display: none; color: red;"></div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="form-group row">
-                                                            <label class="col-sm-3 col-md-3 col-lg-3 col-xl-3 col-form-label"></label>
-                                                            <div class="col-sm-9 col-md-9 col-lg-9 col-xl-9">
-                                                                <button type="submit" class="btn btn-disabled" id="button-update" name="button-update" disabled>Update</button>
                                                             </div>
                                                         </div>
                                                     </form>
@@ -332,6 +362,47 @@
             link_cancel.hide();
             link_save.hide();
             link_edit.show();
+        });
+
+
+
+        // ============ For division field ====================
+        // For semester Field.
+        var div_link_cancel = $('button.div-link-cancel');
+        var div_link_save = $('button.div-link-save');
+        div_link_save.hide();
+        div_link_cancel.hide();
+        var div_link_edit = $('button.div-link-edit');
+        var div_tag = $('div#division-div');
+        var old_div_content;
+        function edit_div(event){
+            event.preventDefault();
+            old_div_content = div_tag.html();
+            var old_sem = div_tag.find('label').html();
+            var div_select = '<select class="custom-select" id="division" name="division" required>';
+            var i;
+            for(i=1;i<=3;i++) {
+                if(i == parseInt(old_sem)) {
+                    div_select += '<option value="'+ i +'" selected>Division '+ i +'</option>';
+                }
+                else {
+                    div_select += '<option value="'+ i +'">Division '+ i +'</option>';
+                }
+            }
+            div_select += '</select>';
+            div_tag.html(div_select);
+            div_link_edit.hide();
+            div_link_cancel.show();
+            div_link_save.show();
+        }
+        div_link_edit.on('click', edit_div);
+
+        $(document).on('click', 'button.div-link-cancel', function (event) {
+            event.preventDefault();
+            div_tag.html(old_div_content);
+            div_link_cancel.hide();
+            div_link_save.hide();
+            div_link_edit.show();
         });
     </script>
 

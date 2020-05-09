@@ -226,14 +226,15 @@
                                         <div id="Error_dept" style="display: none; color: red;"></div>
                                     </div>
                                 </div>
-                                <div class="form-group row" id="division-div" style="display: none;">
+                                <div class="form-group row" id="division-div">
                                     <label class="col-sm-4 col-form-label" for="division">Division : </label>
                                     <div class="col-sm-8">
                                         <select name="division" id="division" class="custom-select" required>
-                                            <option value="-1" disabled selected>Select Division</option>
                                             <option value="1">Division 1</option>
                                             <option value="2">Division 2</option>
+                                            <option value="3">Division 3</option>
                                         </select>
+                                        <p class="text-muted">If you are not told about dividion from department then let it be division 1.</p>
                                     </div>
                                 </div>
 
@@ -1014,19 +1015,5 @@
         {% endif %}
     </script>
     <!-- Messages Javascripts > Start -->
-
-    <!-- Javascript > Start -->
-    <script type="text/javascript">
-        $('select#dept').on('change', function (event) {
-            var val = $(this).val();
-            if(val == "{{ mech_dept_id }}") {
-                $('div#division-div').show();
-            }
-            else {
-                $('div#division-div').hide();
-            }
-        });
-    </script>
-    <!-- Javascript > End -->
 </body>
 </html>

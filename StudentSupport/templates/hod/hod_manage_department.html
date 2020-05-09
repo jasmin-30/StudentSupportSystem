@@ -8,9 +8,15 @@
 
 <!-- Extra CSS Block > Start -->
 {% block extra_css %}
+    <!-- Switch component css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/switchery/css/switchery.min.css' %}">
     <link rel="stylesheet" href="{% static 'bower_components/bootstrap-selectpicker/css_bootstrap-select.css' %}" />
     <!-- sweet alert framework -->
     <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+        <!-- Data Table Css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables.net-bs4/css/dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/data-table/css/buttons.dataTables.min.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css' %}">
 {% endblock extra_css %}
 <!-- Extra CSS Block > End -->
 
@@ -47,9 +53,20 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label class="col-sm-4 col-form-label" for="add_subject_division">Division : </label>
+                            <div class="col-sm-8">
+                                <select name="add_subject_division" id="add_subject_division" class="custom-select" style="width: 100%" required>
+                                    <option value="-1" disabled selected>Select Division</option>
+                                    <option value="1">Division 1</option>
+                                    <option value="2">Division 2</option>
+                                    <option value="3">Division 3</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label class="col-sm-4 col-form-label" for="add_subject_semester">Semester : </label>
                             <div class="col-sm-8">
-                                <select name="add_subject_semester" id="add_subject_semester" class="form-control" required>
+                                <select name="add_subject_semester" id="add_subject_semester" class="custom-select" style="width: 100%" required>
                                     <option value="-1" disabled selected>Select Semester</option>
                                     <option value="1">Sem 1</option>
                                     <option value="2">Sem 2</option>
@@ -167,24 +184,68 @@
                                             <!-- Nav tabs -->
                                             <ul class="nav nav-tabs md-tabs tabs-left b-none" role="tablist">
                                                 <li class="nav-item">
-                                                    <a class="nav-link active" data-toggle="tab" href="#faculties" role="tab" style="font-size: 12pt; width: 180px;">Faculties</a>
+                                                    <a class="nav-link active" id="feedbackStatus-tab" data-toggle="tab" href="#feedbackStatus" role="tab" aria-controls="feedbackStatus" aria-selected="true" style="font-size: 12pt; width: 180px;">Take Feedback</a>
                                                     <div class="slide"></div>
                                                 </li>
                                                 <li class="nav-item">
-                                                    <a class="nav-link" data-toggle="tab" href="#subjects" role="tab" style="font-size: 12pt; width: 180px;">Subjects</a>
+                                                    <a class="nav-link" id="faculties-tab" data-toggle="tab" href="#faculties" role="tab" aria-controls="faculties" aria-selected="false" style="font-size: 12pt; width: 180px;">Faculties</a>
+                                                    <div class="slide"></div>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a class="nav-link" id="subjects-tab" data-toggle="tab" href="#subjects" role="tab" aria-controls="subjects" aria-selected="false" style="font-size: 12pt; width: 180px;">Subjects</a>
                                                     <div class="slide"></div>
                                                 </li>
                                             </ul>
                                             <!-- Tab panes -->
-                                            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
-                                                <div class="tab-pane active" id="faculties" role="tabpanel">
+                                            <div class="col-sm-12 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
+                                                <div class="tab-pane fade show active" id="feedbackStatus" role="tabpanel" aria-labelledby="feedbackStatus-tab">
+                                                    <div class="row">
+                                                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                                            <h5>Make Feedback live for students.</h5>
+                                                        </div>
+                                                    </div>
+                                                    <div class="p-t-25 p-b-25">
+                                                        <form action="{% url 'hod_manage_department' %}" method="post" id="feedback_live_form">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="status" id="status" value="true">
+                                                            <div class="form-group row">
+                                                                <label class="col-sm-4 col-form-label" for="mid_sem_live">Make Mid Semester feedback live : </label>
+                                                                <div class="col-sm-8">
+                                                                    {% ifequal mid_live True %}
+                                                                        <input type="checkbox" id="mid_sem_live" name="mid_sem_live" checked>
+                                                                    {% else %}
+                                                                        <input type="checkbox" id="mid_sem_live" name="mid_sem_live">
+                                                                    {% endifequal %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <label class="col-sm-4 col-form-label" for="end_sem_live">Make End Semester feedback live : </label>
+                                                                <div class="col-sm-8">
+                                                                    {% ifequal end_live True %}
+                                                                        <input type="checkbox" id="end_sem_live" name="end_sem_live" checked>
+                                                                    {% else %}
+                                                                        <input type="checkbox" id="end_sem_live" name="end_sem_live">
+                                                                    {% endifequal %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="form-group row">
+                                                                <div class="col-sm-8 d-flex justify-content-center">
+                                                                    <button type="submit" class="btn btn-outline-primary">
+                                                                        Confirm
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="faculties" role="tabpanel" aria-labelledby="faculties-tab">
                                                     <div class="row">
                                                         <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                             <h5>List of all faculties registered in your Department</h5>
                                                         </div>
                                                     </div>
-                                                    <div class="table-responsive p-t-20">
-                                                        <table class="table table-hover">
+                                                    <div class="dt-responsive table-responsive p-t-20">
+                                                        <table id="simpletable" class="table table-hover">
                                                             <thead>
                                                                 <tr>
                                                                     <th scope="col">#</th>
@@ -194,148 +255,150 @@
                                                                 </tr>
                                                             </thead>
                                                             <tbody>
-                                                            {% for f in faculties %}
-                                                                {% ifnotequal f.auth_id request.user %}
-                                                                    <tr row_id="{{ f.id }}">
-                                                                        <th scope="row">
-                                                                            <div col_name="id">
-                                                                                {{ forloop.counter }}
-                                                                            </div>
-                                                                        </th>
-                                                                        <td>
-                                                                            <div col_name="name" id="name">
-                                                                                {{ f.name }}
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div col_name="email" id="email">
-                                                                                {{ f.auth_id.email }}
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <span class="btn_remove">
-                                                                                <div class="btn-toolbar" style="text-align: left;">
-                                                                                    <div class="btn-group btn-group-sm" style="float: none;">
-                                                                                        <button type="button" class="btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                            <span class="icofont icofont-ui-delete"></span>
-                                                                                        </button>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </span>
-                                                                        </td>
-                                                                    </tr>
-                                                                {% else %}
-                                                                    <tr row_id="{{ f.id }}">
-                                                                        <th scope="row">
-                                                                            <div col_name="id">
-                                                                                {{ forloop.counter }}
-                                                                            </div>
-                                                                        </th>
-                                                                        <td>
-                                                                            <div col_name="name" id="name">
-                                                                                {{ f.name }}
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div col_name="email" id="email">
-                                                                                {{ f.auth_id.email }}
-                                                                            </div>
-                                                                        </td>
-                                                                        <td>
-                                                                            <div class="label-main">
-                                                                                <label class="label label-lg label-primary">HOD</label>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                {% endifnotequal %}
-                                                            {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                                <div class="tab-pane" id="subjects" role="tabpanel">
-                                                    <div class="subject-data" style="display: block">
-                                                        <div class="row">
-                                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                                <h5>List of Subjects of Department</h5>
-                                                            </div>
-                                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                                <button type="button" class="btn btn-outline-primary f-right" data-toggle="modal" data-target="#add-subject-modal">
-                                                                    <i class="feather icon-plus"></i>
-                                                                    Add Subjects
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                        <div class="row">
-                                                            <div class="col-sm-12 col-md-12 col-lg-12 col-xl-12 table-responsive p-t-20">
-                                                                <table class="table table-hover">
-                                                                    <thead>
-                                                                        <tr>
-                                                                            <th scope="col">#</th>
-                                                                            <th scope="col">Subject Name</th>
-                                                                            <th scope="col">Subject Code</th>
-                                                                            <th scope="col">Semester</th>
-                                                                            <th scope="col">Teaching Faculty</th>
-                                                                            <th scope="col">Action</th>
-                                                                        </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                    {% for s in subjects %}
-                                                                        <tr row_id="{{ s.id }}">
+                                                                {% for f in faculties %}
+                                                                    {% ifnotequal f.auth_id request.user %}
+                                                                        <tr row_id="{{ f.id }}">
                                                                             <th scope="row">
-                                                                                <div col_name="subject_id" id="subject_id">
+                                                                                <div col_name="id">
                                                                                     {{ forloop.counter }}
                                                                                 </div>
                                                                             </th>
                                                                             <td>
-                                                                                <div class="subject_data" col_name="subject_name" id="subject_name">
-                                                                                    {{ s.name }}
+                                                                                <div col_name="name" id="name">
+                                                                                    {{ f.name }}
                                                                                 </div>
                                                                             </td>
                                                                             <td>
-                                                                                <div class="subject_data" col_name="subject_code" id="subject_code">
-                                                                                    {{ s.code }}
+                                                                                <div col_name="email" id="email">
+                                                                                    {{ f.auth_id.email }}
                                                                                 </div>
                                                                             </td>
                                                                             <td>
-                                                                                <div class="subject_data" col_name="subject_sem" id="subject_sem">
-                                                                                    {{ s.sem }}
-                                                                                </div>
-                                                                            </td>
-                                                                            <td>
-                                                                                <div class="subject_data" col_name="teaching_faculties" id="teaching_faculties" is_edited="0">
-                                                                                    {% for i in s.teaching_faculty %}
-                                                                                        <span class="faculty" fac_id="{{ i.faculty_id.id }}" fac_email="{{ i.faculty_id.auth_id.email }}">
-                                                                                            {{ i.faculty_id.name }} ({{ i.faculty_id.dept_id.accronym }})
-                                                                                        </span>
-                                                                                        <br/>
-                                                                                    {% endfor %}
-                                                                                </div>
-                                                                            </td>
-                                                                            <td>
-                                                                                <div class="btn-toolbar" style="text-align: left;">
-                                                                                    <div class="btn-group btn-group-sm" style="float: none;">
-                                                                                        <button type="button" class="btn_subject_edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                            <span class="icofont icofont-ui-edit"></span>
-                                                                                        </button>
-                                                                                        <button type="button" class="btn_subject_remove btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                            <span class="icofont icofont-ui-delete"></span>
-                                                                                        </button>
-                                                                                        <button type="button" class="btn_subject_save btn btn-primary waves-effect waves-light active" style="float: none;margin: 5px;">
-                                                                                            <span class="icofont icofont-ui-check"></span>
-                                                                                        </button>
-                                                                                        <button type="button" class="btn_subject_cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                            <span class="icofont icofont-ui-close"></span>
-                                                                                        </button>
+                                                                                <span class="btn_remove">
+                                                                                    <div class="btn-toolbar" style="text-align: left;">
+                                                                                        <div class="btn-group btn-group-sm" style="float: none;">
+                                                                                            <button type="button" class="btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                                <span class="icofont icofont-ui-delete"></span>
+                                                                                            </button>
+                                                                                        </div>
                                                                                     </div>
+                                                                                </span>
+                                                                            </td>
+                                                                        </tr>
+                                                                    {% else %}
+                                                                        <tr row_id="{{ f.id }}">
+                                                                            <th scope="row">
+                                                                                <div col_name="id">
+                                                                                    {{ forloop.counter }}
+                                                                                </div>
+                                                                            </th>
+                                                                            <td>
+                                                                                <div col_name="name" id="name">
+                                                                                    {{ f.name }}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div col_name="email" id="email">
+                                                                                    {{ f.auth_id.email }}
+                                                                                </div>
+                                                                            </td>
+                                                                            <td>
+                                                                                <div class="label-main">
+                                                                                    <label class="label label-lg label-primary">HOD</label>
                                                                                 </div>
                                                                             </td>
                                                                         </tr>
-                                                                    {% endfor %}
-                                                                    </tbody>
-                                                                </table>
-                                                            </div>
+                                                                    {% endifnotequal %}
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="subjects" role="tabpanel" aria-labelledby="subjects-tab">
+                                                    <div class="row">
+                                                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                                            <h5>List of Subjects of Department</h5>
                                                         </div>
+                                                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                                            <button type="button" class="btn btn-outline-primary f-right" data-toggle="modal" data-target="#add-subject-modal">
+                                                                <i class="feather icon-plus"></i>
+                                                                Add Subjects
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="dt-responsive table-responsive p-t-20">
+                                                        <table id="simpletable2" class="table table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">#</th>
+                                                                    <th scope="col">Subject Name</th>
+                                                                    <th scope="col">Subject Code</th>
+                                                                    <th scope="col">Division</th>
+                                                                    <th scope="col">Semester</th>
+                                                                    <th scope="col">Teaching Faculty</th>
+                                                                    <th scope="col">Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {% for s in subjects %}
+                                                                <tr row_id="{{ s.id }}">
+                                                                    <th scope="row">
+                                                                        <div col_name="subject_id" id="subject_id">
+                                                                            {{ forloop.counter }}
+                                                                        </div>
+                                                                    </th>
+                                                                    <td>
+                                                                        <div class="subject_data" col_name="subject_name" id="subject_name">
+                                                                            {{ s.name }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="subject_data" col_name="subject_code" id="subject_code">
+                                                                            {{ s.code }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="subject_data" col_name="subject_division" id="subject_division">
+                                                                            {{ s.div }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="subject_data" col_name="subject_sem" id="subject_sem">
+                                                                            {{ s.sem }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="subject_data" col_name="teaching_faculties" id="teaching_faculties" is_edited="0">
+                                                                            {% for i in s.teaching_faculty %}
+                                                                                <span class="faculty" fac_id="{{ i.faculty_id.id }}" fac_email="{{ i.faculty_id.auth_id.email }}">
+                                                                                    {{ i.faculty_id.name }} ({{ i.faculty_id.dept_id.accronym }})
+                                                                                </span>
+                                                                                <br/>
+                                                                            {% endfor %}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="btn-toolbar" style="text-align: left;">
+                                                                            <div class="btn-group btn-group-sm" style="float: none;">
+                                                                                <button type="button" class="btn_subject_edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                    <span class="icofont icofont-ui-edit"></span>
+                                                                                </button>
+                                                                                <button type="button" class="btn_subject_remove btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                    <span class="icofont icofont-ui-delete"></span>
+                                                                                </button>
+                                                                                <button type="button" class="btn_subject_save btn btn-primary waves-effect waves-light active" style="float: none;margin: 5px;">
+                                                                                    <span class="icofont icofont-ui-check"></span>
+                                                                                </button>
+                                                                                <button type="button" class="btn_subject_cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                    <span class="icofont icofont-ui-close"></span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            {% endfor %}
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
@@ -355,18 +418,41 @@
 
 <!-- Extra JS Block > Start -->
 {% block extra_js %}
+    <!-- Switch component js -->
+    <script type="text/javascript" src="{% static 'bower_components/switchery/js/switchery.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bower_components/bootstrap-selectpicker/js_bootstrap-select.js' %}"></script>
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+
+        <!-- data-table js -->
+    <script src="{% static 'bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-buttons/js/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-bs4/js/dataTables.bootstrap4.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-responsive/js/dataTables.responsive.min.js' %}"></script>
+    <script src="{% static 'bower_components/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js' %}"></script>
 {% endblock extra_js %}
 <!-- Extra JS Block > End -->
 
 <!-- Custom JS Block > Start -->
 {% block custom_js %}
+    <!-- Enabling Data tables -->
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#simpletable').DataTable();
+        $('#simpletable2').DataTable();
+    });
+    </script>
+
     <!-- Enabling Select Picker -->
     <script type="text/javascript">
         $(document).ready(function () {
             $('select.selectpicker').selectpicker();
+
+            var mid_live = document.querySelector('#mid_sem_live');
+	        var mid_switchery = new Switchery(mid_live, { color: '#4680ff', jackColor: '#fff' });
+
+	        var end_live = document.querySelector('#end_sem_live');
+	        var end_switchery = new Switchery(end_live, { color: '#4680ff', jackColor: '#fff' });
         });
     </script>
 
@@ -408,28 +494,43 @@
                 $(this).attr('original_entry', $(this).html().toString().trim());
                 if($(this).attr('col_name') == "subject_name") {
                     var value = $(this).html().toString().trim();
-                    var name_input = '<input class="form-control" id="new_subject_name" name="new_subject_name" value="'+value+'"></input>'
+                    var name_input = '<input class="form-control" id="new_subject_name" name="new_subject_name" value="'+value+'" style="width: inherit"></input>'
                     $(this).html(name_input);
                 }
                 else if($(this).attr('col_name') == "subject_code") {
                     var value = $(this).html().toString().trim();
-                    var code_input = '<input class="form-control" id="new_subject_code" name="new_subject_code" value="'+value+'"></input>'
+                    var code_input = '<input class="form-control" id="new_subject_code" name="new_subject_code" value="'+value+'" style="width: inherit"></input>'
                     $(this).html(code_input);
                 }
                 else if($(this).attr('col_name') == "subject_sem") {
                     var value = $(this).html().toString().trim();
-                    var sem_select = '<select class="form-control" name="new_subject_sem" id="new_subject_sem">';
+                    var sem_select = '<select class="custom-select" name="new_subject_sem" id="new_subject_sem">';
                     var i;
                     for(i=1;i<=8;++i){
                         if(i == value){
-                            sem_select += '<option value="'+i.toString()+'" selected>Sem '+i.toString()+'</option>';
+                            sem_select += '<option value="'+i.toString()+'" selected>'+i.toString()+'</option>';
                         }
                         else {
-                            sem_select += '<option value="'+i.toString()+'">Sem '+i.toString()+'</option>';
+                            sem_select += '<option value="'+i.toString()+'">'+i.toString()+'</option>';
                         }
                     }
                     sem_select += '</select>';
                     $(this).html(sem_select);
+                }
+                else if($(this).attr('col_name') == "subject_division") {
+                    var value = $(this).html().toString().trim();
+                    var div_select = '<select class="custom-select" name="new_subject_division" id="new_subject_division">';
+                    var i;
+                    for(i=1;i<=3;++i){
+                        if(i == value){
+                            div_select += '<option value="'+i.toString()+'" selected>'+i.toString()+'</option>';
+                        }
+                        else {
+                            div_select += '<option value="'+i.toString()+'">'+i.toString()+'</option>';
+                        }
+                    }
+                    div_select += '</select>';
+                    $(this).html(div_select);
                 }
                 else if($(this).attr('col_name') == "teaching_faculties") {
                     var spans = $(this).find('.faculty');
@@ -440,7 +541,7 @@
                         faculty_id[$(this).attr('fac_id')] = true;
                     });
 
-                    var select = '<select class="selectpicker form-control" id="new_teaching_faculties" name="new_teaching_faculties" multiple data-live-search="true" data-selected-text-format="count > 1" title="Select Teaching Faculty">';
+                    var select = '<div style="overflow: inherit;"><select class="selectpicker form-control" id="new_teaching_faculties" name="new_teaching_faculties" multiple data-live-search="true" data-selected-text-format="count > 1" data-container="body" title="Select Teaching Faculty" style="width: inherit;">';
                     {% for d in dept_faculties %}
                         select += '<optgroup label="{{ d.name }}">';
                         {% for f in d.faculties %}
@@ -454,7 +555,7 @@
                         {% endfor %}
                         select += '</optgroup>';
                     {% endfor %}
-                    select += '</select>';
+                    select += '</div></select>';
                     $(this).html(select);
                     $('select.selectpicker').selectpicker();
                 }
@@ -482,6 +583,7 @@
             var new_subject_name = tbl_row.find('[name=new_subject_name]').val();
             var new_subject_code = tbl_row.find('[name=new_subject_code]').val();
             var new_subject_sem = tbl_row.find('[name=new_subject_sem]').val();
+            var new_subject_division = tbl_row.find('[name=new_subject_division]').val();
             var new_teaching_faculties_id = tbl_row.find('[name=new_teaching_faculties]').val();
 
             //Ajax request
@@ -501,6 +603,7 @@
                         new_subject_name: new_subject_name,
                         new_subject_code: new_subject_code,
                         new_subject_sem: new_subject_sem,
+                        new_subject_division: new_subject_division,
                         new_teaching_faculties: new_teaching_faculties_id,
                         type: 'update'
                     },
@@ -522,6 +625,9 @@
                             }
                             else if($(this).attr('col_name') == 'subject_sem') {
                                 $(this).html(new_subject_sem);
+                            }
+                            else if($(this).attr('col_name') == 'subject_division') {
+                                $(this).html(new_subject_division);
                             }
                             else if($(this).attr('col_name') == 'teaching_faculties') {
                                 var faculty_id = new_teaching_faculties_id;
