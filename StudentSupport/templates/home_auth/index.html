@@ -117,16 +117,15 @@
                                 <input type="password" class="form-control" name="pwd" id="pwd" required>
                             </div>
                         </div>
-                        <div class="form-group row" id="role-div">
+                        <div class="form-group row">
                             <label class="col-sm-4 col-form-label" for="role">Role : </label>
                             <div class="col-sm-8">
-                                <select onblur="validate_role()" name="role" id="role" class="custom-select" required>
-                                    <option value="-1" selected disabled>Select Role</option>
+                                <select name="role" id="role" class="custom-select" required>
+                                    <option value="" selected disabled>Select Role</option>
                                     <option value="Student">Student</option>
                                     <option value="Faculty">Faculty</option>
                                     <option value="Principal">Principal</option>
                                 </select>
-                                <div id="Error_role" style="display: none; color: red;"></div>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -138,10 +137,9 @@
                             </div>
                         </div>
                         <div class="form-group row" style="padding-right: 15px; float:right;">
-                            <button class="btn btn-outline-disabled" id="button-sign-in" name="button-sign-in" onfocus="validate_signin()" onclick="validate_signin()" onmouseover="validate_signin()" onmouseenter="validate_signin()">
+                            <button class="btn btn-outline-primary" id="button-sign-in" name="button-sign-in">
                                 <i class="feather icon-check"></i> Sign in
                             </button>
-{#                            <input type="submit" value="Sign In" class="form-control submit btn btn-disabled" id="button-sign-in" name="button-sign-in" onfocus="validate_signin()" onclick="validate_signin()" onmouseover="validate_signin()" onmouseenter="validate_signin()">#}
                         </div>
                     </form>
                 </div>
@@ -174,48 +172,48 @@
                     <div class="tab-content modal-body">
                         <div class="tab-pane active" id="tab-student" role="tabpanel" aria-expanded="true">
                             <h5 class="m-b-20">Student Registration</h5>
-                            <form method="post" action="{% url 'register' %}">
+                            <form method="post" action="{% url 'register' %}" id="student_register">
                                 {% csrf_token %}
-                                <div class="form-group row" id="fname-div">
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="fname">First Name : </label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" onblur="validate_fname()" name="fname" id="fname" required>
-                                        <div id="Error_fname" style="display: none; color: red;"></div>
+                                        <input type="text" class="form-control" name="fname" id="fname" required>
+                                        <div id="Error_fname" style="color: red; display: none"></div>
                                     </div>
                                 </div>
-                                <div class="form-group row" id="lname-div">
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="lname">Last Name : </label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" onblur="validate_lname()" name="lname" id="lname" required>
-                                        <div id="Error_lname" style="display: none; color: red;"></div>
+                                        <input type="text" class="form-control" name="lname" id="lname" required>
+                                        <div id="Error_lname" style="color: red; display: none"></div>
                                     </div>
                                 </div>
-                                <div class="form-group row" id="emailid-div">
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="emailid">Email ID : </label>
                                     <div class="col-sm-8">
-                                        <input type="email" class="form-control" onblur="validate_email()" name="emailid" id="emailid" required>
-                                        <div id="Error_emailid" style="display: none; color: red;"></div>
+                                        <input type="email" class="form-control" name="emailid" id="emailid" required>
+                                        <div id="Error_emailid" style="color: red; display: none"></div>
                                     </div>
                                 </div>
-                                <div class="form-group row" id="password-div">
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="password">Password : </label>
                                     <div class="col-sm-8">
-                                        <input type="password" class="form-control" onblur="validate_password()" name="password" id="password" required>
-                                        <div id="Error_Pwd" style="display: none; color: red;"></div>
+                                        <input type="password" class="form-control" name="password" id="password" minlength="6" maxlength="16" requiured>
+                                        <div id="Error_password" style="color: red; display: none"></div>
                                     </div>
                                 </div>
-                                <div class="form-group row" id="enrollment-div">
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="enrollment">Enrollment No : </label>
                                     <div class="col-sm-8">
-                                        <input type="text" class="form-control" onblur="validate_enrollment()" name="enrollment" id="enrollment" maxlength="12" required>
-                                        <div id="Error_enrl" style="display: none; color: red;"></div>
+                                        <input type="text" class="form-control" name="enrollment" id="enrollment" minlength="12" maxlength="12" required>
+                                        <div id="Error_enrollment" style="color: red; display: none"></div>
                                     </div>
                                 </div>
-                                <div class="form-group row" id="dept-div">
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="dept">Department : </label>
                                     <div class="col-sm-8">
-                                        <select onblur="validate_dept()" name="dept" id="dept" class="custom-select" required>
-                                            <option value="-1" disabled selected>Select Department</option>
+                                        <select name="dept" id="dept" class="custom-select" required>
+                                            <option value="" disabled selected>Select Department</option>
                                             {% for i in dept %}
                                                 {% if i.accronym == "AM" or i.accronym == "GNRL" %}
                                                 {% else %}
@@ -223,13 +221,12 @@
                                                 {% endif %}
                                             {% endfor %}
                                         </select>
-                                        <div id="Error_dept" style="display: none; color: red;"></div>
                                     </div>
                                 </div>
-                                <div class="form-group row" id="division-div">
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="division">Division : </label>
                                     <div class="col-sm-8">
-                                        <select name="division" id="division" class="custom-select" required>
+                                        <select name="division" id="division" class="custom-select">
                                             <option value="1">Division 1</option>
                                             <option value="2">Division 2</option>
                                             <option value="3">Division 3</option>
@@ -238,10 +235,10 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group row" id="sem-div">
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="sem">Semester : </label>
                                     <div class="col-sm-8">
-                                        <select onblur="validate_sem()" name="sem" id="sem" class="custom-select" required>
+                                        <select name="sem" id="sem" class="custom-select" required>
                                             <option value="-1" disabled selected>Select Semester</option>
                                             <option value="1">Sem 1</option>
                                             <option value="2">Sem 2</option>
@@ -252,7 +249,6 @@
                                             <option value="7">Sem 7</option>
                                             <option value="8">Sem 8</option>
                                         </select>
-                                        <div id="Error_sem" style="display: none; color: red;"></div>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -263,8 +259,8 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="form-group row f-right" style="padding-right: 15px;">
-                                    <button type="submit" id="button-register" class="btn btn-block btn-outline-disabled" onfocus="validate_form()" onclick="validate_form()" onmouseover="validate_form()" onmouseenter="validate_form()">
+                                <div class="form-group row">
+                                    <button type="submit" id="button-register" class="btn btn-block btn-outline-primary">
                                         <i class="feather icon-check"></i>
                                         Register
                                     </button>
@@ -274,42 +270,41 @@
                         </div>
                         <div class="tab-pane" id="tab-faculty" role="tabpanel" aria-expanded="false">
                             <h5 class="m-b-20">Faculty Registration</h5>
-                            <form action="{% url 'register' %}" method="post">
+                            <form action="{% url 'register' %}" method="post" id="faculty_register">
                                 {% csrf_token %}
                                 <div class="form-group row" id="faculty-name-div">
                                     <label class="col-sm-4 col-form-label" for="faculty-name"> Name : </label>
                                     <div class="col-sm-8">
-                                        <input type="text" data-toggle="tooltip" title="It should contain First name, Initial of middle name and lastname such as 'Barry H. Allen'." onblur="validate_faculty_name()" class="form-control" name="faculty-name" id="faculty-name" required>
+                                        <input type="text" data-toggle="tooltip" title="It should contain First name, Initial of middle name and lastname such as 'Barry H. Allen'." class="form-control" name="faculty-name" id="faculty-name" required>
                                         <div id="Error_faculty-name" style="display: none; color: red;"></div>
                                     </div>
                                 </div>
-                                <div class="form-group row" id="faculty-emailid-div">
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="faculty-emailid">Email ID : </label>
                                     <div class="col-sm-8">
-                                        <input type="email" onblur="validate_faculty_email()" class="form-control" name="faculty-emailid" id="faculty-emailid" required>
+                                        <input type="email" class="form-control" name="faculty-emailid" id="faculty-emailid" required>
                                         <div id="Error_faculty-emailid" style="display: none; color: red;"></div>
                                     </div>
                                 </div>
-                                <div class="form-group row" id="faculty-password-div">
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="faculty-password">Password : </label>
                                     <div class="col-sm-8">
-                                        <input type="password" onblur="validate_faculty_password()" class="form-control" name="faculty-password" id="faculty-password" required>
+                                        <input type="password" class="form-control" name="faculty-password" id="faculty-password" minlength="6" maxlength="16" required>
                                         <div id="Error_faculty-password" style="display: none; color: red;"></div>
                                     </div>
                                 </div>
-                                <div class="form-group row" id="faculty-dept-div">
+                                <div class="form-group row">
                                     <label class="col-sm-4 col-form-label" for="faculty-dept">Department : </label>
                                     <div class="col-sm-8">
-                                        <select onblur="validate_faculty_dept()" name="faculty-dept" id="faculty-dept" class="custom-select" required>
-                                            <option value="-1" disabled selected>Select Department</option>
+                                        <select name="faculty-dept" id="faculty-dept" class="custom-select" required>
+                                            <option value="" disabled selected>Select Department</option>
                                             {% for i in dept %}
-                                                {% if i.accronym == "AM" or i.accronym == "GNRL" or i.accronym == "MECH1" or i.accronym == "MECH2" %}
+                                                {% if i.accronym == "AM" or i.accronym == "GNRL" %}
                                                 {% else %}
                                                     <option value="{{ i.id }}">{{ i.dept_name }}</option>
                                                 {% endif %}
                                             {% endfor %}
                                         </select>
-                                        <div id="Error_faculty-dept" style="display: none; color: red;"></div>
                                     </div>
                                 </div>
 
@@ -321,9 +316,8 @@
                                         </a>
                                     </div>
                                 </div>
-                                <div class="form-group row f-right" style="padding-right: 15px;">
-{#                                    <input type="submit" value="Register" id="button-faculty-register" class="form-control submit btn-disabled" onfocus="validate_faculty_form()" onclick="validate_faculty_form()" onmouseover="validate_faculty_form()" onmouseenter="validate_faculty_form()">#}
-                                    <button type="submit" id="button-faculty-register" class="btn btn-block btn-outline-disabled" onfocus="validate_faculty_form()" onclick="validate_faculty_form()" onmouseover="validate_faculty_form()" onmouseenter="validate_faculty_form()">
+                                <div class="form-group row">
+                                    <button type="submit" id="button-faculty-register" class="btn btn-block btn-outline-primary">
                                         <i class="feather icon-check"></i>
                                         Register
                                     </button>
@@ -692,298 +686,184 @@
     <script src="{% static 'assets/landing/js/main.js' %}"></script>
     <!-- sweet alert js -->
     <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
-    <!-- sweet alert modal.js initialize js -->
-
-    <!-- Sign in Validation Javascripts > Start -->
+    
     <script type="text/javascript">
-        function validate_role() {
-            var role = document.getElementById('role').value;
-            var tag = document.getElementById('Error_role');
-            if(role == -1){
-                tag.innerHTML = "Select Valid Role";
-                tag.style.display = 'block';
-                document.getElementById("role").classList.add("form-control-danger");
-                document.getElementById("role-div").classList.add("has-danger");
-                return false;
+        //Student Registration Validations
+        var valid_fname, valid_lname, valid_email, valid_password, valid_enrollment;
+        $('input#fname').on('blur', function () {
+            var val = $(this).val();
+            if(val == "") {
+                $('div#Error_fname')
+                    .html("Enter valid First Name")
+                    .show();
+                $(this).css('border-color', 'red');
+                valid_fname = 0;
             }
             else {
-                tag.style.display = 'none';
-                document.getElementById("role").classList.remove("form-control-danger");
-                document.getElementById("role-div").classList.remove("has-danger");
-                return true;
+                $('div#Error_fname').hide();
+                $(this).removeAttr('style');
+                valid_fname = 1;
             }
-        }
+        });
 
-        function validate_signin() {
-            var email = document.getElementById('email').value;
-            var pwd = document.getElementById('pwd').value;
-            var btn = document.getElementById('button-sign-in');
-            if(email != "" && pwd != "" && validate_role()){
-                btn.classList.remove('btn-outline-disabled');
-                btn.classList.add('btn-outline-primary');
-                $(btn).removeAttr('disabled');
-                //$(btn).attr('disabled', 'false');
-                //btn.disabled = false;
+        $('input#lname').on('blur', function () {
+            var val = $(this).val();
+            if(val == "") {
+                $('div#Error_lname')
+                    .html("Enter valid Last Name")
+                    .show();
+                $(this).css('border-color', 'red');
+                valid_lname = 0;
             }
             else {
-                btn.classList.remove('btn-outline-primary');
-                btn.classList.add('btn-outline-disabled');
-                $(btn).attr('disabled', 'true');
-                //btn.disabled = true;
+                $('div#Error_lname').hide();
+                $(this).removeAttr('style');
+                valid_lname = 1;
             }
-        }
-    </script>
-    <!-- Sign in Validation Javascripts > End -->
+        });
 
-    <!-- Student Signup Validation Javascripts > Start -->
-    <script type="text/javascript">
-        function validate_fname() {
-            var fname = document.getElementById('fname').value;
-            var tag = document.getElementById('Error_fname');
-            if(fname.length === 0){
-                tag.innerHTML = "Enter Valid First Name";
-                tag.style.display = 'block';
-                document.getElementById("fname").classList.add("form-control-danger");
-                document.getElementById("fname-div").classList.add("has-danger");
-                return false;
-            }
-            else {
-                tag.style.display = 'none';
-                document.getElementById("fname").classList.remove("form-control-danger");
-                document.getElementById("fname-div").classList.remove("has-danger");
-                return true;
-            }
-        }
-
-        function validate_lname() {
-            var lname = document.getElementById('lname').value;
-            var tag = document.getElementById('Error_lname');
-            if(lname.length === 0){
-                tag.innerHTML = "Enter Valid Last Name";
-                tag.style.display = 'block';
-                document.getElementById("lname").classList.add("form-control-danger");
-                document.getElementById("lname-div").classList.add("has-danger");
-                return false;
-            }
-            else {
-                tag.style.display = 'none';
-                document.getElementById("lname").classList.remove("form-control-danger");
-                document.getElementById("lname-div").classList.remove("has-danger");
-                return true;
-            }
-        }
+        $('input#emailid').on('blur', validate_email);
+        $('input#emailid').on('input', validate_email);
 
         function validate_email() {
-            var email = document.getElementById('emailid').value;
-            var tag = document.getElementById('Error_emailid');
-            var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-            if(re.test(email.toLowerCase())){
-                tag.style.display = 'none';
-                document.getElementById("emailid").classList.remove("form-control-danger");
-                document.getElementById("emailid-div").classList.remove("has-danger");
-                return true;
+            var val = $(this).val();
+            var re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if(re.test(val)) {
+                $('div#Error_emailid').hide();
+                $(this).removeAttr('style');
+                valid_email = 1;
             }
             else {
-                tag.innerHTML = "Enter Valid Email Address";
-                tag.style.display = 'block';
-                document.getElementById("emailid").classList.add("form-control-danger");
-                document.getElementById("emailid-div").classList.add("has-danger");
-                return false;
+                $('div#Error_emailid')
+                    .html("Enter valid Email Address")
+                    .show();
+                $(this).css('border-color', 'red');
+                valid_email = 0;
             }
-
         }
+
+        $('input#password').on('blur', validate_password);
+        $('input#password').on('input', validate_password);
 
         function validate_password() {
+            var val = $(this).val();
             var regularExpression = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[a-zA-Z!@#$%&? "])[a-zA-Z0-9!@#$%&?]{6,16}$/;
-            var pwd = document.getElementById("password").value;
-            var tag = document.getElementById("Error_Pwd");
-            if(regularExpression.test(pwd)){
-                tag.style.display = 'none';
-                document.getElementById("password").classList.remove("form-control-danger");
-                document.getElementById("password-div").classList.remove("has-danger");
-                document.getElementById("password").classList.add("form-control-success");
-                return true;
+            if(regularExpression.test(val)) {
+                $('div#Error_password').hide();
+                $(this).removeAttr('style');
+                valid_password = 1;
             }
             else {
-                tag.innerHTML = "Password must have at least one uppercase, one lowercase, one digit and one special character. Length of password is 6 to 16.";
-                tag.style.display = 'block';
-                document.getElementById("password").classList.add("form-control-danger");
-                document.getElementById("password-div").classList.add("has-danger");
-                return false;
+                $('div#Error_password')
+                    .html("Password must contain one upper case, one lower case, one digit and one special character.")
+                    .show();
+                $(this).css('border-color', 'red');
+                valid_password = 0;
             }
         }
+
+        $('input#enrollment').on('blur', validate_enrollment);
+        $('input#enrollment').on('input', validate_enrollment);
 
         function validate_enrollment() {
-            var enrl = document.getElementById("enrollment").value;
-            var tag = document.getElementById("Error_enrl");
-            if(enrl.length === 12){
-                tag.style.display = 'none';
-                document.getElementById("enrollment").classList.remove("form-control-danger");
-                document.getElementById("enrollment-div").classList.remove("has-danger");
-                //document.getElementById("enrollment").classList.add("form-control-success");
-                //document.getElementById("enrollment-div").classList.add("has-success");
-                return true;
+            var val = $(this).val();
+            var re = /\d{12}/;
+            if(re.test(val)) {
+                $('div#Error_enrollment').hide();
+                $(this).removeAttr('style');
+                valid_enrollment = 1;
             }
             else {
-                tag.innerHTML = "Length of enrollment number must be 12";
-                tag.style.display = 'block';
-                document.getElementById("enrollment").classList.add("form-control-danger");
-                document.getElementById("enrollment-div").classList.add("has-danger");
-                return false;
+                $('div#Error_enrollment')
+                    .html("Enrollment must be 12 character long.")
+                    .show();
+                $(this).css('border-color', 'red');
+                valid_enrollment = 0;
             }
         }
 
-        function validate_dept() {
-            var branch = document.getElementById('dept').value;
-            var tag = document.getElementById('Error_dept');
-            if(branch == -1) {
-                tag.innerHTML = "Select Valid Department.";
-                tag.style.display = 'block';
-                document.getElementById("dept").classList.add("form-control-danger");
-                document.getElementById("dept-div").classList.add("has-danger");
-                return false;
+        $('button#button-register').on('click', function (event) {
+            event.preventDefault();
+            if(valid_fname && valid_lname && valid_email && valid_password && valid_enrollment) {
+                $('#student_register').submit();
             }
             else {
-                tag.style.display = 'none';
-                document.getElementById("dept").classList.remove("form-control-danger");
-                document.getElementById("dept-div").classList.remove("has-danger");
-                return true;
+                alert("Please Fill details correctly.")
             }
-        }
+        });
 
-        function validate_sem() {
-            var sem = document.getElementById('sem').value;
-            var tag = document.getElementById('Error_sem');
-            if(sem == -1) {
-                tag.innerHTML = "Select Valid Semester.";
-                tag.style.display = 'block';
-                document.getElementById("sem").classList.add("form-control-danger");
-                document.getElementById("sem-div").classList.add("has-danger");
-                return false;
-            }
-            else {
-                tag.style.display = 'none';
-                document.getElementById("sem").classList.remove("form-control-danger");
-                document.getElementById("sem-div").classList.remove("has-danger");
-                return true;
-            }
-        }
+        //Faculty Registrations Validations
+        var valid_faculty_name, valid_faculty_email, valid_faculty_password;
+        $('input#faculty-name').on('blur', validate_faculty_name);
+        $('input#faculty-name').on('input', validate_faculty_name);
 
-        function validate_form() {
-            var btn = document.getElementById('button-register');
-            if(validate_fname() && validate_lname() && validate_email() && validate_password() && validate_enrollment() && validate_dept() && validate_sem()){
-                btn.classList.remove('btn-outline-disabled');
-                btn.classList.add('btn-outline-primary');
-                $(btn).removeAttr('disabled');
-                //$(btn).attr('disabled', 'false');
-                //btn.disabled = false;
-            }
-            else {
-                btn.classList.remove('btn-outline-primary');
-                btn.classList.add('btn-outline-disabled');
-                $(btn).attr('disabled', 'true');
-                //btn.disabled = true;
-            }
-        }
-    </script>
-    <!-- Student Signup Validation Javascripts > End -->
-
-    <!-- Faculty Signup Validation Javascripts > Start -->
-    <script type="text/javascript">
         function validate_faculty_name() {
-            var name = document.getElementById('faculty-name').value.toString();
-            var tag = document.getElementById('Error_faculty-name');
-            if(name.length === 0){
-                tag.innerHTML = "Enter Valid Name. It should contain First name, Initial of middle name and lastname such as 'Barry H. Allen' ";
-                tag.style.display = 'block';
-                document.getElementById("faculty-name").classList.add("form-control-danger");
-                document.getElementById("faculty-name-div").classList.add("has-danger");
-                return false;
+            var val = $(this).val();
+            var re = /[a-zA-Z]+\s{1}[a-zA-Z]+\s{1}[a-zA-Z]+/;
+            if(re.test(val)) {
+                $('div#Error_faculty-name').hide();
+                $(this).removeAttr('style');
+                valid_faculty_name = 1;
             }
             else {
-                tag.style.display = 'none';
-                document.getElementById("faculty-name").classList.remove("form-control-danger");
-                document.getElementById("faculty-name-div").classList.remove("has-danger");
-                return true;
+                $('div#Error_faculty-name')
+                    .html("Name must contain your first name, initial of middle name and last name.")
+                    .show();
+                $(this).css('border-color', 'red');
+                valid_faculty_name = 0;
             }
         }
+
+        $('input#faculty-emailid').on('blur', validate_faculty_email);
+        $('input#faculty-emailid').on('input', validate_faculty_email);
 
         function validate_faculty_email() {
-            var email = document.getElementById('faculty-emailid').value;
-            var tag = document.getElementById('Error_faculty-emailid');
-            var re = /^(([^<>()\[\]\.,;:\s@\"]+(\.[^<>()\[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-            if(re.test(email.toLowerCase())){
-                tag.style.display = 'none';
-                document.getElementById("faculty-emailid").classList.remove("form-control-danger");
-                document.getElementById("faculty-emailid-div").classList.remove("has-danger");
-                return true;
+            var val = $(this).val();
+            var re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if(re.test(val)) {
+                $('div#Error_faculty-emailid').hide();
+                $(this).removeAttr('style');
+                valid_faculty_email = 1;
             }
             else {
-                tag.innerHTML = "Enter Valid Email Address";
-                tag.style.display = 'block';
-                document.getElementById("faculty-emailid").classList.add("form-control-danger");
-                document.getElementById("faculty-emailid-div").classList.add("has-danger");
-                return false;
+                $('div#Error_faculty-emailid')
+                    .html("Enter valid Email Address")
+                    .show();
+                $(this).css('border-color', 'red');
+                valid_faculty_email = 0;
             }
-
         }
+
+        $('input#faculty-password').on('blur', validate_faculty_password);
+        $('input#faculty-password').on('input', validate_faculty_password);
 
         function validate_faculty_password() {
+            var val = $(this).val();
             var regularExpression = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[a-zA-Z!@#$%&? "])[a-zA-Z0-9!@#$%&?]{6,16}$/;
-            var pwd = document.getElementById("faculty-password").value;
-            var tag = document.getElementById("Error_faculty-password");
-            if(regularExpression.test(pwd)){
-                tag.style.display = 'none';
-                document.getElementById("faculty-password").classList.remove("form-control-danger");
-                document.getElementById("faculty-password-div").classList.remove("has-danger");
-                document.getElementById("faculty-password").classList.add("form-control-success");
-                return true;
+            if(regularExpression.test(val)) {
+                $('div#Error_faculty-password').hide();
+                $(this).removeAttr('style');
+                valid_faculty_password = 1;
             }
             else {
-                tag.innerHTML = "Password must have at least one uppercase, one lowercase, one digit and one special character. Length of password is 6 to 16.";
-                tag.style.display = 'block';
-                document.getElementById("faculty-password").classList.add("form-control-danger");
-                document.getElementById("faculty-password-div").classList.add("has-danger");
-                return false;
+                $('div#Error_faculty-password')
+                    .html("Password must contain one upper case, one lower case, one digit and one special character.")
+                    .show();
+                $(this).css('border-color', 'red');
+                valid_faculty_password = 0;
             }
         }
 
-        function validate_faculty_dept() {
-            var branch = document.getElementById('faculty-dept').value;
-            var tag = document.getElementById('Error_faculty-dept');
-            if(branch == -1) {
-                tag.innerHTML = "Select Valid Department.";
-                tag.style.display = 'block';
-                document.getElementById("faculty-dept").classList.add("form-control-danger");
-                document.getElementById("faculty-dept-div").classList.add("has-danger");
-                return false;
+        $('button#button-faculty-register').on('click', function (event) {
+            event.preventDefault();
+            if(valid_faculty_name && valid_faculty_email && valid_faculty_password) {
+                $('#faculty_register').submit();
             }
             else {
-                tag.style.display = 'none';
-                document.getElementById("faculty-dept").classList.remove("form-control-danger");
-                document.getElementById("faculty-dept-div").classList.remove("has-danger");
-                return true;
+                alert("Please Fill details correctly.")
             }
-        }
-
-        function validate_faculty_form() {
-            var btn = document.getElementById('button-faculty-register');
-            if(validate_faculty_name() && validate_faculty_email() && validate_faculty_password() && validate_faculty_dept()){
-                btn.classList.remove('btn-outline-disabled');
-                btn.classList.add('btn-outline-primary');
-                $(btn).removeAttr('disabled');
-                //btn.disabled = false;
-            }
-            else {
-                btn.classList.remove('btn-outline-primary');
-                btn.classList.add('btn-outline-disabled');
-                $(btn).attr('disabled', 'true');
-                //btn.disabled = true;
-            }
-        }
-
+        });
     </script>
-    <!-- Faculty Signup Validation Javascripts > End -->
 
     <!-- Messages Javascripts > Start -->
     <script type="text/javascript">
