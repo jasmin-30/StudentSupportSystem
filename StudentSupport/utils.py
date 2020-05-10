@@ -13,7 +13,8 @@ from reportlab.lib import colors
 from reportlab.lib.formatters import DecimalFormatter
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, TableStyle, Spacer, Table, PageBreak
+from reportlab.platypus import SimpleDocTemplate, TableStyle, Spacer, Table, PageBreak, Paragraph
+from reportlab.lib.styles import getSampleStyleSheet
 
 
 # Function for getting queryset of feedback
@@ -40,60 +41,60 @@ def get_feedback_qs(faculty_obj, subject_obj, fb_type, year):
 
 
 # Function for getting question wise average feedback for all subject of perticular faculty.
-def serialize_feedback(feedback_qs, faculty_obj, semester_list):
-    # feedback_distinct = feedback_qs.filter()
-    subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=faculty_obj,
-                                                           subject_id__semester__in=semester_list)
-    ratings = []
-    for i in subject_qs:
-        tmp = {
-            'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0, 'Q5': 0,
-            'Q6': 0, 'Q7': 0, 'Q8': 0, 'Q9': 0, 'Q10': 0,
-        }
-        print(i.subject_id.id, i.subject_id.subject_name)
-        tmp['subject_id'] = i.subject_id.id
-        tmp['subject_name'] = i.subject_id.subject_name
-        tmp['subject_code'] = i.subject_id.subject_code
-        tmp['subject_semester'] = i.subject_id.semester
-        feedback_distinct = feedback_qs.filter(subject_id_id=i.subject_id.id)
-        div = feedback_distinct.count()
-        if div > 0:
-            for j in feedback_distinct:
-                # getting sum of all the feedback.
-                tmp['Q1'] += j.Q1
-                tmp['Q2'] += j.Q2
-                tmp['Q3'] += j.Q3
-                tmp['Q4'] += j.Q4
-                tmp['Q5'] += j.Q5
-                tmp['Q6'] += j.Q6
-                tmp['Q7'] += j.Q7
-                tmp['Q8'] += j.Q8
-                tmp['Q9'] += j.Q9
-                tmp['Q10'] += j.Q10
-
-            # calculating average of all the feedback
-            tmp['Q1'] = round((tmp['Q1'] / div), 2)
-            tmp['Q2'] = round((tmp['Q2'] / div), 2)
-            tmp['Q3'] = round((tmp['Q3'] / div), 2)
-            tmp['Q4'] = round((tmp['Q4'] / div), 2)
-            tmp['Q5'] = round((tmp['Q5'] / div), 2)
-            tmp['Q6'] = round((tmp['Q6'] / div), 2)
-            tmp['Q7'] = round((tmp['Q7'] / div), 2)
-            tmp['Q8'] = round((tmp['Q8'] / div), 2)
-            tmp['Q9'] = round((tmp['Q9'] / div), 2)
-            tmp['Q10'] = round((tmp['Q10'] / div), 2)
-            tmp['count'] = div
-
-        else:
-            # It is for that subjects whose feedback has not been submitted yet.
-            tmp['count'] = div
-            pass
-
-        # appending tmp dictionary into rating list
-        ratings.append(tmp)
-
-    # Returning ratings object
-    return ratings
+# def serialize_feedback(feedback_qs, faculty_obj, semester_list):
+#     # feedback_distinct = feedback_qs.filter()
+#     subject_qs = Subject_to_Faculty_Mapping.objects.filter(faculty_id=faculty_obj,
+#                                                            subject_id__semester__in=semester_list)
+#     ratings = []
+#     for i in subject_qs:
+#         tmp = {
+#             'Q1': 0, 'Q2': 0, 'Q3': 0, 'Q4': 0, 'Q5': 0,
+#             'Q6': 0, 'Q7': 0, 'Q8': 0, 'Q9': 0, 'Q10': 0,
+#         }
+#         print(i.subject_id.id, i.subject_id.subject_name)
+#         tmp['subject_id'] = i.subject_id.id
+#         tmp['subject_name'] = i.subject_id.subject_name
+#         tmp['subject_code'] = i.subject_id.subject_code
+#         tmp['subject_semester'] = i.subject_id.semester
+#         feedback_distinct = feedback_qs.filter(subject_id_id=i.subject_id.id)
+#         div = feedback_distinct.count()
+#         if div > 0:
+#             for j in feedback_distinct:
+#                 # getting sum of all the feedback.
+#                 tmp['Q1'] += j.Q1
+#                 tmp['Q2'] += j.Q2
+#                 tmp['Q3'] += j.Q3
+#                 tmp['Q4'] += j.Q4
+#                 tmp['Q5'] += j.Q5
+#                 tmp['Q6'] += j.Q6
+#                 tmp['Q7'] += j.Q7
+#                 tmp['Q8'] += j.Q8
+#                 tmp['Q9'] += j.Q9
+#                 tmp['Q10'] += j.Q10
+#
+#             # calculating average of all the feedback
+#             tmp['Q1'] = round((tmp['Q1'] / div), 2)
+#             tmp['Q2'] = round((tmp['Q2'] / div), 2)
+#             tmp['Q3'] = round((tmp['Q3'] / div), 2)
+#             tmp['Q4'] = round((tmp['Q4'] / div), 2)
+#             tmp['Q5'] = round((tmp['Q5'] / div), 2)
+#             tmp['Q6'] = round((tmp['Q6'] / div), 2)
+#             tmp['Q7'] = round((tmp['Q7'] / div), 2)
+#             tmp['Q8'] = round((tmp['Q8'] / div), 2)
+#             tmp['Q9'] = round((tmp['Q9'] / div), 2)
+#             tmp['Q10'] = round((tmp['Q10'] / div), 2)
+#             tmp['count'] = div
+#
+#         else:
+#             # It is for that subjects whose feedback has not been submitted yet.
+#             tmp['count'] = div
+#             pass
+#
+#         # appending tmp dictionary into rating list
+#         ratings.append(tmp)
+#
+#     # Returning ratings object
+#     return ratings
 
 
 # Function for getting question wise average feedback for all faculty of perticular subject.
@@ -382,7 +383,7 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
     text2 = fb_type + " Semester Feedback Report"
     text3 = "Term: " + term_type + " " + str(year)
     text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
-    text5 = str(subject_obj.dept_id.dept_name) + " Department"
+    text5 = str(subject_obj.dept_id.dept_name) + " Department" + " Div - " + str(subject_obj.div)
     text6 = str(fac_obj.name) + "( " + str(fac_obj.dept_id.accronym) + " Department )"
     text7 = "Subject Name: " + subject_obj.subject_name + " (" + subject_obj.subject_code + ")"
     text8 = "Semester: " + str(subject_obj.semester)
@@ -396,7 +397,7 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
     d.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
     d.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
     d.add(Line(0, 90, 550, 90))
-    d.add(String(150, 65, text5, fontSize=18, fillColor=colors.black))
+    d.add(String(130, 65, text5, fontSize=18, fillColor=colors.black))
     d.add(String(30, 35, text6, fontSize=12, fillColor=colors.black))
     d.add(String(30, 20, text7, fontSize=12, fillColor=colors.black))
     d.add(String(380, 20, text8, fontSize=12, fillColor=colors.black))
@@ -502,15 +503,12 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
                                  range(n)]
         dpie.add(legend)
 
-        ft = []
-        ft.append(i + 1)
-        ft.append(question_qs[i].question_text)
-        ft.append([dpie])
+        style = getSampleStyleSheet()
+        p = Paragraph(str(question_qs[i].question_text), style['Normal'])
+        ft = [(i + 1), p, [dpie]]
         fl.append(ft)
 
-    tbdata = fl
-
-    table = Table(tbdata)
+    table = Table(fl)
 
     table.setStyle(TableStyle([('BACKGROUND', (0, 0), (-1, 0), colors.white),
                                ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
@@ -582,7 +580,7 @@ def make_detailed_feedback_pdf(serialized_feedback, subject_obj, fac_obj, fb_typ
         text2 = fb_type + " Semester Feedback Report"
         text3 = "Term: " + term_type + " " + str(year)
         text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
-        text5 = str(subject_obj.dept_id.dept_name) + " Department"
+        text5 = str(subject_obj.dept_id.dept_name) + " Department" + " Div - " + str(subject_obj.div)
         text6 = str(fac_obj.name) + "( " + str(fac_obj.dept_id.accronym) + " Department )"
         text7 = "Subject Name: " + subject_obj.subject_name + " (" + subject_obj.subject_code + ")"
         text8 = "Semester: " + str(subject_obj.semester)
@@ -598,7 +596,7 @@ def make_detailed_feedback_pdf(serialized_feedback, subject_obj, fac_obj, fb_typ
         d.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
         d.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
         d.add(Line(0, 90, 550, 90))
-        d.add(String(150, 65, text5, fontSize=18, fillColor=colors.black))
+        d.add(String(130, 65, text5, fontSize=18, fillColor=colors.black))
         d.add(String(30, 35, text6, fontSize=12, fillColor=colors.black))
         d.add(String(30, 20, text7, fontSize=12, fillColor=colors.black))
         d.add(String(380, 20, text8, fontSize=12, fillColor=colors.black))
@@ -616,7 +614,9 @@ def make_detailed_feedback_pdf(serialized_feedback, subject_obj, fac_obj, fb_typ
         fl = [["Sr No", "Questions", "Feedback"]]
         for i in range(1, question_count + 1):
             index = "q" + str(i)
-            ft = [i, question_qs[i - 1].question_text, k[index]]
+            styles = getSampleStyleSheet()
+            p = Paragraph(str(question_qs[i - 1].question_text), styles['Normal'])
+            ft = [i, p, k[index]]
             fl.append(ft)
 
         # fl.append([11, 'Remarks', l[k][10]])
@@ -638,8 +638,8 @@ def make_detailed_feedback_pdf(serialized_feedback, subject_obj, fac_obj, fb_typ
         table._argW[2] = 2.0 * inch
 
         table._argH[0] = 0.5 * inch
-        for i in range(1, question_count + 1):
-            table._argH[i] = 0.4 * inch
+        # for i in range(1, question_count + 1):
+        #     table._argH[i] = 0.7 * inch
 
         # table._argH[1] = 0.4 * inch
         # table._argH[2] = 0.4 * inch
