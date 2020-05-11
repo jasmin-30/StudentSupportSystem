@@ -7,7 +7,7 @@ import traceback
 from django.contrib.auth.hashers import check_password
 from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, render_to_response
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -2165,6 +2165,7 @@ def HOD_FeedbackSection(request, type, dept_id):
         context["error"] = "Log in First"
         return render(request, 'home_auth/index.html', context)
 
+
 # HOD Related Views > End
 
 # Views for ajax related to feedbacks > Start
@@ -2243,7 +2244,6 @@ def GetSubjectwiseAverageFeedback(request):
         }
         res = json.dumps(data)
         return HttpResponse(res, status=status.HTTP_401_UNAUTHORIZED)
-
 
 
 # Views for ajax related to feedbacks > End
@@ -2348,6 +2348,7 @@ def ManageCommitteesView(request):
     else:
         context["error"] = "Login first to access dashboard."
         return render(request, 'home_auth/index.html', context)
+
 
 # ========== AJAX endpoint : This view is for editing committee ====================
 def EditCommittees(request):
@@ -2585,6 +2586,7 @@ def PrincipalProfile(request):
         context["error"] = "Login to access dashboard."
         return render(request, 'home_auth/index.html', context)
 
+
 # =============== Principal Feedback section ========================
 def Principal_FeedbackSection(request, type, dept_id):
     return HOD_FeedbackSection(
@@ -2615,6 +2617,7 @@ def Principal_SubjectAverageFeedback(request, type, sub_id, fac_id):
 # This view is reusing subjectwise hod view.
 def PrincipalSubjectwiseAverageFeedback(request, type, dept_id):
     return HODSubjectwiseAverageFeedback(request, type=type, dept_id=dept_id)
+
 
 # Principal Related Views > End
 
@@ -2652,7 +2655,6 @@ def CommitteeChairpersonDashboard(request, com_id):
                     action=action
                 )
                 solution_obj.save()
-
 
                 context["success"] = "Action has been taken against " + str(
                     complaint_obj.student_id.first_name) + " " + str(
@@ -3339,7 +3341,8 @@ def CommitteeManageMembers(request, com_id):
 
                                 You can now view complaints of this committee.
 
-                            """.format(committee_name=mapping_obj.committee_id.committee_name, details=mapping_obj.committee_id.committee_details)
+                            """.format(committee_name=mapping_obj.committee_id.committee_name,
+                                       details=mapping_obj.committee_id.committee_details)
                             recipient_list = [str(mapping_obj.faculty_id.auth_id.email)]
 
                             status = send_mail(
@@ -3388,4 +3391,6 @@ def CommitteeManageMembers(request, com_id):
         context["error"] = "Login First"
         return render(request, 'home_auth/index.html', context)
 
+
 # Committee Related Views > End
+
