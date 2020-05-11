@@ -1,0 +1,29 @@
+.team{
+  text-align:center;
+  font-size:30px;
+}
+
+.pcoded[theme-layout="vertical"][vertical-placement="left"][vertical-nav-type="expanded"][vertical-effect="shrink"] .pcoded-content{
+  margin-left: 0;
+}
+
+.symbol{
+    width:26px !important;
+    height:22px !important;
+    margin-top: -1px !important;
+  }
+
+.p-2 {
+    padding: 0!important;
+}
+
+.email{
+    margin-top:-16px;
+  }
+
+.text-muted1{
+color:#FE8A7D !important;
+}
+body{
+font-size: .875em;
+}

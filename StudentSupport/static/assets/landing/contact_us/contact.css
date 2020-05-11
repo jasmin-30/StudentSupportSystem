@@ -1,0 +1,26 @@
+.content{
+margin-top:15px;
+margin-bottom:15px;
+}
+
+.form-b{
+border:1px solid #ADADAD;
+margin-right:80px;
+}
+
+.icon{
+font-size: 28px;
+ color: black;
+ }
+
+ .foot{
+ background:#404E67;
+  padding-bottom:2rem !important;
+  padding-left:2rem
+ }
+
+@media only screen and (max-width:600px){
+    .form-b{
+        margin-right:0px;
+    }
+}

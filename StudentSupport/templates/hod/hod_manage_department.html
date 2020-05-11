@@ -198,93 +198,6 @@
                                             </ul>
                                             <!-- Tab panes -->
                                             <div class="col-sm-12 tab-content tabs-left-content card-block" style="border: 1px solid #353c4e; padding: 20px 20px;">
-                                                <div class="tab-pane fade" id="subjects" role="tabpanel" aria-labelledby="subjects-tab">
-                                                    <div class="row">
-                                                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                            <h5>List of Subjects of Department</h5>
-                                                        </div>
-                                                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                            <button type="button" class="btn btn-outline-primary f-right" data-toggle="modal" data-target="#add-subject-modal">
-                                                                <i class="feather icon-plus"></i>
-                                                                Add Subjects
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                    <div class="dt-responsive table-responsive p-t-20">
-                                                        <table id="simpletable2" class="table table-hover">
-                                                            <thead>
-                                                                <tr>
-                                                                    <th scope="col">#</th>
-                                                                    <th scope="col">Subject Name</th>
-                                                                    <th scope="col">Subject Code</th>
-                                                                    <th scope="col">Division</th>
-                                                                    <th scope="col">Semester</th>
-                                                                    <th scope="col">Teaching Faculty</th>
-                                                                    <th scope="col">Action</th>
-                                                                </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {% for s in subjects %}
-                                                                <tr row_id="{{ s.id }}">
-                                                                    <th scope="row">
-                                                                        <div col_name="subject_id" id="subject_id">
-                                                                            {{ forloop.counter }}
-                                                                        </div>
-                                                                    </th>
-                                                                    <td>
-                                                                        <div class="subject_data" col_name="subject_name" id="subject_name">
-                                                                            {{ s.name }}
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="subject_data" col_name="subject_code" id="subject_code">
-                                                                            {{ s.code }}
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="subject_data" col_name="subject_division" id="subject_division">
-                                                                            {{ s.div }}
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="subject_data" col_name="subject_sem" id="subject_sem">
-                                                                            {{ s.sem }}
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="subject_data" col_name="teaching_faculties" id="teaching_faculties" is_edited="0">
-                                                                            {% for i in s.teaching_faculty %}
-                                                                                <span class="faculty" fac_id="{{ i.faculty_id.id }}" fac_email="{{ i.faculty_id.auth_id.email }}">
-                                                                                    {{ i.faculty_id.name }} ({{ i.faculty_id.dept_id.accronym }})
-                                                                                </span>
-                                                                                <br/>
-                                                                            {% endfor %}
-                                                                        </div>
-                                                                    </td>
-                                                                    <td>
-                                                                        <div class="btn-toolbar" style="text-align: left;">
-                                                                            <div class="btn-group btn-group-sm" style="float: none;">
-                                                                                <button type="button" class="btn_subject_edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                    <span class="icofont icofont-ui-edit"></span>
-                                                                                </button>
-                                                                                <button type="button" class="btn_subject_remove btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                    <span class="icofont icofont-ui-delete"></span>
-                                                                                </button>
-                                                                                <button type="button" class="btn_subject_save btn btn-primary waves-effect waves-light active" style="float: none;margin: 5px;">
-                                                                                    <span class="icofont icofont-ui-check"></span>
-                                                                                </button>
-                                                                                <button type="button" class="btn_subject_cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
-                                                                                    <span class="icofont icofont-ui-close"></span>
-                                                                                </button>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            {% endfor %}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
                                                 <div class="tab-pane fade show active" id="feedbackStatus" role="tabpanel" aria-labelledby="feedbackStatus-tab">
                                                     <div class="row">
                                                         <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
@@ -397,6 +310,93 @@
                                                                         </tr>
                                                                     {% endifnotequal %}
                                                                 {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="subjects" role="tabpanel" aria-labelledby="subjects-tab">
+                                                    <div class="row">
+                                                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                                            <h5>List of Subjects of Department</h5>
+                                                        </div>
+                                                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                                                            <button type="button" class="btn btn-outline-primary f-right" data-toggle="modal" data-target="#add-subject-modal">
+                                                                <i class="feather icon-plus"></i>
+                                                                Add Subjects
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="dt-responsive table-responsive p-t-20">
+                                                        <table id="simpletable2" class="table table-hover">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">#</th>
+                                                                    <th scope="col">Subject Name</th>
+                                                                    <th scope="col">Subject Code</th>
+                                                                    <th scope="col">Division</th>
+                                                                    <th scope="col">Semester</th>
+                                                                    <th scope="col">Teaching Faculty</th>
+                                                                    <th scope="col">Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                            {% for s in subjects %}
+                                                                <tr row_id="{{ s.id }}">
+                                                                    <th scope="row">
+                                                                        <div col_name="subject_id" id="subject_id">
+                                                                            {{ forloop.counter }}
+                                                                        </div>
+                                                                    </th>
+                                                                    <td>
+                                                                        <div class="subject_data" col_name="subject_name" id="subject_name">
+                                                                            {{ s.name }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="subject_data" col_name="subject_code" id="subject_code">
+                                                                            {{ s.code }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="subject_data" col_name="subject_division" id="subject_division">
+                                                                            {{ s.div }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="subject_data" col_name="subject_sem" id="subject_sem">
+                                                                            {{ s.sem }}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="subject_data" col_name="teaching_faculties" id="teaching_faculties" is_edited="0">
+                                                                            {% for i in s.teaching_faculty %}
+                                                                                <span class="faculty" fac_id="{{ i.faculty_id.id }}" fac_email="{{ i.faculty_id.auth_id.email }}">
+                                                                                    {{ i.faculty_id.name }} ({{ i.faculty_id.dept_id.accronym }})
+                                                                                </span>
+                                                                                <br/>
+                                                                            {% endfor %}
+                                                                        </div>
+                                                                    </td>
+                                                                    <td>
+                                                                        <div class="btn-toolbar" style="text-align: left;">
+                                                                            <div class="btn-group btn-group-sm" style="float: none;">
+                                                                                <button type="button" class="btn_subject_edit btn btn-primary waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                    <span class="icofont icofont-ui-edit"></span>
+                                                                                </button>
+                                                                                <button type="button" class="btn_subject_remove btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                    <span class="icofont icofont-ui-delete"></span>
+                                                                                </button>
+                                                                                <button type="button" class="btn_subject_save btn btn-primary waves-effect waves-light active" style="float: none;margin: 5px;">
+                                                                                    <span class="icofont icofont-ui-check"></span>
+                                                                                </button>
+                                                                                <button type="button" class="btn_subject_cancel btn btn-danger waves-effect waves-light" style="float: none;margin: 5px;">
+                                                                                    <span class="icofont icofont-ui-close"></span>
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            {% endfor %}
                                                             </tbody>
                                                         </table>
                                                     </div>

@@ -1,0 +1,180 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Student Support System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fredericka+the+Great" rel="stylesheet">
+      <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/landing/css/custom_css/bootstrap/bootstrap.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/landing/css/custom_css/bootstrap/bootstrap-grid.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/landing/css/custom_css/bootstrap/bootstrap-reboot.css' %}">
+    <!-- feather Awesome -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/landing/css/open-iconic-bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/animate.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/landing/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/magnific-popup.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/landing/css/aos.css' %}">
+
+    <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/flaticon.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/icomoon.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/custom_css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/contact_us/contact.css' %}">
+    <style>
+        .text-muted{
+            color:#FE8A7D !important;
+        }
+        body{
+            font-size: .875em;
+        }
+    </style>
+</head>
+  <body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark ftco_navbar ftco-navbar-light" id="ftco-navbar" style="height:100px; padding-top:10px;">
+        <div class="container d-flex align-items-center">
+            <a class="navbar-brand" href="{% url 'home' %}">Student Support System</a>
+            <ul class="navbar-nav ml-auto">
+                    <li class="nav-item active">
+                        <a href="{% url 'home' %}" class="nav-link pl-0">
+                            Home
+                        </a>
+                    </li>
+                </ul>
+        </div>
+    </nav>
+
+    <section class="hero-wrap hero-wrap-2" style="background-image:url({% static 'assets/landing/images/gec1.png' %});">
+<!--      <div class="overlay"></div>-->
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+            <h1 class="mb-2 bread">Contact Us</h1>
+            <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'home' %}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Contact <i class="ion-ios-arrow-forward"></i></span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+		<section class="ftco-section ftco-no-pt ftco-no-pb contact-section content">
+			<div class="container">
+                 <h3>Get in Touch</h3>
+                <p class="mb-2">To contact us please use the below form</p>
+				<div class="row d-flex align-items-stretch no-gutters">
+					<div class="col-md-6 p-4 p-md-5 form-b">
+						<form action="{% url 'contact_us' %}" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Your Name" name="name" id="name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" class="form-control" placeholder="Your Email" name="email" id="email" required>
+                            </div>
+                            <div class="form-group">
+                                <textarea name="desc" id="desc" cols="30" rows="7" class="form-control" placeholder="Issue Description" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <input type="submit" value="Submit" class="btn btn-primary py-2 px-3">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4 d-flex">
+                        <div class="row box p-4 text-left">
+                            <h3 class="mb-4">Contact Info</h3>
+                            <hr>
+                            <div class="row">
+                                <span class="col-md-2 icon"><i class="feather icon-home"></i></span>
+                                <p class="col-md-10">Nr. Sir BPTI Campus, Vidhyanagar, Bhavnagar, Gujarat 364002</p>
+                            </div>
+                            <div class="row">
+                                <span class="col-md-2 icon"><i class="feather icon-phone"></i></span>
+                                <p class="col-md-10">2782525354</p>
+                            </div>
+                            <div class="row">
+                                <span class="col-md-2" style="font-size: 25px; color: black;"><i class="feather icon-envelope"></i></span>
+                                <p class="col-md-10">gec-bhav-dte@gujarat.gov.in</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+		</section>
+		
+ <footer class="pt-4 pt-md-5 border-top" style="background:#404E67; padding-bottom:2rem !important; padding-left:2rem">
+		<div class="row">
+            <div class="col-12 col-md">
+                <img class="mb-2" src="{% static 'assets/images/logo.png' %}" alt="" width="300px" height="50px">
+            </div>
+            <div class="col-6 col-md">
+                <h5 style="color:white;">Features</h5>
+                <ul class="list-unstyled text-small">
+                    <li class="text-muted">Feedback Portal</li>
+                    <li class="text-muted">Complaint Section</li>
+                    <li class="text-muted">Committee Section</li>
+                </ul>
+            </div>
+            <div class="col-6 col-md">
+                <h5 style="color:white;">About</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a class="text-muted" href="{% url 'contact_us' %}">Contact Us</a></li>
+                    <li><a class="text-muted" href="{% url 'courtesy' %}">About US</a></li>
+                </ul>
+            </div>
+			<div class="col-6 col-md">
+                <p style="color:white;">Copyright © 2020 GEC Bhavnagar. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- loader -->
+    <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+    <script src="{% static 'assets/landing/js/jquery.min.js' %}"></script>
+    <script src="{% static 'assets/landing/js/jquery-migrate-3.0.1.min.js' %}"></script>
+    <script src="{% static 'assets/landing/js/popper.min.js' %}"></script>
+    <script src="{% static 'assets/landing/js/custom-js/bootstrap/bootstrap.js' %}"></script>
+    <script src="{% static 'assets/landing/js/custom-js/bootstrap/bootstrap.bundle.js' %}"></script>
+    <script src="{% static 'assets/landing/js/jquery.easing.1.3.js' %}"></script>
+    <script src="{% static 'assets/landing/js/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'assets/landing/js/jquery.stellar.min.js' %}"></script>
+    <script src="{% static 'assets/landing/js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'assets/landing/js/jquery.magnific-popup.min.js' %}"></script>
+    <script src="{% static 'assets/landing/js/aos.js' %}"></script>
+    <script src="{% static 'assets/landing/js/jquery.animateNumber.min.js' %}"></script>
+    <script src="{% static 'assets/landing/js/scrollax.min.js' %}"></script>
+{#    <script src="{% static 'assets/landing/js/google-map.js' %}"></script>#}
+    <script src="{% static 'assets/landing/js/main.js' %}"></script>
+    <!-- sweet alert js -->
+    <script type="text/javascript" src="{% static 'bower_components/sweetalert/js/sweetalert.min.js' %}"></script>
+
+
+    <script type="text/javascript">
+        {% if success %}
+            swal({
+                title: "{{ success }}",
+                type: "success"
+            });
+        {% endif %}
+
+        {% if error %}
+            swal({
+                title: "Error",
+                text: "{{ error }}",
+                dangerMode: true,
+                type: "error"
+            });
+        {% endif %}
+    </script>
+
+  </body>
+</html>

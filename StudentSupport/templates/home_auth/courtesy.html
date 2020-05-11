@@ -1,0 +1,263 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Student Support System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Material io cdn -->
+    <link href="{% static 'assets/css/material-components-web.min.css' %}" rel="stylesheet">
+    <script src="{% static 'assets/js/material-components-web.min.js' %}"></script>
+
+
+    <link href="https://fonts.googleapis.com/css?family=Work+Sans:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Fredericka+the+Great" rel="stylesheet">
+      <!-- Required Fremwork -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/bootstrap/css/bootstrap.min.css' %}">
+    <!-- feather Awesome -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/icon/feather/css/feather.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/landing/css/open-iconic-bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/animate.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/landing/css/owl.carousel.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/owl.theme.default.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/magnific-popup.css' %}">
+
+    <link rel="stylesheet" href="{% static 'assets/landing/css/aos.css' %}">
+      <!-- sweet alert framework -->
+    <link rel="stylesheet" type="text/css" href="{% static 'bower_components/sweetalert/css/sweetalert.css' %}">
+    <!-- Notification.css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/pages/notification/notification.css' %}">
+    <!-- animation nifty modal window effects css -->
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/component.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'assets/css/custom_css/custom_style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/ionicons.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/flaticon.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/icomoon.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/landing/courtesy/courtesy.css' %}">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark ftco_navbar ftco-navbar-light" id="ftco-navbar">
+	    <div class="container d-flex align-items-center">
+	    	<a class="navbar-brand" href="{% url 'home' %}">Student Support System</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#ftco-nav" aria-controls="ftco-nav" aria-expanded="false" aria-label="Toggle navigation">
+	        <span class="oi oi-menu"></span> Menu
+	      </button>
+	      <!-- <p class="button-custom order-lg-last mb-0"><a href="appointment.html" class="btn btn-secondary py-2 px-3">Make An Appointment</a></p> -->
+	      <div class="collapse navbar-collapse" id="ftco-nav">
+	        <ul class="navbar-nav ml-auto">
+	        	<li class="nav-item active"><a href="{% url 'home' %}" class="nav-link pl-0">Home</a></li>
+	        </ul>
+	      </div>
+	    </div>
+	  </nav>
+    <!-- END nav -->
+
+    <section class="hero-wrap hero-wrap-2" style="background-image: url('{% static 'assets/images/gec1.png' %}');">
+<!--      <div class="overlay"></div>-->
+      <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+          <div class="col-md-9 ftco-animate text-center">
+            <h1 class="mb-2 bread">Courtesy</h1>
+            <p class="breadcrumbs"><span class="mr-2"><a href="{% url 'home' %}">Home <i class="ion-ios-arrow-forward"></i></a></span> <span>Courtesy <i class="ion-ios-arrow-forward"></i></span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+<div id="pcoded" class="pcoded">
+    <div class="pcoded-overlay-box"></div>
+        <div class="pcoded-main-container">
+            <div class="pcoded-wrapper">
+                <div class="pcoded-content">
+                    <div class="pcoded-inner-content">
+                        <!-- Main-body start -->
+                        <div class="main-body">
+                            <div class="page-wrapper wrpr">
+                                <!-- Page-body start -->
+                                <div class="page-body">
+                                    <div class="page-header">
+                                        <h4 class="team">Guided By</h4>
+                                        <div class="row align-items-end">
+                                            <div class="col-lg-4">
+                                                <div class="page-header-breadcrumb">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row users-card justify-content-around">
+                                        <div class="col-md-6 col-lg-3 ftco-animate">
+                                            <div class="staff card">
+                                                <div class="card-block">
+                                                <div class="img-wrap d-flex align-items-stretch">
+                                                    <div class="img align-self-stretch" style="background-image: url({% static 'assets/landing/images/developers/kpk.jpg' %});"></div>
+                                                </div>
+                                                <div class="user-content">
+                                                        <h4 class="">Prof. Karshan Kandoriya</h4>
+                                                        <div class="d-flex justify-content-center mb-3">
+                                                        </div>
+                                                        <p class="m-b-0 text-muted email" style="font-size:14px;color:black;"><i class="fa fa-envelope" style="font-size:22px;color:black;"></i>  karshankandoriya@gmail.com</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        <div class="page-header">
+                                            <h4 class="team">Design & Developed By</h4>
+                                            <div class="row align-items-end">
+                                                <div class="col-lg-4">
+                                                    <div class="page-header-breadcrumb">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row users-card">
+                                            <div class="col-md-6 col-lg-3 ftco-animate">
+                                                <div class="staff card">
+                                                    <div class="card-block">
+                                                        <div class="img-wrap d-flex align-items-stretch">
+                                                            <div class="img align-self-stretch" style="background-image: url({% static 'assets/landing/images/developers/Jasmin.jpeg' %});"></div>
+                                                        </div>
+                                                        <div class="user-content">
+                                                            <h4 class="">Jasmin Makwana</h4>
+                                                            <div class="d-flex justify-content-center mb-3">
+                                                            </div>
+                                                            <a href="mailto:jasminmakwana32@gmail.com">
+                                                                <p class="m-b-0 text-muted email" style="font-size:12px;color:black;"><i class="fa fa-envelope" style="font-size:22px;color:black;"></i>  jasminmakwana32@gmail.com</p>
+                                                            </a>
+                                                            <br />
+                                                            <a  href="https://github.com/jasmin-30">
+                                                                <p class="m-b-0 text-muted email" style="font-size:12px;color:black;"><i class="fa fa-github" style="font-size:22px;color:black;"></i>  https://github.com/jasmin-30</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-3 ftco-animate">
+                                                <div class="staff card">
+                                                    <div class="card-block">
+                                                        <div class="img-wrap d-flex align-items-stretch">
+                                                            <div class="img align-self-stretch" style="background-image: url({% static 'assets/landing/images/developers/Jinesh.jpg' %});"></div>
+                                                        </div>
+                                                        <div class="user-content">
+                                                            <h4 class="">Jinesh Kamdar</h4>
+                                                            <div class="d-flex justify-content-center mb-3">
+                                                            </div>
+                                                            <a href="mailto:jdkamdar98@gmail.com">
+                                                                <p class="m-b-0 text-muted email" style="font-size:12px;color:black;"><i class="fa fa-envelope" style="font-size:22px;color:black;"></i>  jdkamdar98@gmail.com</p>
+                                                            </a>
+                                                            <br />
+                                                            <a  href="https://github.com/JineshKamdar98">
+                                                                <p class="m-b-0 text-muted email" style="font-size:12px;color:black;"><i class="fa fa-github" style="font-size:22px;color:black;"></i>  https://github.com/JineshKamdar98</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-3 ftco-animate">
+                                                <div class="staff card">
+                                                    <div class="card-block">
+                                                        <div class="img-wrap d-flex align-items-stretch">
+                                                            <div class="img align-self-stretch" style="background-image: url({% static 'assets/landing/images/developers/vishwa.jpg' %});"></div>
+                                                        </div>
+                                                        <div class="user-content">
+                                                            <h4 class="">Vishwa Rajput</h4>
+                                                            <div class="d-flex justify-content-center mb-3">
+                                                            </div>
+                                                            <a href="mailto:vishwarajput1999@gmail.com">
+                                                                <p class="m-b-0 text-muted email" style="font-size:12px;color:black;"><i class="fa fa-envelope" style="font-size:22px;color:black;"></i>  vishwarajput1999@gmail.com</p>
+                                                            </a>
+                                                            <br />
+                                                            <a  href="https://github.com/VishwaRajput">
+                                                                <p class="m-b-0 text-muted email" style="font-size:12px;color:black;"><i class="fa fa-github" style="font-size:22px;color:black;"></i>  https://github.com/VishwaRajput</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 col-lg-3 ftco-animate">
+                                                <div class="staff card">
+                                                    <div class="card-block">
+                                                        <div class="img-wrap d-flex align-items-stretch">
+                                                            <div class="img align-self-stretch" style="background-image: url({% static 'assets/landing/images/developers/kinjal.jpg' %});"></div>
+                                                        </div>
+                                                        <div class="user-content">
+                                                            <h4 class="">Kinjal Doshi</h4>
+                                                            <div class="d-flex justify-content-center mb-3">
+                                                            </div>
+                                                            <a href="mailto:kinjaldoshi1398@gmail.com">
+                                                                <p class="m-b-0 text-muted email" style="font-size:12px;color:black;"><i class="fa fa-envelope" style="font-size:22px;color:black;"></i>  kinjaldoshi1398@gmail.com</p>
+                                                            </a>
+                                                            <br />
+                                                            <a  href="https://github.com/kd1398">
+                                                                <p class="m-b-0 text-muted email" style="font-size:12px;color:black;"><i class="fa fa-github" style="font-size:22px;color:black;"></i>  https://github.com/kd1398</p>
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <!-- Page-body end -->
+                        </div>
+                    </div>
+                    <!-- Main-body end -->
+                </div>
+            </div>
+
+
+   <footer class="pt-4 pt-md-5 border-top" style="background:#404E67; padding-bottom:2rem !important; padding-left:2rem">
+		<div class="row">
+            <div class="col-12 col-md">
+                <img class="mb-2" src="{% static 'assets/images/logo.png' %}" alt="" width="300px" height="50px">
+            </div>
+            <div class="col-6 col-md">
+                <h5 style="color:white;">Features</h5>
+                <ul class="list-unstyled text-small">
+                    <li style="color: #FE8A7D">Feedback Portal</li>
+                    <li style="color: #FE8A7D">Complaint Section</li>
+                    <li style="color: #FE8A7D">Committee Section</li>
+                </ul>
+            </div>
+            <div class="col-6 col-md">
+                <h5 style="color:white;">About</h5>
+                <ul class="list-unstyled text-small">
+                    <li><a href="{% url 'contact_us' %}" style="color: #FE8A7D">Contact Us</a></li>
+                    <li><a href="{% url 'courtesy' %}" style="color: #FE8A7D">About Us</a></li>
+                </ul>
+            </div>
+			<div class="col-6 col-md">
+                <p style="color:white;">Copyright © 2020 GEC Bhavnagar. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+
+
+  <!-- loader -->
+  <div id="ftco-loader" class="show fullscreen"><svg class="circular" width="48px" height="48px"><circle class="path-bg" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke="#eeeeee"/><circle class="path" cx="24" cy="24" r="22" fill="none" stroke-width="4" stroke-miterlimit="10" stroke="#F96D00"/></svg></div>
+
+
+  <script src="{% static 'assets/landing/js/jquery.min.js' %}"></script>
+  <script src="{% static 'assets/landing/js/jquery-migrate-3.0.1.min.js' %}"></script>
+  <script src="{% static 'assets/landing/js/popper.min.js' %}"></script>
+  <script src="{% static 'assets/landing/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'assets/landing/js/jquery.easing.1.3.js' %}"></script>
+  <script src="{% static 'assets/landing/js/jquery.waypoints.min.js' %}"></script>
+  <script src="{% static 'assets/landing/js/jquery.stellar.min.js' %}"></script>
+  <script src="{% static 'assets/landing/js/owl.carousel.min.js' %}"></script>
+  <script src="{% static 'assets/landing/js/jquery.magnific-popup.min.js' %}"></script>
+  <script src="{% static 'assets/landing/js/aos.js' %}"></script>
+  <script src="{% static 'assets/landing/js/jquery.animateNumber.min.js' %}"></script>
+  <script src="{% static 'assets/landing/js/scrollax.min.js' %}"></script>
+  <script src="{% static 'assets/landing/js/main.js' %}"></script>
+
+  </body>
+</html>
