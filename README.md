@@ -22,14 +22,14 @@ Faculty can also improve their performance according to feedback received.
 Principal may have formed some committees for supporting students and resolving their issues and complaints.
 Using this system student can also submit complaint and respective committee members can take action against complaint.
 
-#Steps to run project
+# Steps to run project
 1. Create virtualenv using `virtualenv` command.
 2. Install all the requirements from `requirements.txt` file.
 3. Create database named `student_support_system`
 4. Import `student_support_system.sql` file into created database to add necessary data.
 5. after activating account you are good to go for runserver.
 
-#Contributors
+# Contributors
 1. [Jasmin Makwana](https://github.com/jasmin-30)
 2. [Jinesh Kamdar](https://github.com/JineshKamdar98)
 3. [Kinjal Doshi](https://github.com/kd1398)
