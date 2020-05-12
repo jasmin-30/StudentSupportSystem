@@ -135,7 +135,8 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 EMAIL_PORT = 587
 
-EMAIL_HOST_USER = 'sf.gecbhav@gmail.com'
-EMAIL_HOST_PASSWORD = 'SF#gecbhav2019'
+# Confirmation mail while creating account will be sent from below registered email address
+EMAIL_HOST_USER = '< Your Email Address >'
+EMAIL_HOST_PASSWORD = '< Password of email address >'
 
 BASE_URL = 'http://127.0.0.1:8000/'

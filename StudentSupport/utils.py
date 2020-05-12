@@ -366,7 +366,7 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
                              bottomMargin=inch / 4,
                              pagesize=A4)
 
-    path_to_file = os.getcwd() + "/logo.jpg"
+    path_to_file = os.getcwd() + "/logo.png"
 
     data_list = []
     label_list = []
@@ -379,7 +379,7 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
 
     overall = round((sum/question_count), 2)
 
-    text1 = "Government Engineering College, Bhavnagar"
+    text1 = "College Name with address"
     text2 = fb_type + " Semester Feedback Report"
     text3 = "Term: " + term_type + " " + str(year)
     text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
@@ -392,7 +392,7 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
 
     d = Drawing(400, 200)
     d.add(Image(0, 120, 100, 100, path_to_file))
-    d.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
+    d.add(String(150, 190, text1, fontSize=20, fillColor=colors.black))
     d.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
     d.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
     d.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
@@ -450,9 +450,9 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
                              bottomMargin=inch / 4,
                              pagesize=A4)
 
-    path_to_file = os.getcwd() + "/logo.jpg"
+    path_to_file = os.getcwd() + "/logo.png"
 
-    text1 = "Government Engineering College, Bhavnagar"
+    text1 = "College Name with address"
     text2 = fb_type + " Semester Feedback Report"
     text3 = "Term: " + term_type + " " + str(year)
     text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
@@ -460,7 +460,7 @@ def make_avg_feedback_pdf(questionwise_ratings, rating_insights, subject_obj, fa
 
     d2 = Drawing(400, 200)
     d2.add(Image(0, 120, 100, 100, path_to_file))
-    d2.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
+    d2.add(String(150, 190, text1, fontSize=20, fillColor=colors.black))
     d2.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
     d2.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
     d2.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
@@ -572,11 +572,11 @@ def make_detailed_feedback_pdf(serialized_feedback, subject_obj, fac_obj, fb_typ
                             bottomMargin=inch / 4,
                             pagesize=A4)
 
-    path_to_file = os.getcwd() + "/logo.jpg"
+    path_to_file = os.getcwd() + "/logo.png"
 
     for k in serialized_feedback:
 
-        text1 = "Government Engineering College, Bhavnagar"
+        text1 = "College Name with address"
         text2 = fb_type + " Semester Feedback Report"
         text3 = "Term: " + term_type + " " + str(year)
         text4 = "Date: " + str(datetime.datetime.now().strftime("%d %B, %Y %I:%M %p"))
@@ -591,7 +591,7 @@ def make_detailed_feedback_pdf(serialized_feedback, subject_obj, fac_obj, fb_typ
 
         d = Drawing(400, 200)
         d.add(Image(0, 120, 100, 100, path_to_file))
-        d.add(String(120, 190, text1, fontSize=20, fillColor=colors.black))
+        d.add(String(150, 190, text1, fontSize=20, fillColor=colors.black))
         d.add(String(170, 150, text2, fontSize=18, fillColor=colors.black))
         d.add(String(30, 110, text3, fontSize=14, fillColor=colors.black))
         d.add(String(370, 110, text4, fontSize=14, fillColor=colors.black))
