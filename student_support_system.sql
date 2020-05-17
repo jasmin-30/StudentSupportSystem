@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS `studentsupport_end_sem_feedback_questions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `question_text` longtext NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `studentsupport_end_sem_feedback_questions`
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `studentsupport_mid_sem_feedback_questions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `question_text` longtext NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `studentsupport_mid_sem_feedback_questions`
