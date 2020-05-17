@@ -23,11 +23,13 @@ Principal may have formed some committees for supporting students and resolving 
 Using this system student can also submit complaint and respective committee members can take action against complaint.
 
 # Steps to run project
-1. Create virtualenv using `virtualenv` command.
-2. Install all the requirements from `requirements.txt` file.
-3. Create database named `student_support_system`
-4. Import `student_support_system.sql` file into created database to add necessary data.
-5. after activating account you are good to go for runserver.
+1. Create virtualenv using `virtualenv` command. `virtualenv venv`.
+2. Once the virtualenvironemnt is created activate that virtual env by `activate`.
+3. Install all the requirements from `requirements.txt` file using `pip install -r requirements.txt`.
+4. Create database named `student_support_system`.
+5. run `python manage.py migrate`.
+6. Import `student_support_system.sql` file into created database to add necessary data.
+7. after importing sql file you are good to go for runserver.
 
 # Contributors
 1. [Jasmin Makwana](https://github.com/jasmin-30)
