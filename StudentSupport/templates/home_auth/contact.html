@@ -55,7 +55,7 @@
         </div>
     </nav>
 
-    <section class="hero-wrap hero-wrap-2" style="background-image:url({% static 'assets/landing/images/Photos/slide1.jpg' %});">
+    <section class="hero-wrap hero-wrap-2" style="background-image:url({% static 'assets/landing/images/gec1.png' %});">
 <!--      <div class="overlay"></div>-->
       <div class="container">
         <div class="row no-gutters slider-text align-items-center justify-content-center">
@@ -72,7 +72,7 @@
                  <h3>Get in Touch</h3>
                 <p class="mb-2">To contact us please use the below form</p>
 				<div class="row d-flex align-items-stretch no-gutters">
-					<div class="col-sm-12 p-4 p-md-5 form-b">
+					<div class="col-md-6 p-4 p-md-5 form-b">
 						<form action="{% url 'contact_us' %}" method="post">
                             {% csrf_token %}
                             <div class="form-group">
@@ -88,6 +88,24 @@
                                 <input type="submit" value="Submit" class="btn btn-primary py-2 px-3">
                             </div>
                         </form>
+                    </div>
+                    <div class="col-md-4 d-flex">
+                        <div class="row box p-4 text-left">
+                            <h3 class="mb-4">Contact Info</h3>
+                            <hr>
+                            <div class="row">
+                                <span class="col-md-2 icon"><i class="feather icon-home"></i></span>
+                                <p class="col-md-10">Nr. Sir BPTI Campus, Vidhyanagar, Bhavnagar, Gujarat 364002</p>
+                            </div>
+                            <div class="row">
+                                <span class="col-md-2 icon"><i class="feather icon-phone"></i></span>
+                                <p class="col-md-10">2782525354</p>
+                            </div>
+                            <div class="row">
+                                <span class="col-md-2" style="font-size: 25px; color: black;"><i class="feather icon-envelope"></i></span>
+                                <p class="col-md-10">gec-bhav-dte@gujarat.gov.in</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -114,7 +132,7 @@
                 </ul>
             </div>
 			<div class="col-6 col-md">
-                <p style="color:white;">Copyright © All Rights Reserved.</p>
+                <p style="color:white;">Copyright © 2020 GEC Bhavnagar. All Rights Reserved.</p>
             </div>
         </div>
     </footer>
