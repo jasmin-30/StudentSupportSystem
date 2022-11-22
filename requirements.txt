@@ -3,7 +3,7 @@ django-extensions==2.2.9
 django-filter==2.2.0
 djangorestframework==3.11.0
 mysqlclient==1.4.6
-Pillow==7.1.2
+Pillow==9.3.0
 pydot==1.4.1
 pydotplus==2.0.2
 pyparsing==2.4.7
